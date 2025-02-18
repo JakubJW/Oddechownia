@@ -9,8 +9,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
         foreground: "var(--foreground)",
+        primaryFg: "var(--primary-foreground)",
+        primarBg: "(--primary-background)",
+        redFg: "(--red-foreground)",
+        redBg: "(--red-background)",
+        greenFg: "(--green-foreground)",
+        greenBg: "(--green-background)",
+        yellowFg: "(--yellow-foreground)",
+        yellowBg: "(--yellow-background)",
+        whiteBg: "(--background-white)",
       },
     },
   },
