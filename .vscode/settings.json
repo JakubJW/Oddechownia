@@ -1,0 +1,12 @@
+{
+    "css.customData": [".vscode/tailwind.json"],
+    "css.lint.unknownAtRules": "ignore",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+    },
+    "eslint.alwaysShowStatus": true,
+    "prettier.requireConfig": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+}
