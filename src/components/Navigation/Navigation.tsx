@@ -13,7 +13,7 @@ export const routes = [
 
 export default function Navigation() {
   return (
-    <div className="flex items-center justify-between p-4">
+    <header className="fixed top-0 w-full bg-whiteBg flex items-center justify-between p-4">
       <nav>
         <ul className="flex justify-center sm:justify-start items-center">
           <li>
@@ -50,6 +50,6 @@ export default function Navigation() {
       >
         Zaloguj się
       </Button>
-    </div>
+    </header>
   );
 }
