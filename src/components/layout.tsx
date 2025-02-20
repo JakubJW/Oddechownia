@@ -5,7 +5,7 @@ export default function Layout({ children }: React.PropsWithChildren<object>) {
   return (
     <>
       <Navigation />
-      <main>{children}</main>
+      <main className='mt-[90px]'>{children}</main>
     </>
   );
 }
