@@ -29,7 +29,7 @@ const mockVideos = [
 
 export default function CourseVideosPreview() {
   return (
-    <section>
+    <section className='bg-gradient-to-b from-whiteBg to-primaryBg'>
       <Container>
         <div className="max-w-[600px] space-y-8 mb-24">
           <HeaderTwo>
