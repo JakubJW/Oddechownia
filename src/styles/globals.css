@@ -60,9 +60,19 @@ body {
   }
 }
 
+.slick-slide {
+  height: inherit !important;
+}
+
+.slick-track {
+  display: flex !important;
+}
+
 /* the slides */
 .slick-slide>div {
   margin: 0 16px;
+  height: 100%;
+  display: flex;
 }
 
 /* the parent */
