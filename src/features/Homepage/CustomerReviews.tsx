@@ -27,7 +27,7 @@ const mockReiews = [
 
 export default function CustomerReviews() {
   return (
-    <section>
+    <section className="bg-gradient-to-b from-primaryBg to-whiteBg">
       <Container>
         <div className="text-center mb-16">
           <HeaderTwo>Jak oceniają nas klienci?</HeaderTwo>
