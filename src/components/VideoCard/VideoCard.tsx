@@ -23,7 +23,6 @@ export default function VideoCard({
   title,
   description,
   duration,
-  videoUrl,
 }: VideoCardProps) {
   return (
     <div className="relative rounded-xl overflow-hidden">
