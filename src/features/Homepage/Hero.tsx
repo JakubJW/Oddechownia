@@ -7,7 +7,7 @@ export default function Hero() {
     <section>
       <div className="flex items-center">
         <div className="px-4 space-y-8 mx-auto max-w-[600px]">
-          <hgroup className='text-center md:text-left'>
+          <hgroup className="text-center md:text-left">
             <h1 className="font-bold text-4xl leading-normal xl:text-5xl xl:leading-relaxed">
               Odnajdź <span className="text-primaryFg">spokój.</span>
               <br />
