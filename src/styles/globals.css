@@ -59,3 +59,31 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* the slides */
+.slick-slide>div {
+  margin: 0 16px;
+}
+
+/* the parent */
+.slick-list {
+  margin: 0 -16px;
+}
+
+.slick-dots {
+  bottom: -48px !important;
+
+  li {
+    button::before {
+      @apply bg-white border border-gray-500 rounded-full;
+      content: "" !important;
+    }
+  }
+
+  li.slick-active {
+    button::before {
+      @apply bg-primaryBg border border-primaryFg rounded-full;
+      content: "";
+    }
+  } 
+}

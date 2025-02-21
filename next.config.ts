@@ -1,3 +1,4 @@
+import { withNextVideo } from "next-video/process";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -7,10 +8,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'wknpvvtasrhwkqmkvoml.supabase.co',
+        hostname: `${process.env.SUPABASE_PROJECT_ID}.supabase.co`,
       }
     ]
   },
 };
 
-export default nextConfig;
+export default withNextVideo(nextConfig);
