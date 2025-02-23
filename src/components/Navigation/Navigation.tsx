@@ -13,7 +13,7 @@ export const routes = [
 
 export default function Navigation() {
   return (
-    <header className="fixed top-0 w-full bg-whiteBg flex items-center justify-between p-4">
+    <header className="fixed top-0 z-40 w-full bg-whiteBg flex items-center justify-between p-4">
       <nav>
         <ul className="flex justify-center sm:justify-start items-center">
           <li>
