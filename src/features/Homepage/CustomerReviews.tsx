@@ -29,9 +29,9 @@ export default function CustomerReviews() {
   return (
     <section className="bg-gradient-to-b from-primaryBg to-whiteBg">
       <Container>
-        <div className="text-center mb-16">
+        <div className="text-center mb-32 max-w-[800px] mx-auto">
           <HeaderTwo>Jak oceniają nas klienci?</HeaderTwo>
-          <p className="mt-8">
+          <p className="text-xl mt-8">
             Dokładamy wszelkich starań, aby nasze kursy były jak najwyższej
             jakości i odpowiadały waszym potrzebom.
           </p>
