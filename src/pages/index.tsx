@@ -14,7 +14,7 @@ export default function Home() {
       <Hero />
       <CourseVideosPreview />
       <CustomerReviews />
-      <AvailableSubscriptions />
+      {/* <AvailableSubscriptions /> */}
       <Faq />
     </>
   );
