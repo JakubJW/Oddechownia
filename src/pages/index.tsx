@@ -1,3 +1,4 @@
+import AvailableSubscriptions from '@/features/Homepage/AvailableSubscriptions';
 import Hero from '../features/Homepage/Hero';
 import CourseVideosPreview from '@/features/Homepage/CoursePreviewSlider';
 import CustomerReviews from '@/features/Homepage/CustomerReviews';
@@ -13,7 +14,7 @@ export default function Home() {
       <Hero />
       <CourseVideosPreview />
       <CustomerReviews />
-      {/* <AvailableSubscriptions /> */}
+      <AvailableSubscriptions />
       <Faq />
     </>
   );
