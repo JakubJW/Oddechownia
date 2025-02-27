@@ -31,7 +31,7 @@ export default function CourseVideosPreview() {
   return (
     <section className='bg-gradient-to-b from-whiteBg to-primaryBg'>
       <Container>
-        <div className="max-w-[600px] space-y-8 mb-24">
+        <div className="max-w-[600px] space-y-6 mb-24">
           <HeaderTwo>
             Zobacz, jak wyglądają <br />{' '}
             <span className="text-primaryFg">nasze pratyki</span>

@@ -20,7 +20,7 @@ export default function Carousel({
     arrows: false,
     responsive: [
       {
-        breakpoint: 360,
+        breakpoint: 640,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -43,20 +43,20 @@ export default function Carousel({
   return (
     <div className="slider-container relative">
       <button
-        className="absolute left-0 top-1/2 -translate-y-1/2 p-4 bg-primaryBg rounded-full"
+        className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 p-4 bg-primaryBg rounded-full"
         onClick={() => slider.current?.slickPrev()}
       >
         <ChevronLeft className="text-primaryFg" />
       </button>
       <Slider
-        className="mx-24"
+        className="lg:mx-24"
         ref={slider}
         {...settings}
       >
         {children}
       </Slider>
       <button
-        className="absolute right-0 top-1/2 -translate-y-1/2 p-4 bg-primaryBg rounded-full"
+        className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 p-4 bg-primaryBg rounded-full"
         onClick={() => slider.current?.slickNext()}
       >
         <ChevronRight className="text-primaryFg" />

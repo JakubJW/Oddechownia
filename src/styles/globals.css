@@ -85,15 +85,20 @@ body {
   bottom: -48px !important;
 
   li {
+    height: 16px !important;
+    width: 16px !important;
+  }
+
+  li {
     button::before {
-      @apply bg-white border border-gray-500 rounded-full;
+      @apply bg-whiteBg border border-primaryFg rounded-full;
       content: "" !important;
     }
   }
 
   li.slick-active {
     button::before {
-      @apply bg-primaryBg border border-primaryFg rounded-full;
+      @apply bg-primaryFg border border-primaryFg rounded-full;
       content: "";
     }
   } 

@@ -26,7 +26,7 @@ export default function VideoCard({
 }: VideoCardProps) {
   return (
     <div className="relative rounded-xl overflow-hidden">
-      <Video src={getStarted} />;
+      <Video src={getStarted} />
       <div className="absolute top-2 left-2 inline-flex items-center gap-2 p-2 rounded-md bg-primaryBg">
         <Clock className="text-primaryFg" />
         <span className="text-black leading-none">
