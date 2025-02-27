@@ -49,10 +49,10 @@ export default function SubscriptionCard({
 
   return (
     <div className={cn(subscriptionCardVariants({ variant, className }))}>
-      <span className="font-bold text-lg">{period} miesiące</span>{' '}
+      <span className="font-normal text-lg">{period} miesiące</span>{' '}
       {variant === 'popular' && (
         <span className="text-sm absolute top-6 right-6 bg-primaryBg p-2 rounded-md text-primaryFg">
-          Najpopularniejszy
+          Popularny
         </span>
       )}
       <div className="mt-4">
