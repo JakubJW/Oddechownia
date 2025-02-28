@@ -41,7 +41,7 @@ export default function Footer() {
   return (
     <footer className="bg-primaryBg">
       <Container>
-        <div className="grid grid-cols-4 justify-items-center">
+        <div className="grid grid-cols-1 gap-6 md:gap-0 md:grid-cols-4 md:justify-items-center">
           <Link
             className="block mr-8"
             href="/"
