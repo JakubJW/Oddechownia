@@ -13,43 +13,47 @@ export const routes = [
 
 export default function Navigation() {
   return (
-    <header className="fixed top-0 z-40 w-full bg-whiteBg flex items-center justify-between p-4">
-      <nav>
-        <ul className="flex justify-center sm:justify-start items-center">
-          <li>
-            <Link
-              className="block mr-8"
-              href="/"
-            >
-              <Image
-                src={Logo}
-                alt="Oddechownia logo"
-                priority
-              />
-            </Link>
-          </li>
-          {routes.map(({ content, href }, index) => (
-            <li
-              className="hidden sm:block"
-              key={index}
-            >
-              <NavigationElement
-                content={content}
-                href={href}
-              />
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <MobileNavigation />
-      <Button
-        size="lg"
-        variant="outline"
-        onClick={() => console.log('logowanie')}
-        className="hidden sm:block"
-      >
-        Zaloguj się
-      </Button>
+    <header className="fixed top-0 z-40 w-full bg-whiteBg flex items-center justify-between">
+      <div className="container mx-auto px-4 py-4 sm:py-0">
+        <div className="flex justify-between items-center">
+          <nav>
+            <ul className="flex justify-center sm:justify-start items-center">
+              <li>
+                <Link
+                  className="block mr-8"
+                  href="/"
+                >
+                  <Image
+                    src={Logo}
+                    alt="Oddechownia logo"
+                    priority
+                  />
+                </Link>
+              </li>
+              {routes.map(({ content, href }, index) => (
+                <li
+                  className="hidden sm:block"
+                  key={index}
+                >
+                  <NavigationElement
+                    content={content}
+                    href={href}
+                  />
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => console.log('logowanie')}
+            className="hidden sm:block"
+          >
+            Zaloguj się
+          </Button>
+          <MobileNavigation />
+        </div>
+      </div>
     </header>
   );
 }

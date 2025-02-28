@@ -17,7 +17,7 @@ export default function MobileNavigation() {
       </button>
       <div
         className={cn(
-          'absolute p-4 bg-whiteBg top-0 left-0 h-full w-full flex flex-col opacity-0 pointer-events-none transition-opacity duration-300',
+          'absolute p-4 bg-whiteBg top-0 left-0 h-screen w-full flex flex-col opacity-0 pointer-events-none transition-opacity duration-300',
           open && 'opacity-1 pointer-events-auto'
         )}
       >

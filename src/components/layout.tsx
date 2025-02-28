@@ -6,7 +6,7 @@ export default function Layout({ children }: React.PropsWithChildren<object>) {
   return (
     <>
       <Navigation />
-      <main className="mt-[90px]">{children}</main>
+      <main className="mt-[64px] sm:mt-[76px]">{children}</main>
       <Footer />
     </>
   );
