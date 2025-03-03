@@ -82,7 +82,7 @@ export default function SubscriptionCard({
       <Button
         variant={variant === 'default' ? 'outline' : 'default'}
         size="lg"
-        onClick={() => router.push('/checkout')}
+        onClick={() => console.log('siema')}
       >
         Wybierz
       </Button>
