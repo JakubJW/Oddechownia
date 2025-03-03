@@ -4,7 +4,6 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Check } from 'lucide-react';
-import { useRouter } from 'next/router';
 
 const subscriptionCardVariants = cva(
   'bg-white relative rounded-lg flex flex-col p-8',
@@ -45,7 +44,6 @@ export default function SubscriptionCard({
   className,
   variant,
 }: SubscriptionCardProps) {
-  const router = useRouter();
 
   return (
     <div className={cn(subscriptionCardVariants({ variant, className }))}>
