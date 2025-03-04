@@ -1,20 +1,21 @@
 'use-client';
 
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface StepperProps {
   steps: {
     label: string;
   }[];
+  currentStep: number;
   onStepChange: (stepIndex: number) => void;
 }
 
-export default function Stepper({ steps, onStepChange }: StepperProps) {
-  const [currentStep, setCurrentStep] = useState(steps.indexOf(steps[0]));
-
+export default function Stepper({
+  steps,
+  onStepChange,
+  currentStep,
+}: StepperProps) {
   const handleStepChange = (stepIndex: number) => {
-    setCurrentStep(stepIndex);
     onStepChange(stepIndex);
   };
 
@@ -27,13 +28,13 @@ export default function Stepper({ steps, onStepChange }: StepperProps) {
       {steps.map(({ label }, index) => (
         <li
           key={index}
-          onClick={() => handleStepChange(index)}
           className={cn(
             active(index) && 'stepper__item-active',
             'stepper__item'
           )}
         >
           <span
+            onClick={() => handleStepChange(index)}
             className={cn(
               active(index) && 'stepper__item__bullet-active',
               'stepper__item__bullet'
