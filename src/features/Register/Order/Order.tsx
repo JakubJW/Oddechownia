@@ -2,11 +2,10 @@ import SubscriptionCard from '@/components/SubscriptionCard/SubscriptionCard';
 import { Button } from '@/components/ui/button';
 
 export interface OrderProps {
-  onStepSubmit: () => void;
   nextStepDisabled: boolean;
 }
 
-export default function Order({ onStepSubmit, nextStepDisabled }: OrderProps) {
+export default function Order({ nextStepDisabled }: OrderProps) {
   return (
     <div className="flex flex-col col-span-4 col-start-9">
       <p className="font-bold text-xl mb-8">Twoje zamówienie</p>
@@ -22,7 +21,6 @@ export default function Order({ onStepSubmit, nextStepDisabled }: OrderProps) {
       </div>
       <Button
         size="lg"
-        onClick={onStepSubmit}
         disabled={nextStepDisabled}
       >
         Przejdź do posumowania
