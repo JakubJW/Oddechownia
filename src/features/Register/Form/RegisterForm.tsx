@@ -1,4 +1,4 @@
-'use-client';
+'use client';
 
 import Stepper from '../../../components/Stepper/Stepper';
 import { useState } from 'react';
@@ -9,10 +9,10 @@ import { Form } from '@/components/ui/form';
 import AccountData from './Steps/AccountData';
 import PaymentData from './Steps/PaymentData';
 import { formSchema } from './schema';
-
-export interface RegisterFormProps {
-  ref: React.Ref<typeof RegisterForm>;
-}
+import { signup } from '@/app/rejestracja/actions';
+import { useFormContext } from './formContext';
+import { initialPaymentData, initialAccountData } from './formContext';
+import Summary from './Steps/Summary';
 
 const registerSteps = [
   { label: 'Dane konta' },
@@ -20,48 +20,58 @@ const registerSteps = [
   { label: 'Podsumowanie' },
 ];
 
-const defaultValues = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-  passwordConfirmation: '',
-  regulationsAgreement: false,
-  privacyPolicyAgreement: false,
-  cardNumber: '',
-  expirationDate: '',
-  cvc: '',
-};
-
 export default function RegisterForm() {
   const [currentStep, setCurrentStep] = useState(0);
+  const { setAccountData, setPaymentData } = useFormContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues,
-    mode: 'all'
+    defaultValues: {
+      accountData: initialAccountData,
+      paymentData: initialPaymentData,
+    },
+    mode: 'all',
   });
 
   const handleStepChange = (stepIndex: number) => {
-    form.trigger([
-      'firstName',
-      'lastName',
-      'email',
-      'password',
-      'passwordConfirmation',
-      'privacyPolicyAgreement',
-      'regulationsAgreement',
-    ]);
+    switch (stepIndex) {
+      case 1:
+        form.trigger('accountData');
 
-    if (Object.keys(form.formState.errors).length) {
-      return;
+        if (form.formState.errors.accountData) {
+          return;
+        }
+
+        setAccountData((prevState) => ({
+          ...prevState,
+          ...form.getValues('accountData'),
+        }));
+        setCurrentStep(stepIndex);
+
+        break;
+      case 2:
+        form.trigger('paymentData');
+
+        if (form.formState.errors.paymentData) {
+          return;
+        }
+
+        setPaymentData((prevState) => ({
+          ...prevState,
+          ...form.getValues('paymentData'),
+        }));
+
+        setCurrentStep(stepIndex);
+        break;
     }
-
-    setCurrentStep(stepIndex);
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const formData = new FormData();
+    formData.append('email', values.accountData.email);
+    formData.append('password', values.accountData.password);
+
+    await signup(formData);
   };
 
   return (
@@ -78,6 +88,8 @@ export default function RegisterForm() {
         >
           {currentStep === 0 && <AccountData form={form} />}
           {currentStep === 1 && <PaymentData form={form} />}
+          {currentStep === 2 && <Summary />}
+          <button type="submit">Zarejestruj</button>
         </form>
       </Form>
     </div>

@@ -24,13 +24,17 @@ export default function Hero() {
             <div className="inline-block rounded-full bg-primaryFg p-2 sm:p-4">
               <MessagesSquare className="text-white h-4 w-4 sm:h-6 sm:w-6" />
             </div>
-            <span className="text-primaryFg text-sm sm:text-base pr-4">50+ filmów instruktażowych</span>
+            <span className="text-primaryFg text-sm sm:text-base pr-4">
+              50+ filmów instruktażowych
+            </span>
           </div>
           <div className="inline-flex items-center gap-4 p-2 rounded-full bg-primaryBg">
             <div className="inline-block rounded-full bg-primaryFg p-2 sm:p-4">
               <MessagesSquare className="text-white h-4 w-4 sm:h-6 sm:w-6" />
             </div>
-            <span className="text-primaryFg text-sm sm:text-base pr-4">1000+ zadowolonych klientów</span>
+            <span className="text-primaryFg text-sm sm:text-base pr-4">
+              1000+ zadowolonych klientów
+            </span>
           </div>
           <Button
             size="lg"

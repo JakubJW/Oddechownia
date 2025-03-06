@@ -3,7 +3,7 @@ import { ERROR_MESSAGES } from './messages';
 
 const nonEmptyString = z.string({ required_error: ERROR_MESSAGES.REQUIRED }).trim().min(1, { message: ERROR_MESSAGES.REQUIRED });
 
-export const formSchema = z.object({
+const accountDataSchema = z.object({
     firstName: z.string().pipe(nonEmptyString),
     lastName: z.string().pipe(nonEmptyString),
     email: z
@@ -13,9 +13,6 @@ export const formSchema = z.object({
     passwordConfirmation: z.string().pipe(nonEmptyString),
     regulationsAgreement: z.boolean().refine(value => value, ERROR_MESSAGES.REQUIRED),
     privacyPolicyAgreement: z.boolean().refine(value => value, ERROR_MESSAGES.REQUIRED),
-    cardNumber: z.string(),
-    expirationDate: z.string(),
-    cvc: z.string(),
 }).superRefine(({ password, passwordConfirmation, regulationsAgreement, privacyPolicyAgreement }, ctx) => {
     if (password !== passwordConfirmation) {
         ctx.addIssue({ code: 'custom', message: ERROR_MESSAGES.PASSWORDS_MISMATCH, path: ['passwordConfirmation'] })
@@ -29,3 +26,15 @@ export const formSchema = z.object({
         ctx.addIssue({ code: 'custom', "message": ERROR_MESSAGES.REQUIRED, path: ['privacyPolicyAgreement'] })
     }
 });
+
+const paymentDataSchema = z.object({
+    cardNumber: z.string(),
+    expirationDate: z.string(),
+    cvc: z.string(),
+})
+
+export const formSchema = z.object({
+    accountData: accountDataSchema,
+    paymentData: paymentDataSchema
+
+})
