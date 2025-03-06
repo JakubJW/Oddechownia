@@ -22,7 +22,7 @@ export default function PaymentData({ form }: PaymentDataProps) {
 
         <FormField
           control={form.control}
-          name="cardNumber"
+          name="paymentData.cardNumber"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Numer karty</FormLabel>
@@ -36,7 +36,7 @@ export default function PaymentData({ form }: PaymentDataProps) {
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="expirationDate"
+            name="paymentData.expirationDate"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Data ważności</FormLabel>
@@ -49,7 +49,7 @@ export default function PaymentData({ form }: PaymentDataProps) {
           />
           <FormField
             control={form.control}
-            name="cvc"
+            name="paymentData.cvc"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Numer CVC</FormLabel>

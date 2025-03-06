@@ -24,7 +24,7 @@ const AccountData = ({ form }: AccountDataProps) => {
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="firstName"
+            name="accountData.firstName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Imię</FormLabel>
@@ -40,7 +40,7 @@ const AccountData = ({ form }: AccountDataProps) => {
           />
           <FormField
             control={form.control}
-            name="lastName"
+            name="accountData.lastName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nazwisko</FormLabel>
@@ -57,7 +57,7 @@ const AccountData = ({ form }: AccountDataProps) => {
         </div>
         <FormField
           control={form.control}
-          name="email"
+          name="accountData.email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Adres e-mail</FormLabel>
@@ -74,7 +74,7 @@ const AccountData = ({ form }: AccountDataProps) => {
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="password"
+            name="accountData.password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Hasło</FormLabel>
@@ -90,7 +90,7 @@ const AccountData = ({ form }: AccountDataProps) => {
           />
           <FormField
             control={form.control}
-            name="passwordConfirmation"
+            name="accountData.passwordConfirmation"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Powtórz hasło</FormLabel>
@@ -109,7 +109,7 @@ const AccountData = ({ form }: AccountDataProps) => {
       <div className="space-y-2">
         <FormField
           control={form.control}
-          name="regulationsAgreement"
+          name="accountData.regulationsAgreement"
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -138,7 +138,7 @@ const AccountData = ({ form }: AccountDataProps) => {
         />
         <FormField
           control={form.control}
-          name="privacyPolicyAgreement"
+          name="accountData.privacyPolicyAgreement"
           render={({ field }) => (
             <FormItem>
               <FormControl>

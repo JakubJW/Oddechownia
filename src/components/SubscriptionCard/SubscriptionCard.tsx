@@ -1,4 +1,4 @@
-"use-client"
+'use client';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -44,7 +44,6 @@ export default function SubscriptionCard({
   className,
   variant,
 }: SubscriptionCardProps) {
-
   return (
     <div className={cn(subscriptionCardVariants({ variant, className }))}>
       <span className="font-normal text-lg">{period} miesiące</span>{' '}

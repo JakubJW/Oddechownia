@@ -1,9 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import Logo from '../../../public/oddechownia.svg';
 import MobileNavigation from './MobileNavigation';
 import NavigationElement from './NavigationLink';
 import { Button } from '../ui/button';
+import type { User } from '@supabase/supabase-js';
+import { redirect } from 'next/navigation';
 
 export const routes = [
   { content: 'Nasze kursy', href: '/nasze-kursy' },
@@ -11,7 +15,11 @@ export const routes = [
   { content: 'Blog', href: '/blog' },
 ];
 
-export default function Navigation() {
+export interface NavigationProps {
+  user: User | null;
+}
+
+export default function Navigation({ user }: NavigationProps) {
   return (
     <header className="fixed top-0 z-40 w-full bg-whiteBg flex items-center justify-between">
       <div className="container mx-auto px-4 py-4 sm:py-0">
@@ -43,14 +51,28 @@ export default function Navigation() {
               ))}
             </ul>
           </nav>
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => console.log('logowanie')}
-            className="hidden sm:block"
-          >
-            Zaloguj się
-          </Button>
+
+          {!user && (
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => redirect('/logowanie')}
+              className="hidden sm:block"
+            >
+              Zaloguj się
+            </Button>
+          )}
+
+          {user && (
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => redirect('/moje-konto')}
+              className="hidden sm:block"
+            >
+              Moje konto
+            </Button>
+          )}
           <MobileNavigation />
         </div>
       </div>

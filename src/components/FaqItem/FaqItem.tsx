@@ -1,4 +1,4 @@
-'use-client';
+'use client';
 
 import { BadgeHelp, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
