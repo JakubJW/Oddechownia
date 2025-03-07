@@ -1,17 +1,20 @@
 'use client';
 
-import Stepper from '../../../components/Stepper/Stepper';
-import { useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { signup } from '@/app/rejestracja/actions';
 import { Form } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import Stepper from '../../../components/Stepper/Stepper';
+import {
+  initialAccountData,
+  initialPaymentData,
+  useFormContext,
+} from './formContext';
+import { formSchema } from './schema';
 import AccountData from './Steps/AccountData';
 import PaymentData from './Steps/PaymentData';
-import { formSchema } from './schema';
-import { signup } from '@/app/rejestracja/actions';
-import { useFormContext } from './formContext';
-import { initialPaymentData, initialAccountData } from './formContext';
 import Summary from './Steps/Summary';
 
 const registerSteps = [

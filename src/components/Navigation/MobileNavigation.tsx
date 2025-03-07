@@ -5,9 +5,10 @@ import { MenuIcon, X } from 'lucide-react';
 import { useState } from 'react';
 import { routes } from './Navigation';
 import NavigationLink from './NavigationLink';
-import { Button } from '../ui/button';
+import { NavigationProps } from './Navigation';
+import NavigationAction from './NavigationAction';
 
-export default function MobileNavigation() {
+export default function MobileNavigation({ user }: NavigationProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -37,13 +38,7 @@ export default function MobileNavigation() {
               />
             </li>
           ))}
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => console.log('logowanie')}
-          >
-            Zaloguj się
-          </Button>
+          <NavigationAction user={user} />
         </ul>
       </div>
     </div>
