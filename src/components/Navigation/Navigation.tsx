@@ -5,9 +5,8 @@ import Link from 'next/link';
 import Logo from '../../../public/oddechownia.svg';
 import MobileNavigation from './MobileNavigation';
 import NavigationElement from './NavigationLink';
-import { Button } from '../ui/button';
 import type { User } from '@supabase/supabase-js';
-import { redirect } from 'next/navigation';
+import NavigationAction from './NavigationAction';
 
 export const routes = [
   { content: 'Nasze kursy', href: '/nasze-kursy' },
@@ -51,29 +50,8 @@ export default function Navigation({ user }: NavigationProps) {
               ))}
             </ul>
           </nav>
-
-          {!user && (
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => redirect('/logowanie')}
-              className="hidden sm:block"
-            >
-              Zaloguj się
-            </Button>
-          )}
-
-          {user && (
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => redirect('/moje-konto')}
-              className="hidden sm:block"
-            >
-              Moje konto
-            </Button>
-          )}
-          <MobileNavigation />
+          <NavigationAction className='hidden sm:inline-flex' user={user} />
+          <MobileNavigation user={user}/>
         </div>
       </div>
     </header>
