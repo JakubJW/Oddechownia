@@ -45,7 +45,7 @@ export default function Hero() {
         </div>
         <Image
           className="homepage-hero-image object-cover w-1/2 hidden md:block"
-          src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/Public/images/pexels-pixabay-460307.jpg"
+          src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/website-assets/images/pexels-pixabay-460307.jpg"
           alt="Hero image"
           height={1365}
           width={2048}

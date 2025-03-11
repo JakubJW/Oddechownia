@@ -10,7 +10,8 @@ export default function AdminLayout({
     <section>
       <Container>
         <div className="grid grid-cols-12">
-          <div className="col-span-2">
+          <div className="flex flex-col gap-4 col-span-2">
+            <Link href="/admin">Dashboard</Link>
             <Link href="/admin/blog">Blog</Link>
           </div>
           <div className="col-span-10">{children}</div>

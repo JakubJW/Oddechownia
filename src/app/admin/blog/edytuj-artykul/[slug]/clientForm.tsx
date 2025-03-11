@@ -1,14 +1,13 @@
 'use client';
 
-import { Form } from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { createPost } from '../actions';
 import { PostForm } from '@/features/Blog/Form';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-export default function DodajArtykul() {
+export const ClientComponent = ({ post }) => {
   const formSchema = z.object({
     title: z.string(),
     description: z.string(),
@@ -21,10 +20,10 @@ export default function DodajArtykul() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      image: undefined,
-      content: '',
+      title: post.title,
+      description: post.shortDescription,
+      image: post.thumbnailUrl,
+      content: post.content,
     },
     mode: 'onChange',
   });
@@ -35,8 +34,6 @@ export default function DodajArtykul() {
     formData.append('shortDescription', values.description);
     formData.append('thumbnail', values.image);
     formData.append('content', values.content);
-
-    await createPost(formData);
   };
 
   return (
@@ -52,4 +49,4 @@ export default function DodajArtykul() {
       </Form>
     </div>
   );
-}
+};
