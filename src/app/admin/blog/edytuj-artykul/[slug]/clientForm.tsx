@@ -8,13 +8,18 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updatePost } from '../../actions';
 import { formSchema } from './schema';
+import type { Post } from '@/lib/actions/post';
 
-export const ClientComponent = ({ post }) => {
+interface ClientComponentProps {
+  post: Post;
+}
+
+export const ClientComponent = ({ post }: ClientComponentProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: post.title,
-      description: post.shortDescription,
+      description: post.shortDescription ?? undefined,
       image: undefined,
       content: post.content,
     },
@@ -24,7 +29,9 @@ export const ClientComponent = ({ post }) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
     formData.append('title', values.title);
-    formData.append('shortDescription', values.description);
+    if (values.description) {
+      formData.append('shortDescription', values.description);
+    }
     formData.append('thumbnail', values.image);
     formData.append('content', values.content);
 

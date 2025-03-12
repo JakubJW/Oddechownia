@@ -7,16 +7,12 @@ export default async function Blog() {
   return (
     <div className="grid grid-cols-3 gap-6">
       {posts.map(
-        (
-          { id, title, slug, shortDescription, thumbnailUrl, createdAt },
-          index
-        ) => (
+        ({ title, slug, shortDescription, thumbnailUrl, createdAt }, index) => (
           <BlogCard
-            id={id}
             key={index}
             title={title}
             slug={slug}
-            description={shortDescription || ''}
+            description={shortDescription}
             image={thumbnailUrl}
             createdAt={new Date(createdAt).toLocaleDateString()}
           />

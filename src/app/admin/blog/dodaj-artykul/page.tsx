@@ -24,7 +24,9 @@ export default function DodajArtykul() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
     formData.append('title', values.title);
-    formData.append('shortDescription', values.description);
+    if (values.description) {
+      formData.append('shortDescription', values.description);
+    }
     formData.append('thumbnail', values.image);
     formData.append('content', values.content);
 

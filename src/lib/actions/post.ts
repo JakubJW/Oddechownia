@@ -1,21 +1,37 @@
-import { db } from "@/db";
-import { posts } from "@/db/schema";
-import { eq } from "drizzle-orm";
+'use server';
 
-const takeUniqueOrThrow = <T>(values: T[]): T => {
-    if (values.length !== 1)
-        throw new Error("Found non unique or inexistent value");
-    return values[0]!;
+import { db } from '@/db';
+import { posts } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+
+type NullToUndefined<T> = {
+  [K in keyof T]: T[K] extends null
+    ? undefined
+    : T[K] extends (infer U)[]
+    ? NullToUndefined<U>[]
+    : Exclude<T[K], null> | ([null] extends [T[K]] ? undefined : never);
 };
 
-export const getPosts = async () => {
-    const data = await db.select().from(posts);
+export type Post = NullToUndefined<typeof posts.$inferSelect>;
 
-    return data;
-}
+export const getPosts = async (): Promise<Post[]> => {
+  const data = await db.select().from(posts);
 
-export const getPostBySlug = async (slug: string) => {
-    const data = await db.select().from(posts).where(eq(posts.slug, slug)).then(takeUniqueOrThrow);
+  return data.map((post) => ({
+    ...post,
+    shortDescription: post.shortDescription ?? undefined,
+  }));
+};
 
-    return data;
-}
+export const getPostBySlug = async (slug: string): Promise<Post | undefined> => {
+  const data = await db.query.posts.findFirst({ where: eq(posts.slug, slug) });
+
+  if (!data) {
+    return undefined;
+  }
+
+  return {
+    ...data,
+    shortDescription: data.shortDescription ?? undefined,
+  };
+};
