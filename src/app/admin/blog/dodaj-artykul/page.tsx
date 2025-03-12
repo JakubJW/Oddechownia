@@ -7,17 +7,9 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { createPost } from '../actions';
 import { PostForm } from '@/features/Blog/Form';
+import { formSchema } from './schema';
 
 export default function DodajArtykul() {
-  const formSchema = z.object({
-    title: z.string(),
-    description: z.string(),
-    image: z
-      .any()
-      .refine((file) => file.size <= 5000000, 'Max image size is 5MB'),
-    content: z.string(),
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

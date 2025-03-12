@@ -6,23 +6,16 @@ import { Form } from '@/components/ui/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { updatePost } from '../../actions';
+import { formSchema } from './schema';
 
 export const ClientComponent = ({ post }) => {
-  const formSchema = z.object({
-    title: z.string(),
-    description: z.string(),
-    image: z
-      .any()
-      .refine((file) => file.size <= 5000000, 'Max image size is 5MB'),
-    content: z.string(),
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: post.title,
       description: post.shortDescription,
-      image: post.thumbnailUrl,
+      image: undefined,
       content: post.content,
     },
     mode: 'onChange',
@@ -34,6 +27,8 @@ export const ClientComponent = ({ post }) => {
     formData.append('shortDescription', values.description);
     formData.append('thumbnail', values.image);
     formData.append('content', values.content);
+
+    await updatePost(post.id, formData);
   };
 
   return (
@@ -43,7 +38,10 @@ export const ClientComponent = ({ post }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          <PostForm form={form} />
+          <PostForm
+            form={form}
+            currentImage={post.thumbnailUrl}
+          />
           <Button type="submit">Zatwierdź</Button>
         </form>
       </Form>

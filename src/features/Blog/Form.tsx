@@ -9,17 +9,21 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { z } from 'zod';
 import { useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
+import { formSchema as editFormSchema } from '@/app/admin/blog/edytuj-artykul/[slug]/schema';
+import { formSchema as createFormSchema } from '@/app/admin/blog/dodaj-artykul/schema';
+import { z } from 'zod';
 
-interface PostFormProps<T extends z.ZodTypeAny> {
-  form: any;
+interface PostFormProps {
+  form: UseFormReturn<z.infer<typeof editFormSchema | typeof createFormSchema>>;
+  currentImage?: string;
 }
 
-export const PostForm = <T extends z.ZodTypeAny>({
-  form,
-}: PostFormProps<T>) => {
-  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+export const PostForm = ({ form, currentImage }: PostFormProps) => {
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(
+    currentImage ?? form.getValues('image') ?? null
+  );
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,7 +77,7 @@ export const PostForm = <T extends z.ZodTypeAny>({
       <FormField
         control={form.control}
         name="image"
-        render={({ field }) => (
+        render={() => (
           <FormItem>
             <FormLabel>Zdjęcie główne</FormLabel>
             <FormControl>
