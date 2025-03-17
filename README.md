@@ -42,5 +42,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/b
 - [] Make validation schema for blog post
 - [x] Add slug to database and slug generation aciton
 - [] Add typesafety for requests and appropriate responses
-- [] Add storage bucket names to env variables or constants
-- []
+- [x] Add storage bucket names to env variables or constants

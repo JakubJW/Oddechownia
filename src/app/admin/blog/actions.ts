@@ -50,7 +50,7 @@ export async function createPost(formData: FormData) {
 
   const { data: responseData, error } = await supabase.storage
     .from(process.env.NEXT_WEBSITE_ASSETS_BUCKET_ID!)
-    .upload(`post-thumbnails/${file.name}`, file, {
+    .upload(`${process.env.NEXT_POST_THUMBNAILS_FOLDER}/${file.name}`, file, {
       cacheControl: '3600',
       upsert: true,
     });
@@ -85,7 +85,7 @@ export async function updatePost(id: number, formData: FormData) {
   if (file) {
     const { data: responseData, error } = await supabase.storage
       .from(process.env.NEXT_WEBSITE_ASSETS_BUCKET_ID!)
-      .upload(`post-thumbnails/${file.name}`, file, {
+      .upload(`${process.env.NEXT_POST_THUMBNAILS_FOLDER}/${file.name}`, file, {
         cacheControl: '3600',
         upsert: true,
       });

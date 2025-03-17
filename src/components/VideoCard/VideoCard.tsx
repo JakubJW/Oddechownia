@@ -1,3 +1,5 @@
+
+
 import { Clock } from 'lucide-react';
 import Video from 'next-video';
 import getStarted from '@/../videos/get-started.mp4';

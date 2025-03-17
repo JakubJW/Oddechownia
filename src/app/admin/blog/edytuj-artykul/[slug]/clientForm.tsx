@@ -1,6 +1,6 @@
 'use client';
 
-import { PostForm } from '@/features/Blog/Form';
+import { PostForm } from '@/features/admin/Blog/Form/Form';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { z } from 'zod';
@@ -19,7 +19,7 @@ export const ClientComponent = ({ post }: ClientComponentProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: post.title,
-      description: post.shortDescription ?? undefined,
+      description: post.shortDescription,
       image: undefined,
       content: post.content,
     },

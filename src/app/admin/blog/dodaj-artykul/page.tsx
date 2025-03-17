@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { createPost } from '../actions';
-import { PostForm } from '@/features/Blog/Form';
+import { PostForm } from '@/features/admin/Blog/Form/Form';
 import { formSchema } from './schema';
 
 export default function DodajArtykul() {

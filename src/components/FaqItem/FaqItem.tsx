@@ -20,14 +20,14 @@ export default function FaqItem({ question, answer }: FaqItemProps) {
 
     const onResize = () => {
       if (!collapsibleContent.current) return;
-     setHeight(collapsibleContent.current.scrollHeight);
-    }
+      setHeight(collapsibleContent.current.scrollHeight);
+    };
 
-    window.addEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener("resize", onResize);
-    }
+      window.removeEventListener('resize', onResize);
+    };
   }, []);
 
   return (
