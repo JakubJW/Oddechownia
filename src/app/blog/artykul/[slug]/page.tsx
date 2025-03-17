@@ -21,7 +21,7 @@ export async function generateMetadata({
     notFound();
   }
   return {
-    title: post.title,
+    title: `${post.title} | Oddechownia`,
   };
 }
 

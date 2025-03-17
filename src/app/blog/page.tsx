@@ -3,6 +3,11 @@ import { getPaginatedPosts } from '@/lib/actions/post';
 import Hero from '@/features/Blog/Hero';
 import Container from '@/components/Container/Container';
 import Pagination from '@/components/Pagination/Pagination';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Odkryj korzyści jogi dla ciała i umysłu | Oddechownia',
+};
 
 export default async function Blog({
   searchParams,
