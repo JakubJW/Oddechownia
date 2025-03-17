@@ -13,6 +13,9 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...compat.config({
     extends: ['next', 'prettier'],
+    rules: {
+      "no-var": 0
+    }
   }),
 ];
 

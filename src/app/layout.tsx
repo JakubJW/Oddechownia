@@ -31,7 +31,7 @@ export default async function RootLayout({
     >
       <body className="antialiased">
         <Navigation user={user} />
-        <main className="mt-[64px] sm:mt-[76px]">{children}</main>
+        <main className="mt-[64px] sm:mt-[74px]">{children}</main>
         <Footer />
       </body>
     </html>

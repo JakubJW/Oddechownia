@@ -8,6 +8,13 @@
       "when": 1741118725192,
       "tag": "0000_chubby_blink",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1741629265946,
+      "tag": "0001_tough_bloodaxe",
+      "breakpoints": true
     }
   ]
 }
