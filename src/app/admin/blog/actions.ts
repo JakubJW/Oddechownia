@@ -22,7 +22,7 @@ export async function createPost(formData: FormData) {
 
   const schema = z.object({
     title: z.string(),
-    shortDescription: z.string(),
+    shortDescription: z.string().optional().nullable(),
     content: z.string(),
     thumbnail: z
       .any()
@@ -41,7 +41,7 @@ export async function createPost(formData: FormData) {
   });
 
   if (!parse.success) {
-    return { message: 'Failed to create todo' };
+    return { message: 'Validation failed', fields: parse.error };
   }
 
   const { title, shortDescription, content, thumbnail } = parse.data;

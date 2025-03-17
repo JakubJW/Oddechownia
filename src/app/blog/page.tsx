@@ -1,10 +1,16 @@
 import { BlogCard } from '@/components/BlogCard';
-import { getPosts } from '@/lib/actions/post';
+import { getPaginatedPosts } from '@/lib/actions/post';
 import Hero from '@/features/Blog/Hero';
 import Container from '@/components/Container/Container';
+import Pagination from '@/components/Pagination/Pagination';
 
-export default async function Blog() {
-  const posts = await getPosts();
+export default async function Blog({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { page } = await searchParams;
+  const { posts, perPage, total } = await getPaginatedPosts(page as string);
 
   return (
     <>
@@ -24,6 +30,14 @@ export default async function Blog() {
                     createdAt={createdAt}
                   />
                 ))}
+              </div>
+              <div className='flex mt-8 justify-center col-span-1 sm:col-span-2 xl:col-span-3'>
+                <Pagination
+                  page={page as string}
+                  perPage={perPage}
+                  total={total}
+                  baseUrl="/blog"
+                />
               </div>
             </div>
           </div>
