@@ -6,7 +6,7 @@ import Pagination from '@/components/Pagination/Pagination';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Odkryj korzyści jogi dla ciała i umysłu | Oddechownia',
+  title: 'Blog | Oddechownia',
 };
 
 export default async function Blog({

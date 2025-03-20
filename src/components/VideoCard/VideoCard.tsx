@@ -5,6 +5,7 @@ import Video from 'next-video';
 import getStarted from '@/../videos/get-started.mp4';
 
 export interface VideoCardProps {
+  id: number;
   title: string;
   description: string;
   duration: number;

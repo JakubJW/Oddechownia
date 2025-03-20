@@ -29,7 +29,7 @@ const mockVideos = [
 
 export default function CourseVideosPreview() {
   return (
-    <section className='bg-gradient-to-b from-whiteBg to-primaryBg'>
+    <section className="bg-gradient-to-b from-whiteBg to-primaryBg">
       <Container>
         <div className="max-w-[600px] space-y-6 mb-24">
           <HeaderTwo>
@@ -43,15 +43,18 @@ export default function CourseVideosPreview() {
           </p>
         </div>
         <Carousel>
-          {mockVideos.map(({ title, description, duration, videoUrl, id }) => (
-            <VideoCard
-              key={id}
-              title={title}
-              description={description}
-              duration={duration}
-              videoUrl={videoUrl}
-            />
-          ))}
+          {mockVideos.map(
+            ({ title, description, duration, videoUrl, id }) => (
+              <VideoCard
+                id={id}
+                key={id}
+                title={title}
+                description={description}
+                duration={duration}
+                videoUrl={videoUrl}
+              />
+            )
+          )}
         </Carousel>
       </Container>
     </section>

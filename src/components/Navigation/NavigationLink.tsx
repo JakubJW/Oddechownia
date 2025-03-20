@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { memo } from 'react';
 
 interface NavigationLinkProps {
   content: string;
@@ -10,11 +11,7 @@ interface NavigationLinkProps {
   onClick?: () => void;
 }
 
-export default function NavigationLink({
-  content,
-  href,
-  onClick,
-}: NavigationLinkProps) {
+function NavigationLink({ content, href, onClick }: NavigationLinkProps) {
   const currentPath = usePathname();
 
   return (
@@ -23,7 +20,8 @@ export default function NavigationLink({
       onClick={onClick}
       className={cn(
         'block text-primaryFg border-b-2 py-4 sm:py-6 px-4 hover:border-primaryFg trasition-colors duration-300',
-        currentPath === href
+        href.split('/').includes(currentPath.split('/')[1]) &&
+          currentPath !== '/'
           ? 'border-primaryFg font-bold'
           : 'border-transparent'
       )}
@@ -32,3 +30,5 @@ export default function NavigationLink({
     </Link>
   );
 }
+
+export default memo(NavigationLink);
