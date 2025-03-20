@@ -1,4 +1,14 @@
-import { pgTable, serial, varchar, text, timestamp  } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  serial,
+  varchar,
+  text,
+  timestamp,
+  boolean,
+  integer,
+  decimal,
+} from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -11,9 +21,51 @@ export const users = pgTable('users', {
 export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 256 }).notNull(),
-  slug: varchar('slug', {length: 256}).notNull(),
+  slug: varchar('slug', { length: 256 }).notNull(),
   shortDescription: varchar('short_description', { length: 256 }),
   content: text('content').notNull(),
   thumbnailUrl: varchar('thumbnail_url', { length: 256 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull()
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const courses = pgTable('courses', {
+  id: serial('id').primaryKey(),
+  name: varchar('title', { length: 256 }).notNull(),
+  description: varchar('short_description', { length: 256 }).notNull(),
+  slug: varchar('slug', { length: 256 }).notNull(),
+  published: boolean('published').notNull(),
+});
+
+export const coursesRelations = relations(courses, ({ many }) => ({
+  lessons: many(lessons),
+}));
+
+export const lessons = pgTable('lessons', {
+  id: serial('id').primaryKey(),
+  name: varchar('title', { length: 256 }).notNull(),
+  description: varchar('short_description', { length: 256 }).notNull(),
+  slug: varchar('slug', { length: 256 }).notNull(),
+  courseId: integer('course_id')
+    .references(() => courses.id, { onDelete: 'cascade' })
+    .notNull(),
+});
+
+export const lessonsRelations = relations(lessons, ({ one }) => ({
+  course: one(courses, {
+    fields: [lessons.courseId],
+    references: [courses.id],
+  }),
+}));
+
+export const videos = pgTable('videos', {
+  id: serial('id').primaryKey(),
+  lessonId: integer('lesson_id').references(() => lessons.id, {
+    onDelete: 'cascade',
+  }),
+  uploadId: varchar('upload_id').unique().notNull(),
+  publicPlaybackId: varchar('public_playback_id'),
+  privatePlaybackId: varchar('private_playback_id'),
+  duration: decimal('duration'),
+  aspectRatio: varchar('aspect_ratio'),
+  status: varchar().default('preparing').notNull(),
 });
