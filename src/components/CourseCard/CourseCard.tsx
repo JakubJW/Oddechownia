@@ -1,17 +1,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, Film } from 'lucide-react';
-import { cn, formatDuration } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 interface CourseCardProps {
   id: number;
   title: string;
   description: string;
   slug: string;
-  totalVideos: number;
-  totalDuration: number;
-  thumbnailUrl: string;
   disabled: boolean;
+  thumbnailUrl: string;
+  totalVideos: number;
+  totalDuration: string;
 }
 
 export default function CourseCard({
@@ -61,7 +61,7 @@ export default function CourseCard({
           )}
         >
           <Clock />
-          <span className="leading-none">{formatDuration(totalDuration)}</span>
+          <span className="leading-none">{totalDuration}</span>
         </div>
       </div>
 

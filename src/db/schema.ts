@@ -8,7 +8,6 @@ import {
   integer,
   decimal,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -30,32 +29,21 @@ export const posts = pgTable('posts', {
 
 export const courses = pgTable('courses', {
   id: serial('id').primaryKey(),
-  name: varchar('title', { length: 256 }).notNull(),
-  description: varchar('short_description', { length: 256 }).notNull(),
+  name: varchar('name', { length: 256 }).notNull(),
+  description: varchar('description', { length: 256 }).notNull(),
   slug: varchar('slug', { length: 256 }).notNull(),
-  published: boolean('published').notNull(),
+  isPublished: boolean('is_published').notNull(),
 });
-
-export const coursesRelations = relations(courses, ({ many }) => ({
-  lessons: many(lessons),
-}));
 
 export const lessons = pgTable('lessons', {
   id: serial('id').primaryKey(),
-  name: varchar('title', { length: 256 }).notNull(),
-  description: varchar('short_description', { length: 256 }).notNull(),
+  name: varchar('name', { length: 256 }).notNull(),
+  description: varchar('description', { length: 256 }).notNull(),
   slug: varchar('slug', { length: 256 }).notNull(),
   courseId: integer('course_id')
     .references(() => courses.id, { onDelete: 'cascade' })
     .notNull(),
 });
-
-export const lessonsRelations = relations(lessons, ({ one }) => ({
-  course: one(courses, {
-    fields: [lessons.courseId],
-    references: [courses.id],
-  }),
-}));
 
 export const videos = pgTable('videos', {
   id: serial('id').primaryKey(),

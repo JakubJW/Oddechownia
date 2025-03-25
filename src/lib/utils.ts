@@ -1,8 +1,9 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import slugify from 'slugify';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function formatDuration(duration: number) {
@@ -20,4 +21,8 @@ export function formatDuration(duration: number) {
     seconds = '0' + seconds;
   }
   return hours + ':' + minutes + ':' + seconds;
-};
+}
+
+export function createSlug(value: string) {
+  return slugify(value, { lower: true, strict: true });
+}
