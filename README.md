@@ -43,3 +43,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/b
 - [x] Add slug to database and slug generation aciton
 - [] Add typesafety for requests and appropriate responses
 - [x] Add storage bucket names to env variables or constants
+- [] FormData doesn't accept booleans, probably should use something different for server actions

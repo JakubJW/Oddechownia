@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Container from '@/components/Container/Container';
 import HeaderOne from '@/components/Headers/HeaderOne';
-import { mockCourses, mockVideos } from './mocks';
+import { getCourseBySlug } from '@/actions/course';
 import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn, formatDuration } from '@/lib/utils';
 import { Film, Clock } from 'lucide-react';
 import CourseVideoCard from '@/components/CourseVideoCard/CourseVideoCard';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata({
   params,
@@ -24,13 +25,17 @@ export default async function Course({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const course = mockCourses.find((course) => course.slug === slug);
+  const course = await getCourseBySlug(slug);
+
+  if (!course) {
+    notFound();
+  }
 
   return (
     <section>
       <Container className="pt-16">
         <hgroup className="space-y-6">
-          <HeaderOne className="font-semibold">{course?.title}</HeaderOne>
+          <HeaderOne className="font-semibold">{course?.name}</HeaderOne>
           <p>{course?.description}</p>
           <div className="flex gap-4">
             <div
@@ -39,7 +44,8 @@ export default async function Course({
                 'border-primaryBg'
               )}
             >
-              <Film /> <span>{course?.totalVideos} filmów</span>
+              <Film />
+              <span>{course?.lessonCount} filmów</span>
             </div>
             <div
               className={cn(
@@ -47,24 +53,26 @@ export default async function Course({
                 'border-primaryBg'
               )}
             >
-              <Clock /> <span>{course?.totalDuration}</span>
+              <Clock />
+              <span>{formatDuration(Math.floor(course?.totalDuration))}</span>
             </div>
           </div>
         </hgroup>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-8 mt-16">
-          {mockVideos.map(
-            ({ id, title, description, slug, thumbnailUrl, totalDuration }) => (
+          {course.lessons.map(({ id, name, description, video }) => {
+            return (
               <CourseVideoCard
                 key={id}
                 id={id}
-                title={title}
+                title={name}
                 description={description}
                 slug={slug}
-                thumbnailUrl={thumbnailUrl}
-                totalDuration={totalDuration}
+                thumbnailUrl={`https://image.mux.com/${video?.publicPlaybackId}/thumbnail.jpg?width=640`}
+                duration={video.duration}
+                videoPlaybackId={video?.publicPlaybackId}
               />
-            )
-          )}
+            );
+          })}
         </div>
       </Container>
     </section>

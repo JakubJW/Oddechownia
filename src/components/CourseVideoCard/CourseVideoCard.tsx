@@ -6,10 +6,11 @@ import { formatDuration } from '@/lib/utils';
 interface CourseVideoCardProps {
   id: number;
   slug: string;
-  totalDuration: number;
+  duration: number | null;
   thumbnailUrl: string;
   title: string;
   description: string;
+  videoPlaybackId: string | null;
 }
 
 export default function CourseVideoCard({
@@ -17,19 +18,20 @@ export default function CourseVideoCard({
   slug,
   thumbnailUrl,
   title,
-  totalDuration,
+  duration,
   description,
+  videoPlaybackId
 }: CourseVideoCardProps) {
   return (
     <Link
       key={id}
       className="rounded-xl bg-white overflow-hidden relative"
-      href={`/nasze-kursy/${slug}`}
+      href={`/nasze-kursy/${slug}/video/${videoPlaybackId}`}
     >
       <div className="absolute top-2 left-2 space-y-2">
         <div className="flex gap-2 items-center bg-primaryBg text-primaryFg rounded-md p-2">
           <Clock />
-          <span className="leading-none">{formatDuration(totalDuration)}</span>
+          <span className="leading-none">{formatDuration(duration)}</span>
         </div>
       </div>
       <Image
