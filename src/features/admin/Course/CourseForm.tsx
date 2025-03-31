@@ -17,7 +17,7 @@ import { Course } from '@/db/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { updateCourse, createCourse } from '@/app/admin/kursy/actions';
+import { updateCourse, createCourse } from '@/actions/course';
 
 interface CourseFormProps {
   course?: Course;

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
-import { getCourses } from './actions';
+import { getCourses } from '@/actions/course';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -71,7 +71,7 @@ export default async function AdminCourses() {
               >
                 <td className="px-6 py-4">
                   <img
-                    src={`https://image.mux.com/${lessons[0]?.videos[0]?.publicPlaybackId}/thumbnail.jpg?width=640`}
+                    src={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
                     alt=""
                     width={640}
                     className="rounded-lg"

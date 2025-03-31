@@ -6,10 +6,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDuration(duration: number) {
-  var hours = String(Math.floor(duration / 3600));
-  var minutes = String(Math.floor((duration - Number(hours) * 3600) / 60));
-  var seconds = String(duration - Number(hours) * 3600 - Number(minutes) * 60);
+export function formatDuration(duration: number | null) {
+  if (!duration) return '--:--:--';
+
+  const round = Math.round(duration);
+  var hours = String(Math.floor(round / 3600));
+  var minutes = String(Math.floor((round - Number(hours) * 3600) / 60));
+  var seconds = String(round - Number(hours) * 3600 - Number(minutes) * 60);
 
   if (Number(hours) < 10) {
     hours = '0' + hours;

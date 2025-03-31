@@ -6,16 +6,7 @@ import {
   timestamp,
   boolean,
   integer,
-  decimal,
 } from 'drizzle-orm/pg-core';
-
-export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  firstName: varchar('first_name', { length: 256 }).notNull(),
-  lastName: varchar('last_name', { length: 256 }).notNull(),
-  email: varchar('email', { length: 256 }).notNull(),
-  password: varchar('password', { length: 256 }).notNull(),
-});
 
 export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),
@@ -43,17 +34,20 @@ export const lessons = pgTable('lessons', {
   courseId: integer('course_id')
     .references(() => courses.id, { onDelete: 'cascade' })
     .notNull(),
+  position: integer('position').notNull(),
 });
 
 export const videos = pgTable('videos', {
   id: serial('id').primaryKey(),
-  lessonId: integer('lesson_id').references(() => lessons.id, {
-    onDelete: 'cascade',
-  }),
+  lessonId: integer('lesson_id')
+    .unique()
+    .references(() => lessons.id, {
+      onDelete: 'cascade',
+    }),
   uploadId: varchar('upload_id').unique().notNull(),
   publicPlaybackId: varchar('public_playback_id'),
   privatePlaybackId: varchar('private_playback_id'),
-  duration: decimal('duration'),
+  duration: integer('duration'),
   aspectRatio: varchar('aspect_ratio'),
   status: varchar().default('preparing').notNull(),
 });

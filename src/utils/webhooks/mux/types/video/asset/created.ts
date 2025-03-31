@@ -1,11 +1,4 @@
-import { db } from '@/db';
-import { eq, and, not } from 'drizzle-orm';
-import { videos } from '@/db/schema';
-
-type PlaybackId = {
-  id: string;
-  policy: 'signed' | 'public';
-};
+import { handleCreatedWebhook } from '@/actions/video';
 
 type Props = {
   data: { [key: string]: any };
@@ -14,20 +7,7 @@ type Props = {
 const handler = async ({ data }: Props) => {
   const { upload_id, playback_ids, status } = data;
 
-  await db
-    .update(videos)
-    .set({
-      publicPlaybackId: playback_ids.find(
-        (row: PlaybackId) => row.policy === 'public'
-      ).id,
-      privatePlaybackId: playback_ids.find(
-        (row: PlaybackId) => row.policy === 'signed'
-      ).id,
-      status,
-    })
-    .where(
-      and(eq(videos.uploadId, upload_id), not(eq(videos.status, 'ready')))
-    );
+  await handleCreatedWebhook({ uploadId: upload_id, playbackIds: playback_ids, status });
 };
 
 export default handler;

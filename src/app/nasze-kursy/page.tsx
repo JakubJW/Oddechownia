@@ -3,11 +3,11 @@ import CourseCard from '@/components/CourseCard/CourseCard';
 import HeaderOne from '@/components/Headers/HeaderOne';
 import Pagination from '@/components/Pagination/Pagination';
 import { buttonVariants } from '@/components/ui/button';
-import { cn, formatDuration } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { createClient } from '@/supabase/server';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getCourses } from '../admin/kursy/actions';
+import { getCourses } from '@/actions/course';
 
 export const metadata: Metadata = {
   title: 'Nasze kursy | Oddechownia',
@@ -58,13 +58,12 @@ export default async function CoursesLibrary() {
               {courses.map(({ id, name, description, slug, lessonCount, totalDuration, lessons }) => (
                 <CourseCard
                   key={id}
-                  id={id}
                   title={name}
                   description={description}
                   slug={slug}
                   totalVideos={lessonCount}
-                  totalDuration={formatDuration(Math.round(totalDuration))}
-                  thumbnailUrl={`https://image.mux.com/${lessons[0]?.videos[0]?.publicPlaybackId}/thumbnail.jpg?width=640`}
+                  totalDuration={Math.round(totalDuration)}
+                  thumbnailUrl={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
                   disabled={!user}
                 />
               ))}

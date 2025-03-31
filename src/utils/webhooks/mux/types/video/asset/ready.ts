@@ -1,11 +1,4 @@
-import { db } from '@/db';
-import { videos } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-
-type PlaybackId = {
-  id: string;
-  policy: 'signed' | 'public';
-};
+import { handleReadyWebkook } from '@/actions/video';
 
 type Props = {
   data: { [key: string]: any };
@@ -14,21 +7,13 @@ type Props = {
 const handler = async ({ data }: Props) => {
   const { upload_id, playback_ids, duration, status, aspect_ratio } = data;
 
-  // update video record
-  await db
-    .update(videos)
-    .set({
-      publicPlaybackId: playback_ids.find(
-        (row: PlaybackId) => row.policy === 'public'
-      ).id,
-      privatePlaybackId: playback_ids.find(
-        (row: PlaybackId) => row.policy === 'signed'
-      ).id,
-      duration,
-      aspectRatio: aspect_ratio,
-      status,
-    })
-    .where(eq(videos.uploadId, upload_id));
+  await handleReadyWebkook({
+    uploadId: upload_id,
+    playbackIds: playback_ids,
+    duration,
+    aspectRatio: aspect_ratio,
+    status,
+  });
 };
 
 export default handler;

@@ -8,7 +8,7 @@ import { z } from 'zod';
 import {
   createLesson,
   updateLesson,
-} from '@/app/admin/kurs/[slug]/lekcje/actions';
+} from '@/actions/lesson';
 import { useRouter } from 'next/navigation';
 import {
   FormControl,
@@ -110,7 +110,7 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
             <MuxPlayer
               className="mb-6 w-full aspect-video"
               streamType="on-demand"
-              playbackId={lesson.videos[0]?.publicPlaybackId}
+              playbackId={lesson.video?.publicPlaybackId || undefined}
               metadata={{
                 video_series: lesson.courseId,
                 video_title: lesson.name,

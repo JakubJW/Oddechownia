@@ -1,7 +1,6 @@
 'use server';
 
-import { db } from '@/db';
-import { videos } from '@/db/schema';
+import { createVideo } from '@/actions/video';
 import Mux from '@mux/mux-node';
 const mux = new Mux({
   tokenId: '9d984eac-f80d-4199-8687-118476e7fdb7',
@@ -17,9 +16,7 @@ export async function GET() {
     },
   });
 
-  await db.insert(videos).values({
-    uploadId: upload.id,
-  });
+  await createVideo({ uploadId: upload.id });
 
   const data = { upload_id: upload.id, upload_url: upload.url };
 

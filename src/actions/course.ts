@@ -4,7 +4,7 @@ import slugify from 'slugify';
 import { db } from '@/db';
 import { courses, lessons, videos } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { mapNullsToUndefined } from '@/db/types';
+import { nullToUndefined } from '@/db/types';
 import { sql } from 'drizzle-orm';
 
 interface CreateCourse {
@@ -60,8 +60,9 @@ export const getCourses = async () => {
       with: {
         lessons: {
           with: {
-            videos: true
-          }
+            video: true,
+          },
+          orderBy: (lessons, { asc }) => [asc(lessons.position)],
         },
       },
     });
@@ -96,7 +97,7 @@ export const getCourses = async () => {
         durations.find((d) => d.courseId === course.id)?.totalDuration || 0,
     }));
 
-    return mapNullsToUndefined(coursesWithCounts);
+    return nullToUndefined(coursesWithCounts);
   } catch (e) {
     console.error('Request error', e);
     return null;
@@ -109,12 +110,43 @@ export const getCourseBySlug = async (slug: string) => {
       where: eq(courses.slug, slug),
       with: {
         lessons: {
-          with: { videos: true },
+          with: { video: true },
+          orderBy: (lessons, { asc }) => [asc(lessons.position)],
         },
       },
     });
 
-    return course;
+    if (!course) return null;
+
+    const lessonCounts = await db
+      .select({
+        courseId: courses.id,
+        lessonCount: sql<number>`COUNT(${lessons.id})::FLOAT`.as('lessonCount'),
+      })
+      .from(courses)
+      .leftJoin(lessons, eq(courses.id, lessons.courseId))
+      .groupBy(courses.id);
+
+    const durations = await db
+      .select({
+        courseId: courses.id,
+        totalDuration:
+          sql<number>`COALESCE(SUM(${videos.duration}::numeric), 0)::FLOAT`.as(
+            'totalDuration'
+          ),
+      })
+      .from(courses)
+      .leftJoin(lessons, eq(courses.id, lessons.courseId))
+      .leftJoin(videos, eq(lessons.id, videos.lessonId))
+      .groupBy(courses.id);
+
+    return {
+      ...course,
+      lessonCount:
+        lessonCounts.find((lc) => lc.courseId === course.id)?.lessonCount || 0,
+      totalDuration:
+        durations.find((d) => d.courseId === course.id)?.totalDuration || 0,
+    };
   } catch (e) {
     console.error('Request error', e);
   }

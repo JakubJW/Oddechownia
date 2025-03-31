@@ -1,5 +1,5 @@
 import AdminNewLesson from '@/features/admin/Course/LessonForm';
-import { getLessonBySlug } from '../actions';
+import { getLessonBySlug } from '@/actions/lesson';
 
 export default async function AdminEditLesson({
   params,

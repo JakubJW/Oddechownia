@@ -2,9 +2,8 @@
 
 import { createSlug } from '@/lib/utils';
 import { db } from '@/db';
-import { lessons, courses, videos } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { mapNullsToUndefined } from '@/db/types';
+import { eq, desc } from 'drizzle-orm';
+import { courses, lessons, videos } from '@/db/schema';
 
 interface CreateLesson {
   name: string;
@@ -24,9 +23,21 @@ export const createLesson = async ({
       where: eq(courses.slug, courseSlug),
     });
 
+    if (!course) return null;
+
     const video = await db.query.videos.findFirst({
       where: eq(videos.uploadId, uploadId),
     });
+
+    const lastLesson = await db
+      .select({ position: lessons.position })
+      .from(lessons)
+      .where(eq(lessons.courseId, course.id))
+      .orderBy(desc(lessons.position))
+      .limit(1);
+
+    const position =
+      lastLesson.length > 0 ? lastLesson[0].position + 1000 : 1000;
 
     const lesson = await db
       .insert(lessons)
@@ -35,6 +46,7 @@ export const createLesson = async ({
         description,
         slug: createSlug(name),
         courseId: course!.id,
+        position,
       })
       .returning({ slug: lessons.slug, id: lessons.id });
 
@@ -70,41 +82,16 @@ export const updateLesson = async (
   }
 };
 
-export const getCourses = async () => {
-  try {
-    const courses = await db.query.courses.findMany();
-
-    return courses;
-  } catch (e) {
-    console.error('Request error', e);
-  }
-};
-
-export const getCourseBySlug = async (slug: string) => {
-  try {
-    const course = await db.query.courses.findFirst({
-      where: eq(courses.slug, slug),
-      with: {
-        lessons: true,
-      },
-    });
-
-    return course;
-  } catch (e) {
-    console.error('Request error', e);
-  }
-};
-
 export const getLessonBySlug = async (slug: string) => {
   try {
     const lesson = await db.query.lessons.findFirst({
       where: eq(lessons.slug, slug),
       with: {
-        videos: true,
+        video: true,
       },
     });
-    
-    return mapNullsToUndefined(lesson);
+
+    return lesson;
   } catch (e) {
     console.error('Request error', e);
   }

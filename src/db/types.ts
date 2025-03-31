@@ -33,7 +33,9 @@ type NullToUndefined<T> = {
     ? undefined
     : T[K] extends (infer U)[]
     ? NullToUndefined<U>[]
-    : Exclude<T[K], null> | ([null] extends [T[K]] ? undefined : never);
+    : T[K] extends object
+    ? NullToUndefined<T[K]>
+    : T[K];
 };
 
 export type Course = typeof schema.courses.$inferSelect;
@@ -48,20 +50,21 @@ export type CourseWithLessonsWithVideos = NullToUndefined<
   InferResultType<'courses', { lessons: true }>
 >;
 export type LessonWithVideos = NullToUndefined<
-  InferResultType<'lessons', { videos: true }>
+  InferResultType<'lessons', { video: true }>
 >;
 
-export function mapNullsToUndefined<T>(obj: T): NullToUndefined<T> | undefined {
-  if (obj === null) return undefined;
-  if (Array.isArray(obj))
-    return obj.map(mapNullsToUndefined) as NullToUndefined<T>;
-  if (typeof obj === 'object' && obj !== null) {
+export function nullToUndefined<T>(data: T): NullToUndefined<T> {
+  if (Array.isArray(data)) {
+    return data.map(nullToUndefined) as NullToUndefined<T>;
+  }
+  if (data !== null && typeof data === 'object') {
     return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [
+      Object.entries(data).map(([key, value]) => [
         key,
-        mapNullsToUndefined(value),
+        value === null ? undefined : nullToUndefined(value),
       ])
     ) as NullToUndefined<T>;
   }
-  return obj as NullToUndefined<T> | undefined;
+
+  return data as NullToUndefined<T>;
 }

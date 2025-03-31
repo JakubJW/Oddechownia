@@ -2,20 +2,19 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, Film } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatDuration } from '@/lib/utils';
 
 interface CourseCardProps {
-  id: number;
   title: string;
   description: string;
   slug: string;
   disabled: boolean;
   thumbnailUrl: string;
   totalVideos: number;
-  totalDuration: string;
+  totalDuration: number;
 }
 
 export default function CourseCard({
-  id,
   title,
   description,
   slug,
@@ -25,8 +24,7 @@ export default function CourseCard({
   disabled,
 }: CourseCardProps) {
   return (
-    <Link
-      key={id}
+    <Link      
       className="rounded-xl bg-white overflow-hidden relative"
       href={disabled ? '/' : `/nasze-kursy/${slug}`} // probably implicit redirect to checkout or through middleware
     >
@@ -61,7 +59,7 @@ export default function CourseCard({
           )}
         >
           <Clock />
-          <span className="leading-none">{totalDuration}</span>
+          <span className="leading-none">{formatDuration(totalDuration)}</span>
         </div>
       </div>
 

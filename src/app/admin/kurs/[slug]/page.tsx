@@ -1,10 +1,10 @@
-import { getCourseBySlug } from '../../kursy/actions';
+import { getCourseBySlug } from '@/actions/course';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
-import LessonCard from '@/features/admin/Lesson/LessonCard';
 import CourseForm from '@/features/admin/Course/CourseForm';
+import LessonList from '@/features/admin/Lesson/LessonList';
 
 export default async function AdminCourse({
   params,
@@ -18,7 +18,7 @@ export default async function AdminCourse({
     notFound();
   }
 
-  const lessons = course.lessons;
+  const { lessons } = course;
 
   return (
     <>
@@ -28,21 +28,10 @@ export default async function AdminCourse({
         {course && (
           <div className="flex flex-col gap-4 max-w-lg">
             <h2>Lekcje</h2>
-            {lessons.length ? (
-              <div className="space-y-4">
-                {lessons.map(({ id, name, description, slug: lessonSlug }) => (
-                  <LessonCard
-                    key={id}
-                    name={name}
-                    description={description}
-                    imageUrl={`https://image.mux.com/${lessons[0].videos[0].publicPlaybackId}/thumbnail.jpg?width=640`}
-                    href={`/admin/kurs/${slug}/lekcje/${lessonSlug}`}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p>Nie masz żadnych lekcji</p>
-            )}
+            <LessonList
+              lessons={lessons}
+              courseSlug={slug}
+            />
             <Link
               className={cn(buttonVariants({}))}
               href={`/admin/kurs/${slug}/lekcje/dodaj`}

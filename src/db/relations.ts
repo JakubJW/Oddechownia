@@ -1,12 +1,15 @@
 import { relations } from 'drizzle-orm';
 import { lessons, courses, videos } from './schema';
 
-export const lessonsRelations = relations(lessons, ({ one, many }) => ({
+export const lessonsRelations = relations(lessons, ({ one }) => ({
   course: one(courses, {
     fields: [lessons.courseId],
     references: [courses.id],
   }),
-  videos: many(videos),
+  video: one(videos, {
+    fields: [lessons.id],
+    references: [videos.lessonId],
+  }),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
