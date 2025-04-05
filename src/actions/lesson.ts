@@ -29,6 +29,10 @@ export const createLesson = async ({
       where: eq(videos.uploadId, uploadId),
     });
 
+    if (!video) {
+      return null;
+    }
+
     const lastLesson = await db
       .select({ position: lessons.position })
       .from(lessons)
@@ -45,19 +49,20 @@ export const createLesson = async ({
         name,
         description,
         slug: createSlug(name),
-        courseId: course!.id,
+        courseId: course.id,
         position,
       })
-      .returning({ slug: lessons.slug, id: lessons.id });
+      .returning();
 
     await db
       .update(videos)
       .set({ lessonId: lesson[0].id })
-      .where(eq(videos.id, video!.id));
+      .where(eq(videos.id, video.id));
 
     return lesson;
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to create lesson', e);
+    return null;
   }
 };
 
@@ -78,7 +83,8 @@ export const updateLesson = async (
 
     return lesson;
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to update lesson', e);
+    return null;
   }
 };
 
@@ -91,8 +97,13 @@ export const getLessonBySlug = async (slug: string) => {
       },
     });
 
+    if (!lesson) {
+      return null;
+    }
+
     return lesson;
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to get lesson', e);
+    return null;
   }
 };

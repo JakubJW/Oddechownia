@@ -1,28 +1,22 @@
 'use client';
 
-import { Form } from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { createLesson, updateLesson } from '@/actions/lesson';
 import { Button } from '@/components/ui/button';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import {
-  createLesson,
-  updateLesson,
-} from '@/actions/lesson';
-import { useRouter } from 'next/navigation';
-import {
-  FormControl,
+  Form, FormControl,
   FormField,
-  FormItem,
-  FormMessage,
-  FormLabel,
+  FormItem, FormLabel, FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
-import MuxUploader from '@mux/mux-uploader-react';
 import { LessonWithVideos } from '@/db/types';
+import { zodResolver } from '@hookform/resolvers/zod';
 import MuxPlayer from '@mux/mux-player-react/lazy';
+import MuxUploader from '@mux/mux-uploader-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 interface LessonFormProps {
   lesson?: LessonWithVideos;
@@ -45,8 +39,9 @@ const initialState = {
 };
 
 export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
-  const router = useRouter();
   const [isUploaded, setIsUploaded] = useState(false);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: lesson

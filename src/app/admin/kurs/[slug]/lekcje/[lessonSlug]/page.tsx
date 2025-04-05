@@ -1,5 +1,6 @@
-import AdminNewLesson from '@/features/admin/Course/LessonForm';
 import { getLessonBySlug } from '@/actions/lesson';
+import AdminNewLesson from '@/features/admin/Course/LessonForm';
+import { notFound } from 'next/navigation';
 
 export default async function AdminEditLesson({
   params,
@@ -8,6 +9,10 @@ export default async function AdminEditLesson({
 }) {
   const { slug, lessonSlug } = await params;
   const lesson = await getLessonBySlug(lessonSlug);
+
+  if (!lesson) {
+    notFound();
+  }
 
   return (
     <AdminNewLesson

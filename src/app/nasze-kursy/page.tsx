@@ -1,13 +1,12 @@
 import Container from '@/components/Container/Container';
-import CourseCard from '@/components/CourseCard/CourseCard';
 import HeaderOne from '@/components/Headers/HeaderOne';
-import Pagination from '@/components/Pagination/Pagination';
+import { getCourses } from '@/actions/course';
+import CourseGrid from '@/components/CourseGrid';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/supabase/server';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getCourses } from '@/actions/course';
 
 export const metadata: Metadata = {
   title: 'Nasze kursy | Oddechownia',
@@ -19,15 +18,7 @@ export default async function CoursesLibrary() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const courses = await getCourses();
-
-  if (!courses) {
-    return (
-      <div className="text-red-500">
-        Failed to load courses. Please try again later.
-      </div>
-    );
-  }
+  const courses = await getCourses({ published: true });
 
   return (
     <section>
@@ -53,30 +44,10 @@ export default async function CoursesLibrary() {
         </hgroup>
         <div className="grid grid-cols-12 mt-32">
           <div className="col-span-12 lg:col-span-2">es</div>
-          <div className="col-span-12 lg:col-span-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
-              {courses.map(({ id, name, description, slug, lessonCount, totalDuration, lessons }) => (
-                <CourseCard
-                  key={id}
-                  title={name}
-                  description={description}
-                  slug={slug}
-                  totalVideos={lessonCount}
-                  totalDuration={Math.round(totalDuration)}
-                  thumbnailUrl={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
-                  disabled={!user}
-                />
-              ))}
-            </div>
-            <div className="flex mt-8 justify-center col-span-1 sm:col-span-2 xl:col-span-3">
-              <Pagination
-                page={'1'}
-                perPage={3}
-                total={9}
-                baseUrl="/nasze-kursy"
-              />
-            </div>
-          </div>
+          <CourseGrid
+            courses={courses}
+            user={user}
+          />
         </div>
       </Container>
     </section>
