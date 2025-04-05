@@ -40,7 +40,7 @@ export const handleCreatedWebhook = async ({
     }
 
     const privatePlaybackRow = playbackIds.find(
-      (row: PlaybackId) => row.policy === Policy.PUBLIC
+      (row: PlaybackId) => row.policy === Policy.SIGNED
     );
 
     if (!privatePlaybackRow) {
