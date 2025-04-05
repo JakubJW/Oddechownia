@@ -5,9 +5,14 @@ import { eq, and, not } from 'drizzle-orm';
 import { videos } from '@/db/schema';
 import { nullToUndefined } from '@/db/types';
 
+enum Policy {
+  SIGNED = 'signed',
+  PUBLIC = 'public',
+}
+
 type PlaybackId = {
   id: string;
-  policy: 'signed' | 'public';
+  policy: Policy;
 };
 
 export const createVideo = async ({ uploadId }: { uploadId: string }) => {
@@ -27,7 +32,7 @@ export const handleCreatedWebhook = async ({
 }) => {
   try {
     const publicPlaybackRow = playbackIds.find(
-      (row: PlaybackId) => row.policy === 'public'
+      (row: PlaybackId) => row.policy === Policy.PUBLIC
     );
 
     if (!publicPlaybackRow) {
@@ -35,7 +40,7 @@ export const handleCreatedWebhook = async ({
     }
 
     const privatePlaybackRow = playbackIds.find(
-      (row: PlaybackId) => row.policy === 'signed'
+      (row: PlaybackId) => row.policy === Policy.PUBLIC
     );
 
     if (!privatePlaybackRow) {
@@ -52,8 +57,8 @@ export const handleCreatedWebhook = async ({
       .where(
         and(eq(videos.uploadId, uploadId), not(eq(videos.status, 'ready')))
       );
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    console.error("Webhook 'created' failed", e);
     return null;
   }
 };
@@ -73,7 +78,7 @@ export const handleReadyWebkook = async ({
 }) => {
   try {
     const publicPlaybackRow = playbackIds.find(
-      (row: PlaybackId) => row.policy === 'public'
+      (row: PlaybackId) => row.policy === Policy.PUBLIC
     );
 
     if (!publicPlaybackRow) {
@@ -81,7 +86,7 @@ export const handleReadyWebkook = async ({
     }
 
     const privatePlaybackRow = playbackIds.find(
-      (row: PlaybackId) => row.policy === 'signed'
+      (row: PlaybackId) => row.policy === Policy.PUBLIC
     );
 
     if (!privatePlaybackRow) {
@@ -98,14 +103,18 @@ export const handleReadyWebkook = async ({
         status,
       })
       .where(eq(videos.uploadId, uploadId));
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    console.error("Webhook 'ready' failed", e);
     return null;
   }
 };
 
 export const deleteVideo = async ({ uploadId }: { uploadId: string }) => {
-  await db.delete(videos).where(eq(videos.uploadId, uploadId));
+  try {
+    await db.delete(videos).where(eq(videos.uploadId, uploadId));
+  } catch (e) {
+    console.error('Unable to delete video', e);
+  }
 };
 
 export const getVideoByPlaybackId = async (playbackId: string) => {
@@ -120,7 +129,7 @@ export const getVideoByPlaybackId = async (playbackId: string) => {
 
     return nullToUndefined(video);
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to get video', e);
     return null;
   }
 };

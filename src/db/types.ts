@@ -6,6 +6,7 @@ import type {
   DBQueryConfig,
   ExtractTablesWithRelations,
 } from 'drizzle-orm';
+import { getCourses } from '@/actions/course';
 
 type Schema = typeof schema & typeof relations;
 type TSchema = ExtractTablesWithRelations<Schema>;
@@ -46,8 +47,8 @@ export type Post = typeof schema.posts.$inferSelect;
 export type CourseWithLessons = NullToUndefined<
   InferResultType<'courses', { lessons: true }>
 >;
-export type CourseWithLessonsWithVideos = NullToUndefined<
-  InferResultType<'courses', { lessons: true }>
+export type CourseWithLessonsWithVideos = Awaited<
+  ReturnType<typeof getCourses>
 >;
 export type LessonWithVideos = NullToUndefined<
   InferResultType<'lessons', { video: true }>

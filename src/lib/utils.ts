@@ -29,3 +29,7 @@ export function formatDuration(duration: number | null) {
 export function createSlug(value: string) {
   return slugify(value, { lower: true, strict: true });
 }
+
+export function generateThumbnailUrl() {
+  
+}

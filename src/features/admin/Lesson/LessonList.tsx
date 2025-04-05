@@ -22,14 +22,11 @@ export default function LessonList({ lessons, courseSlug }: LessonListProps) {
     let position;
 
     if (newIndex === 0 && lessons.length > 1) {
-      //moved to first position, divide previous first position by 2
       position = lessons[1].position / 2;
     } else if (newIndex > 0 && newIndex < lessons?.length - 1) {
-      //everywhere between first and last, get avarage from neighbors
       position =
         lessons[newIndex + 1].position + lessons[newIndex + 1].position / 2;
     } else {
-      //last postion, increment previous last position by 1000
       position = lessons[lessons.length - 1].position + 1000;
     }
 

@@ -4,8 +4,8 @@ import slugify from 'slugify';
 import { db } from '@/db';
 import { courses, lessons, videos } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { nullToUndefined } from '@/db/types';
 import { sql } from 'drizzle-orm';
+import { createSlug } from '@/lib/utils';
 
 interface CreateCourse {
   name: string;
@@ -27,34 +27,39 @@ export const createCourse = async ({
         slug: slugify(name, { lower: true, strict: true }),
         isPublished: isPublished,
       })
-      .returning({ slug: courses.slug });
+      .returning();
 
-    return course;
+    return course[0];
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to create course', e);
+    return null;
   }
 };
 
-export const updateCourse = async (slug: string, values: CreateCourse) => {
+export const updateCourse = async (
+  slug: string,
+  { name, description, isPublished }: CreateCourse
+) => {
   try {
     const course = await db
       .update(courses)
       .set({
-        name: values.name,
-        description: values.description,
-        slug: slugify(values.name, { lower: true, strict: true }),
-        isPublished: values.isPublished,
+        name,
+        description,
+        slug: createSlug(name),
+        isPublished,
       })
       .where(eq(courses.slug, slug))
-      .returning({ slug: courses.slug });
+      .returning();
 
-    return course;
+    return course[0];
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to update course', e);
+    return null;
   }
 };
 
-export const getCourses = async () => {
+export const getCourses = async (options?: { published: boolean }) => {
   try {
     const data = await db.query.courses.findMany({
       with: {
@@ -65,6 +70,7 @@ export const getCourses = async () => {
           orderBy: (lessons, { asc }) => [asc(lessons.position)],
         },
       },
+      where: options?.published ? eq(courses.isPublished, options.published) : undefined,
     });
 
     const lessonCounts = await db
@@ -92,14 +98,16 @@ export const getCourses = async () => {
     const coursesWithCounts = data.map((course) => ({
       ...course,
       lessonCount:
-        lessonCounts.find((lc) => lc.courseId === course.id)?.lessonCount || 0,
+        lessonCounts.find(({ courseId }) => courseId === course.id)
+          ?.lessonCount || 0,
       totalDuration:
-        durations.find((d) => d.courseId === course.id)?.totalDuration || 0,
+        durations.find(({ courseId }) => courseId === course.id)
+          ?.totalDuration || 0,
     }));
 
-    return nullToUndefined(coursesWithCounts);
+    return coursesWithCounts;
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to get courses', e);
     return null;
   }
 };
@@ -148,6 +156,7 @@ export const getCourseBySlug = async (slug: string) => {
         durations.find((d) => d.courseId === course.id)?.totalDuration || 0,
     };
   } catch (e) {
-    console.error('Request error', e);
+    console.error('Unable to get course', e);
+    return null;
   }
 };
