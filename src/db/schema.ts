@@ -6,7 +6,9 @@ import {
   timestamp,
   boolean,
   integer,
+  uuid,
 } from 'drizzle-orm/pg-core';
+import { UserRoles } from './consts';
 
 export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),
@@ -50,4 +52,13 @@ export const videos = pgTable('videos', {
   duration: integer('duration'),
   aspectRatio: varchar('aspect_ratio'),
   status: varchar().default('preparing').notNull(),
+});
+
+export const profiles = pgTable('profiles', {
+  id: uuid('id').primaryKey().notNull(),
+  role: text('role').notNull().default(UserRoles.USER),
+  firstName: text('first_name'),
+  lastName: text('last_name'),
+  regulationsAgreement: boolean('regulations_agreement').default(false),
+  privacyPolicyAgreement: boolean('privacy_policy_agreement').default(false)
 });

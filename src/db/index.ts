@@ -13,7 +13,9 @@ export const drizzleClient = drizzle(client, {
 });
 
 declare global {
-  var database: PostgresJsDatabase<typeof schema & typeof relations> | undefined;
+  var database:
+    | PostgresJsDatabase<typeof schema & typeof relations>
+    | undefined;
 }
 
 export const db = global.database || drizzleClient;
