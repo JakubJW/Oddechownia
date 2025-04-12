@@ -73,6 +73,10 @@ export default function RegisterForm() {
     const formData = new FormData();
     formData.append('email', values.accountData.email);
     formData.append('password', values.accountData.password);
+    formData.append('firstName', values.accountData.firstName);
+    formData.append('lastName', values.accountData.lastName);
+    formData.append('regulationsAgreement', String(values.accountData.regulationsAgreement));
+    formData.append('privacyPolicyAgreement', String(values.accountData.privacyPolicyAgreement));
 
     await signup(formData);
   };
