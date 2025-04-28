@@ -8,7 +8,7 @@ export interface FooterLinkProps {
 export default function FooterLink({ href, content }: FooterLinkProps) {
   return (
     <li>
-      <Link className='block text-primaryFg text-lg' href={href}>{content}</Link>
+      <Link className='block text-white text-lg' href={href}>{content}</Link>
     </li>
   );
 }

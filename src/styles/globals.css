@@ -2,30 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* --foreground: #171717; */
-  --primary-foreground: #35A6EC;
-  --primary-background: #E8F5FD;
-  --red-foreground: #EC3538;
-  --red-background: #FDE8E8;
-  --green-foreground: #35EC4A;
-  --green-background: #E8FDEA;
-  --yellow-foreground: #ECD135;
-  --yellow-background: #FDFAE8;
-  --background-white: #FAFAFA;
-  --navigation-height: 74px;
-}
-
 body {
-  color: var(--foreground);
+  color: var(--rich-black);
   background: var(--background-white);
-  font-family: "Comfortaa", serif;
   font-optical-sizing: auto;
   font-style: normal;
 }
 
 @layer base {
   :root {
+    --primary-foreground: #35A6EC;
+    --primary-background: #E8F5FD;
+    --red-foreground: #EC3538;
+    --red-background: #FDE8E8;
+    --green-foreground: #35EC4A;
+    --green-background: #E8FDEA;
+    --yellow-foreground: #ECD135;
+    --yellow-background: #FDFAE8;
+    --background-white: #FAFAFA;
+    --navigation-height: 74px;
+
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -40,6 +36,14 @@ body {
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    --almond: #EBDFD3;
+    --almond-foreground: #f5efe9;
+    --steel-blue: #9EAFBF;
+    --steel-blue-foreground: #cfd7df;
+    --matcha: #B9C499;
+    --matcha-foreground: #dce2cc;
+    --rich-black: #00171F;
+    --rich-black-foreground: #808b8f;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;

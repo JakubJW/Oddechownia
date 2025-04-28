@@ -20,7 +20,7 @@ export interface NavigationProps {
 
 export default function Navigation({ user }: NavigationProps) {
   return (
-    <header className="fixed top-0 z-40 w-full bg-whiteBg flex items-center justify-between">
+    <header className="fixed top-0 z-40 w-full bg-matcha flex items-center justify-between">
       <div className="container mx-auto px-4 py-4 sm:py-0">
         <div className="flex justify-between items-center">
           <nav>
@@ -34,6 +34,7 @@ export default function Navigation({ user }: NavigationProps) {
                     src={Logo}
                     alt="Oddechownia logo"
                     priority
+                    className='w-[200px]'
                   />
                 </Link>
               </li>

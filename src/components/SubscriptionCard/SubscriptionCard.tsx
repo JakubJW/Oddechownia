@@ -12,7 +12,7 @@ const subscriptionCardVariants = cva(
       variant: {
         default: 'border',
         popular:
-          'border border-primaryFg bg-gradient-to-b from-white to-primaryBg',
+          'border border-matcha bg-gradient-to-b from-white to-matcha-foreground',
       },
     },
     defaultVariants: {

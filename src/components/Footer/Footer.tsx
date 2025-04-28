@@ -39,7 +39,7 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-primaryBg">
+    <footer className="bg-matcha">
       <Container>
         <div className="grid grid-cols-1 gap-6 md:gap-0 md:grid-cols-4 md:justify-items-center">
           <Link
@@ -50,6 +50,7 @@ export default function Footer() {
               src={Logo}
               alt="Oddechownia logo"
               priority
+              className='w-[200px]'
             />
           </Link>
           {footerLinks.map((column, index) => (
