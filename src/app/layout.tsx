@@ -1,6 +1,6 @@
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
-import { Comfortaa } from 'next/font/google';
+import { Source_Sans_3 } from 'next/font/google';
 import Navigation from '@/components/Navigation/Navigation';
 import Footer from '@/components/Footer/Footer';
 import { createClient } from '@/supabase/server';
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Twoje studio yogi online | Oddechownia',
 };
 
-const comfortaa = Comfortaa({
+const sourceSans = Source_Sans_3({
   display: 'swap',
   subsets: ['latin'],
 });
@@ -27,7 +27,7 @@ export default async function RootLayout({
   return (
     <html
       lang="pl"
-      className={comfortaa.className}
+      className={sourceSans.className}
     >
       <body className="antialiased">
         <Navigation user={user} />

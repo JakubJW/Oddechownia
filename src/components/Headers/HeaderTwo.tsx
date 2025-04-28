@@ -1,15 +1,18 @@
 import { cn } from '@/lib/utils';
-
-export interface HeaderTwoProps extends React.PropsWithChildren<object> {
+import { Montserrat } from 'next/font/google';
+interface HeaderTwoProps extends React.PropsWithChildren {
   className?: string;
 }
+
+const montserrat = Montserrat({ display: 'swap', subsets: ['latin'] });
 
 export default function HeaderTwo({ children, className }: HeaderTwoProps) {
   return (
     <h2
       className={cn(
         'font-bold text-2xl leading-normal xl:text-4xl xl:leading-relaxed',
-        className ?? ''
+        className ?? '',
+        montserrat.className
       )}
     >
       {children}

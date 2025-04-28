@@ -22,10 +22,10 @@ const mockFaqs = [
 
 export default function Faq() {
   return (
-    <section className="bg-primaryBg">
+    <section className="bg-matcha">
       <Container>
         <HeaderTwo className="text-center mb-16">
-          W czym możemy ci <span className="text-primaryFg">pomóc?</span>
+          W czym możemy ci <span className="text-white">pomóc?</span>
         </HeaderTwo>
         <div className="space-y-6 max-w-[1000px] mx-auto">
           {mockFaqs.map(({ question, answer }, index) => (
