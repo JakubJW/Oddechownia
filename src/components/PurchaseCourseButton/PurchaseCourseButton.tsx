@@ -11,7 +11,7 @@ interface PurchaseCourseButtonProps {
 export default function PurchaseCourseButton({
   text,
   endpoint,
-  payload
+  payload,
 }: PurchaseCourseButtonProps) {
   return (
     <Button
@@ -19,15 +19,19 @@ export default function PurchaseCourseButton({
       className="text-almond bg-richBlack border-richBlack"
       size="lg"
       onClick={async () => {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
 
-        const { url } = await res.json();
-        console.log(url);
-        window.location.href = url;
+          const { url } = await res.json();
+
+          window.location.href = url;
+        } catch (error) {
+          console.error(error);
+        }
       }}
     >
       {text}
