@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import slugify from 'slugify';
 import { z } from 'zod';
+import { env } from '@/../env';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -49,8 +50,8 @@ export async function createPost(formData: FormData) {
   const file: File | null = thumbnail as unknown as File;
 
   const { data: responseData, error } = await supabase.storage
-    .from(process.env.NEXT_WEBSITE_ASSETS_BUCKET_ID!)
-    .upload(`${process.env.NEXT_POST_THUMBNAILS_FOLDER}/${file.name}`, file, {
+    .from(env.NEXT_WEBSITE_ASSETS_BUCKET_ID)
+    .upload(`${env.NEXT_POST_THUMBNAILS_FOLDER}/${file.name}`, file, {
       cacheControl: '3600',
       upsert: true,
     });
@@ -60,7 +61,7 @@ export async function createPost(formData: FormData) {
   }
 
   const { data: thumbnailUrl } = supabase.storage
-    .from(process.env.NEXT_WEBSITE_ASSETS_BUCKET_ID!)
+    .from(env.NEXT_WEBSITE_ASSETS_BUCKET_ID!)
     .getPublicUrl(responseData.path);
 
   await db.insert(posts).values({
@@ -84,8 +85,8 @@ export async function updatePost(id: number, formData: FormData) {
 
   if (file) {
     const { data: responseData, error } = await supabase.storage
-      .from(process.env.NEXT_WEBSITE_ASSETS_BUCKET_ID!)
-      .upload(`${process.env.NEXT_POST_THUMBNAILS_FOLDER}/${file.name}`, file, {
+      .from(env.NEXT_WEBSITE_ASSETS_BUCKET_ID)
+      .upload(`${env.NEXT_POST_THUMBNAILS_FOLDER}/${file.name}`, file, {
         cacheControl: '3600',
         upsert: true,
       });
@@ -95,7 +96,7 @@ export async function updatePost(id: number, formData: FormData) {
     }
 
     const { data: thumbnailUrl } = supabase.storage
-      .from(process.env.NEXT_WEBSITE_ASSETS_BUCKET_ID!)
+      .from(env.NEXT_WEBSITE_ASSETS_BUCKET_ID)
       .getPublicUrl(responseData.path);
 
     await db

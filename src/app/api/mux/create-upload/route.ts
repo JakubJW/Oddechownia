@@ -7,6 +7,7 @@ const mux = new Mux({
   tokenSecret:
     'k6xsyPQecLZjf8HKRBVERqDsjISWcS3BQ/PAFMkMUUjXGlazZreIoohTXwu0pAOAYDOFph67xfY',
 });
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   const upload = await mux.video.uploads.create({
@@ -16,9 +17,16 @@ export async function GET() {
     },
   });
 
-  await createVideo({ uploadId: upload.id });
+  const { error } = await createVideo({ uploadId: upload.id });
+
+  if (error) {
+    return NextResponse.json(
+      { message: 'Video creation failed' },
+      { status: 500 }
+    );
+  }
 
   const data = { upload_id: upload.id, upload_url: upload.url };
 
-  return new Response(JSON.stringify(data), { status: 200 });
+  return NextResponse.json({ data }, { status: 200 });
 }

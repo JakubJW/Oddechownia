@@ -3,8 +3,9 @@ import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 import * as relations from './relations';
+import { env } from '../../env';
 
-const connectionString = process.env.DATABASE_URL!;
+const connectionString = env.NEXT_DATABASE_URL;
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
 export const client = postgres(connectionString, { prepare: false });
@@ -19,4 +20,4 @@ declare global {
 }
 
 export const db = global.database || drizzleClient;
-if (process.env.NODE_ENV !== 'production') global.database = db;
+if (env.NODE_ENV !== 'production') global.database = db;

@@ -37,6 +37,8 @@ export default function CourseGrid({ courses, user }: CourseGridProps) {
             lessonCount,
             totalDuration,
             lessons,
+            isOneOff,
+            priceInCents
           }) => (
             <CourseCard
               key={id}
@@ -47,6 +49,8 @@ export default function CourseGrid({ courses, user }: CourseGridProps) {
               totalDuration={Math.round(totalDuration)}
               thumbnailUrl={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
               disabled={!user}
+              isOneOff={isOneOff}
+              priceInCents={priceInCents}
             />
           )
         )}

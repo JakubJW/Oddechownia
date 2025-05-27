@@ -1,14 +1,13 @@
 'use server';
 
 import { env } from '@/../env';
-import WEBHOOK_TYPES from '@/utils/webhooks/mux/types';
-import Mux from '@mux/mux-node';
+import { stripe } from '@/stripe/stripe';
+import WEBHOOK_TYPES from '@/utils/webhooks/stripe/types';
 import get from 'lodash.get';
 import { NextResponse } from 'next/server';
 import { buffer } from '@/utils/requestBodyBufer';
 
-const webhookSecret = env.NEXT_MUX_WEBHOOK_SECRET;
-const mux = new Mux();
+const webhookSecret = env.NEXT_STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: Request) {
   const text = await req.text();
@@ -21,8 +20,11 @@ export async function POST(req: Request) {
     );
   }
 
+  let event;
+  const signature = req.headers.get('stripe-signature') as string;
+
   try {
-    mux.webhooks.verifySignature(raw, req.headers, webhookSecret);
+    event = stripe.webhooks.constructEvent(raw, signature, webhookSecret);
   } catch (e) {
     console.error('Webhook signature verification failed', e);
     return NextResponse.json(
@@ -33,17 +35,14 @@ export async function POST(req: Request) {
     );
   }
 
-  const json = JSON.parse(raw);
-  const { data, type } = json;
-
-  const WEBHOOK_TYPE_HANDLER = get(WEBHOOK_TYPES, type);
+  const WEBHOOK_TYPE_HANDLER = get(WEBHOOK_TYPES, event.type);
   if (!WEBHOOK_TYPE_HANDLER) {
     console.error('Webhook type handler not found');
     return NextResponse.json({ message: 'Server error' }, { status: 500 });
   }
 
   try {
-    await WEBHOOK_TYPE_HANDLER({ data });
+    await WEBHOOK_TYPE_HANDLER({ data: event.data.object });
     return NextResponse.json({ message: 'Success' }, { status: 200 });
   } catch (e) {
     if (e instanceof Error) {

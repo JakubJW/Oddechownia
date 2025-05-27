@@ -7,6 +7,7 @@ import { cn, formatDuration } from '@/lib/utils';
 import { Film, Clock } from 'lucide-react';
 import CourseVideoCard from '@/components/CourseVideoCard/CourseVideoCard';
 import { notFound } from 'next/navigation';
+import PurchaseCourseButton from '@/components/PurchaseCourseButton/PurchaseCourseButton';
 
 export async function generateMetadata({
   params,
@@ -35,9 +36,22 @@ export default async function Course({
     <section>
       <Container className="pt-16">
         <hgroup className="space-y-6">
-          <HeaderOne className="font-semibold">{course?.name}</HeaderOne>
+          <HeaderOne className="font-semibold">{course.name}</HeaderOne>
           <p>{course?.description}</p>
           <div className="flex gap-4">
+            {course.isOneOff && (
+              <PurchaseCourseButton
+                text={`Wykup dostęp za ${
+                  course.priceInCents
+                    ? (course.priceInCents / 100).toFixed(2)
+                    : ''
+                } zł`}
+                endpoint={'/api/checkout/one-off'}
+                payload={{
+                  courseId: course.id,
+                }}
+              />
+            )}
             <div
               className={cn(
                 buttonVariants({ variant: 'outline', size: 'lg' }),
@@ -54,7 +68,7 @@ export default async function Course({
               )}
             >
               <Clock />
-              <span>{formatDuration(Math.floor(course?.totalDuration))}</span>
+              <span>{formatDuration(Math.floor(course.totalDuration))}</span>
             </div>
           </div>
         </hgroup>

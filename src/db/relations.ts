@@ -1,5 +1,13 @@
 import { relations } from 'drizzle-orm';
-import { lessons, courses, videos } from './schema';
+import {
+  lessons,
+  courses,
+  videos,
+  profiles,
+  coursesToProfiles,
+  stripeProducts,
+  stripePrices,
+} from './schema';
 
 export const lessonsRelations = relations(lessons, ({ one }) => ({
   course: one(courses, {
@@ -21,4 +29,34 @@ export const videosRelations = relations(videos, ({ one }) => ({
 
 export const coursesRelations = relations(courses, ({ many }) => ({
   lessons: many(lessons),
+  profiles: many(coursesToProfiles),
+}));
+
+export const profilesRelations = relations(profiles, ({ many }) => ({
+  courses: many(coursesToProfiles),
+}));
+
+export const coursesToProfilesRelations = relations(
+  coursesToProfiles,
+  ({ one }) => ({
+    profile: one(profiles, {
+      fields: [coursesToProfiles.profileId],
+      references: [profiles.id],
+    }),
+    course: one(courses, {
+      fields: [coursesToProfiles.courseId],
+      references: [courses.id],
+    }),
+  })
+);
+
+export const stripeProductsRelations = relations(stripeProducts, ({ one }) => ({
+  stripePrice: one(stripePrices, {
+    fields: [stripeProducts.stripeProductId],
+    references: [stripePrices.stripeProductId],
+  }),
+}));
+
+export const stripePricesRelations = relations(stripePrices, ({ many }) => ({
+  stripeProducts: many(stripeProducts),
 }));

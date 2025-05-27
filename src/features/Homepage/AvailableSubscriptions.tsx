@@ -1,26 +1,15 @@
 import SubscriptionCard from '@/components/SubscriptionCard/SubscriptionCard';
 import Container from '@/components/Container/Container';
 import HeaderTwo from '@/components/Headers/HeaderTwo';
+import { db } from '@/db';
 
-const mockSubscriptions = [
-  {
-    period: 3,
-    price: 135,
-    variant: 'default',
+const subscriptions = await db.query.stripeProducts.findMany({
+  with: {
+    stripePrice: true,
   },
-  {
-    period: 3,
-    price: 240,
-    variant: 'popular',
-  },
-  {
-    period: 3,
-    price: 420,
-    variant: 'default',
-  },
-] as const;
+});
 
-export default function AvailableSubscriptions() {
+export default async function AvailableSubscriptions() {
   return (
     <section>
       <Container className="overflow-hidden">
@@ -34,12 +23,16 @@ export default function AvailableSubscriptions() {
           </p>
         </hgroup>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-10">
-          {mockSubscriptions.map(({ period, price, variant }, index) => (
+          {!subscriptions.length && <div className='col-span-full'>Brak dodanych opcji subskrypcji.</div>}
+
+          {subscriptions.map(({ stripeProductId, stripePrice, marketingFeatures }) => (
             <SubscriptionCard
-              key={index}
-              period={period}
-              price={price}
-              variant={variant}
+              key={stripeProductId}
+              period={stripePrice.intervalCount}
+              price={stripePrice.unitAmount}
+              variant={stripePrice.intervalCount === 3 ? 'popular' : 'default'}
+              productId={stripeProductId}
+              features={marketingFeatures}
             />
           ))}
         </div>

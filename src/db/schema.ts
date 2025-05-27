@@ -7,6 +7,8 @@ import {
   boolean,
   integer,
   uuid,
+  primaryKey,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
 
@@ -26,6 +28,9 @@ export const courses = pgTable('courses', {
   description: varchar('description', { length: 256 }).notNull(),
   slug: varchar('slug', { length: 256 }).notNull(),
   isPublished: boolean('is_published').notNull(),
+  isOneOff: boolean('is_one_off').default(false).notNull(),
+  priceInCents: integer('price_in_cents'),
+  stripePriceId: varchar('stripe_price_id'),
 });
 
 export const lessons = pgTable('lessons', {
@@ -60,5 +65,51 @@ export const profiles = pgTable('profiles', {
   firstName: text('first_name'),
   lastName: text('last_name'),
   regulationsAgreement: boolean('regulations_agreement').default(false),
-  privacyPolicyAgreement: boolean('privacy_policy_agreement').default(false)
+  privacyPolicyAgreement: boolean('privacy_policy_agreement').default(false),
+});
+
+export const coursesToProfiles = pgTable(
+  'courses_to_profiles',
+  {
+    profileId: uuid('profile_id')
+      .references(() => profiles.id)
+      .notNull(),
+    courseId: integer('course_id')
+      .references(() => courses.id)
+      .notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.profileId, t.courseId] })]
+);
+
+export const stripeProducts = pgTable('stripe_products', {
+  stripeProductId: varchar('stripe_product_id').primaryKey().notNull(),
+  name: varchar('name').notNull(),
+  description: varchar('description'),
+  active: boolean('active').default(true).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  marketingFeatures: jsonb('marketing_features').notNull(),
+});
+
+export const stripePrices = pgTable('stripe_prices', {
+  stripePriceId: varchar('stripe_price_id').primaryKey().notNull(),
+  stripeProductId: varchar('stripe_product_id')
+    .notNull()
+    .references(() => stripeProducts.stripeProductId, { onDelete: 'cascade' }),
+  active: boolean('active').default(true).notNull(),
+  unitAmount: integer('unit_amount').notNull(),
+  currency: varchar('currency').notNull(),
+  type: varchar('type').notNull(),
+  interval: varchar('interval'),
+  intervalCount: integer('interval_count'),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
