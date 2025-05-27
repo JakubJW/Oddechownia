@@ -1,35 +1,70 @@
 'use server';
 
-import slugify from 'slugify';
 import { db } from '@/db';
 import { courses, lessons, videos } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
 import { createSlug } from '@/lib/utils';
+import { stripe } from '@/stripe/stripe';
 
 interface CreateCourse {
   name: string;
   description: string;
   isPublished: boolean;
+  isOneOff: boolean;
+  priceInCents?: number;
 }
 
 export const createCourse = async ({
   name,
   description,
   isPublished,
+  isOneOff,
+  priceInCents,
 }: CreateCourse) => {
   try {
-    const course = await db
-      .insert(courses)
-      .values({
+    if (isOneOff) {
+      const product = await stripe.products.create({
         name,
         description,
-        slug: slugify(name, { lower: true, strict: true }),
-        isPublished: isPublished,
-      })
-      .returning();
+      });
 
-    return course[0];
+      const price = await stripe.prices.create({
+        product: product.id,
+        unit_amount: priceInCents,
+        currency: 'pln',
+      });
+
+      const course = await db
+        .insert(courses)
+        .values({
+          name,
+          description,
+          slug: createSlug(name),
+          isPublished,
+          isOneOff,
+          priceInCents: isOneOff ? priceInCents : null,
+          stripePriceId: price.id,
+        })
+        .returning();
+
+      return course[0];
+    } else {
+      const course = await db
+        .insert(courses)
+        .values({
+          name,
+          description,
+          slug: createSlug(name),
+          isPublished,
+          isOneOff,
+          priceInCents: null,
+          stripePriceId: null,
+        })
+        .returning();
+
+      return course[0];
+    }
   } catch (e) {
     console.error('Unable to create course', e);
     return null;
@@ -38,7 +73,7 @@ export const createCourse = async ({
 
 export const updateCourse = async (
   slug: string,
-  { name, description, isPublished }: CreateCourse
+  { name, description, isPublished, isOneOff, priceInCents }: CreateCourse
 ) => {
   try {
     const course = await db
@@ -48,6 +83,8 @@ export const updateCourse = async (
         description,
         slug: createSlug(name),
         isPublished,
+        isOneOff,
+        priceInCents: priceInCents ?? null,
       })
       .where(eq(courses.slug, slug))
       .returning();
@@ -70,7 +107,9 @@ export const getCourses = async (options?: { published: boolean }) => {
           orderBy: (lessons, { asc }) => [asc(lessons.position)],
         },
       },
-      where: options?.published ? eq(courses.isPublished, options.published) : undefined,
+      where: options?.published
+        ? eq(courses.isPublished, options.published)
+        : undefined,
     });
 
     const lessonCounts = await db

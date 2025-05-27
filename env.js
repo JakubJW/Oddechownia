@@ -1,0 +1,38 @@
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
+
+export const env = createEnv({
+	server: {
+		NODE_ENV: z.enum(["development", "test", "production"]),
+		NEXT_DATABASE_URL: z.string(),
+		NEXT_MUX_TOKEN_SECRET: z.string(),
+		NEXT_MUX_TOKEN_ID: z.string(),
+		NEXT_MUX_WEBHOOK_SECRET: z.string(),
+		NEXT_SUPABASE_SERVICE_ROLE_KEY: z.string(),
+		NEXT_STRIPE_API_SECRET: z.string(),
+		NEXT_STRIPE_WEBHOOK_SECRET: z.string(),
+	},
+	client: {
+		NEXT_PUBLIC_SUPABASE_URL: z.string(),
+		NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
+		NEXT_WEBSITE_ASSETS_BUCKET_ID: z.string(),
+		NEXT_POST_THUMBNAILS_FOLDER: z.string(),
+		NEXT_PUBLIC_APP_URL: z.string()
+	},
+	runtimeEnv: {
+		NODE_ENV: process.env.NODE_ENV,
+		NEXT_DATABASE_URL: process.env.NEXT_DATABASE_URL,
+		NEXT_MUX_TOKEN_SECRET: process.env.NEXT_MUX_TOKEN_SECRET,
+		NEXT_MUX_TOKEN_ID: process.env.NEXT_MUX_TOKEN_ID,
+		NEXT_MUX_WEBHOOK_SECRET: process.env.NEXT_MUX_WEBHOOK_SECRET,
+		NEXT_SUPABASE_SERVICE_ROLE_KEY: process.env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+		NEXT_STRIPE_API_SECRET: process.env.NEXT_STRIPE_API_SECRET,
+		NEXT_STRIPE_WEBHOOK_SECRET: process.env.NEXT_STRIPE_WEBHOOK_SECRET,
+		NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+		NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+		NEXT_WEBSITE_ASSETS_BUCKET_ID: process.env.NEXT_WEBSITE_ASSETS_BUCKET_ID,
+		NEXT_POST_THUMBNAILS_FOLDER: process.env.NEXT_POST_THUMBNAILS_FOLDER,
+		NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL
+	},
+});
+

@@ -2,8 +2,8 @@
 
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { Button } from '../ui/button';
 import { Check } from 'lucide-react';
+import PurchaseCourseButton from '../PurchaseCourseButton/PurchaseCourseButton';
 
 const subscriptionCardVariants = cva(
   'bg-white relative rounded-lg flex flex-col p-8',
@@ -24,18 +24,18 @@ const subscriptionCardVariants = cva(
 export interface SubscriptionCardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof subscriptionCardVariants> {
-  period: number;
+  period: number | null;
   price: number;
+  productId: string;
+  features: { name: string }[];
 }
 
-const features = [
-  'nielimitowany dostęp do wszystkich zajęć jogi, relaksacji, medytacji',
-  'sesje na różnych poziomach zaawansowania i w różnych stylach jogi',
-  'praktykujesz kiedy chcesz i gdzie chcesz, przez 24 godziny, 7 dni w tygodniu',
-];
+const calculateMonthly = (price: number, period: number | null) => {
+  if (!period) {
+    return '--.--';
+  }
 
-const calculateMonthly = (price: number, period: number) => {
-  return price / period;
+  return (price / 100 / period).toFixed(2);
 };
 
 export default function SubscriptionCard({
@@ -43,6 +43,8 @@ export default function SubscriptionCard({
   price,
   className,
   variant,
+  productId,
+  features,
 }: SubscriptionCardProps) {
   return (
     <div className={cn(subscriptionCardVariants({ variant, className }))}>
@@ -59,30 +61,30 @@ export default function SubscriptionCard({
             variant === 'popular' && 'text-primaryFg'
           )}
         >
-          {price} zł{' '}
+          {(price / 100).toFixed(2)} zł{' '}
         </span>
         <span className="text-gray-400 text-sm">
           {calculateMonthly(price, period)} zł/mies.
         </span>
       </div>
       <ul className="space-y-2 my-4">
-        {features.map((feature, index) => (
+        {features.map(({ name }, index) => (
           <li
             key={index}
             className="flex gap-2"
           >
             <Check className="text-primaryFg flex-shrink-0" />
-            <p>{feature}</p>
+            <p>{name}</p>
           </li>
         ))}
       </ul>
-      <Button
-        variant={variant === 'default' ? 'outline' : 'default'}
-        size="lg"
-        onClick={() => console.log('siema')}
-      >
-        Wybierz
-      </Button>
+      <PurchaseCourseButton
+        endpoint="/api/checkout/subscription"
+        text="Wybierz"
+        payload={{
+          stripeProductId: productId,
+        }}
+      />
     </div>
   );
 }

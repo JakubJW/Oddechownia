@@ -15,10 +15,28 @@ type PlaybackId = {
   policy: Policy;
 };
 
-export const createVideo = async ({ uploadId }: { uploadId: string }) => {
-  await db.insert(videos).values({
-    uploadId,
-  });
+type ActionResult<T> = {
+  data: T | null;
+  error: any;
+};
+
+export const createVideo = async ({
+  uploadId,
+}: {
+  uploadId: string;
+}): Promise<ActionResult<(typeof videos.$inferInsert)[]>> => {
+  try {
+    const video = await db
+      .insert(videos)
+      .values({
+        uploadId,
+      })
+      .returning();
+
+    return { data: video, error: null };
+  } catch (e) {
+    return { data: null, error: e };
+  }
 };
 
 export const handleCreatedWebhook = async ({

@@ -16,7 +16,7 @@ import { z } from 'zod';
 import { Course } from '@/db/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { updateCourse, createCourse } from '@/actions/course';
 
 interface CourseFormProps {
@@ -27,12 +27,16 @@ const formSchema = z.object({
   name: z.string(),
   description: z.string(),
   isPublished: z.boolean(),
+  isOneOff: z.boolean(),
+  priceInCents: z.number().optional(),
 });
 
 const initialState = {
   name: '',
   description: '',
   isPublished: false,
+  isOneOff: false,
+  priceInCents: 0,
 };
 
 export default function CourseForm({ course }: CourseFormProps) {
@@ -44,6 +48,8 @@ export default function CourseForm({ course }: CourseFormProps) {
           name: course.name,
           description: course.description,
           isPublished: course.isPublished,
+          priceInCents: course.priceInCents ?? 0,
+          isOneOff: course.isOneOff,
         }
       : initialState,
     mode: 'onChange',
@@ -58,6 +64,11 @@ export default function CourseForm({ course }: CourseFormProps) {
 
     router.push(`/admin/kursy`);
   };
+
+  const isOneOff = useWatch({
+    control: form.control,
+    name: 'isOneOff',
+  });
 
   return (
     <Form {...form}>
@@ -75,7 +86,7 @@ export default function CourseForm({ course }: CourseFormProps) {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
-                <FormMessage></FormMessage>
+                <FormMessage />
               </FormItem>
             </FormItem>
           )}
@@ -93,11 +104,60 @@ export default function CourseForm({ course }: CourseFormProps) {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage></FormMessage>
+                <FormMessage />
               </FormItem>
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="isOneOff"
+          render={({ field }) => (
+            <FormItem>
+              <FormItem>
+                <FormControl>
+                  <div className="flex gap-4">
+                    <Checkbox
+                      id="isOneOff"
+                      checked={field.value}
+                      onCheckedChange={(checked: boolean) =>
+                        field.onChange(checked)
+                      }
+                    />
+                    <label
+                      htmlFor="isOneOff"
+                      className="text-sm font-medium leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Zakup jednorazowy
+                    </label>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormItem>
+          )}
+        />
+        {isOneOff && (
+          <FormField
+            control={form.control}
+            name="priceInCents"
+            render={({ field }) => (
+              <FormItem>
+                <FormItem>
+                  <FormLabel>Cena (w groszach)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="isPublished"
