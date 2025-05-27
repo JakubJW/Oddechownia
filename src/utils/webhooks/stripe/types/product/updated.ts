@@ -1,6 +1,7 @@
 import { db } from '@/db';
 import { stripeProducts } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 type Props = {
   data: { [key: string]: any };
@@ -9,7 +10,7 @@ type Props = {
 const handler = async ({ data }: Props) => {
   const { id, name, description, active, marketing_features } = data;
 
-  await db
+  const result = await db
     .update(stripeProducts)
     .set({
       name,
@@ -17,7 +18,16 @@ const handler = async ({ data }: Props) => {
       active,
       marketingFeatures: marketing_features,
     })
-    .where(eq(stripeProducts.stripeProductId, id));
+    .where(eq(stripeProducts.stripeProductId, id))
+    .returning({ updatedIds: stripeProducts.stripeProductId });
+
+  console.log('attempring path revalidation');
+  revalidatePath('/');
+	console.log('path revalidation completed');
+
+  if (!result.length) {
+    throw new Error('Subscription with given ID not found');
+  }
 };
 
 export default handler;

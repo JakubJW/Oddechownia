@@ -66,7 +66,7 @@ export default function CourseCard({
             </span>
           </div>
         </div>
-        {isOneOff && (
+        {isOneOff && priceInCents && (
           <div className="absolute bottom-2 left-2">
             <div
               className={cn(

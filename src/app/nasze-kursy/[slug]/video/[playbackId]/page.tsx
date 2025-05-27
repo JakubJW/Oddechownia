@@ -68,6 +68,8 @@ export default async function LessonVideo({
                 lessonCount,
                 totalDuration,
                 lessons,
+                isOneOff,
+                priceInCents
               }) => (
                 <CourseCard
                   key={id}
@@ -78,6 +80,8 @@ export default async function LessonVideo({
                   totalDuration={Math.round(totalDuration)}
                   thumbnailUrl={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
                   disabled={false}
+                  isOneOff={isOneOff}
+                  priceInCents={priceInCents}
                 />
               )
             )}

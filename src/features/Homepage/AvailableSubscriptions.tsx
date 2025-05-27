@@ -1,3 +1,5 @@
+'use server';
+
 import SubscriptionCard from '@/components/SubscriptionCard/SubscriptionCard';
 import Container from '@/components/Container/Container';
 import HeaderTwo from '@/components/Headers/HeaderTwo';
@@ -23,18 +25,26 @@ export default async function AvailableSubscriptions() {
           </p>
         </hgroup>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-10">
-          {!subscriptions.length && <div className='col-span-full'>Brak dodanych opcji subskrypcji.</div>}
+          {!subscriptions.length && (
+            <div className="col-span-full">
+              Brak dodanych opcji subskrypcji.
+            </div>
+          )}
 
-          {subscriptions.map(({ stripeProductId, stripePrice, marketingFeatures }) => (
-            <SubscriptionCard
-              key={stripeProductId}
-              period={stripePrice.intervalCount}
-              price={stripePrice.unitAmount}
-              variant={stripePrice.intervalCount === 3 ? 'popular' : 'default'}
-              productId={stripeProductId}
-              features={marketingFeatures}
-            />
-          ))}
+          {subscriptions.map(
+            ({ stripeProductId, stripePrice, marketingFeatures }) => (
+              <SubscriptionCard
+                key={stripeProductId}
+                period={stripePrice.intervalCount}
+                price={stripePrice.unitAmount}
+                variant={
+                  stripePrice.intervalCount === 3 ? 'popular' : 'default'
+                }
+                productId={stripeProductId}
+                features={marketingFeatures}
+              />
+            )
+          )}
         </div>
       </Container>
     </section>

@@ -92,7 +92,9 @@ export const stripeProducts = pgTable('stripe_products', {
   updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
-  marketingFeatures: jsonb('marketing_features').notNull(),
+  marketingFeatures: jsonb('marketing_features')
+    .$type<{ name: string }[]>()
+    .notNull(),
 });
 
 export const stripePrices = pgTable('stripe_prices', {

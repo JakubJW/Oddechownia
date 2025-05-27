@@ -53,13 +53,13 @@ export default function AboutMe() {
               alt="Dot"
               className="h-8 w-8 absolute right-12 -top-10"
             />
-            <Image
+            {/* <Image
               src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/Public/images/pexels-pixabay-460307.jpg"
               height={400}
               width={400}
               className="object-cover rounded-full border-4 border-primaryFg h-full aspect-square"
               alt="Me"
-            />
+            /> */}
             <Image
               src={Dot}
               alt="Dot"

@@ -27,7 +27,7 @@ export interface SubscriptionCardProps
   period: number | null;
   price: number;
   productId: string;
-  features: { [key: string]: string };
+  features: { name: string }[];
 }
 
 const calculateMonthly = (price: number, period: number | null) => {
@@ -68,13 +68,13 @@ export default function SubscriptionCard({
         </span>
       </div>
       <ul className="space-y-2 my-4">
-        {features.map((feature, index) => (
+        {features.map(({ name }, index) => (
           <li
             key={index}
             className="flex gap-2"
           >
             <Check className="text-primaryFg flex-shrink-0" />
-            <p>{feature}</p>
+            <p>{name}</p>
           </li>
         ))}
       </ul>

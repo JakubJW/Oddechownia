@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server';
 import { buffer } from '@/utils/requestBodyBufer';
 
 const webhookSecret = env.NEXT_MUX_WEBHOOK_SECRET;
-const mux = new Mux();
+const mux = new Mux({ tokenId: env.NEXT_MUX_TOKEN_ID, tokenSecret: env.NEXT_MUX_TOKEN_SECRET });
 
 export async function POST(req: Request) {
   const text = await req.text();
