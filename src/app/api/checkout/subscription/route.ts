@@ -10,7 +10,10 @@ export async function POST(req: NextRequest) {
   const { stripeProductId } = await req.json();
 
   if (!stripeProductId) {
-    return NextResponse.json({ message: 'Product ID missing' }, { status: 400 });
+    return NextResponse.json(
+      { message: 'Product ID missing' },
+      { status: 400 }
+    );
   }
 
   const supabase = await createClient();
@@ -58,6 +61,13 @@ export async function POST(req: NextRequest) {
       userId: user.id,
     },
   });
+
+  if (!session.url) {
+    return NextResponse.json(
+      { message: 'Unable to create checkout session' },
+      { status: 400 }
+    );
+  }
 
   return NextResponse.json({ url: session.url }, { status: 200 });
 }
