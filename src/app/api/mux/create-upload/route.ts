@@ -22,7 +22,7 @@ export async function GET() {
 
   if (error) {
     return NextResponse.json(
-      { message: 'Video creation failed' },
+      { message: 'Video creation failed', error },
       { status: 500 }
     );
   }
