@@ -2,16 +2,17 @@
 
 import { createVideo } from '@/actions/video';
 import Mux from '@mux/mux-node';
-const mux = new Mux({
-  tokenId: '9d984eac-f80d-4199-8687-118476e7fdb7',
-  tokenSecret:
-    'k6xsyPQecLZjf8HKRBVERqDsjISWcS3BQ/PAFMkMUUjXGlazZreIoohTXwu0pAOAYDOFph67xfY',
-});
 import { NextResponse } from 'next/server';
+import { env } from '../../../../../env';
+
+const mux = new Mux({
+  tokenId: env.NEXT_MUX_TOKEN_ID,
+  tokenSecret: env.NEXT_MUX_TOKEN_SECRET,
+});
 
 export async function GET() {
   const upload = await mux.video.uploads.create({
-    cors_origin: 'https://localhost:3000',
+    cors_origin: env.NEXT_PUBLIC_APP_URL,
     new_asset_settings: {
       playback_policy: ['public', 'signed'],
     },
