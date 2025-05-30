@@ -3,9 +3,12 @@
 import { createLesson, updateLesson } from '@/actions/lesson';
 import { Button } from '@/components/ui/button';
 import {
-  Form, FormControl,
+  Form,
+  FormControl,
   FormField,
-  FormItem, FormLabel, FormMessage
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -115,11 +118,16 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
           ) : (
             <MuxUploader
               endpoint={async () => {
-                const res = await fetch('/api/mux/create-upload').then((res) =>
-                  res.json()
-                );
-                form.setValue('uploadId', res.upload_id);
-                return res.upload_url;
+                const { data, error } = await fetch(
+                  '/api/mux/create-upload'
+                ).then((res) => res.json());
+
+                if (error) {
+                  return console.error(error);
+                }
+
+                form.setValue('uploadId', data.upload_id);
+                return data.upload_url;
               }}
               type="bar"
               style={
