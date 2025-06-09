@@ -4,6 +4,8 @@ import { Source_Sans_3 } from 'next/font/google';
 import Navigation from '@/components/Navigation/Navigation';
 import Footer from '@/components/Footer/Footer';
 import { createClient } from '@/supabase/server';
+import { env } from '../../env';
+import MaintenanceMode from '@/features/Maintenance/MaintenanceMode';
 
 export const metadata: Metadata = {
   title: 'Twoje studio yogi online | Oddechownia',
@@ -30,9 +32,15 @@ export default async function RootLayout({
       className={sourceSans.className}
     >
       <body className="antialiased">
-        <Navigation user={user} />
-        <main className="mt-[64px] sm:mt-[74px]">{children}</main>
-        <Footer />
+        {env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' ? (
+          <MaintenanceMode />
+        ) : (
+          <>
+            <Navigation user={user} />
+            <main className="mt-[64px] sm:mt-[74px]">{children}</main>
+            <Footer />
+          </>
+        )}
       </body>
     </html>
   );
