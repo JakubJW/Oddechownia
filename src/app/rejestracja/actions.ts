@@ -1,27 +1,31 @@
 'use server';
-
+import 'server-only';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/server';
 import { UserRoles } from '@/db/consts';
+import { formSchema } from '@/features/Login/Form/schema';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  };
+  const data = Object.fromEntries(formData);
+  const parsed = formSchema.safeParse(data);
 
-  const { error } = await supabase.auth.signInWithPassword(data);
-
-  if (error) {
-    console.log(error)
-    redirect('/error');
+  if (!parsed.success) {
+    return { data: null, error: null };
   }
 
-  revalidatePath('/', 'layout');
-  redirect('/moje-konto');
+  const { error } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
+
+  if (error && error.code === 'invalid_credentials') {
+    return { error: 'Nieprawidłowe dane logowania', data: null };
+  }
+
+  return { data: null, error: null };
 }
 
 export async function signup(formData: FormData) {
@@ -45,7 +49,7 @@ export async function signup(formData: FormData) {
         last_name: userData.lastName,
         regulations_agreement: userData.regulationsAgreement,
         privacy_policy_agreement: userData.privacyPolicyAgreement,
-        role: UserRoles.USER
+        role: UserRoles.USER,
       },
     },
   });

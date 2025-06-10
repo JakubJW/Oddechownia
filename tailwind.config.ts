@@ -36,7 +36,7 @@ export default {
         yellowFg: 'var(--yellow-foreground)',
         yellowBg: 'var(--yellow-background)',
         whiteBg: 'var(--background-white)',
-        background: 'var(--background)',
+        background: 'hsl(var(--background))',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
