@@ -7,8 +7,8 @@ nextEnv.loadEnvConfig(process.cwd());
 
 const program = new Command();
 program
-  .option('-e --email <email>', 'Admin email')
-  .option('-p --password <password>', 'Admin password');
+  .option('-e, --email <email>', 'Admin email')
+  .option('-p, --password <password>', 'Admin password');
 
 program.parse(process.argv);
 const { email, password } = program.opts();
