@@ -40,9 +40,11 @@ export default function LoginForm() {
     const { error } = await login(formData);
 
     if (error) {
+      console.log('Error in LoginForm', error);
       return setError(error);
     }
 
+    console.log('Before push to /moje-konto');
     router.push('/moje-konto');
   };
 
