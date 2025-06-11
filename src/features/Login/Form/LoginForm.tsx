@@ -44,7 +44,6 @@ export default function LoginForm() {
       return setError(error);
     }
 
-    console.log('Before push to /moje-konto');
     router.push('/moje-konto');
   };
 
