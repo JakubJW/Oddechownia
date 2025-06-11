@@ -16,28 +16,40 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { formSchema } from './schema';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
     },
-    mode: 'all',
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setError(null);
+
     const formData = new FormData();
     formData.append('email', values.email);
     formData.append('password', values.password);
 
-    await login(formData);
+    const { error } = await login(formData);
+
+    if (error) {
+      console.log('Error in LoginForm', error);
+      return setError(error);
+    }
+
+    router.push('/moje-konto');
   };
 
   return (
     <div className="w-full lg:max-w-[512px] xl:max-w-[640px] 2xl:max-w-[768px] ml-auto py-32 px-4 lg:pr-16 xl:pr-24 2xl:pr-32 self-center">
-      <div className="p-8 bg-primaryBg rounded-xl">
+      <div className="p-8 rounded-xl">
         <h1 className="font-bold text-xl mb-4">Logowanie</h1>
         <Form {...form}>
           <form
@@ -76,12 +88,14 @@ export default function LoginForm() {
                 </FormItem>
               )}
             />
+            {error && (
+              <p className="text-sm font-medium text-destructive">{error}</p>
+            )}
             <p className="text-sm">
               Jesteś nowym użytkownikem? &nbsp;
               <Link
                 className="text-sm text-primaryFg underline self-end"
                 href="/dolacz-do-nas"
-                target="_blank"
               >
                 Dołącz już teraz!
               </Link>
@@ -89,13 +103,13 @@ export default function LoginForm() {
             <Link
               className="text-sm text-primaryFg underline"
               href="/zapomnialem-hasla"
-              target="_blank"
             >
               Zapomniałem hasła
             </Link>
             <Button
               size="lg"
               type="submit"
+              disabled={form.formState.isSubmitting}
             >
               Zaloguj
             </Button>
