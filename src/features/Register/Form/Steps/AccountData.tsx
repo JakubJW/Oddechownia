@@ -19,7 +19,7 @@ export interface AccountDataProps {
 const AccountData = ({ form }: AccountDataProps) => {
   return (
     <div className="mt-6 space-y-6">
-      <div className="bg-primaryBg space-y-4 p-8 rounded-xl">
+      <div className="space-y-4 p-8 rounded-xl">
         <p className="font-bold text-xl mb-4">Twoje dane</p>
         <div className="grid grid-cols-2 gap-4">
           <FormField

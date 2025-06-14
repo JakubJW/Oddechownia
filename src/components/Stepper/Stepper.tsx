@@ -7,16 +7,25 @@ export interface StepperProps {
     label: string;
   }[];
   currentStep: number;
-  onStepChange: (stepIndex: number) => void;
+  onNextStep: (stepIndex: number) => void;
+  onPrevStep: (stepIndex: number) => void;
 }
 
 export default function Stepper({
   steps,
-  onStepChange,
+  onNextStep,
+  onPrevStep,
   currentStep,
 }: StepperProps) {
+
   const handleStepChange = (stepIndex: number) => {
-    onStepChange(stepIndex);
+    if (stepIndex === currentStep) {
+      return;
+    } else if (stepIndex > currentStep) {
+      onNextStep(stepIndex);
+    } else {
+      onPrevStep(stepIndex);
+    }
   };
 
   const active = (index: number) => {

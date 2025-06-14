@@ -36,13 +36,15 @@ export default function RegisterForm() {
     mode: 'all',
   });
 
-  const handleStepChange = (stepIndex: number) => {
+  const handleNextStep = async (stepIndex: number) => {
+    let valid: boolean = false;
+
     switch (stepIndex) {
       case 1:
-        form.trigger('accountData');
+        valid = await form.trigger('accountData');
 
-        if (form.formState.errors.accountData) {
-          return;
+        if (!valid) {
+          break;
         }
 
         setAccountData((prevState) => ({
@@ -53,10 +55,10 @@ export default function RegisterForm() {
 
         break;
       case 2:
-        form.trigger('paymentData');
+        valid = await form.trigger('paymentData');
 
-        if (form.formState.errors.paymentData) {
-          return;
+        if (!valid) {
+          break;
         }
 
         setPaymentData((prevState) => ({
@@ -69,14 +71,26 @@ export default function RegisterForm() {
     }
   };
 
+  const handlePrevStep = (stepIndex: number) => {
+    setCurrentStep(stepIndex);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
-    formData.append('email', values.accountData.email);
-    formData.append('password', values.accountData.password);
-    formData.append('firstName', values.accountData.firstName);
-    formData.append('lastName', values.accountData.lastName);
-    formData.append('regulationsAgreement', String(values.accountData.regulationsAgreement));
-    formData.append('privacyPolicyAgreement', String(values.accountData.privacyPolicyAgreement));
+    const { accountData } = values;
+
+    formData.append('email', accountData.email);
+    formData.append('password', accountData.password);
+    formData.append('firstName', accountData.firstName);
+    formData.append('lastName', accountData.lastName);
+    formData.append(
+      'regulationsAgreement',
+      String(accountData.regulationsAgreement)
+    );
+    formData.append(
+      'privacyPolicyAgreement',
+      String(accountData.privacyPolicyAgreement)
+    );
 
     await signup(formData);
   };
@@ -86,7 +100,8 @@ export default function RegisterForm() {
       <Stepper
         steps={registerSteps}
         currentStep={currentStep}
-        onStepChange={handleStepChange}
+        onNextStep={handleNextStep}
+        onPrevStep={handlePrevStep}
       />
       <Form {...form}>
         <form

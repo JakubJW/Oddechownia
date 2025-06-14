@@ -32,15 +32,15 @@ export default async function AvailableSubscriptions() {
           )}
 
           {subscriptions.map(
-            ({ stripeProductId, stripePrice, marketingFeatures }) => (
+            ({ stripeProductId, stripePrice, marketingFeatures, name }) => (
               <SubscriptionCard
                 key={stripeProductId}
+                name={name}
                 period={stripePrice.intervalCount}
                 price={stripePrice.unitAmount}
                 variant={
                   stripePrice.intervalCount === 3 ? 'popular' : 'default'
                 }
-                productId={stripeProductId}
                 features={marketingFeatures}
               />
             )

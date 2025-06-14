@@ -4,13 +4,14 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/server';
 import { UserRoles } from '@/db/consts';
-import { formSchema } from '@/features/Login/Form/schema';
+import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
+import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
 
   const data = Object.fromEntries(formData);
-  const parsed = formSchema.safeParse(data);
+  const parsed = loginFormSchema.safeParse(data);
 
   if (!parsed.success) {
     return { data: null, error: null };
@@ -34,36 +35,34 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = await createClient();
 
-  const userData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-    firstName: formData.get('firstName') as string,
-    lastName: formData.get('lastName') as string,
-    regulationsAgreement: Boolean(formData.get('regulationsAgreement')),
-    privacyPolicyAgreement: Boolean(formData.get('privacyPolicyAgreement')),
-  };
+  const data = Object.fromEntries(formData);
+  const parsed = registerFormSchema.safeParse(data);
+
+  if (!parsed.success) {
+    return { data: null, error: null };
+  }
 
   const { error } = await supabase.auth.signUp({
-    email: userData.email,
-    password: userData.password,
+    email: parsed.data.accountData.email,
+    password: parsed.data.accountData.password,
     options: {
       data: {
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-        regulations_agreement: userData.regulationsAgreement,
-        privacy_policy_agreement: userData.privacyPolicyAgreement,
+        first_name: parsed.data.accountData.firstName,
+        last_name: parsed.data.accountData.lastName,
+        regulations_agreement: parsed.data.accountData.regulationsAgreement,
+        privacy_policy_agreement:
+          parsed.data.accountData.privacyPolicyAgreement,
         role: UserRoles.USER,
       },
     },
   });
 
   if (error) {
-    console.log(error);
-    // redirect('/error');
   }
 
-  revalidatePath('/', 'layout');
-  redirect('/');
+  if (error && error.code === 'invalid_credentials') {
+    return { error: 'Nieprawidłowe dane logowania', data: null };
+  }
 }
 
 export async function signOut() {

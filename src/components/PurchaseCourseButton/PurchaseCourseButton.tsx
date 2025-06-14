@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 interface PurchaseCourseButtonProps {
   text: string;
   endpoint: string;
-  payload: { [key: string]: any };
+  payload: { [key: string]: unknown };
 }
 
 export default function PurchaseCourseButton({

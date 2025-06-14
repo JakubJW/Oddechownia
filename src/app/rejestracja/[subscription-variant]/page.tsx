@@ -4,7 +4,11 @@ import RegisterForm from '@/features/Register/Form/RegisterForm';
 import Container from '@/components/Container/Container';
 import Order from '@/features/Register/Order/Order';
 import React, { useState } from 'react';
-import { FormContext, initialAccountData, initialPaymentData } from '@/features/Register/Form/formContext';
+import {
+  FormContext,
+  initialAccountData,
+  initialPaymentData,
+} from '@/features/Register/Form/formContext';
 
 export default function SignIn() {
   const [accountData, setAccountData] = useState(initialAccountData);

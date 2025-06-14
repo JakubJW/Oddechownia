@@ -17,7 +17,7 @@ export interface PaymentDataProps {
 export default function PaymentData({ form }: PaymentDataProps) {
   return (
     <div className="mt-6 space-y-6">
-      <div className="bg-primaryBg space-y-4 p-8 rounded-xl">
+      <div className="space-y-4 p-8 rounded-xl">
         <p className="font-bold text-xl mb-4">Dane płatności</p>
 
         <FormField
