@@ -8,29 +8,31 @@ import { courses, lessons, videos } from '@/db/schema';
 interface CreateLesson {
   name: string;
   description: string;
-  uploadId: string;
   courseSlug: string;
+  video: {
+    uploadId: string;
+  };
 }
 
 export const createLesson = async ({
   name,
   description,
-  uploadId,
   courseSlug,
+  video,
 }: CreateLesson) => {
   try {
     const course = await db.query.courses.findFirst({
       where: eq(courses.slug, courseSlug),
     });
 
-    if (!course) return null;
+    if (!course) return { data: null, error: 'Course not found' };
 
-    const video = await db.query.videos.findFirst({
-      where: eq(videos.uploadId, uploadId),
+    const lessonVideo = await db.query.videos.findFirst({
+      where: eq(videos.uploadId, video.uploadId),
     });
 
-    if (!video) {
-      return null;
+    if (!lessonVideo) {
+      return { data: null, error: 'Video not found' };
     }
 
     const lastLesson = await db
@@ -57,18 +59,22 @@ export const createLesson = async ({
     await db
       .update(videos)
       .set({ lessonId: lesson[0].id })
-      .where(eq(videos.id, video.id));
+      .where(eq(videos.id, lessonVideo.id));
 
-    return lesson;
-  } catch (e) {
-    console.error('Unable to create lesson', e);
-    return null;
+    return { data: lesson, error: null };
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error('Unable to create lesson', e.message);
+      return { data: null, error: e.message };
+    }
+
+    return { data: null, error: 'Unable to create lesson' };
   }
 };
 
 export const updateLesson = async (
   slug: string,
-  { name, description }: CreateLesson
+  { name, description, video }: CreateLesson
 ) => {
   try {
     const lesson = await db
@@ -79,12 +85,29 @@ export const updateLesson = async (
         slug: createSlug(name),
       })
       .where(eq(lessons.slug, slug))
-      .returning({ slug: lessons.slug });
+      .returning();
 
-    return lesson;
+    const lessonVideo = await db.query.videos.findFirst({
+      where: eq(videos.uploadId, video.uploadId),
+    });
+
+    if (!lessonVideo) {
+      return { data: null, error: 'Video not found' };
+    }
+
+    await db
+      .update(videos)
+      .set({ lessonId: lesson[0].id })
+      .where(eq(videos.id, lessonVideo.id));
+
+    return { data: lesson, error: null };
   } catch (e) {
-    console.error('Unable to update lesson', e);
-    return null;
+    if (e instanceof Error) {
+      console.error('Unable to update lesson', e.message);
+      return { data: null, error: e.message };
+    }
+
+    return { data: null, error: 'Unable to update lesson' };
   }
 };
 

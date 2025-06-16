@@ -12,8 +12,6 @@ const handler = async ({ data }: Props) => {
 
   if (type !== 'recurring') return null;
 
-  
-
   await db.insert(stripePrices).values({
     stripePriceId: id,
     active,

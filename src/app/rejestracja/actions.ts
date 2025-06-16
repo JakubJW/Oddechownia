@@ -6,6 +6,7 @@ import { createClient } from '@/supabase/server';
 import { UserRoles } from '@/db/consts';
 import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
 import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
+import { env } from '../../../env';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -32,37 +33,63 @@ export async function login(formData: FormData) {
   return { data: null, error: null };
 }
 
-export async function signup(formData: FormData) {
+export async function signup(formData: FormData, stripeProductId: string) {
   const supabase = await createClient();
 
-  const data = Object.fromEntries(formData);
-  const parsed = registerFormSchema.safeParse(data);
+  const { regulationsAgreement, privacyPolicyAgreement, ...rest } =
+    Object.fromEntries(formData);
+  const parsed = registerFormSchema.safeParse({
+    regulationsAgreement: Boolean(regulationsAgreement),
+    privacyPolicyAgreement: Boolean(privacyPolicyAgreement),
+    ...rest,
+  });
 
   if (!parsed.success) {
+    console.log(parsed.error.flatten());
     return { data: null, error: null };
   }
 
-  const { error } = await supabase.auth.signUp({
-    email: parsed.data.accountData.email,
-    password: parsed.data.accountData.password,
+  const { data, error } = await supabase.auth.signUp({
+    email: parsed.data.email,
+    password: parsed.data.password,
     options: {
       data: {
-        first_name: parsed.data.accountData.firstName,
-        last_name: parsed.data.accountData.lastName,
-        regulations_agreement: parsed.data.accountData.regulationsAgreement,
-        privacy_policy_agreement:
-          parsed.data.accountData.privacyPolicyAgreement,
+        first_name: parsed.data.firstName,
+        last_name: parsed.data.lastName,
+        regulations_agreement: parsed.data.regulationsAgreement,
+        privacy_policy_agreement: parsed.data.privacyPolicyAgreement,
         role: UserRoles.USER,
       },
     },
   });
 
-  if (error) {
+  if (error && error.code === 'email_exists') {
+    return { data: null, error: 'Adres e-mail jest już w użyciu.' };
   }
 
-  if (error && error.code === 'invalid_credentials') {
-    return { error: 'Nieprawidłowe dane logowania', data: null };
+  const res = await fetch(
+    `${env.NEXT_PUBLIC_APP_URL}/api/checkout/subscription`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stripeProductId,
+        customerEmail: parsed.data.email,
+        clientReferenceId: data.user?.id,
+      }),
+    }
+  );
+
+  const { url } = await res.json();
+
+  if (error) {
+    return {
+      error: 'Podczas rejestracji wystąpił błąd. Spróbuj ponownie później.',
+      data: null,
+    };
   }
+
+  return { data: url, error: null };
 }
 
 export async function signOut() {

@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 import Link from 'next/link';
 import { buttonVariants } from '../ui/button';
 
-const subscriptionCardVariants = cva(
+export const subscriptionCardVariants = cva(
   'bg-white relative rounded-lg flex flex-col p-8',
   {
     variants: {
@@ -27,6 +27,7 @@ export interface SubscriptionCardProps
   name: string;
   price: number;
   features: { name: string }[];
+  showCTAButton: boolean
 }
 
 const calculateMonthly = (price: number, period: number | null) => {
@@ -37,7 +38,7 @@ const calculateMonthly = (price: number, period: number | null) => {
   return (price / 100 / period).toFixed(2);
 };
 
-export default function SubscriptionCard({
+export function SubscriptionCard({
   period,
   price,
   className,

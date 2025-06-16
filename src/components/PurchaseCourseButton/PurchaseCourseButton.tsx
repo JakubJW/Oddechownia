@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 interface PurchaseCourseButtonProps {
   text: string;
@@ -13,6 +14,8 @@ export default function PurchaseCourseButton({
   endpoint,
   payload,
 }: PurchaseCourseButtonProps) {
+  const router = useRouter();
+
   return (
     <Button
       variant="outline"
@@ -25,6 +28,10 @@ export default function PurchaseCourseButton({
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
           });
+
+          if (res.status === 401) {
+            return router.push('/dolacz-do-nas');
+          }
 
           const { url } = await res.json();
 

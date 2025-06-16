@@ -21,12 +21,10 @@ const handler = async ({ data }: Props) => {
     .where(eq(stripeProducts.stripeProductId, id))
     .returning({ updatedIds: stripeProducts.stripeProductId });
 
-  console.log('attempring path revalidation');
   revalidatePath('/');
-	console.log('path revalidation completed');
 
   if (!result.length) {
-    throw new Error('Subscription with given ID not found');
+    throw new Error('Product with given ID not found');
   }
 };
 
