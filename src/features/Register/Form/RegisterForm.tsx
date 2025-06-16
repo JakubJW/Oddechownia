@@ -46,7 +46,7 @@ export default function RegisterForm({
     );
     formData.append('stripeProductId', stripeProductId);
 
-    const { data, error } = await signup(formData, stripeProductId);
+    const { data } = await signup(formData, stripeProductId);
 
     window.location.href = data;
   };

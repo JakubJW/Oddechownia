@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { createSlug } from '@/lib/utils';
 
 type Props = {
-  data: { [key: string]: unknown };
+  data: { [key: string]: any };
 };
 
 const handler = async ({ data }: Props) => {

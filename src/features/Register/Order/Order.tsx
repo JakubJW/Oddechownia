@@ -1,10 +1,14 @@
 import { SubscriptionCard } from '@/components/SubscriptionCard/SubscriptionCard';
-import { stripeProducts } from '@/db/schema';
+import { stripeProducts, stripePrices } from '@/db/schema';
+
+type StripeProductWithPrice = typeof stripeProducts.$inferSelect & {
+  stripePrice: typeof stripePrices.$inferSelect;
+};
 
 export default function Order({
   stripeProduct,
 }: {
-  stripeProduct: typeof stripeProducts.$inferSelect;
+  stripeProduct: StripeProductWithPrice;
 }) {
   return (
     <div className="flex flex-col col-span-4 col-start-9">

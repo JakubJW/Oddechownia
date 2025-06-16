@@ -42,7 +42,7 @@ export default async function CoursesLibrary() {
           <div className="col-span-12 lg:col-span-2"></div>
           <CourseGrid
             courses={courses}
-            user={profile}
+            profile={profile}
           />
         </div>
       </Container>
