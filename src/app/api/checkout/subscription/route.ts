@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/stripe/stripe';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { stripeProducts } from '@/db/schema';
-import { createClient } from '@/supabase/server';
 import { env } from '@/../env';
+import { stripeService } from '@/services/stripe';
 
 export async function POST(req: NextRequest) {
-  const { stripeProductId } = await req.json();
+  const { stripeProductId, customerEmail, clientReferenceId } = await req.json();
 
   if (!stripeProductId) {
     return NextResponse.json(
@@ -16,15 +15,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (!customerEmail) {
     return NextResponse.json(
-      { message: 'User must be logged in to perform this action' },
-      { status: 401 }
+      { message: 'Customer email missing' },
+      { status: 400 }
     );
   }
 
@@ -46,7 +40,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await stripeService.createCheckoutSession({
     mode: 'subscription',
     line_items: [
       {
@@ -56,10 +50,8 @@ export async function POST(req: NextRequest) {
     ],
     success_url: `${env.NEXT_PUBLIC_APP_URL}/sukces?courseId=${stripePoduct.stripeProductId}`,
     cancel_url: `${env.NEXT_PUBLIC_APP_URL}/anuluj`,
-    metadata: {
-      courseId: stripePoduct.stripeProductId,
-      userId: user.id,
-    },
+    customer_email: customerEmail,
+    client_reference_id: clientReferenceId
   });
 
   if (!session.url) {

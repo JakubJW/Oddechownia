@@ -1,30 +1,21 @@
 'use server';
 
-import { env } from '@/../env';
-import { stripe } from '@/stripe/stripe';
+import { stripeService } from '@/services/stripe';
+import { buffer } from '@/utils/requestBodyBufer';
 import WEBHOOK_TYPES from '@/utils/webhooks/stripe/types';
 import get from 'lodash.get';
 import { NextResponse } from 'next/server';
-import { buffer } from '@/utils/requestBodyBufer';
-
-const webhookSecret = env.NEXT_STRIPE_WEBHOOK_SECRET;
+import Stripe from 'stripe';
 
 export async function POST(req: Request) {
   const text = await req.text();
   const raw = await buffer(text).then((buffer) => buffer.toString('utf8'));
 
-  if (!webhookSecret) {
-    return NextResponse.json(
-      { message: 'No webhook secret provided' },
-      { status: 400 }
-    );
-  }
-
-  let event;
+  let event: Stripe.Event;
   const signature = req.headers.get('stripe-signature') as string;
 
   try {
-    event = stripe.webhooks.constructEvent(raw, signature, webhookSecret);
+    event = stripeService.constructWebhookEvent(raw, signature);
   } catch (e) {
     console.error('Webhook signature verification failed', e);
     return NextResponse.json(

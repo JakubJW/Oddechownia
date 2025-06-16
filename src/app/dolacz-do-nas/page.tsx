@@ -11,7 +11,7 @@ const subscriptions = await db.query.stripeProducts.findMany({
   },
 });
 
-export default async function AvailableSubscriptions() {
+export default async function JoinUs() {
   return (
     <section>
       <Container className="overflow-hidden">
@@ -32,10 +32,9 @@ export default async function AvailableSubscriptions() {
           )}
 
           {subscriptions.map(
-            ({ stripeProductId, stripePrice, marketingFeatures, name }) => (
+            ({ stripeProductId, name, stripePrice, marketingFeatures }) => (
               <SubscriptionCard
                 key={stripeProductId}
-                name={name}
                 period={stripePrice.intervalCount}
                 price={stripePrice.unitAmount}
                 variant={
@@ -43,6 +42,7 @@ export default async function AvailableSubscriptions() {
                 }
                 features={marketingFeatures}
                 showCTAButton
+                name={name}
               />
             )
           )}

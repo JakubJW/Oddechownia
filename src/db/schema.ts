@@ -66,6 +66,8 @@ export const profiles = pgTable('profiles', {
   lastName: text('last_name'),
   regulationsAgreement: boolean('regulations_agreement').default(false),
   privacyPolicyAgreement: boolean('privacy_policy_agreement').default(false),
+  stripeCustomerId: varchar('stripe_customer_id'),
+  subscriptionStatus: varchar('subscription_status').default('inactive'),
 });
 
 export const coursesToProfiles = pgTable(

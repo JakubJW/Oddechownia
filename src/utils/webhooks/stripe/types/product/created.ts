@@ -1,6 +1,7 @@
 import { db } from '@/db';
 import { stripeProducts } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
+import { createSlug } from '@/lib/utils';
 
 type Props = {
   data: { [key: string]: any };
@@ -11,7 +12,7 @@ const handler = async ({ data }: Props) => {
 
   await db.insert(stripeProducts).values({
     stripeProductId: id,
-    name,
+    name: createSlug(name),
     description,
     active,
     marketingFeatures: marketing_features,

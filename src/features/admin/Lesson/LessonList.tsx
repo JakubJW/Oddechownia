@@ -75,7 +75,7 @@ export default function LessonList({ lessons, courseSlug }: LessonListProps) {
   if (!lessonsClone) return <p>Nie masz żadnych lekcji</p>;
 
   return (
-    <div className="space-y-4">
+    <div>
       <DndContext
         onDragEnd={handleDragEnd}
         collisionDetection={closestCenter}

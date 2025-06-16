@@ -4,27 +4,23 @@ import { getCourses } from '@/actions/course';
 import CourseGrid from '@/components/CourseGrid';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/supabase/server';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { getProfile } from '@/actions/profile';
 
 export const metadata: Metadata = {
   title: 'Nasze kursy | Oddechownia',
 };
 
 export default async function CoursesLibrary() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const profile = await getProfile();
   const courses = await getCourses({ published: true });
 
   return (
     <section>
       <Container className="pt-16">
         <hgroup
-          className={cn(!user ? 'text-start' : 'text-center', 'space-y-6')}
+          className={cn(!profile ? 'text-start' : 'text-center', 'space-y-6')}
         >
           <HeaderOne className="font-semibold">
             Rozpocznij swoją <span className="text-primaryFg">podróż</span>
@@ -33,7 +29,7 @@ export default async function CoursesLibrary() {
             Przeglądaj naszą bogatą kolekcję kursów jogi online, przygotowanych
             przez doświadczonych instruktorów.
           </p>
-          {!user && (
+          {!profile && (
             <Link
               href={'/dolacz-do-nas'}
               className={cn(buttonVariants({ size: 'lg' }))}
@@ -43,10 +39,10 @@ export default async function CoursesLibrary() {
           )}
         </hgroup>
         <div className="grid grid-cols-12 mt-32">
-          <div className="col-span-12 lg:col-span-2">es</div>
+          <div className="col-span-12 lg:col-span-2"></div>
           <CourseGrid
             courses={courses}
-            user={user}
+            profile={profile}
           />
         </div>
       </Container>

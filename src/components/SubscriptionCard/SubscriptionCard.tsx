@@ -1,11 +1,10 @@
-'use client';
-
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
-import PurchaseCourseButton from '../PurchaseCourseButton/PurchaseCourseButton';
+import Link from 'next/link';
+import { buttonVariants } from '../ui/button';
 
-const subscriptionCardVariants = cva(
+export const subscriptionCardVariants = cva(
   'bg-white relative rounded-lg flex flex-col p-8',
   {
     variants: {
@@ -25,9 +24,10 @@ export interface SubscriptionCardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof subscriptionCardVariants> {
   period: number | null;
+  name: string;
   price: number;
-  productId: string;
   features: { name: string }[];
+  showCTAButton: boolean
 }
 
 const calculateMonthly = (price: number, period: number | null) => {
@@ -38,12 +38,12 @@ const calculateMonthly = (price: number, period: number | null) => {
   return (price / 100 / period).toFixed(2);
 };
 
-export default function SubscriptionCard({
+export function SubscriptionCard({
   period,
   price,
   className,
   variant,
-  productId,
+  name,
   features,
 }: SubscriptionCardProps) {
   return (
@@ -78,13 +78,7 @@ export default function SubscriptionCard({
           </li>
         ))}
       </ul>
-      <PurchaseCourseButton
-        endpoint="/api/checkout/subscription"
-        text="Wybierz"
-        payload={{
-          stripeProductId: productId,
-        }}
-      />
+      <Link href={`rejestracja/${name}`} className={buttonVariants({ variant: "default"})}>Wybierz</Link>
     </div>
   );
 }
