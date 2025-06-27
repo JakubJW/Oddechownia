@@ -1,6 +1,6 @@
 'use server';
 
-import { env } from '@/../env';
+import { env } from '@/env';
 import WEBHOOK_TYPES from '@/utils/webhooks/mux/types';
 import Mux from '@mux/mux-node';
 import get from 'lodash.get';
@@ -8,7 +8,10 @@ import { NextResponse } from 'next/server';
 import { buffer } from '@/utils/requestBodyBufer';
 
 const webhookSecret = env.NEXT_MUX_WEBHOOK_SECRET;
-const mux = new Mux({ tokenId: env.NEXT_MUX_TOKEN_ID, tokenSecret: env.NEXT_MUX_TOKEN_SECRET });
+const mux = new Mux({
+  tokenId: env.NEXT_MUX_TOKEN_ID,
+  tokenSecret: env.NEXT_MUX_TOKEN_SECRET,
+});
 
 export async function POST(req: Request) {
   const text = await req.text();

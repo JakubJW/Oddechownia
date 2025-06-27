@@ -4,7 +4,7 @@ import { Source_Sans_3 } from 'next/font/google';
 import Navigation from '@/components/Navigation/Navigation';
 import Footer from '@/components/Footer/Footer';
 import { createClient } from '@/supabase/server';
-import { env } from '../../env';
+import { env } from '@/env';
 import MaintenanceMode from '@/features/Maintenance/MaintenanceMode';
 
 export const metadata: Metadata = {

@@ -6,7 +6,7 @@ import { createClient } from '@/supabase/server';
 import { UserRoles } from '@/db/consts';
 import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
 import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
-import { env } from '../../../env';
+import { env } from '@/env';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();

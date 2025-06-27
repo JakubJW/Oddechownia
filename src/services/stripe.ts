@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { env } from '../../env';
+import { env } from '@/env';
 
 class StripeService {
   private static _instance: StripeService;
@@ -53,9 +53,19 @@ class StripeService {
     }
   }
 
+  public async getProduct(productId: string) {
+    try {
+      const product = await this.stripe.products.retrieve(productId);
+      return product;
+    } catch (error) {
+      console.error('Error retrieving product:', error);
+      throw error;
+    }
+  }
+
   public constructWebhookEvent(
     rawBody: string | Buffer,
-    signature: string,
+    signature: string
   ): Stripe.Event {
     try {
       return this.stripe.webhooks.constructEvent(

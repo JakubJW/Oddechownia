@@ -2,7 +2,7 @@ import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 import * as relations from './relations';
-import { env } from '../../env';
+import { env } from '@/env';
 
 const connectionString = env.NEXT_DATABASE_URL;
 

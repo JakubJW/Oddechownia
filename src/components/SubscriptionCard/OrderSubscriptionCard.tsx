@@ -1,36 +1,16 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import Stripe from 'stripe';
-import ChooseSubscriptionButton from './ChooseSubscriptionButton';
-import { getProfile } from '@/actions/profile';
 
-export const subscriptionCardVariants = cva(
-  'bg-white relative rounded-lg flex flex-col p-8',
-  {
-    variants: {
-      variant: {
-        default: 'border',
-        popular:
-          'border border-matcha bg-gradient-to-b from-white to-matcha-foreground',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+import { subscriptionCardVariants } from './SubscriptionCard';
 
-type Profile = Awaited<ReturnType<typeof getProfile>>;
 export interface SubscriptionCardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof subscriptionCardVariants> {
   period: number | null;
-  name: string;
-  stripeProductId: string;
   price: number;
   features: Stripe.Product.MarketingFeature[];
-  profile: Profile | null;
 }
 
 const calculateMonthly = (price: number, period: number | null) => {
@@ -41,15 +21,12 @@ const calculateMonthly = (price: number, period: number | null) => {
   return (price / 100 / period).toFixed(2);
 };
 
-export function SubscriptionCard({
+export function OrderSubscriptionCard({
   period,
   price,
-  name,
-  stripeProductId,
   className,
   variant,
   features,
-  profile,
 }: SubscriptionCardProps) {
   return (
     <div className={cn(subscriptionCardVariants({ variant, className }))}>
@@ -83,11 +60,6 @@ export function SubscriptionCard({
           </li>
         ))}
       </ul>
-      <ChooseSubscriptionButton
-        profile={profile}
-        route={`/rejestracja/${name}`}
-        stripeProductId={stripeProductId}
-      />
     </div>
   );
 }
