@@ -22,7 +22,7 @@ export const getProfile = async () => {
       return null;
     }
 
-    return profile;
+    return { ...profile, ...user };
   } catch (error) {
     console.log(error);
     return null;

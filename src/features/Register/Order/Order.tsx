@@ -1,8 +1,8 @@
-import { SubscriptionCard } from '@/components/SubscriptionCard/SubscriptionCard';
+import { OrderSubscriptionCard } from '@/components/SubscriptionCard/OrderSubscriptionCard';
 import { stripeProducts, stripePrices } from '@/db/schema';
 
 type StripeProductWithPrice = typeof stripeProducts.$inferSelect & {
-  stripePrice: typeof stripePrices.$inferSelect;
+  stripePrices: (typeof stripePrices.$inferSelect)[];
 };
 
 export default function Order({
@@ -13,13 +13,11 @@ export default function Order({
   return (
     <div className="flex flex-col col-span-4 col-start-9">
       <p className="font-bold text-xl mb-8">Twoje zamówienie</p>
-      <SubscriptionCard
+      <OrderSubscriptionCard
         features={stripeProduct.marketingFeatures}
         variant="popular"
-        period={stripeProduct.stripePrice.intervalCount}
-        price={stripeProduct.stripePrice.unitAmount}
-        name={stripeProduct.name}
-        showCTAButton={false}
+        period={stripeProduct.stripePrices[0].intervalCount}
+        price={stripeProduct.stripePrices[0].unitAmount}
       />
     </div>
   );

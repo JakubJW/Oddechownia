@@ -1,17 +1,13 @@
-'use server';
-
 import { SubscriptionCard } from '@/components/SubscriptionCard/SubscriptionCard';
 import Container from '@/components/Container/Container';
 import HeaderTwo from '@/components/Headers/HeaderTwo';
-import { db } from '@/db';
+import { getSubscriptions } from '@/actions/product';
+import { getProfile } from '@/actions/profile';
 
-const subscriptions = await db.query.stripeProducts.findMany({
-  with: {
-    stripePrice: true,
-  },
-});
+const subscriptions = await getSubscriptions();
 
 export default async function JoinUs() {
+  const profile = await getProfile();
   return (
     <section>
       <Container className="overflow-hidden">
@@ -41,8 +37,9 @@ export default async function JoinUs() {
                   stripePrice.intervalCount === 3 ? 'popular' : 'default'
                 }
                 features={marketingFeatures}
-                showCTAButton
                 name={name}
+                profile={profile}
+                stripeProductId={stripeProductId}
               />
             )
           )}

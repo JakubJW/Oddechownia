@@ -4,7 +4,7 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { courses } from '@/db/schema';
 import { createClient } from '@/supabase/server';
-import { env } from '@/../env';
+import { env } from '@/env';
 
 export async function POST(req: NextRequest) {
   const { courseId } = await req.json();

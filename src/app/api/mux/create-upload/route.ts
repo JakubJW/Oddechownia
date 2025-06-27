@@ -3,7 +3,7 @@
 import { createVideo } from '@/actions/video';
 import Mux from '@mux/mux-node';
 import { NextResponse } from 'next/server';
-import { env } from '../../../../../env';
+import { env } from '@/env';
 
 const mux = new Mux({
   tokenId: env.NEXT_MUX_TOKEN_ID,

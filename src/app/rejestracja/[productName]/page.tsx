@@ -1,29 +1,24 @@
 import RegisterForm from '@/features/Register/Form/RegisterForm';
 import Container from '@/components/Container/Container';
 import Order from '@/features/Register/Order/Order';
-import { db } from '@/db';
-import { stripeProducts } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import { getSubscriptionBySlug } from '@/actions/product';
 import { getProfile } from '@/actions/profile';
+import { redirect } from 'next/navigation';
 
 export default async function SignIn({
   params,
 }: {
   params: Promise<{ productName: string }>;
 }) {
+  const { productName } = await params;
   const profile = await getProfile();
-  if (profile) {
+
+  if (profile && profile.subscriptionStatus === 'active') {
     redirect('/moje-konto');
   }
 
-  const { productName } = await params;
-  const stripeProduct = await db.query.stripeProducts.findFirst({
-    where: eq(stripeProducts.name, productName),
-    with: {
-      stripePrice: true,
-    },
-  });
+  const stripeProduct = await getSubscriptionBySlug(productName);
 
   if (!stripeProduct) {
     notFound();

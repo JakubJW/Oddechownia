@@ -1,3 +1,5 @@
+import Stripe from 'stripe';
+
 import {
   pgTable,
   serial,
@@ -95,7 +97,7 @@ export const stripeProducts = pgTable('stripe_products', {
     .defaultNow()
     .notNull(),
   marketingFeatures: jsonb('marketing_features')
-    .$type<{ name: string }[]>()
+    .$type<Stripe.Product.MarketingFeature[]>()
     .notNull(),
 });
 
