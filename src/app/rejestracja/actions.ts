@@ -4,13 +4,15 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/server';
 import { UserRoles } from '@/db/consts';
-import { formSchema } from '@/features/Login/Form/schema';
+import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
+import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
+import { env } from '@/env';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
 
   const data = Object.fromEntries(formData);
-  const parsed = formSchema.safeParse(data);
+  const parsed = loginFormSchema.safeParse(data);
 
   if (!parsed.success) {
     return { data: null, error: null };
@@ -31,39 +33,63 @@ export async function login(formData: FormData) {
   return { data: null, error: null };
 }
 
-export async function signup(formData: FormData) {
+export async function signup(formData: FormData, stripeProductId: string) {
   const supabase = await createClient();
 
-  const userData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-    firstName: formData.get('firstName') as string,
-    lastName: formData.get('lastName') as string,
-    regulationsAgreement: Boolean(formData.get('regulationsAgreement')),
-    privacyPolicyAgreement: Boolean(formData.get('privacyPolicyAgreement')),
-  };
+  const { regulationsAgreement, privacyPolicyAgreement, ...rest } =
+    Object.fromEntries(formData);
+  const parsed = registerFormSchema.safeParse({
+    regulationsAgreement: Boolean(regulationsAgreement),
+    privacyPolicyAgreement: Boolean(privacyPolicyAgreement),
+    ...rest,
+  });
 
-  const { error } = await supabase.auth.signUp({
-    email: userData.email,
-    password: userData.password,
+  if (!parsed.success) {
+    console.log(parsed.error.flatten());
+    return { data: null, error: null };
+  }
+
+  const { data, error } = await supabase.auth.signUp({
+    email: parsed.data.email,
+    password: parsed.data.password,
     options: {
       data: {
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-        regulations_agreement: userData.regulationsAgreement,
-        privacy_policy_agreement: userData.privacyPolicyAgreement,
+        first_name: parsed.data.firstName,
+        last_name: parsed.data.lastName,
+        regulations_agreement: parsed.data.regulationsAgreement,
+        privacy_policy_agreement: parsed.data.privacyPolicyAgreement,
         role: UserRoles.USER,
       },
     },
   });
 
-  if (error) {
-    console.log(error);
-    // redirect('/error');
+  if (error && error.code === 'email_exists') {
+    return { data: null, error: 'Adres e-mail jest już w użyciu.' };
   }
 
-  revalidatePath('/', 'layout');
-  redirect('/');
+  const res = await fetch(
+    `${env.NEXT_PUBLIC_APP_URL}/api/checkout/subscription`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stripeProductId,
+        customerEmail: parsed.data.email,
+        clientReferenceId: data.user?.id,
+      }),
+    }
+  );
+
+  const { url } = await res.json();
+
+  if (error) {
+    return {
+      error: 'Podczas rejestracji wystąpił błąd. Spróbuj ponownie później.',
+      data: null,
+    };
+  }
+
+  return { data: url, error: null };
 }
 
 export async function signOut() {

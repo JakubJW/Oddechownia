@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/stripe/stripe';
+import { stripeService } from '@/services/stripe';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { courses } from '@/db/schema';
 import { createClient } from '@/supabase/server';
-import { env } from '@/../env';
+import { env } from '@/env';
 
 export async function POST(req: NextRequest) {
   const { courseId } = await req.json();
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await stripeService.createCheckoutSession({
     mode: 'payment',
     line_items: [
       {

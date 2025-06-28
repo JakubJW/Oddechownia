@@ -1,14 +1,14 @@
 import Pagination from '@/components/Pagination/Pagination';
 import CourseCard from '@/components/CourseCard/CourseCard';
 import { CourseWithLessonsWithVideos } from '@/db/types';
-import { User } from '@supabase/supabase-js';
+import { profiles } from '@/db/schema';
 
 interface CourseGridProps {
   courses: CourseWithLessonsWithVideos;
-  user: User | null;
+  profile: typeof profiles.$inferSelect | null;
 }
 
-export default function CourseGrid({ courses, user }: CourseGridProps) {
+export default function CourseGrid({ courses, profile }: CourseGridProps) {
   if (!courses) {
     return (
       <div className="col-span-12 lg:col-span-10 text-red-500 min-h-[300px]">
@@ -48,7 +48,7 @@ export default function CourseGrid({ courses, user }: CourseGridProps) {
               totalVideos={lessonCount}
               totalDuration={Math.round(totalDuration)}
               thumbnailUrl={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
-              disabled={!user}
+              disabled={!profile}
               isOneOff={isOneOff}
               priceInCents={priceInCents}
             />

@@ -50,13 +50,24 @@ export const coursesToProfilesRelations = relations(
   })
 );
 
-export const stripeProductsRelations = relations(stripeProducts, ({ one }) => ({
-  stripePrice: one(stripePrices, {
-    fields: [stripeProducts.stripeProductId],
-    references: [stripePrices.stripeProductId],
-  }),
+// export const stripeProductsRelations = relations(stripeProducts, ({ one }) => ({
+//   stripePrice: one(stripePrices, {
+//     fields: [stripeProducts.stripeProductId],
+//     references: [stripePrices.stripeProductId],
+//   }),
+// }));
+
+export const stripeProductsRelations = relations(stripeProducts, ({ many }) => ({
+  stripePrices: many(stripePrices),
 }));
 
-export const stripePricesRelations = relations(stripePrices, ({ many }) => ({
-  stripeProducts: many(stripeProducts),
+// export const stripePricesRelations = relations(stripePrices, ({ many }) => ({
+//   stripeProducts: many(stripeProducts),
+// }));
+
+export const stripePricesRelations = relations(stripePrices, ({ one }) => ({
+  stripeProduct: one(stripeProducts, {
+    fields: [stripePrices.stripeProductId],
+    references: [stripeProducts.stripeProductId]
+  }),
 }));

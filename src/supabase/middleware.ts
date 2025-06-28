@@ -1,7 +1,6 @@
-import { UserRoles } from '@/db/consts';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { env } from '../../env';
+import { env } from '@/env';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -36,38 +35,15 @@ export async function updateSession(request: NextRequest) {
   // issues with users being randomly logged out.
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
-
   const { pathname }: { pathname: string } = request.nextUrl;
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const authRoutes = ['/logowanie', '/rejestracja', '/zapomnialem-hasla'];
-  const RedirectToDashboard = () => {
-    if (user?.user_metadata.role == UserRoles.ADMIN) {
-      return NextResponse.redirect(new URL('/admin', request.url));
-    } else if (user?.user_metadata.role == UserRoles.USER) {
-      return NextResponse.redirect(new URL('/moje-konto', request.url));
-    }
-  };
-
-  const RedirectToLogin = () => {
-    return NextResponse.redirect(new URL('/logowanie', request.url));
-  };
-
-  if (user && authRoutes.includes(pathname)) {
-    return RedirectToDashboard();
-  } else if (!user && !authRoutes.includes(pathname)) {
-    return RedirectToLogin();
+  if (user && pathname === '/logowanie') {
+    return NextResponse.redirect(new URL('/moje-konto', request.url));
   }
-
-  if (
-    pathname.startsWith('/admin') &&
-    user?.user_metadata.role !== UserRoles.ADMIN
-  ) {
-    return RedirectToDashboard();
-  }
-
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

@@ -29,16 +29,18 @@ interface LessonFormProps {
 const formSchema = z.object({
   name: z.string(),
   description: z.string(),
-  isPublished: z.boolean(),
-  uploadId: z.string(),
   courseSlug: z.string(),
+  video: z.object({
+    uploadId: z.string(),
+  }),
 });
 
 const initialState = {
   name: '',
   description: '',
-  isPublished: false,
-  uploadId: '',
+  video: {
+    uploadId: '',
+  },
 };
 
 export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
@@ -51,6 +53,10 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
       ? {
           name: lesson.name,
           description: lesson.description,
+          courseSlug,
+          video: {
+            uploadId: lesson.video ? lesson.video?.uploadId : '',
+          },
         }
       : { ...initialState, courseSlug },
     mode: 'onChange',
@@ -58,12 +64,21 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (lesson) {
-      await updateLesson(lesson.slug, values);
+      const { error } = await updateLesson(lesson.slug, values);
+      if (error) {
+        console.log(error);
+      } else {
+        router.push(`/admin/kurs/${courseSlug}`);
+      }
     } else {
-      await createLesson(values);
-    }
+      const { error } = await createLesson(values);
 
-    router.push(`/admin/kursy`);
+      if (error) {
+        console.log(error);
+      } else {
+        router.push(`/admin/kurs/${courseSlug}`);
+      }
+    }
   };
 
   return (
@@ -84,7 +99,7 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  <FormMessage></FormMessage>
+                  <FormMessage />
                 </FormItem>
               </FormItem>
             )}
@@ -99,22 +114,25 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
-                  <FormMessage></FormMessage>
+                  <FormMessage />
                 </FormItem>
               </FormItem>
             )}
           />
-          {lesson ? (
-            <MuxPlayer
-              className="mb-6 w-full aspect-video"
-              streamType="on-demand"
-              playbackId={lesson.video?.publicPlaybackId || undefined}
-              metadata={{
-                video_series: lesson.courseId,
-                video_title: lesson.name,
-                player_name: 'Video Course Starter Kit',
-              }}
-            />
+          {lesson && lesson.video ? (
+            <>
+              <MuxPlayer
+                className="mb-6 w-full aspect-video rounded-lg overflow-hidden"
+                streamType="on-demand"
+                playbackId={lesson.video.publicPlaybackId || undefined}
+                metadata={{
+                  video_series: lesson.courseId,
+                  video_title: lesson.name,
+                  player_name: 'Video Course Starter Kit',
+                }}
+              />
+              <Button>Usuń film</Button>
+            </>
           ) : (
             <MuxUploader
               endpoint={async () => {
@@ -126,7 +144,7 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
                   return console.error(error);
                 }
 
-                form.setValue('uploadId', data.upload_id);
+                form.setValue('video.uploadId', data.upload_id);
                 return data.upload_url;
               }}
               type="bar"

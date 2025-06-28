@@ -1,30 +1,24 @@
-// import SubscriptionCard from '@/components/SubscriptionCard/SubscriptionCard';
-import { Button } from '@/components/ui/button';
+import { OrderSubscriptionCard } from '@/components/SubscriptionCard/OrderSubscriptionCard';
+import { stripeProducts, stripePrices } from '@/db/schema';
 
-export interface OrderProps {
-  nextStepDisabled: boolean;
-}
+type StripeProductWithPrice = typeof stripeProducts.$inferSelect & {
+  stripePrices: (typeof stripePrices.$inferSelect)[];
+};
 
-export default function Order({ nextStepDisabled }: OrderProps) {
+export default function Order({
+  stripeProduct,
+}: {
+  stripeProduct: StripeProductWithPrice;
+}) {
   return (
     <div className="flex flex-col col-span-4 col-start-9">
       <p className="font-bold text-xl mb-8">Twoje zamówienie</p>
-      {/* <SubscriptionCard
+      <OrderSubscriptionCard
+        features={stripeProduct.marketingFeatures}
         variant="popular"
-        period={3}
-        price={240}
-      /> */}
-      <p className="font-bold text-xl mt-8 mb-4">Podsumowanie</p>
-      <div className="flex justify-between mb-8">
-        <p>Do zapłaty:</p>
-        <p className="font-bold text-xl">240zł</p>
-      </div>
-      <Button
-        size="lg"
-        disabled={nextStepDisabled}
-      >
-        Przejdź do posumowania
-      </Button>
+        period={stripeProduct.stripePrices[0].intervalCount}
+        price={stripeProduct.stripePrices[0].unitAmount}
+      />
     </div>
   );
 }

@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/stripe/stripe';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { stripeProducts } from '@/db/schema';
-import { createClient } from '@/supabase/server';
-import { env } from '@/../env';
+import { env } from '@/env';
+import { stripeService } from '@/services/stripe';
 
 export async function POST(req: NextRequest) {
-  const { stripeProductId } = await req.json();
+  const { stripeProductId, customerEmail, clientReferenceId } = await req.json();
 
   if (!stripeProductId) {
     return NextResponse.json(
@@ -16,22 +15,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (!customerEmail) {
     return NextResponse.json(
-      { message: 'User must be logged in to perform this action' },
-      { status: 401 }
+      { message: 'Customer email missing' },
+      { status: 400 }
     );
   }
 
   const stripePoduct = await db.query.stripeProducts.findFirst({
     where: eq(stripeProducts.stripeProductId, stripeProductId),
     with: {
-      stripePrice: true,
+      stripePrices: true,
     },
   });
 
@@ -39,27 +33,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Product not found' }, { status: 404 });
   }
 
-  if (!stripePoduct.stripePrice) {
+  if (!stripePoduct.stripePrices) {
     return NextResponse.json(
       { message: 'Product  does not have associated stripe price id' },
       { status: 422 }
     );
   }
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await stripeService.createCheckoutSession({
     mode: 'subscription',
     line_items: [
       {
-        price: stripePoduct.stripePrice.stripePriceId,
+        price: stripePoduct.stripePrices[0].stripePriceId,
         quantity: 1,
       },
     ],
-    success_url: `${env.NEXT_PUBLIC_APP_URL}/sukces?courseId=${stripePoduct.stripeProductId}`,
-    cancel_url: `${env.NEXT_PUBLIC_APP_URL}/anuluj`,
-    metadata: {
-      courseId: stripePoduct.stripeProductId,
-      userId: user.id,
-    },
+    success_url: `${env.NEXT_PUBLIC_APP_URL}/moje-konto`,
+    cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,
+    customer_email: customerEmail,
+    client_reference_id: clientReferenceId
   });
 
   if (!session.url) {

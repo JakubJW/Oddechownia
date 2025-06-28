@@ -6,9 +6,8 @@ import { getProfile } from '@/actions/profile';
 
 const subscriptions = await getSubscriptions();
 
-export default async function AvailableSubscriptions() {
+export default async function JoinUs() {
   const profile = await getProfile();
-
   return (
     <section>
       <Container className="overflow-hidden">
@@ -29,16 +28,16 @@ export default async function AvailableSubscriptions() {
           )}
 
           {subscriptions.map(
-            ({ stripeProductId, stripePrice, marketingFeatures, name }) => (
+            ({ stripeProductId, name, stripePrice, marketingFeatures }) => (
               <SubscriptionCard
                 key={stripeProductId}
-                name={name}
                 period={stripePrice.intervalCount}
                 price={stripePrice.unitAmount}
                 variant={
                   stripePrice.intervalCount === 3 ? 'popular' : 'default'
                 }
                 features={marketingFeatures}
+                name={name}
                 profile={profile}
                 stripeProductId={stripeProductId}
               />

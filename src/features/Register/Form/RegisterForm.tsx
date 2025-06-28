@@ -1,102 +1,218 @@
 'use client';
 
 import { signup } from '@/app/rejestracja/actions';
-import { Form } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import Stepper from '../../../components/Stepper/Stepper';
-import {
-  initialAccountData,
-  initialPaymentData,
-  useFormContext,
-} from './formContext';
-import { formSchema } from './schema';
-import AccountData from './Steps/AccountData';
-import PaymentData from './Steps/PaymentData';
-import Summary from './Steps/Summary';
+import { defaultValues, formSchema } from './schema';
 
-const registerSteps = [
-  { label: 'Dane konta' },
-  { label: 'Dane płatności' },
-  { label: 'Podsumowanie' },
-];
-
-export default function RegisterForm() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const { setAccountData, setPaymentData } = useFormContext();
-
+export default function RegisterForm({
+  stripeProductId,
+}: {
+  stripeProductId: string;
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      accountData: initialAccountData,
-      paymentData: initialPaymentData,
-    },
+    defaultValues,
     mode: 'all',
   });
 
-  const handleStepChange = (stepIndex: number) => {
-    switch (stepIndex) {
-      case 1:
-        form.trigger('accountData');
-
-        if (form.formState.errors.accountData) {
-          return;
-        }
-
-        setAccountData((prevState) => ({
-          ...prevState,
-          ...form.getValues('accountData'),
-        }));
-        setCurrentStep(stepIndex);
-
-        break;
-      case 2:
-        form.trigger('paymentData');
-
-        if (form.formState.errors.paymentData) {
-          return;
-        }
-
-        setPaymentData((prevState) => ({
-          ...prevState,
-          ...form.getValues('paymentData'),
-        }));
-
-        setCurrentStep(stepIndex);
-        break;
-    }
-  };
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
-    formData.append('email', values.accountData.email);
-    formData.append('password', values.accountData.password);
-    formData.append('firstName', values.accountData.firstName);
-    formData.append('lastName', values.accountData.lastName);
-    formData.append('regulationsAgreement', String(values.accountData.regulationsAgreement));
-    formData.append('privacyPolicyAgreement', String(values.accountData.privacyPolicyAgreement));
 
-    await signup(formData);
+    formData.append('email', values.email);
+    formData.append('password', values.password);
+    formData.append('passwordConfirmation', values.passwordConfirmation);
+    formData.append('firstName', values.firstName);
+    formData.append('lastName', values.lastName);
+    formData.append(
+      'regulationsAgreement',
+      String(values.regulationsAgreement)
+    );
+    formData.append(
+      'privacyPolicyAgreement',
+      String(values.privacyPolicyAgreement)
+    );
+    formData.append('stripeProductId', stripeProductId);
+
+    const { data } = await signup(formData, stripeProductId);
+
+    window.location.href = data;
   };
 
   return (
     <div className="col-span-6">
-      <Stepper
-        steps={registerSteps}
-        currentStep={currentStep}
-        onStepChange={handleStepChange}
-      />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {currentStep === 0 && <AccountData form={form} />}
-          {currentStep === 1 && <PaymentData form={form} />}
-          {currentStep === 2 && <Summary />}
-          <button type="submit">Zarejestruj</button>
+          <div className="mt-6 space-y-6">
+            <div className="space-y-4">
+              <p className="font-bold text-xl mb-4">Twoje dane</p>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Imię</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nazwisko</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adres e-mail</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hasło</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="passwordConfirmation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Powtórz hasło</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="regulationsAgreement"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex gap-4">
+                        <Checkbox
+                          id="regulations"
+                          checked={field.value}
+                          onCheckedChange={(checked: boolean) =>
+                            field.onChange(checked)
+                          }
+                        />
+                        <label
+                          htmlFor="regulations"
+                          className="text-sm font-medium leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Akceptuję regulamin serwisu oraz chcę natychmiastowego
+                          świadczenia usług i rozumiem, że nie będę mógł od niej
+                          odstąpić w terminie 14 dni (wymagane).{' '}
+                          <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="privacyPolicyAgreement"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex gap-4">
+                        <Checkbox
+                          id="privacy"
+                          checked={field.value}
+                          onCheckedChange={(checked: boolean) =>
+                            field.onChange(checked)
+                          }
+                        />
+                        <label
+                          htmlFor="privacy"
+                          className="text-sm font-medium leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Oświadczam, że zapoznałem się z Polityką Prywatności w
+                          tym z informacją o dobrowolnym charakterze wyrażenia
+                          zgody oraz prawie do wycofania zgody w każdym czasie.{' '}
+                          <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <Button
+            size="lg"
+            disabled={!form.formState.isValid}
+          >
+            Zatwierdź
+          </Button>
         </form>
       </Form>
     </div>
