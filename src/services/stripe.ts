@@ -62,6 +62,17 @@ class StripeService {
       throw error;
     }
   }
+  public async createPrice(
+    params: Stripe.PriceCreateParams
+  ): Promise<Stripe.Price> {
+    try {
+      const price = await this.stripe.prices.create(params);
+      return price;
+    } catch (error) {
+      console.error('Error creating price:', error);
+      throw error;
+    }
+  }
 
   public constructWebhookEvent(
     rawBody: string | Buffer,
