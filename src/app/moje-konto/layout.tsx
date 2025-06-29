@@ -1,6 +1,8 @@
 import Container from '@/components/Container/Container';
 import Link from 'next/link';
 import { getProfile } from '@/actions/profile';
+import { Button } from '@/components/ui/button';
+import { signOut } from '../rejestracja/actions';
 
 export default async function UserLayout({
   children,
@@ -23,6 +25,9 @@ export default async function UserLayout({
             dołącz do nas!
           </Link>
         </p>
+        <form action={signOut}>
+          <Button type="submit">Wyloguj</Button>
+        </form>
       </div>
     );
   }

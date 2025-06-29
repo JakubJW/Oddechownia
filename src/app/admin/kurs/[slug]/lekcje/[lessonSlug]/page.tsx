@@ -1,5 +1,5 @@
 import { getLessonBySlug } from '@/actions/lesson';
-import AdminNewLesson from '@/features/admin/Course/LessonForm';
+import AdminNewLesson from '@/features/admin/Lesson/LessonForm';
 import { notFound } from 'next/navigation';
 
 export default async function AdminEditLesson({

@@ -44,10 +44,10 @@ export default function Hero() {
           </Button>
         </div>
         <Image
-          className="homepage-hero-image object-cover w-1/2 hidden md:block"
+          className="homepage-hero-image object-cover object-bottom  w-1/2 hidden md:block"
           src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/website-assets/images/hero.png"
           alt="Hero image"
-          height={1365}
+          height={3088}
           width={2048}
           priority={true}
         />

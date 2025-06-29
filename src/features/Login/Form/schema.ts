@@ -9,3 +9,8 @@ export const formSchema = z.object({
     .pipe(nonEmptyString),
   password: z.string().pipe(nonEmptyString),
 });
+
+export const defaultValues = {
+  email: '',
+  password: '',
+};
