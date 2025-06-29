@@ -1,3 +1,8 @@
+// Do zrobienia: admin ma w dashboardzie że nie ma suba
+// Kurs jest linkiem i do wymyślenia co ma sie stać, jeśli jest status disabled
+// Gdy kurs jest jednorazowy, dodatkowo sprawdzamy czy jest wykupiony przez użytkownika i jakoś to pokazujemy
+
+
 import Pagination from '@/components/Pagination/Pagination';
 import CourseCard from '@/components/CourseCard/CourseCard';
 import { CourseWithLessonsWithVideos } from '@/db/types';
@@ -38,7 +43,7 @@ export default function CourseGrid({ courses, profile }: CourseGridProps) {
             totalDuration,
             lessons,
             isOneOff,
-            priceInCents
+            priceInCents,
           }) => (
             <CourseCard
               key={id}
@@ -48,7 +53,7 @@ export default function CourseGrid({ courses, profile }: CourseGridProps) {
               totalVideos={lessonCount}
               totalDuration={Math.round(totalDuration)}
               thumbnailUrl={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
-              disabled={!profile}
+              disabled={!profile || profile.subscriptionStatus !== 'inactive'}
               isOneOff={isOneOff}
               priceInCents={priceInCents}
             />

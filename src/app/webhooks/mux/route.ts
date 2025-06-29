@@ -1,62 +1,142 @@
 'use server';
 
 import { env } from '@/env';
-import WEBHOOK_TYPES from '@/utils/webhooks/mux/types';
 import Mux from '@mux/mux-node';
-import get from 'lodash.get';
 import { NextResponse } from 'next/server';
 import { buffer } from '@/utils/requestBodyBufer';
+import { headers } from 'next/headers';
+import { db } from '@/db';
+import { videos } from '@/db/schema';
+import { not, eq, and } from 'drizzle-orm';
 
-const webhookSecret = env.NEXT_MUX_WEBHOOK_SECRET;
 const mux = new Mux({
   tokenId: env.NEXT_MUX_TOKEN_ID,
   tokenSecret: env.NEXT_MUX_TOKEN_SECRET,
+  webhookSecret: env.NEXT_MUX_WEBHOOK_SECRET,
 });
 
 export async function POST(req: Request) {
-  const text = await req.text();
-  const raw = await buffer(text).then((buffer) => buffer.toString('utf8'));
-
-  if (!webhookSecret) {
-    return NextResponse.json(
-      { message: 'No webhook secret provided' },
-      { status: 400 }
-    );
-  }
+  const body = await req.text();
+  const headerList = await headers();
+  const raw = await buffer(body).then((buffer) => buffer.toString('utf8'));
 
   try {
-    mux.webhooks.verifySignature(raw, req.headers, webhookSecret);
+    mux.webhooks.verifySignature(raw, req.headers);
   } catch (e) {
     console.error('Webhook signature verification failed', e);
     return NextResponse.json(
-      { message: `Webhook error: ${(e as Error).message}` },
+      { message: 'Webhook signature verification failed' },
       {
         status: 400,
       }
     );
   }
 
-  const json = JSON.parse(raw);
-  const { data, type } = json;
-
-  const WEBHOOK_TYPE_HANDLER = get(WEBHOOK_TYPES, type);
-  if (!WEBHOOK_TYPE_HANDLER) {
-    console.error('Webhook type handler not found');
-    return NextResponse.json({ message: 'Server error' }, { status: 500 });
-  }
+  const event = mux.webhooks.unwrap(body, headerList);
 
   try {
-    await WEBHOOK_TYPE_HANDLER({ data });
-    return NextResponse.json({ message: 'Success' }, { status: 200 });
-  } catch (e) {
-    if (e instanceof Error) {
-      console.error(`Webhook Error: ${e.message}`);
-      return NextResponse.json(
-        { message: `Webhook Error: ${e.message}` },
-        { status: 400 }
-      );
-    }
+    switch (event.type) {
+      case 'video.asset.created': {
+        const { upload_id, playback_ids, status } = event.data;
 
+        if (!upload_id || !playback_ids) {
+          return NextResponse.json({ message: '' }, { status: 400 });
+        }
+
+        const publicPlaybackRow = playback_ids.find(
+          (row) => row.policy === 'public'
+        );
+        if (!publicPlaybackRow) {
+          return NextResponse.json(
+            { message: 'Public playback id missing' },
+            { status: 400 }
+          );
+        }
+
+        const privatePlaybackRow = playback_ids.find(
+          (row) => row.policy === 'signed'
+        );
+        if (!privatePlaybackRow) {
+          return NextResponse.json(
+            { message: 'Private playback id missing' },
+            { status: 400 }
+          );
+        }
+
+        await db
+          .update(videos)
+          .set({
+            publicPlaybackId: publicPlaybackRow.id,
+            privatePlaybackId: privatePlaybackRow.id,
+            status,
+          })
+          .where(
+            and(eq(videos.uploadId, upload_id), not(eq(videos.status, 'ready')))
+          );
+        return NextResponse.json(
+          { message: 'Asset created handled successfully' },
+          { status: 200 }
+        );
+      }
+      case 'video.asset.ready': {
+        const { upload_id, playback_ids, status, duration, aspect_ratio } =
+          event.data;
+
+        if (!upload_id || !playback_ids || !duration) {
+          return NextResponse.json({ message: '' }, { status: 400 });
+        }
+        const publicPlaybackRow = playback_ids.find(
+          (row) => row.policy === 'public'
+        );
+        if (!publicPlaybackRow) {
+          return NextResponse.json(
+            { message: 'Public playback id missing' },
+            { status: 400 }
+          );
+        }
+
+        const privatePlaybackRow = playback_ids.find(
+          (row) => row.policy === 'signed'
+        );
+        if (!privatePlaybackRow) {
+          return NextResponse.json(
+            { message: 'Private playback id missing' },
+            { status: 400 }
+          );
+        }
+
+        await db
+          .update(videos)
+          .set({
+            publicPlaybackId: publicPlaybackRow.id,
+            privatePlaybackId: privatePlaybackRow.id,
+            duration: Math.round(duration),
+            aspectRatio: aspect_ratio,
+            status,
+          })
+          .where(eq(videos.uploadId, upload_id));
+        return NextResponse.json(
+          { message: 'Asset ready handled successfully' },
+          { status: 200 }
+        );
+      }
+      case 'video.asset.deleted':
+        {
+          const { upload_id } = event.data;
+          if (!upload_id) {
+            return NextResponse.json({ message: '' }, { status: 400 });
+          }
+
+          await db.delete(videos).where(eq(videos.uploadId, upload_id));
+        }
+        return NextResponse.json(
+          { message: 'Asset deleted successfully' },
+          { status: 200 }
+        );
+      default:
+        return NextResponse.json({ message: 'Success' }, { status: 200 });
+    }
+  } catch (e) {
     console.error('Request error', e);
     return NextResponse.json({ message: 'Request error' }, { status: 500 });
   }

@@ -1,4 +1,4 @@
-import AdminNewLesson from '@/features/admin/Course/LessonForm';
+import AdminNewLesson from '@/features/admin/Lesson/LessonForm';
 
 export default async function AdminAddLesson({
   params,

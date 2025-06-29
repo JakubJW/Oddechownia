@@ -4,6 +4,8 @@ import { createSlug } from '@/lib/utils';
 import { db } from '@/db';
 import { eq, desc } from 'drizzle-orm';
 import { courses, lessons, videos } from '@/db/schema';
+import { ActionResult } from './types';
+import { Lesson } from '@/db/types';
 
 interface CreateLesson {
   name: string;
@@ -19,20 +21,21 @@ export const createLesson = async ({
   description,
   courseSlug,
   video,
-}: CreateLesson) => {
+}: CreateLesson): Promise<ActionResult<Lesson>> => {
   try {
     const course = await db.query.courses.findFirst({
       where: eq(courses.slug, courseSlug),
     });
 
-    if (!course) return { data: null, error: 'Course not found' };
+    if (!course)
+      return { data: null, success: false, error: 'Course not found' };
 
     const lessonVideo = await db.query.videos.findFirst({
       where: eq(videos.uploadId, video.uploadId),
     });
 
     if (!lessonVideo) {
-      return { data: null, error: 'Video not found' };
+      return { data: null, success: false, error: 'Video not found' };
     }
 
     const lastLesson = await db
@@ -45,7 +48,7 @@ export const createLesson = async ({
     const position =
       lastLesson.length > 0 ? lastLesson[0].position + 1000 : 1000;
 
-    const lesson = await db
+    const [lesson] = await db
       .insert(lessons)
       .values({
         name,
@@ -58,17 +61,21 @@ export const createLesson = async ({
 
     await db
       .update(videos)
-      .set({ lessonId: lesson[0].id })
+      .set({ lessonId: lesson.id })
       .where(eq(videos.id, lessonVideo.id));
 
-    return { data: lesson, error: null };
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      console.error('Unable to create lesson', e.message);
-      return { data: null, error: e.message };
-    }
-
-    return { data: null, error: 'Unable to create lesson' };
+    return { data: lesson, success: true, error: null };
+  } catch (e) {
+    console.error(
+      'Podczas tworzenia lekcji wystąpił błąd. Spróbuj ponownie później.',
+      e
+    );
+    return {
+      data: null,
+      success: false,
+      error:
+        'Podczas tworzenia lekcji wystąpił błąd. Spróbuj ponownie później.',
+    };
   }
 };
 
