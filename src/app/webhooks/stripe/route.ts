@@ -37,25 +37,35 @@ export async function POST(req: Request) {
   switch (event.type) {
     case 'product.created':
     case 'product.updated':
-      var { id, name, description, active, marketing_features } =
-        event.data.object;
+      const {
+        id: productId,
+        name: productName,
+        description: productDescription,
+        active: productActive,
+        marketing_features: productMarketingFeatures,
+        metadata: productMetadata,
+      } = event.data.object;
+
+      if (productMetadata && productMetadata.priceType === 'one-off') {
+        return NextResponse.json({ message: 'Success' }, { status: 200 });
+      }
 
       await db
         .insert(stripeProducts)
         .values({
-          stripeProductId: id,
-          name: createSlug(name),
-          description,
-          active,
-          marketingFeatures: marketing_features,
+          stripeProductId: productId,
+          name: createSlug(productName),
+          description: productDescription,
+          active: productActive,
+          marketingFeatures: productMarketingFeatures,
         })
         .onConflictDoUpdate({
           target: stripeProducts.stripeProductId,
           set: {
-            name: createSlug(name),
-            description,
-            active,
-            marketingFeatures: marketing_features,
+            name: createSlug(productName),
+            description: productDescription,
+            active: productActive,
+            marketingFeatures: productMarketingFeatures,
           },
         });
 
@@ -64,21 +74,21 @@ export async function POST(req: Request) {
 
     case 'price.created':
     case 'price.updated':
-      var {
-        id: stripePriceId,
-        active,
-        currency,
-        recurring,
-        type,
-        unit_amount,
-        product,
+      const {
+        id: priceId,
+        active: priceActive,
+        currency: priceCurrency,
+        recurring: priceRecurring,
+        type: priceType,
+        unit_amount: priceUnitAmount,
+        product: priceProductId,
       } = event.data.object;
 
-      if (!recurring) {
+      if (!priceRecurring) {
         return NextResponse.json({ message: 'Success' }, { status: 200 });
       }
 
-      if (!unit_amount) {
+      if (!priceUnitAmount) {
         console.error(
           'Missing unit_amount field in webhook price.created or price.updated event handler'
         );
@@ -92,7 +102,7 @@ export async function POST(req: Request) {
       }
 
       const existingProduct = await db.query.stripeProducts.findFirst({
-        where: eq(stripeProducts.stripeProductId, product as unknown as string),
+        where: eq(stripeProducts.stripeProductId, priceProductId as unknown as string),
       });
 
       if (!existingProduct) {
@@ -104,7 +114,7 @@ export async function POST(req: Request) {
           description: productDescription,
           active: productActive,
           marketing_features: productMarketingFeatures,
-        } = await stripeService.getProduct(product as unknown as string);
+        } = await stripeService.getProduct(priceProductId as unknown as string);
 
         await db.insert(stripeProducts).values({
           stripeProductId: productId,
@@ -118,31 +128,30 @@ export async function POST(req: Request) {
       await db
         .insert(stripePrices)
         .values({
-          stripePriceId,
-          stripeProductId: product as unknown as string,
-          active,
-          currency,
-          interval: recurring.interval,
-          intervalCount: recurring.interval_count,
-          type,
-          unitAmount: unit_amount,
+          stripePriceId: priceId,
+          stripeProductId: priceProductId as unknown as string,
+          active: priceActive,
+          currency: priceCurrency,
+          interval: priceRecurring.interval,
+          intervalCount: priceRecurring.interval_count,
+          type: priceType,
+          unitAmount: priceUnitAmount,
         })
         .onConflictDoUpdate({
           target: stripeProducts.stripeProductId,
           set: {
-            active,
-            currency,
-            interval: recurring.interval,
-            intervalCount: recurring.interval_count,
-            type,
-            unitAmount: unit_amount,
+            active: priceActive,
+            currency: priceCurrency,
+            interval: priceRecurring.interval,
+            intervalCount: priceRecurring.interval_count,
+            type: priceType,
+            unitAmount: priceUnitAmount,
           },
         });
       return NextResponse.json({ message: 'Success' }, { status: 200 });
 
     case 'checkout.session.completed':
-      const { metadata, mode, client_reference_id, customer } =
-        event.data.object;
+      var { mode, client_reference_id, customer, metadata } = event.data.object;
 
       if (!metadata) {
         console.error(
@@ -171,6 +180,9 @@ export async function POST(req: Request) {
       }
 
       if (!customer) {
+        console.error(
+          'Missing customer field in webhook session.checkout.completed event handler'
+        );
         return NextResponse.json(
           {
             message:
@@ -198,6 +210,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Success' }, { status: 200 });
     default:
       console.error('Webhook type handler not found');
-      return NextResponse.json({ message: 'Server error' }, { status: 500 });
+      return NextResponse.json(
+        { message: 'Webhook type handler not found' },
+        { status: 500 }
+      );
   }
 }

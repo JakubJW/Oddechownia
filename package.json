@@ -36,7 +36,6 @@
     "clsx": "^2.1.1",
     "commander": "^13.1.0",
     "drizzle-orm": "^0.39.3",
-    "lodash.get": "^4.4.2",
     "lucide-react": "^0.475.0",
     "next": "15.1.6",
     "postgres": "^3.4.5",

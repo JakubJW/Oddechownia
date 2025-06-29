@@ -5,7 +5,10 @@ import { courses, lessons, videos } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
 import { createSlug } from '@/lib/utils';
-import { stripe } from '@/stripe/stripe';
+import { stripeService } from '@/services/stripe';
+import { Course } from '@/db/types';
+import { ActionResult } from './types';
+import { revalidatePath } from 'next/cache';
 
 interface CreateCourse {
   name: string;
@@ -21,53 +24,58 @@ export const createCourse = async ({
   isPublished,
   isOneOff,
   priceInCents,
-}: CreateCourse) => {
+}: CreateCourse): Promise<ActionResult<Course>> => {
   try {
-    if (isOneOff) {
-      const product = await stripe.products.create({
+    if (!isOneOff) {
+      const [course] = await db
+        .insert(courses)
+        .values({
+          name,
+          description,
+          slug: createSlug(name),
+          isPublished,
+          isOneOff,
+        })
+        .returning();
+
+      return { data: course, success: true, error: null };
+    }
+
+    const product = await stripeService.createProduct({
+      name,
+      description,
+      metadata: {
+        priceType: 'one-off',
+      },
+    });
+
+    const price = await stripeService.createPrice({
+      product: product.id,
+      unit_amount: priceInCents,
+      currency: 'pln',
+    });
+
+    const [course] = await db
+      .insert(courses)
+      .values({
         name,
         description,
-      });
+        slug: createSlug(name),
+        isPublished,
+        isOneOff,
+        priceInCents,
+        stripePriceId: price.id,
+      })
+      .returning();
 
-      const price = await stripe.prices.create({
-        product: product.id,
-        unit_amount: priceInCents,
-        currency: 'pln',
-      });
-
-      const course = await db
-        .insert(courses)
-        .values({
-          name,
-          description,
-          slug: createSlug(name),
-          isPublished,
-          isOneOff,
-          priceInCents: isOneOff ? priceInCents : null,
-          stripePriceId: price.id,
-        })
-        .returning();
-
-      return course[0];
-    } else {
-      const course = await db
-        .insert(courses)
-        .values({
-          name,
-          description,
-          slug: createSlug(name),
-          isPublished,
-          isOneOff,
-          priceInCents: null,
-          stripePriceId: null,
-        })
-        .returning();
-
-      return course[0];
-    }
+    return { data: course, success: true, error: null };
   } catch (e) {
     console.error('Unable to create course', e);
-    return null;
+    return {
+      data: null,
+      success: false,
+      error: 'Podczas tworzenia kursu wystąpił błąd. Spróbuj ponownie później.',
+    };
   }
 };
 
@@ -76,7 +84,7 @@ export const updateCourse = async (
   { name, description, isPublished, isOneOff, priceInCents }: CreateCourse
 ) => {
   try {
-    const course = await db
+    const [course] = await db
       .update(courses)
       .set({
         name,
@@ -89,10 +97,15 @@ export const updateCourse = async (
       .where(eq(courses.slug, slug))
       .returning();
 
-    return course[0];
+    revalidatePath(`/admin/kurs/${course.slug}`);
+    return { data: course, success: true, error: null };
   } catch (e) {
     console.error('Unable to update course', e);
-    return null;
+    return {
+      data: null,
+      success: false,
+      error: 'Podczas edycji kursu wystąpił błąd. Spróbuj ponownie później.',
+    };
   }
 };
 
@@ -197,5 +210,14 @@ export const getCourseBySlug = async (slug: string) => {
   } catch (e) {
     console.error('Unable to get course', e);
     return null;
+  }
+};
+
+export const deleteCourse = async (id: number) => {
+  try {
+    await db.delete(courses).where(eq(courses.id, id));
+  } catch (e) {
+    console.error('Unable to delete course', e);
+    return;
   }
 };

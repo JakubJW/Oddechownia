@@ -15,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { formSchema } from './schema';
+import { formSchema, defaultValues } from './schema';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -24,10 +24,7 @@ export default function LoginForm() {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

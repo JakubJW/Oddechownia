@@ -91,7 +91,7 @@ export default async function AdminCourses() {
                     >
                       Edytuj
                     </Link>
-                    <form action="">
+                    <form>
                       <button type="submit">Usuń</button>
                     </form>
                   </div>

@@ -20,31 +20,17 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { formSchema, defaultValues } from './schema';
 
 interface LessonFormProps {
   lesson?: LessonWithVideos;
   courseSlug: string;
 }
 
-const formSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  courseSlug: z.string(),
-  video: z.object({
-    uploadId: z.string(),
-  }),
-});
-
-const initialState = {
-  name: '',
-  description: '',
-  video: {
-    uploadId: '',
-  },
-};
-
 export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
   const [isUploaded, setIsUploaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,26 +44,31 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
             uploadId: lesson.video ? lesson.video?.uploadId : '',
           },
         }
-      : { ...initialState, courseSlug },
-    mode: 'onChange',
+      : { ...defaultValues, courseSlug },
+    mode: 'all',
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (lesson) {
-      const { error } = await updateLesson(lesson.slug, values);
-      if (error) {
-        console.log(error);
-      } else {
-        router.push(`/admin/kurs/${courseSlug}`);
-      }
-    } else {
+    if (!lesson) {
+      setIsLoading(true);
       const { error } = await createLesson(values);
+      setIsLoading(false);
 
-      if (error) {
-        console.log(error);
+      if (!error) {
+        return router.push(`/admin/kurs/${courseSlug}`);
       } else {
-        router.push(`/admin/kurs/${courseSlug}`);
+        return setError(error);
       }
+    }
+
+    setIsLoading(true);
+    const { error } = await updateLesson(lesson.slug, values);
+    setIsLoading(false);
+
+    if (!error) {
+      return router.push(`/admin/kurs/${courseSlug}`);
+    } else {
+      return setError(error);
     }
   };
 
@@ -155,11 +146,18 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
               className="w-full mb-6"
             />
           )}
+          {error && (
+            <p className="text-sm font-medium text-destructive">{error}</p>
+          )}
           <Button
-            disabled={!lesson && !isUploaded}
             type="submit"
+            disabled={isLoading || !isUploaded}
           >
-            {lesson ? 'Zapisz zmiany' : 'Utwórz lekcję'}
+            {isLoading
+              ? 'Ładowanie...'
+              : lesson
+              ? 'Zapisz zmiany'
+              : 'Utwórz lekcję'}
           </Button>
         </form>
       </Form>

@@ -18,29 +18,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { updateCourse, createCourse } from '@/actions/course';
+import { formSchema, defaultValues } from './schema';
+import { useState } from 'react';
 
 interface CourseFormProps {
   course?: Course;
 }
 
-const formSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  isPublished: z.boolean(),
-  isOneOff: z.boolean(),
-  priceInCents: z.number().optional(),
-});
-
-const initialState = {
-  name: '',
-  description: '',
-  isPublished: false,
-  isOneOff: false,
-  priceInCents: 0,
-};
-
 export default function CourseForm({ course }: CourseFormProps) {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: course
@@ -51,18 +39,30 @@ export default function CourseForm({ course }: CourseFormProps) {
           priceInCents: course.priceInCents ?? 0,
           isOneOff: course.isOneOff,
         }
-      : initialState,
-    mode: 'onChange',
+      : defaultValues,
+    mode: 'all',
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (course) {
-      await updateCourse(course.slug, values);
-    } else {
-      await createCourse(values);
+    if (!course) {
+      setIsLoading(true);
+      const { data, success, error } = await createCourse(values);
+      setIsLoading(false);
+      
+      if (!success) {
+        return setError(error);
+      }
+
+      return router.push(`/admin/kurs/${data.slug}`);
     }
 
-    router.push(`/admin/kursy`);
+    setIsLoading(true);
+    const { success, error } = await updateCourse(course.slug, values);
+    setIsLoading(false);
+
+    if (!success) {
+      return setError(error);
+    }
   };
 
   const isOneOff = useWatch({
@@ -186,8 +186,18 @@ export default function CourseForm({ course }: CourseFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">
-          {course ? 'Zapisz zmiany' : 'Utwórz kurs'}
+        {error && (
+          <p className="text-sm font-medium text-destructive">{error}</p>
+        )}
+        <Button
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading
+            ? 'Ładowanie...'
+            : course
+            ? 'Zapisz zmiany'
+            : 'Utwórz kurs'}
         </Button>
       </form>
     </Form>
