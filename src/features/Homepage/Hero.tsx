@@ -1,7 +1,9 @@
-import Image from 'next/image';
-import { MessagesSquare } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import HeaderOne from '@/components/Headers/HeaderOne';
+import { buttonVariants } from '@/components/ui/button';
+import { MessagesSquare } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export default function Hero() {
   return (
@@ -10,9 +12,8 @@ export default function Hero() {
         <div className="px-4 space-y-6 sm:space-y-8 mx-auto md:max-w-[600px]">
           <hgroup className="mt-20 md:mt-0 space-y-6 text-center md:text-left">
             <HeaderOne>
-              Odnajdź <span className="text-primaryFg">spokój.</span>
-              <br />
-              <span className="text-primaryFg">Wzmocnij</span> ciało.
+              <span className="text-primaryFg">Twoje miejsce,</span> <br />
+              by złapać oddech
             </HeaderOne>
             <p className="text-lightgrey leading-relaxed">
               Ćwicz jogę online z doświadczonymi instruktorami, bez wychodzenia
@@ -36,12 +37,15 @@ export default function Hero() {
               1000+ zadowolonych klientów
             </span>
           </div>
-          <Button
-            size="lg"
-            className="block rounded-full font-bold text-xl h-16 bg-steelBlue"
+          <Link
+            className={cn(
+              buttonVariants({ size: 'lg' }),
+              'flex rounded-full font-bold text-xl h-16 bg-steelBlue w-min'
+            )}
+            href={'/dolacz-do-nas'}
           >
             Dołącz teraz!
-          </Button>
+          </Link>
         </div>
         <Image
           className="homepage-hero-image object-cover object-bottom  w-1/2 hidden md:block"

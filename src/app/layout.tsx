@@ -8,7 +8,7 @@ import { env } from '@/env';
 import MaintenanceMode from '@/features/Maintenance/MaintenanceMode';
 
 export const metadata: Metadata = {
-  title: 'Twoje studio yogi online | Oddechownia',
+  title: 'Twoje miejsce, by złapać oddech | Oddechownia',
 };
 
 const sourceSans = Source_Sans_3({

@@ -11,7 +11,7 @@ export default function HeaderOne({ className, children }: HeaderOneProps) {
   return (
     <h1
       className={cn(
-        'font-bold text-4xl leading-normal xl:text-5xl xl:leading-relaxed',
+        'font-bold text-2xl leading-normal xl:text-4xl xl:leading-relaxed',
         className ?? '',
         montserrat.className
       )}
