@@ -17,30 +17,38 @@ export default function AboutMe() {
           <HeaderTwo>O mnie</HeaderTwo>
         </hgroup>
         <div className="grid grid-cols-1 md:grid-cols-2 justify-items-center gap-6">
-          <p className='z-10 order-2 md:order-1'>
-            Swoją praktykę rozwijałam w Indiach, Polsce, Hiszpanii i Danii.
-            Uczestniczyłam w warsztatach i szkoleniach, które prowadzili m.in.
-            Kino MacGregor, Basia Lipska-Larsen, dr S. K. Pandey, Rahul Singh,
-            Bhavesh Bhimanathani, Nicky Rawat, Devesh Bhargav, Mann Harjai,
-            Lilou Sarah, Lindita Maria, Winther McDonald, dr Arun Thejaus.
+          <p className="z-10 order-2 md:order-1">
+            Cześć!
             <br />
             <br />
-            Miałam okazję stać się jedną z 52 Ambasadorek i Ambasadorów Jogi
-            z całego świata. Dzięki zaproszeniu Ministry of AYUSH (ministerstwa
-            Jogi, Ajurwedy i Medycyny naturalnej) mogłam uczestniczyć
-            w konferencjach poświęconych współczesnym i tradycyjnym aspektom
-            jogi. Poznając jednocześnie tajemnice indyjskiej Kerali.
+            Mam na imię Weronika i witam Cię w mojej czułej, jogowej
+            przestrzeni. ♡
             <br />
             <br />
-            Przez dwa lata prowadziłam swoje studio jogi w Danii, obecnie będąc
-            w Polsce chętnie dzielę się swoją praktyką z osobami, które
-            w codziennym życiu poszukują balansu, harmonii, wyciszenia oraz
-            większej świadomości siebie i swojego ciała.
+            Joga towarzyszy mi od blisko 6 lat - początkowo jako wsparcie w
+            rehabilitacji, by szybko wkraść się do mojego życia na wielu
+            płaszczyznach i… absolutnie je odmienić!
             <br />
             <br />
-            Jestem zwolenniczką uzdrawiania poprzez ruch i odpowiednią dietę.
-            Głęboko wierzę w to, że piękno powstaje wewnątrz, oraz że każda
-            wielka zmiana zaczyna się od jednego małego kroku.
+            Uczę jogi zarówno na macie, jak i poza nią, a moją małą, prywatną
+            misją jest pokazanie, że joga jest naprawdę dla każdego. W
+            Oddechowni znajdziesz różnorodne, wspierające praktyki, ale też
+            treści związane z filozofią jogi, tematyką mindfulness czy miłe,
+            jogowe pogadanki! To miejsce na spotkanie ze sobą, świadomą obecność
+            w ciele i poszukiwanie odpowiedzi na pytania wewnątrz.
+            <br />
+            <br />
+            Nie jestem i nie planuję być związana z żadną konkretną ścieżką. W
+            swoim nauczaniu podchodzę do tematu holistycznie, korzystając z
+            całego dobra, jakie joga nam oferuje. Jestem certyfikowaną przez
+            Yoga Alliance nauczycielką jogi (RYT200, Joga Nidra YACEP,
+            Restorative Yoga YACEP, Art of Chanting YACEP).
+            <br />
+            <br />
+            Do zobaczenia na macie!
+            <br />
+            <br />
+            Weronika
           </p>
           <div className="relative border-8 border-primaryBg rounded-full inline-block h-min">
             <Image
