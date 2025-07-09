@@ -6,21 +6,21 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getProfile } from '@/actions/profile';
+import { getUser } from '@/actions/user';
 
 export const metadata: Metadata = {
   title: 'Nasze kursy | Oddechownia',
 };
 
 export default async function CoursesLibrary() {
-  const profile = await getProfile();
+  const user = await getUser();
   const courses = await getCourses({ published: true });
 
   return (
     <section>
       <Container className="pt-16">
         <hgroup
-          className={cn(!profile ? 'text-start' : 'text-center', 'space-y-6')}
+          className={cn(!user ? 'text-start' : 'text-center', 'space-y-6')}
         >
           <HeaderOne className="font-semibold">
             Rozpocznij swoją <span className="text-primaryFg">podróż</span>
@@ -29,7 +29,7 @@ export default async function CoursesLibrary() {
             Przeglądaj naszą bogatą kolekcję kursów jogi online, przygotowanych
             przez doświadczonych instruktorów.
           </p>
-          {!profile && (
+          {!user && (
             <Link
               href={'/dolacz-do-nas'}
               className={cn(buttonVariants({ size: 'lg' }))}
@@ -42,7 +42,7 @@ export default async function CoursesLibrary() {
           <div className="col-span-12 lg:col-span-2"></div>
           <CourseGrid
             courses={courses}
-            profile={profile}
+            user={user}
           />
         </div>
       </Container>

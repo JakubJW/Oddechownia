@@ -1,13 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { signOut } from '../rejestracja/actions';
+import { signOut } from '@/actions/auth';
 
 export default async function MyAccount() {
   return (
-    <section>
+    <>
       Witaj
       <form action={signOut}>
         <Button type="submit">Wyloguj</Button>
       </form>
-    </section>
+    </>
   );
 }

@@ -3,8 +3,8 @@ import Container from '@/components/Container/Container';
 import Order from '@/features/Register/Order/Order';
 import { notFound } from 'next/navigation';
 import { getSubscriptionBySlug } from '@/actions/product';
-import { getProfile } from '@/actions/profile';
-import { redirect } from 'next/navigation';
+// import { getUser } from '@/actions/user';
+// import { redirect } from 'next/navigation';
 
 export default async function SignIn({
   params,
@@ -12,11 +12,11 @@ export default async function SignIn({
   params: Promise<{ productName: string }>;
 }) {
   const { productName } = await params;
-  const profile = await getProfile();
+  // const user = await getUser();
 
-  if (profile && profile.subscriptionStatus === 'active') {
-    redirect('/moje-konto');
-  }
+  // if (user && user.subscriptionStatus === 'active') {
+  //   redirect('/moje-konto');
+  // }
 
   const stripeProduct = await getSubscriptionBySlug(productName);
 

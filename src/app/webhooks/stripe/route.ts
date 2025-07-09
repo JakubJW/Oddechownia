@@ -2,10 +2,10 @@
 
 import { db } from '@/db';
 import {
-  coursesToProfiles,
-  profiles,
+  userOneOffPurchase,
   stripePrices,
   stripeProducts,
+  userSubscription,
 } from '@/db/schema';
 import { createSlug } from '@/lib/utils';
 import { stripeService } from '@/services/stripe';
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
   switch (event.type) {
     case 'product.created':
-    case 'product.updated':
+    case 'product.updated': {
       const {
         id: productId,
         name: productName,
@@ -71,9 +71,10 @@ export async function POST(req: Request) {
 
       revalidatePath('/');
       return NextResponse.json({ message: 'Success' }, { status: 200 });
+    }
 
     case 'price.created':
-    case 'price.updated':
+    case 'price.updated': {
       const {
         id: priceId,
         active: priceActive,
@@ -102,7 +103,10 @@ export async function POST(req: Request) {
       }
 
       const existingProduct = await db.query.stripeProducts.findFirst({
-        where: eq(stripeProducts.stripeProductId, priceProductId as unknown as string),
+        where: eq(
+          stripeProducts.stripeProductId,
+          priceProductId as unknown as string
+        ),
       });
 
       if (!existingProduct) {
@@ -149,65 +153,103 @@ export async function POST(req: Request) {
           },
         });
       return NextResponse.json({ message: 'Success' }, { status: 200 });
+    }
 
-    case 'checkout.session.completed':
-      var { mode, client_reference_id, customer, metadata } = event.data.object;
-
-      if (!metadata) {
-        console.error(
-          'Missing metadata field in webhook session.checkout.completed event handler'
-        );
-        return NextResponse.json(
-          {
-            message:
-              'Missing metadata field in webhook session.checkout.completed event handler',
-          },
-          { status: 400 }
-        );
-      }
-
-      if (!client_reference_id) {
-        console.error(
-          'Missing client_reference_id field in webhook session.checkout.completed event handler'
-        );
-        return NextResponse.json(
-          {
-            message:
-              'Missing metadata field in webhook session.checkout.completed event handler',
-          },
-          { status: 400 }
-        );
-      }
-
-      if (!customer) {
-        console.error(
-          'Missing customer field in webhook session.checkout.completed event handler'
-        );
-        return NextResponse.json(
-          {
-            message:
-              'Missing customer field in webhook session.checkout.completed event handler',
-          },
-          { status: 400 }
-        );
-      }
+    case 'checkout.session.completed': {
+      const { mode } = event.data.object;
 
       if (mode === 'payment') {
-        await db.insert(coursesToProfiles).values({
-          profileId: metadata.userId,
+        const { metadata, payment_intent } = event.data.object;
+
+        if (!metadata) {
+          console.error(
+            'Missing metadata field in webhook session.checkout.completed event handler'
+          );
+          return NextResponse.json(
+            {
+              message:
+                'Missing metadata field in webhook session.checkout.completed event handler',
+            },
+            { status: 400 }
+          );
+        }
+
+        if (!payment_intent) {
+          console.error(
+            'Missing payment_intent field in webhook session.checkout.completed event handler'
+          );
+          return NextResponse.json(
+            {
+              message:
+                'Missing payment_intent field in webhook session.checkout.completed event handler',
+            },
+            { status: 400 }
+          );
+        }
+
+        await db.insert(userOneOffPurchase).values({
+          userId: metadata.userId,
           courseId: Number(metadata.courseId),
+          stripePaymentIntentId: payment_intent as string,
         });
       } else if (mode === 'subscription') {
-        await db
-          .update(profiles)
-          .set({
-            subscriptionStatus: 'active',
-            stripeCustomerId: customer as unknown as string,
-          })
-          .where(eq(profiles.id, client_reference_id));
+        const { subscription, client_reference_id } = event.data.object;
+
+        if (!subscription) {
+          console.error(
+            'Missing subscription field in webhook session.checkout.completed event handler'
+          );
+          return NextResponse.json(
+            {
+              message:
+                'Missing subscription field in webhook session.checkout.completed event handler',
+            },
+            { status: 400 }
+          );
+        }
+
+        if (!client_reference_id) {
+          console.error(
+            'Missing client_reference_id field in webhook session.checkout.completed event handler'
+          );
+          return NextResponse.json(
+            {
+              message:
+                'Missing metadata field in webhook session.checkout.completed event handler',
+            },
+            { status: 400 }
+          );
+        }
+
+        await db.insert(userSubscription).values({
+          userId: client_reference_id,
+          stripeSubscriptionId: subscription as string,
+        });
       }
 
       return NextResponse.json({ message: 'Success' }, { status: 200 });
+    }
+
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated': {
+      const { status, id } = event.data.object;
+
+      await db
+        .insert(userSubscription)
+        .values({
+          status: status,
+          stripeSubscriptionId: id,
+          userId: 'siema',
+        })
+        .onConflictDoUpdate({
+          target: userSubscription.id,
+          set: {
+            status: status,
+            stripeSubscriptionId: id,
+          },
+        });
+    }
+
     default:
       console.error('Webhook type handler not found');
       return NextResponse.json(

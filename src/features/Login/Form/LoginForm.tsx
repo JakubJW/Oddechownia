@@ -1,6 +1,6 @@
 'use client';
 
-import { login } from '@/app/rejestracja/actions';
+import { login } from '@/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
   Form,
