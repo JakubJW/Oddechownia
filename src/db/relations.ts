@@ -3,10 +3,11 @@ import {
   lessons,
   courses,
   videos,
-  profiles,
-  coursesToProfiles,
+  users,
+  userSubscription,
   stripeProducts,
   stripePrices,
+  userOneOffPurchase,
 } from './schema';
 
 export const lessonsRelations = relations(lessons, ({ one }) => ({
@@ -29,45 +30,48 @@ export const videosRelations = relations(videos, ({ one }) => ({
 
 export const coursesRelations = relations(courses, ({ many }) => ({
   lessons: many(lessons),
-  profiles: many(coursesToProfiles),
+  userOneOffPurchases: many(userOneOffPurchase),
 }));
 
-export const profilesRelations = relations(profiles, ({ many }) => ({
-  courses: many(coursesToProfiles),
+export const userRelations = relations(users, ({ many }) => ({
+  subscriptions: many(userSubscription),
+  purchases: many(userOneOffPurchase),
 }));
 
-export const coursesToProfilesRelations = relations(
-  coursesToProfiles,
-  ({ one }) => ({
-    profile: one(profiles, {
-      fields: [coursesToProfiles.profileId],
-      references: [profiles.id],
-    }),
-    course: one(courses, {
-      fields: [coursesToProfiles.courseId],
-      references: [courses.id],
-    }),
+export const stripeProductsRelations = relations(
+  stripeProducts,
+  ({ many }) => ({
+    stripePrices: many(stripePrices),
   })
 );
-
-// export const stripeProductsRelations = relations(stripeProducts, ({ one }) => ({
-//   stripePrice: one(stripePrices, {
-//     fields: [stripeProducts.stripeProductId],
-//     references: [stripePrices.stripeProductId],
-//   }),
-// }));
-
-export const stripeProductsRelations = relations(stripeProducts, ({ many }) => ({
-  stripePrices: many(stripePrices),
-}));
-
-// export const stripePricesRelations = relations(stripePrices, ({ many }) => ({
-//   stripeProducts: many(stripeProducts),
-// }));
 
 export const stripePricesRelations = relations(stripePrices, ({ one }) => ({
   stripeProduct: one(stripeProducts, {
     fields: [stripePrices.stripeProductId],
-    references: [stripeProducts.stripeProductId]
+    references: [stripeProducts.stripeProductId],
   }),
 }));
+
+export const userSubscriptionRelations = relations(
+  userSubscription,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userSubscription.userId],
+      references: [users.id],
+    }),
+  })
+);
+
+export const userOneOffPurchasesRelations = relations(
+  userOneOffPurchase,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userOneOffPurchase.userId],
+      references: [users.id],
+    }),
+    course: one(courses, {
+      fields: [userOneOffPurchase.courseId],
+      references: [courses.id],
+    }),
+  })
+);

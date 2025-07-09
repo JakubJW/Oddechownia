@@ -31,6 +31,7 @@ async function main() {
       password,
       email_confirm: true,
       user_metadata: {
+        email,
         role: UserRoles.ADMIN,
       },
     });

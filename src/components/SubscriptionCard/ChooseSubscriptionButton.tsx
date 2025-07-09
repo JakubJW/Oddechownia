@@ -5,18 +5,18 @@ import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { env } from '@/env';
-import { getProfile } from '@/actions/profile';
+import { getUser } from '@/actions/user';
 
-type Profile = Awaited<ReturnType<typeof getProfile>>;
+type User = Awaited<ReturnType<typeof getUser>>;
 
 interface ChooseSubscriptionButtonProps {
-  profile: Profile | null;
+  user: User | null;
   route: string;
   stripeProductId: string;
 }
 
 const ChooseSubscriptionButton = ({
-  profile,
+  user,
   route,
   stripeProductId,
 }: ChooseSubscriptionButtonProps) => {
@@ -24,15 +24,13 @@ const ChooseSubscriptionButton = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChoose = async () => {
-    console.log(profile)
-
-    if (!profile) {
+    if (!user) {
       return router.push(route);
     }
 
-    if (profile.subscriptionStatus === 'active') {
-      return router.push('/moje-konto');
-    }
+    // if (user.subscriptionStatus === 'active') {
+    //   return router.push('/moje-konto');
+    // }
 
     try {
       setIsLoading(true);
@@ -44,8 +42,8 @@ const ChooseSubscriptionButton = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             stripeProductId,
-            customerEmail: profile.email,
-            clientReferenceId: profile.id,
+            customerEmail: user.email,
+            clientReferenceId: user.id,
           }),
         }
       );

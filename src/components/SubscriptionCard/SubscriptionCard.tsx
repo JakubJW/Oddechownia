@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import Stripe from 'stripe';
 import ChooseSubscriptionButton from './ChooseSubscriptionButton';
-import { getProfile } from '@/actions/profile';
+import { getUser } from '@/actions/user';
 
 export const subscriptionCardVariants = cva(
   'bg-white relative rounded-lg flex flex-col p-8',
@@ -21,7 +21,7 @@ export const subscriptionCardVariants = cva(
   }
 );
 
-type Profile = Awaited<ReturnType<typeof getProfile>>;
+type User = Awaited<ReturnType<typeof getUser>>;
 export interface SubscriptionCardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof subscriptionCardVariants> {
@@ -30,7 +30,7 @@ export interface SubscriptionCardProps
   stripeProductId: string;
   price: number;
   features: Stripe.Product.MarketingFeature[];
-  profile: Profile | null;
+  user: User | null;
 }
 
 const calculateMonthly = (price: number, period: number | null) => {
@@ -49,7 +49,7 @@ export function SubscriptionCard({
   className,
   variant,
   features,
-  profile,
+  user,
 }: SubscriptionCardProps) {
   return (
     <div className={cn(subscriptionCardVariants({ variant, className }))}>
@@ -84,7 +84,7 @@ export function SubscriptionCard({
         ))}
       </ul>
       <ChooseSubscriptionButton
-        profile={profile}
+        user={user}
         route={`/rejestracja/${name}`}
         stripeProductId={stripeProductId}
       />
