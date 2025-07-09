@@ -1,6 +1,6 @@
 'use client';
 
-import { signup } from '@/app/rejestracja/actions';
+import { signup } from '@/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {

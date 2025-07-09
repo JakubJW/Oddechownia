@@ -2,12 +2,12 @@ import { SubscriptionCard } from '@/components/SubscriptionCard/SubscriptionCard
 import Container from '@/components/Container/Container';
 import HeaderTwo from '@/components/Headers/HeaderTwo';
 import { getSubscriptions } from '@/actions/product';
-import { getProfile } from '@/actions/profile';
+import { getUser } from '@/actions/user';
 
 const subscriptions = await getSubscriptions();
 
 export default async function AvailableSubscriptions() {
-  const profile = await getProfile();
+  const user = await getUser();
 
   return (
     <section>
@@ -39,7 +39,7 @@ export default async function AvailableSubscriptions() {
                   stripePrice.intervalCount === 3 ? 'popular' : 'default'
                 }
                 features={marketingFeatures}
-                profile={profile}
+                user={user}
                 stripeProductId={stripeProductId}
               />
             )

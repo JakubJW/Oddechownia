@@ -6,14 +6,14 @@
 import Pagination from '@/components/Pagination/Pagination';
 import CourseCard from '@/components/CourseCard/CourseCard';
 import { CourseWithLessonsWithVideos } from '@/db/types';
-import { profiles } from '@/db/schema';
+import { users } from '@/db/schema';
 
 interface CourseGridProps {
   courses: CourseWithLessonsWithVideos;
-  profile: typeof profiles.$inferSelect | null;
+  user: typeof users.$inferSelect | null;
 }
 
-export default function CourseGrid({ courses, profile }: CourseGridProps) {
+export default function CourseGrid({ courses, user }: CourseGridProps) {
   if (!courses) {
     return (
       <div className="col-span-12 lg:col-span-10 text-red-500 min-h-[300px]">
@@ -53,7 +53,7 @@ export default function CourseGrid({ courses, profile }: CourseGridProps) {
               totalVideos={lessonCount}
               totalDuration={Math.round(totalDuration)}
               thumbnailUrl={`https://image.mux.com/${lessons[0]?.video?.publicPlaybackId}/thumbnail.jpg?width=640`}
-              disabled={!profile || profile.subscriptionStatus !== 'inactive'}
+              disabled={!user}
               isOneOff={isOneOff}
               priceInCents={priceInCents}
             />

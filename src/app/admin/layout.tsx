@@ -13,6 +13,8 @@ export default function AdminLayout({
           <div className="flex flex-col gap-4 col-span-2">
             <Link href="/admin">Dashboard</Link>
             <Link href="/admin/blog">Blog</Link>
+            <Link href="/admin/playlisty">Playlisty</Link>
+            <Link href="/admin/lekcje">Lekcje</Link>
             <Link href="/admin/kursy">Kursy</Link>
           </div>
           <div className="col-span-10">{children}</div>
