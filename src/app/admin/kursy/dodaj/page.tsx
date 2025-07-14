@@ -1,5 +1,3 @@
-'use client';
-
 import CourseForm from '@/features/admin/Course/CourseForm';
 
 export default function AdminNewCourse() {

@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 import {
   lessons,
+  playlists,
   courses,
   videos,
   users,
@@ -11,9 +12,9 @@ import {
 } from './schema';
 
 export const lessonsRelations = relations(lessons, ({ one }) => ({
-  course: one(courses, {
-    fields: [lessons.courseId],
-    references: [courses.id],
+  playlist: one(playlists, {
+    fields: [lessons.playlistId],
+    references: [playlists.id],
   }),
   video: one(videos, {
     fields: [lessons.id],

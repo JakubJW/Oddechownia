@@ -12,6 +12,7 @@ import {
   jsonb,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
+import { sql } from 'drizzle-orm';
 
 export const posts = pgTable('posts', {
   id: serial('id').primaryKey(),
@@ -36,13 +37,11 @@ export const courses = pgTable('courses', {
 
 export const lessons = pgTable('lessons', {
   id: serial('id').primaryKey(),
-  name: varchar('name', { length: 256 }).notNull(),
-  description: varchar('description', { length: 256 }).notNull(),
-  slug: varchar('slug', { length: 256 }).notNull(),
-  courseId: integer('course_id')
-    .references(() => courses.id, { onDelete: 'cascade' })
-    .notNull(),
-  position: integer('position').notNull(),
+  name: varchar('name').notNull(),
+  description: varchar('description').notNull(),
+  slug: varchar('slug').notNull(),
+  playlistId: integer('playlist_id').references(() => playlists.id),
+  position: integer('position'),
 });
 
 export const videos = pgTable('videos', {
@@ -126,4 +125,20 @@ export const userOneOffPurchase = pgTable('user_one_off_purchase', {
   }),
   stripePaymentIntentId: text('stripe_payment_intent_id'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const playlists = pgTable('playlists', {
+  id: serial('id').primaryKey(),
+  name: varchar('name').notNull(),
+  description: text('description').notNull(),
+  slug: varchar('slug').notNull(),
+  isPublished: boolean('is_published').default(false).notNull(),
+  position: integer('position').notNull(),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
