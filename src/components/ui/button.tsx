@@ -10,8 +10,6 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primaryFg text-white hover:bg-primaryFg/90',
-        destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline: 'border border-primaryFg bg-primaryBg text-primaryFg',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
@@ -24,10 +22,24 @@ const buttonVariants = cva(
         lg: 'h-11 rounded-md px-8',
         icon: 'h-10 w-10',
       },
+      color: {
+        default: '',
+        steelBlue: '',
+        richBlack: '',
+        almond: '',
+        destructive:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      },
     },
+    compoundVariants: [
+      {
+        
+      }
+    ],
     defaultVariants: {
       variant: 'default',
       size: 'default',
+      color: 'default',
     },
   }
 );

@@ -12,6 +12,7 @@ export interface SortablePlaylistElementProps {
   description: string;
   href: string;
   isPublished: boolean;
+  lessonCount: number;
 }
 
 export default function SortablePlaylistElement({
@@ -20,6 +21,7 @@ export default function SortablePlaylistElement({
   href,
   description,
   isPublished,
+  lessonCount
 }: SortablePlaylistElementProps) {
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id });
@@ -33,29 +35,32 @@ export default function SortablePlaylistElement({
     <tr
       ref={setNodeRef}
       style={style}
-      className='bg-background'
+      className="bg-background"
     >
-      <td className='py-4 pl-4'>
+      <td className="py-4 pl-4">
         <GripVertical
           className="text-primaryFg flex-shrink-0 cursor-grab active:cursor-grabbing active:outline-none focus:outline-none"
           {...attributes}
           {...listeners}
         />
       </td>
-      <td className='py-4'>
+      <td className="py-4">
         <p className="line-clamp-2">{name}</p>
       </td>
       <td>
         <p className="line-clamp-2">{description}</p>
       </td>
-      <td className='py-4'>
+      <td>
+        <p className="line-clamp-2">{lessonCount}</p>
+      </td>
+      <td className="py-4">
         <Checkbox
           disabled={true}
           checked={isPublished}
           className="disabled:cursor-default"
         />
       </td>
-      <td className='py-4'>
+      <td className="py-4">
         <Link
           className="inline-flex gap-2 items-center text-matcha hover:underline"
           href={href}

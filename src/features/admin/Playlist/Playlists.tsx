@@ -1,7 +1,7 @@
 'use client';
 
-import { Playlist } from '@/db/types';
-import { useState } from 'react';
+import { PlaylistWithLessons } from '@/db/types';
+import { useState, useEffect } from 'react';
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -11,10 +11,14 @@ import {
 import SortablePlaylistElement from './SortablePlaylistElement';
 import dynamic from 'next/dynamic';
 
-function MyPlaylists({ playlists }: { playlists: Playlist[] }) {
+function MyPlaylists({ playlists }: { playlists: PlaylistWithLessons[] }) {
   const [playlistsClone, setPlaylists] = useState(playlists);
 
-  const calculatePosition = (index: number, playlists: Playlist[]) => {
+  useEffect(() => {
+    setPlaylists(playlists);
+  }, [playlists]);
+
+  const calculatePosition = (index: number, playlists: PlaylistWithLessons[]) => {
     let position;
 
     if (index === 0 && playlists.length > 1) {
@@ -88,13 +92,14 @@ function MyPlaylists({ playlists }: { playlists: Playlist[] }) {
               <th className="text-left py-4"></th>
               <th className="text-left py-4">Nazwa</th>
               <th className="text-left py-4">Opis</th>
+              <th className="text-left py-4">Liczba lekcji</th>
               <th className="text-left py-4">Opublikowano</th>
               <th className="text-left py-4"></th>
             </tr>
           </thead>
           <tbody>
             {playlistsClone.map(
-              ({ id, name, isPublished, description, slug }) => (
+              ({ id, name, isPublished, description, slug, lessons }) => (
                 <SortablePlaylistElement
                   key={id}
                   id={id}
@@ -102,6 +107,7 @@ function MyPlaylists({ playlists }: { playlists: Playlist[] }) {
                   href={`/admin/playlisty/${slug}`}
                   isPublished={isPublished}
                   description={description}
+                  lessonCount={lessons.length}
                 />
               )
             )}

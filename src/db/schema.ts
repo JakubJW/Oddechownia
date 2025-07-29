@@ -10,6 +10,7 @@ import {
   integer,
   uuid,
   jsonb,
+  unique,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
 import { sql } from 'drizzle-orm';
@@ -40,17 +41,20 @@ export const lessons = pgTable('lessons', {
   name: varchar('name').notNull(),
   description: varchar('description').notNull(),
   slug: varchar('slug').notNull(),
-  playlistId: integer('playlist_id').references(() => playlists.id),
-  position: integer('position'),
+  videoId: integer('video_id').references(() => videos.id, {
+    onDelete: 'set null',
+  }),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const videos = pgTable('videos', {
   id: serial('id').primaryKey(),
-  lessonId: integer('lesson_id')
-    .unique()
-    .references(() => lessons.id, {
-      onDelete: 'cascade',
-    }),
   uploadId: varchar('upload_id').unique().notNull(),
   publicPlaybackId: varchar('public_playback_id'),
   privatePlaybackId: varchar('private_playback_id'),
@@ -142,3 +146,25 @@ export const playlists = pgTable('playlists', {
     .notNull()
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
+
+export const playlistLesson = pgTable(
+  'playlist_lesson',
+  {
+    id: serial('id').primaryKey(),
+    lessonId: integer('lesson_id')
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+    playlistId: integer('playlist_id')
+      .notNull()
+      .references(() => playlists.id, { onDelete: 'cascade' }),
+    position: integer('position').notNull(),
+  },
+  (table) => {
+    return {
+      uniquePlaylistLesson: unique('unique_playlist_lesson_constraint').on(
+        table.playlistId,
+        table.lessonId
+      ),
+    };
+  }
+);

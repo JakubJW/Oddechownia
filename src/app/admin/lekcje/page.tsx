@@ -1,20 +1,21 @@
-import { getPlaylists } from '@/actions/playlist';
+import { getLessons } from '@/actions/lesson';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import Playlists from '@/features/admin/Playlist/Playlists';
-import Link from 'next/link';
+import LessonCard from '@/components/LessonCard/LessonCard';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import LessonGrid from '@/features/admin/Lesson/LessonGrid';
+import { LessonFilters, SortOrder } from '@/services/filters';
+import type { SearchParams } from '@/types/types';
 import Filters from '@/components/Filters/Filters';
-import { SearchParams } from '@/types/types';
-import { PlaylistFilters, SortOrder } from '@/services/filters';
 
-export default async function AdminPlaylists({
+export default async function AdminLessons({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
   const query = await searchParams;
-  const filters: PlaylistFilters = {};
+  const filters: LessonFilters = {};
 
   if (query['search']) {
     filters.search = query['search'] as string;
@@ -28,15 +29,23 @@ export default async function AdminPlaylists({
     filters.sortOrder = query['sortOrder'] as SortOrder;
   }
 
-  const { data, error, success } = await getPlaylists(filters);
+  const { data, error, success } = await getLessons(filters);
 
-  if (!success) {
+  if (!success || !data) {
     return <ErrorMessage message={error} />;
   }
 
   return (
     <div>
-      <p>Playlisty</p>
+      <div className="flex justify-between">
+        <p>Lekcje</p>
+        <Link
+          href="/admin/lekcje/dodaj"
+          className={cn(buttonVariants({ variant: 'default' }))}
+        >
+          Dodaj lekcję
+        </Link>
+      </div>
       <Filters
         config={{
           search: true,
@@ -60,15 +69,24 @@ export default async function AdminPlaylists({
             },
           ],
         }}
-      >
-        <Link
-          href="/admin/playlisty/dodaj"
-          className={cn(buttonVariants({ variant: 'default' }))}
-        >
-          Nowa playlista
-        </Link>
-      </Filters>
-      <Playlists playlists={data} />
+      />
+      <LessonGrid>
+        {data.map(({ id, name, description, video, slug }) => (
+          <Link
+            href={`/admin/lekcje/${slug}`}
+            key={id}
+            className="hover:opacity-80"
+          >
+            <LessonCard
+              id={id}
+              key={id}
+              name={name}
+              video={video}
+              description={description}
+            />
+          </Link>
+        ))}
+      </LessonGrid>
     </div>
   );
 }

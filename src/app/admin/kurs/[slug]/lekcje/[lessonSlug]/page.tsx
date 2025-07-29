@@ -8,7 +8,7 @@ export default async function AdminEditLesson({
   params: Promise<{ slug: string; lessonSlug: string }>;
 }) {
   const { slug, lessonSlug } = await params;
-  const lesson = await getLessonBySlug(lessonSlug);
+  const lesson = await getLessonBySlug({ slug: lessonSlug });
 
   if (!lesson) {
     notFound();

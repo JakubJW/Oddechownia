@@ -2,67 +2,33 @@
 
 import { createSlug } from '@/lib/utils';
 import { db } from '@/db';
-import { eq, desc } from 'drizzle-orm';
-import { courses, lessons, videos } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { lessons } from '@/db/schema';
 import { ActionResult } from './types';
-import { Lesson } from '@/db/types';
+import { Lesson, LessonWithPlaylistsWithVideo } from '@/db/types';
+import { filterService, LessonFilters } from '@/services/filters';
 
 interface CreateLesson {
   name: string;
   description: string;
-  courseSlug: string;
-  video: {
-    uploadId: string;
-  };
+  videoId: number | null;
 }
 
 export const createLesson = async ({
   name,
   description,
-  courseSlug,
-  video,
+  videoId,
 }: CreateLesson): Promise<ActionResult<Lesson>> => {
   try {
-    const course = await db.query.courses.findFirst({
-      where: eq(courses.slug, courseSlug),
-    });
-
-    if (!course)
-      return { data: null, success: false, error: 'Course not found' };
-
-    const lessonVideo = await db.query.videos.findFirst({
-      where: eq(videos.uploadId, video.uploadId),
-    });
-
-    if (!lessonVideo) {
-      return { data: null, success: false, error: 'Video not found' };
-    }
-
-    const lastLesson = await db
-      .select({ position: lessons.position })
-      .from(lessons)
-      .where(eq(lessons.courseId, course.id))
-      .orderBy(desc(lessons.position))
-      .limit(1);
-
-    const position =
-      lastLesson.length > 0 ? lastLesson[0].position + 1000 : 1000;
-
     const [lesson] = await db
       .insert(lessons)
       .values({
         name,
         description,
         slug: createSlug(name),
-        courseId: course.id,
-        position,
+        videoId,
       })
       .returning();
-
-    await db
-      .update(videos)
-      .set({ lessonId: lesson.id })
-      .where(eq(videos.id, lessonVideo.id));
 
     return { data: lesson, success: true, error: null };
   } catch (e) {
@@ -81,10 +47,10 @@ export const createLesson = async ({
 
 export const updateLesson = async (
   slug: string,
-  { name, description, video }: CreateLesson
+  { name, description }: CreateLesson
 ) => {
   try {
-    const lesson = await db
+    const data = await db
       .update(lessons)
       .set({
         name,
@@ -94,20 +60,7 @@ export const updateLesson = async (
       .where(eq(lessons.slug, slug))
       .returning();
 
-    const lessonVideo = await db.query.videos.findFirst({
-      where: eq(videos.uploadId, video.uploadId),
-    });
-
-    if (!lessonVideo) {
-      return { data: null, error: 'Video not found' };
-    }
-
-    await db
-      .update(videos)
-      .set({ lessonId: lesson[0].id })
-      .where(eq(videos.id, lessonVideo.id));
-
-    return { data: lesson, error: null };
+    return { data, error: null };
   } catch (e) {
     if (e instanceof Error) {
       console.error('Unable to update lesson', e.message);
@@ -118,22 +71,93 @@ export const updateLesson = async (
   }
 };
 
-export const getLessonBySlug = async (slug: string) => {
+export const getLessons = async (
+  filters?: LessonFilters
+): Promise<ActionResult<LessonWithPlaylistsWithVideo[]>> => {
   try {
-    const lesson = await db.query.lessons.findFirst({
-      where: eq(lessons.slug, slug),
+    const where = filterService.buildWhereCondition(lessons, filters);
+    const orderBy = filterService.buildOrderByClause(lessons, filters);
+
+    const data = await db.query.lessons.findMany({
+      where,
+      orderBy,
+      with: {
+        video: true,
+        playlistLessons: {
+          with: {
+            playlist: true,
+          },
+        },
+      },
+    });
+
+    const result = data.map(({ playlistLessons, ...rest }) => {
+      return {
+        ...rest,
+        playlists: playlistLessons.map(({ playlist }) => {
+          return { ...playlist };
+        }),
+      };
+    });
+
+    return { data: result, success: true, error: null };
+  } catch (e) {
+    console.error(
+      'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',
+      e
+    );
+    return {
+      data: null,
+      success: false,
+      error:
+        'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',
+    };
+  }
+};
+
+export const getLesson = async (filters: LessonFilters) => {
+  try {
+    const lessonWhereClause = filterService.buildWhereCondition(
+      lessons,
+      filters
+    );
+
+    const data = await db.query.lessons.findFirst({
+      ...(lessonWhereClause && { where: lessonWhereClause }),
       with: {
         video: true,
       },
     });
 
-    if (!lesson) {
-      return null;
-    }
-
-    return lesson;
+    return { data, success: true, error: null };
   } catch (e) {
-    console.error('Unable to get lesson', e);
-    return null;
+    console.error(
+      'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',
+      e
+    );
+    return {
+      data: null,
+      success: false,
+      error:
+        'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',
+    };
+  }
+};
+
+export const removeLesson = async (id: number) => {
+  try {
+    await db.delete(lessons).where(eq(lessons.id, id));
+
+    return { data: null, success: true, error: null };
+  } catch (error) {
+    console.error(
+      'Podczas usuwania lekcji wystąpił błąd. Spróbuj ponownie później.',
+      error
+    );
+    return {
+      data: null,
+      success: false,
+      error: 'Podczas usuwania lekcji wystąpił błąd. Spróbuj ponownie później.',
+    };
   }
 };

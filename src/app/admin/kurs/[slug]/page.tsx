@@ -21,26 +21,23 @@ export default async function AdminCourse({
   const { lessons } = course;
 
   return (
-    <>
-      <div className="grid grid-cols-2">
-        <CourseForm course={course} />
-
-        {course && (
-          <div className="flex flex-col gap-4 max-w-lg">
-            <h2>Lekcje</h2>
-            <LessonList
-              lessons={lessons}
-              courseSlug={slug}
-            />
-            <Link
-              className={cn(buttonVariants({}))}
-              href={`/admin/kurs/${slug}/lekcje/dodaj`}
-            >
-              Dodaj lekcję
-            </Link>
-          </div>
-        )}
-      </div>
-    </>
+    <div className="grid grid-cols-2">
+      <CourseForm course={course} />
+      {course && (
+        <div className="flex flex-col gap-4 max-w-lg">
+          <h2>Lekcje</h2>
+          <LessonList
+            lessons={lessons}
+            courseSlug={slug}
+          />
+          <Link
+            className={cn(buttonVariants({}))}
+            href={`/admin/kurs/${slug}/lekcje/dodaj`}
+          >
+            Dodaj lekcję
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }

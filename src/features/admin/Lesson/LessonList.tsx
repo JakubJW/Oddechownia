@@ -1,7 +1,7 @@
 'use client';
 
 import SortableLessonCard from './SortableLessonCard';
-import { LessonWithVideos } from '@/db/types';
+import { LessonWithVideo } from '@/db/types';
 import { useState } from 'react';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
@@ -11,14 +11,14 @@ import {
 } from '@dnd-kit/sortable';
 
 interface LessonListProps {
-  lessons?: LessonWithVideos[];
+  lessons?: LessonWithVideo[];
   courseSlug: string;
 }
 
 export default function LessonList({ lessons, courseSlug }: LessonListProps) {
   const [lessonsClone, setLessons] = useState(lessons);
 
-  const calculatePosition = (newIndex: number, lessons: LessonWithVideos[]) => {
+  const calculatePosition = (newIndex: number, lessons: LessonWithVideo[]) => {
     let position;
 
     if (newIndex === 0 && lessons.length > 1) {

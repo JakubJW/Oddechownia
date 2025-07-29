@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { videos } from '@/db/schema';
 import { nullToUndefined } from '@/db/types';
+import { muxService } from '@/services/mux';
 
 type ActionResult<T> = {
   data: T | null;
@@ -14,9 +15,9 @@ export const createVideo = async ({
   uploadId,
 }: {
   uploadId: string;
-}): Promise<ActionResult<(typeof videos.$inferInsert)[]>> => {
+}): Promise<ActionResult<(typeof videos.$inferInsert)>> => {
   try {
-    const video = await db
+    const [video] = await db
       .insert(videos)
       .values({
         uploadId,
@@ -29,7 +30,7 @@ export const createVideo = async ({
   }
 };
 
-export const deleteVideo = async ({ uploadId }: { uploadId: string }) => {
+export const deleteVideo = async (uploadId: string) => {
   try {
     await db.delete(videos).where(eq(videos.uploadId, uploadId));
   } catch (e) {

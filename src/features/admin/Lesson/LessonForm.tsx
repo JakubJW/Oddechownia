@@ -1,6 +1,6 @@
 'use client';
 
-import { createLesson, updateLesson } from '@/actions/lesson';
+import { createLesson, updateLesson, removeLesson } from '@/actions/lesson';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { LessonWithVideos } from '@/db/types';
+import { LessonWithVideo } from '@/db/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MuxPlayer from '@mux/mux-player-react/lazy';
 import MuxUploader from '@mux/mux-uploader-react';
@@ -21,13 +21,14 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { formSchema, defaultValues } from './schema';
+import { deleteVideo } from '@/actions/video';
+import { revalidatePath } from 'next/cache';
 
 interface LessonFormProps {
-  lesson?: LessonWithVideos;
-  courseSlug: string;
+  lesson?: LessonWithVideo;
 }
 
-export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
+export function AdminNewLesson({ lesson }: LessonFormProps) {
   const [isUploaded, setIsUploaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,23 +40,36 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
       ? {
           name: lesson.name,
           description: lesson.description,
-          courseSlug,
-          video: {
-            uploadId: lesson.video ? lesson.video?.uploadId : '',
-          },
+          videoId: lesson.video ? lesson.video?.id : null,
         }
-      : { ...defaultValues, courseSlug },
+      : { ...defaultValues },
     mode: 'all',
   });
 
+  const handleRemoveLesson = async (id: number) => {
+    await removeLesson(id);
+
+    return router.push(`/admin/lekcje`);
+  };
+
+  const handleRemoveVideo = async (uploadId?: string) => {
+    if (!uploadId) return;
+
+    await deleteVideo(uploadId);
+
+    revalidatePath(`/admin/lekcje/${lesson.slug}`);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+
     if (!lesson) {
       setIsLoading(true);
       const { error } = await createLesson(values);
       setIsLoading(false);
 
       if (!error) {
-        return router.push(`/admin/kurs/${courseSlug}`);
+        return router.push(`/admin/lekcje`);
       } else {
         return setError(error);
       }
@@ -66,7 +80,7 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
     setIsLoading(false);
 
     if (!error) {
-      return router.push(`/admin/kurs/${courseSlug}`);
+      return router.push(`/admin/lekcje`);
     } else {
       return setError(error);
     }
@@ -115,19 +129,25 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
               <MuxPlayer
                 className="mb-6 w-full aspect-video rounded-lg overflow-hidden"
                 streamType="on-demand"
-                playbackId={lesson.video.publicPlaybackId || undefined}
+                playbackId={lesson.video.publicPlaybackId ?? undefined}
                 metadata={{
-                  video_series: lesson.courseId,
                   video_title: lesson.name,
                   player_name: 'Video Course Starter Kit',
                 }}
               />
-              <Button>Usuń film</Button>
+              <Button
+                type="button"
+                onClick={async () =>
+                  await handleRemoveVideo(lesson.video.uploadId)
+                }
+              >
+                Usuń film
+              </Button>
             </>
           ) : (
             <MuxUploader
               endpoint={async () => {
-                const { data, error } = await fetch(
+                const { result, error } = await fetch(
                   '/api/mux/create-upload'
                 ).then((res) => res.json());
 
@@ -135,8 +155,10 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
                   return console.error(error);
                 }
 
-                form.setValue('video.uploadId', data.upload_id);
-                return data.upload_url;
+                console.log(result.data.id);
+
+                form.setValue('videoId', result.data.id);
+                return result.upload_url;
               }}
               type="bar"
               style={
@@ -159,6 +181,15 @@ export function AdminNewLesson({ courseSlug, lesson }: LessonFormProps) {
               ? 'Zapisz zmiany'
               : 'Utwórz lekcję'}
           </Button>
+          {lesson && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async () => await handleRemoveLesson(lesson.id)}
+            >
+              Usuń lekcję
+            </Button>
+          )}
         </form>
       </Form>
     </div>

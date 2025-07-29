@@ -2,10 +2,16 @@
 
 import { createSlug } from '@/lib/utils';
 import { db } from '@/db';
-import { eq, asc, desc } from 'drizzle-orm';
-import { playlists } from '@/db/schema';
+import { eq, asc, desc, inArray, and, max } from 'drizzle-orm';
+import { playlistLesson, playlists } from '@/db/schema';
 import { ActionResult } from './types';
-import { Playlist } from '@/db/types';
+import {
+  Playlist,
+  PlaylistWithLessons,
+  PlaylistWithLessonsWithVideo,
+} from '@/db/types';
+import { notFound } from 'next/navigation';
+import { filterService, PlaylistFilters } from '@/services/filters';
 
 interface ICreatePlaylist {
   name: string;
@@ -103,12 +109,33 @@ export const getPublishedPlaylists = async (): Promise<
   }
 };
 
-export const getPlaylists = async (): Promise<ActionResult<Playlist[]>> => {
+export const getPlaylists = async (
+  filters: PlaylistFilters
+): Promise<ActionResult<PlaylistWithLessons[]>> => {
   try {
-    const data = await db
-      .select()
-      .from(playlists)
-      .orderBy(asc(playlists.position));
+    const where = filterService.buildWhereCondition(playlists, filters);
+    const orderBy = filterService.buildOrderByClause(playlists, filters);
+
+    const result = await db.query.playlists.findMany({
+      with: {
+        playlistLessons: {
+          with: {
+            lesson: true,
+          },
+        },
+      },
+      where,
+      orderBy,
+    });
+
+    const data = result.map(({ playlistLessons, ...rest }) => {
+      return {
+        ...rest,
+        lessons: playlistLessons.map(({ lesson }) => {
+          return { ...lesson };
+        }),
+      };
+    });
 
     return { data, success: true, error: null };
   } catch (error) {
@@ -125,16 +152,82 @@ export const getPlaylists = async (): Promise<ActionResult<Playlist[]>> => {
   }
 };
 
+export const getPlaylistsWithLessons = async () => {
+  try {
+    const data = await db.query.playlists.findMany({
+      orderBy: [asc(playlists.position)],
+      where: eq(playlists.isPublished, true),
+      with: {
+        playlistLessons: {
+          orderBy: [asc(playlistLesson.position)],
+          with: {
+            lesson: {
+              with: {
+                video: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const result = data.map(({ playlistLessons, ...rest }) => {
+      return {
+        ...rest,
+        lessons: playlistLessons.map(({ lesson }) => {
+          return { ...lesson };
+        }),
+      };
+    });
+
+    return { data: result, success: true, error: null };
+  } catch (error) {
+    console.error(
+      'Podczas pobierania playlist wystąpił błąd. Spróbuj ponownie później.',
+      error
+    );
+    return {
+      data: null,
+      success: false,
+      error:
+        'Podczas pobierania playlist wystąpił błąd. Spróbuj ponownie później.',
+    };
+  }
+};
+
 export const getPlaylistBySlug = async (
   slug: string
-): Promise<ActionResult<Playlist>> => {
+): Promise<ActionResult<PlaylistWithLessonsWithVideo>> => {
   try {
-    const [data] = await db
-      .select()
-      .from(playlists)
-      .where(eq(playlists.slug, slug));
+    const data = await db.query.playlists.findFirst({
+      where: (playlists, { eq }) => eq(playlists.slug, slug),
+      with: {
+        playlistLessons: {
+          orderBy: [asc(playlistLesson.position)],
+          with: {
+            lesson: {
+              with: {
+                video: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    return { data, success: true, error: null };
+    if (!data) {
+      notFound();
+    }
+
+    const { playlistLessons, ...rest } = data;
+
+    const result = {
+      ...rest,
+      lessons: playlistLessons.map((playlistLesson) => {
+        return { ...playlistLesson.lesson };
+      }),
+    };
+    return { data: result, error: null, success: true };
   } catch (error) {
     console.error(
       'Podczas pobierania playlisty wystąpił błąd. Spróbuj ponownie później.',
@@ -146,5 +239,76 @@ export const getPlaylistBySlug = async (
       error:
         'Podczas pobierania playlisty wystąpił błąd. Spróbuj ponownie później.',
     };
+  }
+};
+
+export const attachLessonsToPlaylist = async (
+  slug: string,
+  lessonIds: number[]
+) => {
+  try {
+    const playlist = await db.query.playlists.findFirst({
+      where: eq(playlists.slug, slug),
+    });
+
+    if (!playlist) {
+      return { data: null, success: false, error: 'Nie znaleziono playlisty.' };
+    }
+
+    await db.transaction(async (tx) => {
+      const currentPlaylistLessons = await tx
+        .select({ id: playlistLesson.id })
+        .from(playlistLesson)
+        .where(eq(playlistLesson.playlistId, playlist.id));
+
+      const currentLessonIdsInPlaylist = new Set(
+        currentPlaylistLessons.map(({ id }) => id)
+      );
+
+      const lessonsToAdd = lessonIds.filter(
+        (id) => !currentLessonIdsInPlaylist.has(id)
+      );
+      const lessonsToRemove = Array.from(currentLessonIdsInPlaylist).filter(
+        (id) => !lessonIds.includes(id)
+      );
+
+      if (lessonsToRemove.length) {
+        await tx
+          .delete(playlistLesson)
+          .where(
+            and(
+              eq(playlistLesson.id, playlist.id),
+              inArray(playlistLesson.lessonId, lessonsToRemove)
+            )
+          );
+      }
+
+      if (lessonsToAdd.length) {
+        const [maxPositionResult] = await tx
+          .select({
+            maxPos: max(playlistLesson.position),
+          })
+          .from(playlistLesson)
+          .where(eq(playlistLesson.playlistId, playlist.id));
+
+        let currentMaxPosition = maxPositionResult.maxPos || 0;
+        const BASE_POSITION_GAP = 1024;
+
+        const insertions = lessonsToAdd.map((id) => {
+          currentMaxPosition += BASE_POSITION_GAP;
+          return {
+            playlistId: playlist.id,
+            lessonId: id,
+            position: currentMaxPosition,
+          };
+        });
+
+        await tx.insert(playlistLesson).values(insertions);
+      }
+
+      return { data: null, success: true, error: null };
+    });
+  } catch (error) {
+    console.error(error)
   }
 };

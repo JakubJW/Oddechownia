@@ -39,20 +39,34 @@ type NullToUndefined<T> = {
     : T[K];
 };
 
+export type Post = typeof schema.posts.$inferSelect;
 export type Course = typeof schema.courses.$inferSelect;
+export type Playlist = typeof schema.playlists.$inferSelect;
 export type Lesson = typeof schema.lessons.$inferSelect;
 export type Video = typeof schema.videos.$inferSelect;
-export type Post = typeof schema.posts.$inferSelect;
-export type Playlist = typeof schema.playlists.$inferSelect;
+
+export type LessonWithVideo = Lesson & {
+  video: Video | null;
+};
+export type LessonWithPlaylists = Lesson & {
+  playlists: Playlist[];
+};
+export type LessonWithPlaylistsWithVideo = Lesson & {
+  playlists: Playlist[];
+  video: Video | null;
+};
+export type PlaylistWithLessons = Playlist & {
+  lessons: Lesson[];
+};
+export type PlaylistWithLessonsWithVideo = Playlist & {
+  lessons: LessonWithVideo[];
+};
 
 export type CourseWithLessons = NullToUndefined<
   InferResultType<'courses', { lessons: true }>
 >;
 export type CourseWithLessonsWithVideos = Awaited<
   ReturnType<typeof getCourses>
->;
-export type LessonWithVideos = NullToUndefined<
-  InferResultType<'lessons', { video: true }>
 >;
 
 export function nullToUndefined<T>(data: T): NullToUndefined<T> {

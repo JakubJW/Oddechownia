@@ -21,7 +21,7 @@ import { formSchema, defaultValues } from './schema';
 import { useState } from 'react';
 import { Playlist } from '@/db/types';
 
-export default function PlaylistForm({ playlist }: { playlist: Playlist }) {
+export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
