@@ -10,6 +10,7 @@
     "lint": "next lint",
     "create:admin": "npx tsx src/scripts/createAdmin.ts",
     "db:push:dev": "npx dotenv-cli -c local -- npx drizzle-kit push",
+    "db:migrate:local": "npx dotenv-cli -c local -- npx drizzle-kit migrate",
     "db:push:prod": "npx drizzle-kit push"
   },
   "dependencies": {

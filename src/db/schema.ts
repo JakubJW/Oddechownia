@@ -127,3 +127,10 @@ export const userOneOffPurchase = pgTable('user_one_off_purchase', {
   stripePaymentIntentId: text('stripe_payment_intent_id'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
+
+export const waitlist = pgTable('waitlist', {
+  id: serial('id').primaryKey(),
+  firstName: varchar('first_name').notNull(),
+  email: varchar('email').notNull(),
+  emailMarketingAgreement: boolean('email_marketing_agreement').default(false),
+});

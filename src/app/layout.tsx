@@ -5,7 +5,7 @@ import Navigation from '@/components/Navigation/Navigation';
 import Footer from '@/components/Footer/Footer';
 import { createClient } from '@/supabase/server';
 import { env } from '@/env';
-import MaintenanceMode from '@/features/Maintenance/MaintenanceMode';
+import Waitlist from '@/features/Waitlist/Waitlist';
 
 export const metadata: Metadata = {
   title: 'Twoje miejsce, by złapać oddech | Oddechownia',
@@ -33,7 +33,7 @@ export default async function RootLayout({
     >
       <body className="antialiased">
         {env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' ? (
-          <MaintenanceMode />
+          <Waitlist />
         ) : (
           <>
             <Navigation user={user} />
