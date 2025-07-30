@@ -43,6 +43,7 @@ export type Course = typeof schema.courses.$inferSelect;
 export type Lesson = typeof schema.lessons.$inferSelect;
 export type Video = typeof schema.videos.$inferSelect;
 export type Post = typeof schema.posts.$inferSelect;
+export type Waitlist = typeof schema.waitlist.$inferSelect;
 
 export type CourseWithLessons = NullToUndefined<
   InferResultType<'courses', { lessons: true }>
