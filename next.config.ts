@@ -7,11 +7,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: `wknpvvtasrhwkqmkvoml.supabase.co`,
+        hostname: 'wknpvvtasrhwkqmkvoml.supabase.co',
       },
       {
         protocol: 'https',
-        hostname: `image.mux.com`,
+        hostname: 'image.mux.com',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
       },
     ],
   },
