@@ -18,20 +18,28 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { formSchema, defaultValues } from './schema';
 import { signInToWaitlist } from '@/actions/waitlist';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export default function WaitlistForm() {
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
     const { success, error } = await signInToWaitlist(values);
 
     if (!success) {
       setError(error);
+    } else {
+      setSuccess(true);
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -90,12 +98,10 @@ export default function WaitlistForm() {
                     htmlFor="emailMarketingAgreement"
                     className="text-black font-light text-xs leading-relaxed"
                   >
-                    Chcę otrzymywać informacje handlowe dotyczące produktów i
-                    usług oferowanych przez Oddechownia Studio Jogi. (Wyrażam
-                    zgodę na otrzymywanie od Tusz Obok (Oddechownia studio jogi)
-                    informacji handlowych i marketingowych drogą elektroniczną,
-                    zgodnie z ustawą o świadczeniu usług drogą elektroniczną.){' '}
-                    <span className="text-red-500">*</span>
+                    Wyrażam zgodę na otrzymywanie od Tusz Obok (Oddechownia
+                    studio jogi) informacji handlowych i marketingowych drogą
+                    elektroniczną, zgodnie z ustawą o świadczeniu usług drogą
+                    elektroniczną. <span className="text-red-500">*</span>
                   </Label>
                 </div>
               </FormControl>
@@ -105,9 +111,14 @@ export default function WaitlistForm() {
         />
         <Button
           type="submit"
-          className="w-full"
+          className={cn('w-full transition-colors', success && 'bg-green-600')}
+          disabled={isLoading || success}
         >
-          Zapisz się!
+          {isLoading
+            ? 'Ładowanie...'
+            : success
+            ? 'Dziękuję, jesteśmy w kontakcie!'
+            : 'Zapisz się!'}
         </Button>
         {error && (
           <p className="text-sm font-medium text-destructive">{error}</p>
