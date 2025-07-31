@@ -61,6 +61,7 @@ export type PlaylistWithLessons = Playlist & {
 export type PlaylistWithLessonsWithVideo = Playlist & {
   lessons: LessonWithVideo[];
 };
+export type Waitlist = typeof schema.waitlist.$inferSelect;
 
 export type CourseWithLessons = NullToUndefined<
   InferResultType<'courses', { lessons: true }>
