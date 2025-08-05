@@ -1,45 +1,46 @@
 'use client';
 
+import { signInToWaitlist } from '@/actions/waitlist';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { formSchema, defaultValues } from './schema';
-import { signInToWaitlist } from '@/actions/waitlist';
-import { useState } from 'react';
+import { Label } from '@/components/ui/label';
+import { useActionResult } from '@/hooks/useActionResult';
 import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { defaultValues, formSchema } from './schema';
 
 export default function WaitlistForm() {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
 
+  const {
+    isSuccess,
+    isLoading,
+    execute: submitForm,
+  } = useActionResult(signInToWaitlist, {
+    onSuccess: () => {
+      form.reset();
+    },
+    onError: (error) => {
+      form.setError('root.serverError', { type: 'server', message: error });
+    },
+  });
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-    const { success, error } = await signInToWaitlist(values);
-
-    if (!success) {
-      setError(error);
-    } else {
-      setSuccess(true);
-    }
-
-    setIsLoading(false);
+    submitForm(values);
   };
 
   return (
@@ -111,17 +112,22 @@ export default function WaitlistForm() {
         />
         <Button
           type="submit"
-          className={cn('w-full transition-colors', success && 'bg-green-600')}
-          disabled={isLoading || success}
+          className={cn(
+            'w-full transition-colors',
+            isSuccess && 'bg-green-600'
+          )}
+          disabled={isLoading || isSuccess}
         >
           {isLoading
             ? 'Ładowanie...'
-            : success
+            : isSuccess
             ? 'Dziękuję, jesteśmy w kontakcie!'
             : 'Zapisz się!'}
         </Button>
-        {error && (
-          <p className="text-sm font-medium text-destructive">{error}</p>
+        {form.formState.errors.root?.serverError && (
+          <p className="text-sm font-medium text-destructive">
+            {form.formState.errors.root.serverError.message}
+          </p>
         )}
       </form>
       <p className="text-xs font-light leasing-relaxed">
