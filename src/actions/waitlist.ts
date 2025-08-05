@@ -15,10 +15,24 @@ export const signInToWaitlist = async (
 
     return { data, success: true, error: null };
   } catch (error) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === '23505'
+    ) {
+      return {
+        data: null,
+        success: false,
+        error: 'Podany adres e-mail znajduje się już na naszej liście.',
+      };
+    }
+
     console.error(
       'Podczas zapisu wystąpił błąd. Spróbuj ponownie później.',
       error
     );
+
     return {
       data: null,
       success: false,
