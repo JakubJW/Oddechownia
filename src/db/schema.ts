@@ -134,3 +134,8 @@ export const waitlist = pgTable('waitlist', {
   email: varchar('email').unique().notNull(),
   emailMarketingAgreement: boolean('email_marketing_agreement').default(false),
 });
+
+export const test = pgTable('test', {
+  id: serial('id').primaryKey(),
+  test: varchar('test'),
+});
