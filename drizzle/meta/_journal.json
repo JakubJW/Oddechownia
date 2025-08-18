@@ -15,6 +15,13 @@
       "when": 1754344425875,
       "tag": "0001_loose_sally_floyd",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755554120589,
+      "tag": "0002_amazing_wendigo",
+      "breakpoints": true
     }
   ]
 }
