@@ -22,24 +22,10 @@ const buttonVariants = cva(
         lg: 'h-11 rounded-md px-8',
         icon: 'h-10 w-10',
       },
-      color: {
-        default: '',
-        steelBlue: '',
-        richBlack: '',
-        almond: '',
-        destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-      },
     },
-    compoundVariants: [
-      {
-        
-      }
-    ],
     defaultVariants: {
       variant: 'default',
       size: 'default',
-      color: 'default',
     },
   }
 );

@@ -1,6 +1,15 @@
 import { createClient } from '@/supabase/server';
-import { UserAttributes } from '@supabase/supabase-js';
+import {
+  UserAttributes,
+  createClient as createAdminClient,
+} from '@supabase/supabase-js';
 import { getRequiredUser } from '@/lib/data';
+import { env } from '@/env';
+
+export const BUCKETS = {
+  ATTACHMENTS: 'attachments',
+  WEBSITE_ASSETS: 'website_assets',
+};
 
 const updateUserInAuthSchema = async (params: UserAttributes) => {
   const supabase = await createClient();
@@ -43,7 +52,66 @@ const changePasswordAuthenticated = async (password: string) => {
   return { data: null, error: null };
 };
 
+const uploadFile = async (file: File, bucket: string, folder: string) => {
+  const supabase = createAdminClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        persistSession: false,
+      },
+    }
+  );
+
+  const fileExtension = file.name.split('.').pop();
+  const fileName = `${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2, 9)}.${fileExtension}`;
+  const filePath = `${folder}/${fileName}`;
+
+  const { error } = await supabase.storage.from(bucket).upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: false,
+  });
+
+  if (error) {
+    console.error('Supabase Storage Upload Error:', error);
+    throw new Error(`Failed to upload file: ${error.message}`);
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(bucket).getPublicUrl(filePath);
+
+  return {
+    data: { url: publicUrl, internalName: fileName },
+    success: true,
+    error: null,
+  };
+};
+
+const deleteFile = async (bucket: string, paths: string[]) => {
+  const supabase = createAdminClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        persistSession: false,
+      },
+    }
+  );
+
+  const { error } = await supabase.storage.from(bucket).remove(paths);
+
+  if (error) {
+    console.error('Supabase Storage Delete Error:', error);
+    throw new Error(`Failed to delete file: ${error.message}`);
+  }
+};
+
 export const supabaseService = {
+  deleteFile,
+  uploadFile,
   updateUserInAuthSchema,
   changePasswordAuthenticated,
 };

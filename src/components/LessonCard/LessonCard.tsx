@@ -1,13 +1,9 @@
-import { LessonWithPlaylistsWithVideo } from '@/db/types';
+import { Lesson } from '@/db/types';
 import { formatDuration } from '@/lib/utils';
 import { Clock } from 'lucide-react';
 import Image from 'next/image';
 
-const LessonCard = ({
-  name,
-  description,
-  video,
-}: Partial<LessonWithPlaylistsWithVideo>) => {
+const LessonCard = ({ name, description, video }: Partial<Lesson>) => {
   return (
     <div className="rounded-xl overflow-hidden">
       <div className="relative">

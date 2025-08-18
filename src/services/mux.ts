@@ -1,5 +1,6 @@
 import Mux from '@mux/mux-node';
 import { env } from '@/env';
+import { ActionResult } from '@/actions/types';
 
 class MuxService {
   private static _instance: MuxService;
@@ -30,13 +31,24 @@ class MuxService {
     } catch (error) {}
   }
 
-  public async createUpload(params: Mux.Video.UploadCreateParams) {
+  public async createUpload(
+    params: Mux.Video.UploadCreateParams
+  ): Promise<ActionResult<Mux.Video.Uploads.Upload>> {
     try {
       const data = await this.mux.video.uploads.create(params);
 
-      return { data, success: true, error: false };
+      return { data, success: true, error: null };
     } catch (error) {
-      return { data: null, success: false, error: error };
+      console.error(
+        'Podczas przesyłania filmu wystąpił błąd. Spróbuj ponownie później.',
+        error
+      );
+      return {
+        data: null,
+        success: false,
+        error:
+          'Podczas przesyłania filmu wystąpił błąd. Spróbuj ponownie później.',
+      };
     }
   }
 }

@@ -4,8 +4,6 @@ import {
   ilike,
   and,
   or,
-  gt,
-  lt,
   gte,
   lte,
   inArray,
@@ -222,9 +220,7 @@ class FilterService {
   ): SQL<unknown> | undefined {
     const mapper = this.filterMappers.get(table);
     if (!mapper) {
-      console.warn(
-        `No filter mapper registered for table: ${table.getSQL().query}`
-      );
+      console.warn(`No filter mapper registered for table: ${table.getSQL()}`);
       return undefined;
     }
 
@@ -257,9 +253,7 @@ class FilterService {
     const sortableCols = this.sortableColumns.get(table);
     if (!sortableCols || !sortableCols[sortColumnName]) {
       console.warn(
-        `Attempted to sort by non-sortable or unknown column: ${
-          table.getSQL().query
-        }.${sortColumnName}`
+        `Attempted to sort by non-sortable or unknown column: ${table.getSQL()}.${sortColumnName}`
       );
       return undefined;
     }

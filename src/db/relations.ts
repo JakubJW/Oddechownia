@@ -10,10 +10,15 @@ import {
   stripePrices,
   userOneOffPurchase,
   playlistLesson,
+  attachments,
 } from './schema';
 
-export const playlistRelations = relations(playlists, ({ many }) => ({
+export const playlistRelations = relations(playlists, ({ many, one }) => ({
   playlistLessons: many(playlistLesson),
+  video: one(videos, {
+    fields: [playlists.videoId],
+    references: [videos.id],
+  }),
 }));
 
 export const lessonsRelations = relations(lessons, ({ one, many }) => ({
@@ -22,12 +27,17 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
     fields: [lessons.videoId],
     references: [videos.id],
   }),
+  attachments: many(attachments),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
   lesson: one(lessons, {
     fields: [videos.id],
     references: [lessons.videoId],
+  }),
+  playlist: one(playlists, {
+    fields: [videos.id],
+    references: [playlists.videoId],
   }),
 }));
 
@@ -87,5 +97,12 @@ export const playlistLessonRelations = relations(playlistLesson, ({ one }) => ({
   playlist: one(playlists, {
     fields: [playlistLesson.playlistId],
     references: [playlists.id],
+  }),
+}));
+
+export const attachmentsRelations = relations(attachments, ({ one }) => ({
+  lesson: one(lessons, {
+    fields: [attachments.lessonId],
+    references: [lessons.id],
   }),
 }));

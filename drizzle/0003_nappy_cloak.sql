@@ -1,0 +1,2 @@
+ALTER TABLE "playlist_lesson" DROP CONSTRAINT "unique_playlist_lesson_constraint";--> statement-breakpoint
+ALTER TABLE "playlist_lesson" ADD CONSTRAINT "playlist_lesson_lesson_id_unique" UNIQUE("lesson_id");

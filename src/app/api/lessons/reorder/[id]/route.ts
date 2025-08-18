@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { lessons } from '@/db/schema';
+import { playlistLesson } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,11 +12,11 @@ export async function POST(
     const body = await req.json();
 
     await db
-      .update(lessons)
+      .update(playlistLesson)
       .set({
         position: body.position,
       })
-      .where(eq(lessons.id, parseInt(id)));
+      .where(eq(playlistLesson.id, parseInt(id)));
 
     return NextResponse.json({ message: 'Success!' }, { status: 200 });
   } catch (error) {

@@ -3,18 +3,20 @@
 import { attachLessonsToPlaylist } from '@/actions/playlist';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { LessonWithPlaylistsWithVideo } from '@/db/types';
+import { Lesson } from '@/db/types';
 import { formatDuration } from '@/lib/utils';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 const findLessonsBelongingToPlaylist = (
-  lessons: LessonWithPlaylistsWithVideo[],
+  lessons: Lesson[],
   playlistSlug: string
 ) => {
   const result = lessons
-    .filter((lesson) =>
-      lesson.playlists.some((playlist) => playlist.slug === playlistSlug)
+    .filter(
+      (lesson) =>
+        lesson.playlists &&
+        lesson.playlists.some((playlist) => playlist.slug === playlistSlug)
     )
     .map(({ id }) => id);
 
@@ -25,7 +27,7 @@ export default function LessonTable({
   lessons,
   playlistSlug,
 }: {
-  lessons: LessonWithPlaylistsWithVideo[];
+  lessons: Lesson[];
   playlistSlug: string;
 }) {
   const [lessonsClone, setLessonsClone] = useState(lessons);
@@ -45,7 +47,7 @@ export default function LessonTable({
     );
 
   const handleSubmit = async () => {
-    const { data, success, error } = await attachLessonsToPlaylist(
+    const { success, error } = await attachLessonsToPlaylist(
       playlistSlug,
       Array.from(newLessons)
     );

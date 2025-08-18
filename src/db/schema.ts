@@ -145,6 +145,9 @@ export const playlists = pgTable('playlists', {
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull()
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  videoId: integer('video_id').references(() => videos.id, {
+    onDelete: 'set null',
+  }),
 });
 
 export const playlistLesson = pgTable(
@@ -159,14 +162,12 @@ export const playlistLesson = pgTable(
       .references(() => playlists.id, { onDelete: 'cascade' }),
     position: integer('position').notNull(),
   },
-  (table) => {
-    return {
-      uniquePlaylistLesson: unique('unique_playlist_lesson_constraint').on(
-        table.playlistId,
-        table.lessonId
-      ),
-    };
-  }
+  (table) => [
+    unique('unique_playlist_lesson_constraint').on(
+      table.playlistId,
+      table.lessonId
+    ),
+  ]
 );
 
 export const waitlist = pgTable('waitlist', {
@@ -174,4 +175,23 @@ export const waitlist = pgTable('waitlist', {
   firstName: varchar('first_name').notNull(),
   email: varchar('email').unique().notNull(),
   emailMarketingAgreement: boolean('email_marketing_agreement').default(false),
+});
+
+export const attachments = pgTable('attachments', {
+  id: serial('id').primaryKey(),
+  lessonId: integer('lesson_id')
+    .notNull()
+    .references(() => lessons.id, {
+      onDelete: 'cascade',
+    }),
+  name: varchar('name').notNull(),
+  internalName: varchar('internal_name').notNull(),
+  url: text('url').notNull(),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });

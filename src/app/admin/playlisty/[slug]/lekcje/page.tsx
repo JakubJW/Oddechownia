@@ -3,6 +3,7 @@ import Filters from '@/components/Filters/Filters';
 import { Params, SearchParams } from '@/types/types';
 import LessonTable from '@/features/admin/Lesson/LessonTable';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
+import { LessonFilters, SortOrder } from '@/services/filters';
 
 export default async function AdminPlaylistLessons({
   params,
@@ -13,7 +14,29 @@ export default async function AdminPlaylistLessons({
 }) {
   const { slug } = await params;
   const query = await searchParams;
-  const { data, success, error } = await getLessons({ playlistProps: { slug }});
+
+  const filters: LessonFilters = {};
+
+  if (query['search']) {
+    filters.search = query['search'] as string;
+  }
+
+  if (query['sortBy']) {
+    filters.sortBy = query['sortBy'] as string;
+  } else {
+    filters.sortBy = 'position';
+  }
+
+  if (query['sortOrder']) {
+    filters.sortOrder = query['sortOrder'] as SortOrder;
+  } else {
+    filters.sortOrder = 'asc' as SortOrder;
+  }
+
+  const { data, success, error } = await getLessons({
+    ...filters,
+    playlistProps: { slug },
+  });
 
   if (!success) {
     return <ErrorMessage message={error} />;

@@ -1,6 +1,6 @@
 'use client';
 
-import { PlaylistWithLessons } from '@/db/types';
+import { Playlist } from '@/db/types';
 import { useState, useEffect } from 'react';
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import {
@@ -11,14 +11,14 @@ import {
 import SortablePlaylistElement from './SortablePlaylistElement';
 import dynamic from 'next/dynamic';
 
-function MyPlaylists({ playlists }: { playlists: PlaylistWithLessons[] }) {
+function MyPlaylists({ playlists }: { playlists: Playlist[] }) {
   const [playlistsClone, setPlaylists] = useState(playlists);
 
   useEffect(() => {
     setPlaylists(playlists);
   }, [playlists]);
 
-  const calculatePosition = (index: number, playlists: PlaylistWithLessons[]) => {
+  const calculatePosition = (index: number, playlists: Playlist[]) => {
     let position;
 
     if (index === 0 && playlists.length > 1) {
@@ -27,6 +27,8 @@ function MyPlaylists({ playlists }: { playlists: PlaylistWithLessons[] }) {
       position =
         (playlists[index - 1].position + playlists[index + 1].position) / 2;
     } else {
+      console.log(index, playlists.length - 1)
+      console.log('trzeci')
       position = playlists[playlists.length - 1].position * 2;
     }
 

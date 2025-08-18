@@ -22,10 +22,14 @@ export default async function AdminPlaylists({
 
   if (query['sortBy']) {
     filters.sortBy = query['sortBy'] as string;
+  } else {
+    filters.sortBy = 'position';
   }
 
   if (query['sortOrder']) {
     filters.sortOrder = query['sortOrder'] as SortOrder;
+  } else {
+    filters.sortOrder = 'asc' as SortOrder;
   }
 
   const { data, error, success } = await getPlaylists(filters);

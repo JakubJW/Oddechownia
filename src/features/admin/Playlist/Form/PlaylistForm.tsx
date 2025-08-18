@@ -18,13 +18,16 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { updatePlaylist, createPlaylist } from '@/actions/playlist';
 import { formSchema, defaultValues } from './schema';
-import { useState } from 'react';
 import { Playlist } from '@/db/types';
+import { useActionResult } from '@/hooks/useActionResult';
+import { useCallback, useState } from 'react';
+import MuxUploader from '@mux/mux-uploader-react';
+import MuxPlayer from '@mux/mux-player-react';
+import { deleteVideo } from '@/actions/video';
 
 export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: playlist
@@ -37,33 +40,40 @@ export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
     mode: 'all',
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!playlist) {
-      setIsLoading(true);
-      const { success, error } = await createPlaylist(values);
-      setIsLoading(false);
-
-      if (!success) {
-        return setError(error);
+  const handleFormSubmissionAction = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      if (playlist) {
+        return updatePlaylist(playlist.slug, values);
       }
 
-      return router.push(`/admin/playlisty`);
-    }
+      return createPlaylist(values);
+    },
+    [playlist]
+  );
 
-    setIsLoading(true);
-    const { success, error } = await updatePlaylist(playlist.slug, values);
-    setIsLoading(false);
-
-    if (!success) {
-      return setError(error);
+  const { execute: submitForm, isLoading } = useActionResult(
+    handleFormSubmissionAction,
+    {
+      onSuccess: () => {
+        router.push(`/admin/playlisty`);
+      },
+      onError: (error) => {
+        form.setError('root.serverError', { type: 'server', message: error });
+      },
     }
+  );
+
+  const handleRemoveVideo = async (playlist: Playlist) => {
+    if (!playlist || !playlist.video || !playlist.video.uploadId) return;
+
+    await deleteVideo(playlist.video.uploadId);
   };
 
   return (
     <Form {...form}>
       <form
         className="flex flex-col gap-4 max-w-lg w-full"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(submitForm)}
       >
         <FormField
           control={form.control}
@@ -98,6 +108,44 @@ export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
             </FormItem>
           )}
         />
+        {playlist && playlist.video ? (
+          <>
+            <MuxPlayer
+              className="mb-6 w-full aspect-video rounded-lg overflow-hidden"
+              streamType="on-demand"
+              playbackId={playlist.video.publicPlaybackId ?? undefined}
+              metadata={{
+                video_title: playlist.name,
+                player_name: 'Video Course Starter Kit',
+              }}
+            />
+            <Button
+              type="button"
+              onClick={async () => await handleRemoveVideo(playlist)}
+            >
+              Usuń film
+            </Button>
+          </>
+        ) : (
+          <MuxUploader
+            endpoint={async () => {
+              const { result, error } = await fetch(
+                '/api/mux/create-upload'
+              ).then((res) => res.json());
+
+              if (error) {
+                return console.error(error);
+              }
+
+              form.setValue('videoId', result.data.id);
+              return result.upload_url;
+            }}
+            type="bar"
+            style={{ '--button-border-radius': '40px' } as React.CSSProperties}
+            onSuccess={() => setIsUploaded(true)}
+            className="w-full mb-6"
+          />
+        )}
         <FormField
           control={form.control}
           name="isPublished"
@@ -126,12 +174,14 @@ export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
             </FormItem>
           )}
         />
-        {error && (
-          <p className="text-sm font-medium text-destructive">{error}</p>
+        {form.formState.errors.root?.serverError && (
+          <p className="text-sm font-medium text-destructive">
+            {form.formState.errors.root?.serverError.message}
+          </p>
         )}
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || (!playlist && !isUploaded)}
         >
           {isLoading
             ? 'Ładowanie...'

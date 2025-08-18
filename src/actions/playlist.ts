@@ -5,11 +5,7 @@ import { db } from '@/db';
 import { eq, asc, desc, inArray, and, max } from 'drizzle-orm';
 import { playlistLesson, playlists } from '@/db/schema';
 import { ActionResult } from './types';
-import {
-  Playlist,
-  PlaylistWithLessons,
-  PlaylistWithLessonsWithVideo,
-} from '@/db/types';
+import { BasePlaylist, Playlist } from '@/db/types';
 import { notFound } from 'next/navigation';
 import { filterService, PlaylistFilters } from '@/services/filters';
 
@@ -17,15 +13,15 @@ interface ICreatePlaylist {
   name: string;
   description: string;
   isPublished: boolean;
+  videoId: number;
 }
-
-// 17:28 przerwa
 
 export const createPlaylist = async ({
   name,
   description,
   isPublished,
-}: ICreatePlaylist): Promise<ActionResult<Playlist>> => {
+  videoId
+}: ICreatePlaylist): Promise<ActionResult<BasePlaylist>> => {
   try {
     const [lastPlaylist] = await db
       .select()
@@ -41,6 +37,7 @@ export const createPlaylist = async ({
         isPublished,
         slug: createSlug(name),
         position: lastPlaylist ? lastPlaylist.position * 2 : 1024,
+        videoId
       })
       .returning();
 
@@ -59,7 +56,7 @@ export const createPlaylist = async ({
 export const updatePlaylist = async (
   slug: string,
   payload: ICreatePlaylist
-): Promise<ActionResult<Playlist>> => {
+): Promise<ActionResult<BasePlaylist>> => {
   try {
     const [data] = await db
       .update(playlists)
@@ -85,7 +82,7 @@ export const updatePlaylist = async (
 };
 
 export const getPublishedPlaylists = async (): Promise<
-  ActionResult<Playlist[]>
+  ActionResult<BasePlaylist[]>
 > => {
   try {
     const data = await db
@@ -111,7 +108,7 @@ export const getPublishedPlaylists = async (): Promise<
 
 export const getPlaylists = async (
   filters: PlaylistFilters
-): Promise<ActionResult<PlaylistWithLessons[]>> => {
+): Promise<ActionResult<Playlist[]>> => {
   try {
     const where = filterService.buildWhereCondition(playlists, filters);
     const orderBy = filterService.buildOrderByClause(playlists, filters);
@@ -131,8 +128,12 @@ export const getPlaylists = async (
     const data = result.map(({ playlistLessons, ...rest }) => {
       return {
         ...rest,
-        lessons: playlistLessons.map(({ lesson }) => {
-          return { ...lesson };
+        lessons: playlistLessons.map((playlistLesson) => {
+          return {
+            ...playlistLesson.lesson,
+            position: playlistLesson.position,
+            playlistLessonId: playlistLesson.id,
+          };
         }),
       };
     });
@@ -152,7 +153,9 @@ export const getPlaylists = async (
   }
 };
 
-export const getPlaylistsWithLessons = async () => {
+export const getPlaylistsWithLessons = async (): Promise<
+  ActionResult<Playlist[]>
+> => {
   try {
     const data = await db.query.playlists.findMany({
       orderBy: [asc(playlists.position)],
@@ -174,8 +177,12 @@ export const getPlaylistsWithLessons = async () => {
     const result = data.map(({ playlistLessons, ...rest }) => {
       return {
         ...rest,
-        lessons: playlistLessons.map(({ lesson }) => {
-          return { ...lesson };
+        lessons: playlistLessons.map((playlistLesson) => {
+          return {
+            ...playlistLesson.lesson,
+            position: playlistLesson.position,
+            playlistLessonId: playlistLesson.id,
+          };
         }),
       };
     });
@@ -197,17 +204,19 @@ export const getPlaylistsWithLessons = async () => {
 
 export const getPlaylistBySlug = async (
   slug: string
-): Promise<ActionResult<PlaylistWithLessonsWithVideo>> => {
+): Promise<ActionResult<Playlist>> => {
   try {
     const data = await db.query.playlists.findFirst({
       where: (playlists, { eq }) => eq(playlists.slug, slug),
       with: {
+        video: true,
         playlistLessons: {
           orderBy: [asc(playlistLesson.position)],
           with: {
             lesson: {
               with: {
                 video: true,
+                attachments: true,
               },
             },
           },
@@ -224,7 +233,11 @@ export const getPlaylistBySlug = async (
     const result = {
       ...rest,
       lessons: playlistLessons.map((playlistLesson) => {
-        return { ...playlistLesson.lesson };
+        return {
+          ...playlistLesson.lesson,
+          position: playlistLesson.position,
+          playlistLessonId: playlistLesson.id,
+        };
       }),
     };
     return { data: result, error: null, success: true };
@@ -245,7 +258,7 @@ export const getPlaylistBySlug = async (
 export const attachLessonsToPlaylist = async (
   slug: string,
   lessonIds: number[]
-) => {
+): Promise<ActionResult<null>> => {
   try {
     const playlist = await db.query.playlists.findFirst({
       where: eq(playlists.slug, slug),
@@ -257,7 +270,7 @@ export const attachLessonsToPlaylist = async (
 
     await db.transaction(async (tx) => {
       const currentPlaylistLessons = await tx
-        .select({ id: playlistLesson.id })
+        .select({ id: playlistLesson.lessonId })
         .from(playlistLesson)
         .where(eq(playlistLesson.playlistId, playlist.id));
 
@@ -277,7 +290,7 @@ export const attachLessonsToPlaylist = async (
           .delete(playlistLesson)
           .where(
             and(
-              eq(playlistLesson.id, playlist.id),
+              eq(playlistLesson.playlistId, playlist.id),
               inArray(playlistLesson.lessonId, lessonsToRemove)
             )
           );
@@ -305,10 +318,19 @@ export const attachLessonsToPlaylist = async (
 
         await tx.insert(playlistLesson).values(insertions);
       }
-
-      return { data: null, success: true, error: null };
     });
+
+    return { data: null, success: true, error: null };
   } catch (error) {
-    console.error(error)
+    console.error(
+      'Podczas dodawania lekcji do playlisty wystąpił błąd.',
+      error
+    );
+
+    return {
+      data: null,
+      success: false,
+      error: 'Podczas dodawania lekcji do playlisty wystąpił błąd.',
+    };
   }
 };

@@ -3,6 +3,7 @@ import Carousel from '@/components/Carousel/Carousel';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import { getPlaylistsWithLessons } from '@/actions/playlist';
 import LessonCard from '@/components/LessonCard/LessonCard';
+import Link from 'next/link';
 
 export default async function OnlineYogaStudio() {
   const { data: playlists, success, error } = await getPlaylistsWithLessons();
@@ -16,15 +17,25 @@ export default async function OnlineYogaStudio() {
       <Container>
         {playlists.map((playlist) => (
           <div key={playlist.id}>
-            <div>{playlist.name}</div>
+            <div className="flex justify-between">
+              <div>{playlist.name}</div>
+              <Link href={`/studio-jogi-online/${playlist.slug}`}>
+                Zobacz wszystkie
+              </Link>
+            </div>
             <Carousel key={playlist.id}>
               {playlist.lessons.map((lesson) => (
-                <LessonCard
+                <Link
                   key={lesson.id}
-                  name={lesson.name}
-                  description={lesson.description}
-                  video={lesson.video}
-                />
+                  href={`/studio-jogi-online/${playlist.slug}/video/${lesson.video?.publicPlaybackId}`}
+                >
+                  <LessonCard
+                    key={lesson.id}
+                    name={lesson.name}
+                    description={lesson.description}
+                    video={lesson.video}
+                  />
+                </Link>
               ))}
             </Carousel>
           </div>

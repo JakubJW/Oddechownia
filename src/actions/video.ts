@@ -4,18 +4,14 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { videos } from '@/db/schema';
 import { nullToUndefined } from '@/db/types';
-import { muxService } from '@/services/mux';
-
-type ActionResult<T> = {
-  data: T | null;
-  error: any;
-};
+import { ActionResult } from './types';
+import { BaseVideo } from '@/db/types';
 
 export const createVideo = async ({
   uploadId,
 }: {
   uploadId: string;
-}): Promise<ActionResult<(typeof videos.$inferInsert)>> => {
+}): Promise<ActionResult<BaseVideo>> => {
   try {
     const [video] = await db
       .insert(videos)
@@ -24,9 +20,17 @@ export const createVideo = async ({
       })
       .returning();
 
-    return { data: video, error: null };
-  } catch (e) {
-    return { data: null, error: e };
+    return { data: video, success: true, error: null };
+  } catch (error) {
+    console.error(
+      'Podczas tworzenia filmu wystąpił błąd. Spróbuj ponownie później.',
+      error
+    );
+    return {
+      data: null,
+      success: false,
+      error: 'Podczas tworzenia filmu wystąpił błąd. Spróbuj ponownie później.',
+    };
   }
 };
 

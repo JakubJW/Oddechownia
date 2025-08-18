@@ -5,30 +5,65 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { lessons } from '@/db/schema';
 import { ActionResult } from './types';
-import { Lesson, LessonWithPlaylistsWithVideo } from '@/db/types';
+import { BaseLesson, Lesson } from '@/db/types';
 import { filterService, LessonFilters } from '@/services/filters';
+import { formSchema as lessonFormSchema } from '@/features/admin/Lesson/schema';
+import { createAttachment, deleteAttachment } from './attachments';
 
-interface CreateLesson {
-  name: string;
-  description: string;
-  videoId: number | null;
-}
-
-export const createLesson = async ({
-  name,
-  description,
-  videoId,
-}: CreateLesson): Promise<ActionResult<Lesson>> => {
+export const createLesson = async (
+  formData: FormData
+): Promise<ActionResult<BaseLesson>> => {
   try {
+    const rawData = {
+      name: formData.get('name'),
+      description: formData.get('description'),
+      videoId: Number(formData.get('videoId')),
+    };
+    const parsed = lessonFormSchema.safeParse(rawData);
+
+    if (!parsed.success) {
+      return {
+        data: null,
+        success: false,
+        error: 'Podczas edytownaia lekcji wystąpił błąd.',
+      };
+    }
+
     const [lesson] = await db
       .insert(lessons)
       .values({
-        name,
-        description,
-        slug: createSlug(name),
-        videoId,
+        name: parsed.data.name,
+        description: parsed.data.description,
+        slug: createSlug(parsed.data.name),
+        videoId: parsed.data.videoId,
       })
       .returning();
+
+    const newAttachments = formData.getAll('newAttachments[]');
+    const attachmentsToRemove = formData.getAll('attachmentsToRemove[]');
+
+    if (newAttachments) {
+      for (let i = 0; i < newAttachments.length; i++) {
+        const { error } = await createAttachment(
+          lesson.id,
+          newAttachments[i] as File
+        );
+
+        if (error) {
+          throw new Error(error);
+        }
+      }
+    }
+
+    if (attachmentsToRemove && attachmentsToRemove.length) {
+      const { error } = await deleteAttachment(
+        attachmentsToRemove.map((value) => Number(value))
+      );
+
+      if (error) {
+        throw new Error(error);
+      }
+    }
 
     return { data: lesson, success: true, error: null };
   } catch (e) {
@@ -46,34 +81,72 @@ export const createLesson = async ({
 };
 
 export const updateLesson = async (
-  slug: string,
-  { name, description }: CreateLesson
-) => {
+  id: number,
+  formData: FormData
+): Promise<ActionResult<BaseLesson>> => {
   try {
-    const data = await db
+    const rawData = {
+      name: formData.get('name'),
+      description: formData.get('description'),
+      videoId: Number(formData.get('videoId')),
+    };
+    const parsed = lessonFormSchema.safeParse(rawData);
+
+    if (!parsed.success) {
+      return {
+        data: null,
+        success: false,
+        error: 'Podczas edytownaia lekcji wystąpił błąd.',
+      };
+    }
+
+    const [lesson] = await db
       .update(lessons)
       .set({
-        name,
-        description,
-        slug: createSlug(name),
+        name: parsed.data.name,
+        description: parsed.data.description,
+        slug: createSlug(parsed.data.name),
       })
-      .where(eq(lessons.slug, slug))
+      .where(eq(lessons.id, id))
       .returning();
 
-    return { data, error: null };
+    const newAttachments = formData.getAll('newAttachments[]');
+    const attachmentsToRemove = formData.getAll('attachmentsToRemove[]');
+
+    if (newAttachments) {
+      for (let i = 0; i < newAttachments.length; i++) {
+        const { error } = await createAttachment(id, newAttachments[i] as File);
+
+        if (error) {
+          throw new Error(error);
+        }
+      }
+    }
+
+    if (attachmentsToRemove && attachmentsToRemove.length) {
+      const { error } = await deleteAttachment(
+        attachmentsToRemove.map((value) => Number(value))
+      );
+
+      if (error) {
+        throw new Error(error);
+      }
+    }
+
+    return { data: lesson, success: true, error: null };
   } catch (e) {
     if (e instanceof Error) {
       console.error('Unable to update lesson', e.message);
-      return { data: null, error: e.message };
+      return { data: null, success: false, error: e.message };
     }
 
-    return { data: null, error: 'Unable to update lesson' };
+    return { data: null, success: false, error: 'Unable to update lesson' };
   }
 };
 
 export const getLessons = async (
   filters?: LessonFilters
-): Promise<ActionResult<LessonWithPlaylistsWithVideo[]>> => {
+): Promise<ActionResult<Lesson[]>> => {
   try {
     const where = filterService.buildWhereCondition(lessons, filters);
     const orderBy = filterService.buildOrderByClause(lessons, filters);
@@ -115,17 +188,20 @@ export const getLessons = async (
   }
 };
 
-export const getLesson = async (filters: LessonFilters) => {
+export const getLesson = async (
+  filters: LessonFilters
+): Promise<ActionResult<Lesson>> => {
   try {
     const lessonWhereClause = filterService.buildWhereCondition(
       lessons,
       filters
     );
 
-    const data = await db.query.lessons.findFirst({
+    const [data] = await db.query.lessons.findMany({
       ...(lessonWhereClause && { where: lessonWhereClause }),
       with: {
         video: true,
+        attachments: true,
       },
     });
 

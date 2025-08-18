@@ -6,21 +6,27 @@ import { env } from '@/env';
 import { muxService } from '@/services/mux';
 
 export async function GET() {
-  const { data: uploadData, success, error: uploadError } = await muxService.createUpload({
+  const {
+    data: uploadData,
+    success,
+    error: uploadError,
+  } = await muxService.createUpload({
     cors_origin: env.NEXT_PUBLIC_APP_URL,
     new_asset_settings: {
       playback_policy: ['public', 'signed'],
     },
   });
 
-  if (uploadError) {
+  if (!success) {
     return NextResponse.json(
       { message: 'Video creation failed', uploadError },
       { status: 500 }
     );
   }
 
-  const { data: videoData, error: videoError } = await createVideo({ uploadId: uploadData.id });
+  const { data: videoData, error: videoError } = await createVideo({
+    uploadId: uploadData.id,
+  });
 
   if (videoError) {
     return NextResponse.json(
