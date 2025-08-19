@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 import {
   lessons,
+  playlists,
   courses,
   videos,
   users,
@@ -8,23 +9,35 @@ import {
   stripeProducts,
   stripePrices,
   userOneOffPurchase,
+  playlistLesson,
+  attachments,
 } from './schema';
 
-export const lessonsRelations = relations(lessons, ({ one }) => ({
-  course: one(courses, {
-    fields: [lessons.courseId],
-    references: [courses.id],
-  }),
+export const playlistRelations = relations(playlists, ({ many, one }) => ({
+  playlistLessons: many(playlistLesson),
   video: one(videos, {
-    fields: [lessons.id],
-    references: [videos.lessonId],
+    fields: [playlists.videoId],
+    references: [videos.id],
   }),
+}));
+
+export const lessonsRelations = relations(lessons, ({ one, many }) => ({
+  playlistLessons: many(playlistLesson),
+  video: one(videos, {
+    fields: [lessons.videoId],
+    references: [videos.id],
+  }),
+  attachments: many(attachments),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
   lesson: one(lessons, {
-    fields: [videos.lessonId],
-    references: [lessons.id],
+    fields: [videos.id],
+    references: [lessons.videoId],
+  }),
+  playlist: one(playlists, {
+    fields: [videos.id],
+    references: [playlists.videoId],
   }),
 }));
 
@@ -75,3 +88,21 @@ export const userOneOffPurchasesRelations = relations(
     }),
   })
 );
+
+export const playlistLessonRelations = relations(playlistLesson, ({ one }) => ({
+  lesson: one(lessons, {
+    fields: [playlistLesson.lessonId],
+    references: [lessons.id],
+  }),
+  playlist: one(playlists, {
+    fields: [playlistLesson.playlistId],
+    references: [playlists.id],
+  }),
+}));
+
+export const attachmentsRelations = relations(attachments, ({ one }) => ({
+  lesson: one(lessons, {
+    fields: [attachments.lessonId],
+    references: [lessons.id],
+  }),
+}));

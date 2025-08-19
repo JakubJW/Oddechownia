@@ -4,32 +4,37 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { videos } from '@/db/schema';
 import { nullToUndefined } from '@/db/types';
-
-type ActionResult<T> = {
-  data: T | null;
-  error: any;
-};
+import { ActionResult } from './types';
+import { BaseVideo } from '@/db/types';
 
 export const createVideo = async ({
   uploadId,
 }: {
   uploadId: string;
-}): Promise<ActionResult<(typeof videos.$inferInsert)[]>> => {
+}): Promise<ActionResult<BaseVideo>> => {
   try {
-    const video = await db
+    const [video] = await db
       .insert(videos)
       .values({
         uploadId,
       })
       .returning();
 
-    return { data: video, error: null };
-  } catch (e) {
-    return { data: null, error: e };
+    return { data: video, success: true, error: null };
+  } catch (error) {
+    console.error(
+      'Podczas tworzenia filmu wystąpił błąd. Spróbuj ponownie później.',
+      error
+    );
+    return {
+      data: null,
+      success: false,
+      error: 'Podczas tworzenia filmu wystąpił błąd. Spróbuj ponownie później.',
+    };
   }
 };
 
-export const deleteVideo = async ({ uploadId }: { uploadId: string }) => {
+export const deleteVideo = async (uploadId: string) => {
   try {
     await db.delete(videos).where(eq(videos.uploadId, uploadId));
   } catch (e) {

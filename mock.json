@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Joga dla początkujących",
+    "description": "Idealna seria dla osób, które dopiero zaczynają swoją przygodę z jogą. Lekcje koncentrują się na podstawowych pozycjach, oddechu i łagodnym rozciąganiu.",
+    "lessons": [
+      {
+        "title": "Wprowadzenie do jogi",
+        "description": "Krótka sesja prezentująca podstawowe zasady jogi, skupienie na oddechu i świadomości ciała."
+      },
+      {
+        "title": "Podstawowe pozycje stojące",
+        "description": "Nauka pozycji takich jak góra, drzewo i wojownik. Idealne, aby zbudować stabilność i równowagę."
+      },
+      {
+        "title": "Rozciąganie i relaks",
+        "description": "Delikatne ćwiczenia rozciągające zakończone krótką medytacją relaksacyjną."
+      }
+    ]
+  },
+  {
+    "title": "Joga na dobry dzień",
+    "description": "Seria sesji dodających energii i witalności. Doskonałe do porannej praktyki, aby rozpocząć dzień w dobrym nastroju.",
+    "lessons": [
+      {
+        "title": "Dynamiczne powitania słońca",
+        "description": "Energetyczna sekwencja powitań słońca, która pobudza ciało i umysł."
+      },
+      {
+        "title": "Joga na kręgosłup",
+        "description": "Ćwiczenia wzmacniające i rozciągające kręgosłup, wspierające prawidłową postawę."
+      },
+      {
+        "title": "Sesja oddechowa i medytacja",
+        "description": "Ćwiczenia oddechowe połączone z krótką medytacją dla wyciszenia i zebrania energii."
+      }
+    ]
+  }
+]

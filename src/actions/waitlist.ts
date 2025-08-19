@@ -2,14 +2,14 @@
 
 import { waitlist } from '@/db/schema';
 import { ActionResult } from './types';
-import { Waitlist } from '@/db/types';
+import { BaseWaitlist } from '@/db/types';
 import { db } from '@/db';
 import { formSchema } from '@/features/Waitlist/schema';
 import { z } from 'zod';
 
 export const signInToWaitlist = async (
   payload: z.infer<typeof formSchema>
-): Promise<ActionResult<Waitlist>> => {
+): Promise<ActionResult<BaseWaitlist>> => {
   try {
     const [data] = await db.insert(waitlist).values(payload).returning();
 

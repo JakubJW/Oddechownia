@@ -1,0 +1,2 @@
+ALTER TABLE "playlists" ADD COLUMN "video_id" integer;--> statement-breakpoint
+ALTER TABLE "playlists" ADD CONSTRAINT "playlists_video_id_videos_id_fk" FOREIGN KEY ("video_id") REFERENCES "public"."videos"("id") ON DELETE cascade ON UPDATE no action;

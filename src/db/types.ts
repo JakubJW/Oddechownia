@@ -6,7 +6,7 @@ import type {
   DBQueryConfig,
   ExtractTablesWithRelations,
 } from 'drizzle-orm';
-import { getCourses } from '@/actions/course';
+// import { getCourses } from '@/actions/course';
 
 type Schema = typeof schema & typeof relations;
 type TSchema = ExtractTablesWithRelations<Schema>;
@@ -39,21 +39,29 @@ type NullToUndefined<T> = {
     : T[K];
 };
 
-export type Course = typeof schema.courses.$inferSelect;
-export type Lesson = typeof schema.lessons.$inferSelect;
-export type Video = typeof schema.videos.$inferSelect;
-export type Post = typeof schema.posts.$inferSelect;
-export type Waitlist = typeof schema.waitlist.$inferSelect;
+export type BasePost = typeof schema.posts.$inferSelect;
+export type BaseCourse = typeof schema.courses.$inferSelect;
+export type BasePlaylist = typeof schema.playlists.$inferSelect;
+export type BaseLesson = typeof schema.lessons.$inferSelect;
+export type BaseVideo = typeof schema.videos.$inferSelect;
+export type BaseWaitlist = typeof schema.waitlist.$inferSelect;
+export type BaseAttachment = typeof schema.attachments.$inferSelect;
 
-export type CourseWithLessons = NullToUndefined<
-  InferResultType<'courses', { lessons: true }>
->;
-export type CourseWithLessonsWithVideos = Awaited<
-  ReturnType<typeof getCourses>
->;
-export type LessonWithVideos = NullToUndefined<
-  InferResultType<'lessons', { video: true }>
->;
+export type Lesson = BaseLesson & {
+  video?: BaseVideo | null;
+  attachments?: BaseAttachment[];
+  playlists?: BasePlaylist[];
+};
+
+export type PlaylistLesson = Omit<Lesson, "playlists"> & {
+  position: number;
+  playlistLessonId: number;
+};
+
+export type Playlist = BasePlaylist & {
+  video?: BaseVideo | null;
+  lessons: PlaylistLesson[];
+};
 
 export function nullToUndefined<T>(data: T): NullToUndefined<T> {
   if (Array.isArray(data)) {

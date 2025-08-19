@@ -9,7 +9,8 @@ import type { User } from '@supabase/supabase-js';
 import NavigationAction from './NavigationAction';
 
 export const routes = [
-  { content: 'Nasze kursy', href: '/nasze-kursy' },
+  { content: 'Studio Jogi Online', href: '/studio-jogi-online' },
+  { content: 'Nasze Kursy', href: '/nasze-kursy' },
   { content: 'O nas', href: '/o-nas' },
   { content: 'Blog', href: '/blog' },
 ];
