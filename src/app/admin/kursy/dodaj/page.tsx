@@ -1,6 +1,4 @@
-'use client';
-
-import CourseForm from '@/features/admin/Course/CourseForm';
+// import CourseForm from '@/features/admin/Course/CourseForm';
 
 export default function AdminNewCourse() {
 
@@ -8,7 +6,7 @@ export default function AdminNewCourse() {
   return (
     <div>
       <h1>Dodaj kurs</h1>
-      <CourseForm />
+      {/* <CourseForm /> */}
     </div>
   );
 }

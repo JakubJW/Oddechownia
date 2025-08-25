@@ -1,7 +1,7 @@
 'use client';
 
 import SortableLessonCard from './SortableLessonCard';
-import { LessonWithVideos } from '@/db/types';
+import { Lesson } from '@/db/types';
 import { useState } from 'react';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
@@ -11,14 +11,17 @@ import {
 } from '@dnd-kit/sortable';
 
 interface LessonListProps {
-  lessons?: LessonWithVideos[];
+  lessons?: Array<Lesson & { position: number, playlistLessonId: number }>;
   courseSlug: string;
 }
 
 export default function LessonList({ lessons, courseSlug }: LessonListProps) {
   const [lessonsClone, setLessons] = useState(lessons);
 
-  const calculatePosition = (newIndex: number, lessons: LessonWithVideos[]) => {
+  const calculatePosition = (
+    newIndex: number,
+    lessons: Array<Lesson & { position: number, playlistLessonId: number }>
+  ) => {
     let position;
 
     if (newIndex === 0 && lessons.length > 1) {
@@ -54,7 +57,7 @@ export default function LessonList({ lessons, courseSlug }: LessonListProps) {
 
     setLessons(updatedLessons);
 
-    await fetch(`/api/lessons/reorder/${movedLesson.id}`, {
+    await fetch(`/api/lessons/reorder/${movedLesson.playlistLessonId}`, {
       method: 'POST',
       body: JSON.stringify({ position: movedLesson.position }),
     })

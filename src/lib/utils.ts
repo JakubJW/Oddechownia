@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDuration(duration: number | null) {
+export function formatDuration(duration?: number | null) {
   if (!duration) return '--:--:--';
 
   const round = Math.round(duration);

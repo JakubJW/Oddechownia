@@ -2,37 +2,37 @@
 // Kurs jest linkiem i do wymyślenia co ma sie stać, jeśli jest status disabled
 // Gdy kurs jest jednorazowy, dodatkowo sprawdzamy czy jest wykupiony przez użytkownika i jakoś to pokazujemy
 
+// import Pagination from '@/components/Pagination/Pagination';
+// import CourseCard from '@/components/CourseCard/CourseCard';
+// import { CourseWithLessonsWithVideos } from '@/db/types';
+// import { users } from '@/db/schema';
 
-import Pagination from '@/components/Pagination/Pagination';
-import CourseCard from '@/components/CourseCard/CourseCard';
-import { CourseWithLessonsWithVideos } from '@/db/types';
-import { users } from '@/db/schema';
+// interface CourseGridProps {
+//   courses: CourseWithLessonsWithVideos;
+//   user: typeof users.$inferSelect | null;
+// }
 
-interface CourseGridProps {
-  courses: CourseWithLessonsWithVideos;
-  user: typeof users.$inferSelect | null;
-}
+export default function CourseGrid() {
+// { courses, user }: CourseGridProps
+  // if (!courses) {
+  //   return (
+  //     <div className="col-span-12 lg:col-span-10 text-red-500 min-h-[300px]">
+  //       Podczas ładowania kursów wystąpił błąd. Spróbuj ponownie później.
+  //     </div>
+  //   );
+  // }
 
-export default function CourseGrid({ courses, user }: CourseGridProps) {
-  if (!courses) {
-    return (
-      <div className="col-span-12 lg:col-span-10 text-red-500 min-h-[300px]">
-        Podczas ładowania kursów wystąpił błąd. Spróbuj ponownie później.
-      </div>
-    );
-  }
-
-  if (!courses.length) {
-    return (
-      <div className="col-span-12 lg:col-span-10 text-red-500 min-h-[300px]">
-        Brak wyników.
-      </div>
-    );
-  }
+  // if (!courses.length) {
+  //   return (
+  //     <div className="col-span-12 lg:col-span-10 text-red-500 min-h-[300px]">
+  //       Brak wyników.
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="col-span-12 lg:col-span-10">
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
         {courses.map(
           ({
             id,
@@ -67,7 +67,7 @@ export default function CourseGrid({ courses, user }: CourseGridProps) {
           total={9}
           baseUrl="/nasze-kursy"
         />
-      </div>
+      </div> */}
     </div>
   );
 }

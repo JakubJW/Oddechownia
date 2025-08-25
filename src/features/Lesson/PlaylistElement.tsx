@@ -23,7 +23,7 @@ export default function PlaylistElement({
 }: PlaylistElementProps) {
   return (
     <Link
-      href={`/nasze-kursy/${courseSlug}/video/${videoPlaybackId}`}
+      href={`/studio-jogi-online/${courseSlug}/video/${videoPlaybackId}`}
       className={cn(
         isActive && 'bg-primaryBg',
         'flex gap-4 -mx-6 px-6 py-2 relative'

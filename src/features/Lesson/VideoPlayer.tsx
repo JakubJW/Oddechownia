@@ -22,7 +22,6 @@ export default function VideoPlayer({
         metadata={{
           video_series: videoSeries,
           video_title: videoTitle,
-          player_name: 'Video Course Starter Kit',
         }}
       />
     </div>
