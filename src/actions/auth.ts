@@ -8,6 +8,9 @@ import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
 import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
 import { env } from '@/env';
 import { supabaseService } from '@/services/supabase';
+import { db } from '@/db';
+import { users } from '@/db/schema';
+import { stripeService } from '@/services/stripe';
 
 export const changePasswordAuthenticated = async (password: string) => {
   const { error } = await supabaseService.changePasswordAuthenticated(password);
@@ -45,6 +48,7 @@ export async function signup(formData: FormData, stripeProductId: string) {
 
   const { regulationsAgreement, privacyPolicyAgreement, ...rest } =
     Object.fromEntries(formData);
+
   const parsed = registerFormSchema.safeParse({
     regulationsAgreement: Boolean(regulationsAgreement),
     privacyPolicyAgreement: Boolean(privacyPolicyAgreement),
@@ -56,24 +60,40 @@ export async function signup(formData: FormData, stripeProductId: string) {
     return { data: null, error: null };
   }
 
-  const { data, error } = await supabase.auth.signUp({
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
-    options: {
-      data: {
-        first_name: parsed.data.firstName,
-        last_name: parsed.data.lastName,
-        email: parsed.data.email,
-        regulations_agreement: parsed.data.regulationsAgreement,
-        privacy_policy_agreement: parsed.data.privacyPolicyAgreement,
-        role: UserRoles.USER,
-      },
-    },
   });
 
   if (error && error.code === 'email_exists') {
     return { data: null, error: 'Adres e-mail jest już w użyciu.' };
   }
+
+  if (!user) {
+    return {
+      data: null,
+      error: 'Podczas rejestracji wystąpił błąd. Spróbuj ponownie później.',
+    };
+  }
+
+  const customer = await stripeService.createCustomer({
+    name: `${parsed.data.firstName} ${parsed.data.lastName}`,
+    email: parsed.data.email,
+  });
+
+  await db.insert(users).values({
+    id: user.id,
+    firstName: parsed.data.firstName,
+    lastName: parsed.data.lastName,
+    email: parsed.data.email,
+    regulationsAgreement: parsed.data.regulationsAgreement,
+    privacyPolicyAgreement: parsed.data.privacyPolicyAgreement,
+    role: UserRoles.USER,
+    stripeCustomerId: customer.id,
+  });
 
   const res = await fetch(
     `${env.NEXT_PUBLIC_APP_URL}/api/checkout/subscription`,
@@ -83,7 +103,7 @@ export async function signup(formData: FormData, stripeProductId: string) {
       body: JSON.stringify({
         stripeProductId,
         customerEmail: parsed.data.email,
-        clientReferenceId: data.user?.id,
+        clientReferenceId: user.id,
       }),
     }
   );

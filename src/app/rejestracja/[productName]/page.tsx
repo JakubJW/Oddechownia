@@ -28,7 +28,7 @@ export default async function SignIn({
     <section>
       <Container className="pt-6 pb-32">
         <div className="grid grid-cols-12 gap-24">
-          <RegisterForm stripeProductId={stripeProduct?.stripeProductId} />
+          <RegisterForm stripeProductId={stripeProduct.stripeProductId} />
           <Order stripeProduct={stripeProduct} />
         </div>
       </Container>

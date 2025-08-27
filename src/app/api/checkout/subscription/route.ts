@@ -6,7 +6,8 @@ import { env } from '@/env';
 import { stripeService } from '@/services/stripe';
 
 export async function POST(req: NextRequest) {
-  const { stripeProductId, customerEmail, clientReferenceId } = await req.json();
+  const { stripeProductId, customerEmail, clientReferenceId } =
+    await req.json();
 
   if (!stripeProductId) {
     return NextResponse.json(
@@ -51,7 +52,10 @@ export async function POST(req: NextRequest) {
     success_url: `${env.NEXT_PUBLIC_APP_URL}/moje-konto`,
     cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,
     customer_email: customerEmail,
-    client_reference_id: clientReferenceId
+    client_reference_id: clientReferenceId,
+    subscription_data: {
+      metadata: { userId: clientReferenceId },
+    },
   });
 
   if (!session.url) {

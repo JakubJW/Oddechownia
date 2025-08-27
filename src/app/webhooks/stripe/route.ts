@@ -142,7 +142,7 @@ export async function POST(req: Request) {
           unitAmount: priceUnitAmount,
         })
         .onConflictDoUpdate({
-          target: stripeProducts.stripeProductId,
+          target: stripePrices.stripePriceId,
           set: {
             active: priceActive,
             currency: priceCurrency,
@@ -232,22 +232,24 @@ export async function POST(req: Request) {
 
     case 'customer.subscription.created':
     case 'customer.subscription.updated': {
-      const { status, id } = event.data.object;
+      const { status, id, metadata } = event.data.object;
 
       await db
         .insert(userSubscription)
         .values({
           status: status,
           stripeSubscriptionId: id,
-          userId: 'siema',
+          userId: metadata.userId,
         })
         .onConflictDoUpdate({
-          target: userSubscription.id,
+          target: userSubscription.stripeSubscriptionId,
           set: {
             status: status,
-            stripeSubscriptionId: id,
+            userId: metadata.userId,
           },
         });
+
+      return NextResponse.json({ message: 'Success' }, { status: 200 });
     }
 
     default:
