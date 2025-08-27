@@ -11,26 +11,30 @@ export default async function UserLayout({
 }) {
   const user = await getRequiredUser();
 
-  // if (user.subscriptionStatus === 'inactive') {
-  //   return (
-  //     <div className="col-span-12">
-  //       <p>
-  //         Witaj, {user.firstName} {user.lastName}! Wygląda na to, że nie
-  //         posiadasz wykupionej subskrypcji. Aby tego dokończyć proces, kliknij w
-  //         ten link i{' '}
-  //         <Link
-  //           href="/dolacz-do-nas"
-  //           className="underline text-matcha"
-  //         >
-  //           dołącz do nas!
-  //         </Link>
-  //       </p>
-  //       <form action={signOut}>
-  //         <Button type="submit">Wyloguj</Button>
-  //       </form>
-  //     </div>
-  //   );
-  // }
+  if (
+    user.subscriptions.every(
+      (subscription) => subscription.status === 'inactive'
+    )
+  ) {
+    return (
+      <div className="col-span-12">
+        <p>
+          Witaj, {user.firstName} {user.lastName}! Wygląda na to, że nie
+          posiadasz wykupionej subskrypcji. Aby tego dokończyć proces, kliknij w
+          ten link i{' '}
+          <Link
+            href="/dolacz-do-nas"
+            className="underline text-matcha"
+          >
+            dołącz do nas!
+          </Link>
+        </p>
+        <form action={signOut}>
+          <Button type="submit">Wyloguj</Button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <Container>
