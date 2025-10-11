@@ -7,6 +7,7 @@ import { createClient } from '@/supabase/server';
 import { cache } from 'react';
 import { getRequiredUser } from '@/lib/data';
 import { supabaseService } from '@/services/supabase';
+import { userSubscription } from '@/db/schema';
 
 interface UpdateUserParams {
   firstName: string;
@@ -31,15 +32,29 @@ export const getUser = cache(async () => {
       where: eq(users.id, user.id),
     });
 
+    const subscriptions = await db.query.userSubscription.findMany({
+      where: eq(userSubscription.userId, user.id),
+    });
+
     if (!publicUser) {
       return null;
     }
 
-    return { ...publicUser };
+    return { ...publicUser, subscriptions };
   } catch (error) {
     console.log(error);
     return null;
   }
+});
+
+export const getUserWithSubscriptions = cache(async () => {
+  const user = await getRequiredUser();
+
+  const subscriptions = await db.query.userSubscription.findMany({
+    where: eq(userSubscription.userId, user.id),
+  });
+
+  return { ...user, subscriptions };
 });
 
 export const updateUser = async (params: UpdateUserParams) => {

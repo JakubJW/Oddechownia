@@ -89,6 +89,19 @@ class StripeService {
       throw error;
     }
   }
+
+  public async createPortalSession(params: Stripe.BillingPortal.SessionCreateParams) {
+    try {
+      const portalSession = await this.stripe.billingPortal.sessions.create(
+        params
+      );
+
+      return portalSession.url;
+    } catch (error) {
+      console.error('Error constructing portal session:', error);
+      throw error;
+    }
+  }
 }
 
 export const stripeService = StripeService.getInstance();

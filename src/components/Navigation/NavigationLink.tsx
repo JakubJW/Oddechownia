@@ -9,9 +9,10 @@ interface NavigationLinkProps {
   content: string;
   href: string;
   onClick?: () => void;
+  isMobile: boolean;
 }
 
-function NavigationLink({ content, href, onClick }: NavigationLinkProps) {
+function NavigationLink({ content, href, onClick, isMobile }: NavigationLinkProps) {
   const currentPath = usePathname();
 
   return (
@@ -19,11 +20,12 @@ function NavigationLink({ content, href, onClick }: NavigationLinkProps) {
       href={href}
       onClick={onClick}
       className={cn(
-        'block text-white border-b-2 py-4 sm:py-6 px-4 hover:border-richBlack hover:text-richBlack trasition-colors duration-300',
+        'flex border-b-2 h-full items-center px-4 hover:border-richBlack hover:text-richBlack trasition-colors duration-300',
+        isMobile ? 'text-richBlack' : 'text-white',
         href.split('/').includes(currentPath.split('/')[1]) &&
           currentPath !== '/'
           ? 'text-richBlack border-richBlack'
-          : 'border-transparent'
+          : 'border-transparent',
       )}
     >
       {content}

@@ -7,20 +7,23 @@ import { playlistLesson, playlists } from '@/db/schema';
 import { ActionResult } from './types';
 import { BasePlaylist, Playlist } from '@/db/types';
 import { notFound } from 'next/navigation';
-import { filterService, PlaylistFilters } from '@/services/filters';
+import {
+  filterService,
+  PlaylistFilters,
+} from '@/services/filters';
 
 interface ICreatePlaylist {
   name: string;
   description: string;
   isPublished: boolean;
-  videoId: number;
+  videoId?: number | null;
 }
 
 export const createPlaylist = async ({
   name,
   description,
   isPublished,
-  videoId
+  videoId,
 }: ICreatePlaylist): Promise<ActionResult<BasePlaylist>> => {
   try {
     const [lastPlaylist] = await db
@@ -37,7 +40,7 @@ export const createPlaylist = async ({
         isPublished,
         slug: createSlug(name),
         position: lastPlaylist ? lastPlaylist.position * 2 : 1024,
-        videoId
+        videoId,
       })
       .returning();
 
@@ -198,6 +201,26 @@ export const getPlaylistsWithLessons = async (): Promise<
       success: false,
       error:
         'Podczas pobierania playlist wystąpił błąd. Spróbuj ponownie później.',
+    };
+  }
+};
+
+export const getBasePlaylist = async (
+  filters: PlaylistFilters
+): Promise<ActionResult<BasePlaylist>> => {
+  try {
+    const where = filterService.buildWhereCondition(playlists, filters);
+    const [playlist] = await db.query.playlists.findMany({
+      where,
+    });
+
+    return { data: playlist, error: null, success: true };
+  } catch (error) {
+    console.error('Podczas pobierania playlisty wystąpił błąd.', error);
+    return {
+      data: null,
+      success: false,
+      error: 'Podczas pobierania playlisty wystąpił błąd.',
     };
   }
 };

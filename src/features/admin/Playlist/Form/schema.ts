@@ -4,7 +4,7 @@ import { nonEmptyString } from '@/shared/formUtils';
 export const formSchema = z.object({
   name: z.string().pipe(nonEmptyString),
   description: z.string().pipe(nonEmptyString),
-  videoId: z.number(),
+  videoId: z.number().optional().nullable(),
   isPublished: z.boolean(),
 });
 

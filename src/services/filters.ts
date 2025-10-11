@@ -61,11 +61,16 @@ class FilterService {
     this.filterMappers.set(playlists, (filters: PlaylistFilters) => {
       const conditions: SQL<unknown>[] = [];
 
+      if (filters.slug) {
+        conditions.push(eq(playlists.slug, filters.slug));
+      }
+
       if (filters.search) {
         const searchCondition = or(
           ilike(playlists.name, `%${filters.search}%`),
           ilike(playlists.description, `%${filters.search}%`)
         );
+        
         if (searchCondition) {
           conditions.push(searchCondition);
         }
@@ -74,14 +79,6 @@ class FilterService {
       if (typeof filters.isPublished === 'boolean') {
         conditions.push(eq(playlists.isPublished, filters.isPublished));
       }
-
-      //   if (filters.id) {
-      //     if (Array.isArray(filters.id)) {
-      //       conditions.push(inArray(playlists.id, filters.id));
-      //     } else {
-      //       conditions.push(eq(playlists.id, filters.id));
-      //     }
-      //   }
 
       return conditions.length ? and(...conditions) : undefined;
     });

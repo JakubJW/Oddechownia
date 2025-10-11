@@ -4,12 +4,24 @@ import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import { getPlaylistsWithLessons } from '@/actions/playlist';
 import LessonCard from '@/components/LessonCard/LessonCard';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Studio Jogi Online | Oddechownia',
+};
 
 export default async function OnlineYogaStudio() {
   const { data: playlists, success, error } = await getPlaylistsWithLessons();
 
   if (!success) {
-    return <ErrorMessage message={error} />;
+    return (
+      <section>
+        <Container>
+          <h1>Ups, coś poszło nie tak.</h1>
+          <ErrorMessage message={error} />
+        </Container>
+      </section>
+    );
   }
 
   return (

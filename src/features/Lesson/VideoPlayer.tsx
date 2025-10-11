@@ -1,6 +1,7 @@
 'use client';
 
 import MuxPlayer from '@mux/mux-player-react';
+import dynamic from 'next/dynamic';
 
 interface VideoPlayerProps {
   playbackId?: string;
@@ -8,11 +9,11 @@ interface VideoPlayerProps {
   videoTitle?: string;
 }
 
-export default function VideoPlayer({
+const DynamicVideoPlayer = ({
   playbackId,
   videoSeries,
   videoTitle,
-}: VideoPlayerProps) {
+}: VideoPlayerProps) => {
   return (
     <div className="mb-8 w-full aspect-video rounded-xl overflow-hidden">
       <MuxPlayer
@@ -23,7 +24,17 @@ export default function VideoPlayer({
           video_series: videoSeries,
           video_title: videoTitle,
         }}
+        style={{ aspectRatio: 16 / 9 }}
       />
     </div>
   );
-}
+};
+
+const VideoPlayer = dynamic(() => Promise.resolve(DynamicVideoPlayer), {
+  ssr: false,
+  loading: () => (
+    <div className="mb-8 w-full aspect-video rounded-xl animate-pulse bg-white"></div>
+  ),
+});
+
+export default VideoPlayer;

@@ -1,4 +1,4 @@
-import { getPlaylistBySlug } from '@/actions/playlist';
+import { getPlaylistBySlug, getBasePlaylist } from '@/actions/playlist';
 import Container from '@/components/Container/Container';
 import CourseVideoCard from '@/components/CourseVideoCard/CourseVideoCard';
 import HeaderOne from '@/components/Headers/HeaderOne';
@@ -17,8 +17,12 @@ export async function generateMetadata({
   params: Params<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const { data, success } = await getBasePlaylist({ slug });
+
   return {
-    title: `${slug} | Studio Jogi Online | Oddechownia`,
+    title: success
+      ? `${data.name} | Studio Jogi Online | Oddechownia`
+      : 'Studio Jogi Online | Oddechownia',
   };
 }
 
@@ -38,18 +42,16 @@ export default async function Playlist({
     <section>
       <Container className="pt-16">
         <div className="grid grid-cols-2 gap-8">
-          <VideoPlayer
-            playbackId={
-              playlist.video
-                ? playlist.video.publicPlaybackId ?? undefined
-                : undefined
-            }
-            videoSeries={playlist.name}
-            videoTitle={playlist.name}
-          />
+          {playlist.video && (
+            <VideoPlayer
+              playbackId={playlist.video.publicPlaybackId ?? undefined}
+              videoSeries={playlist.name}
+              videoTitle={playlist.name}
+            />
+          )}
           <hgroup className="space-y-6">
             <HeaderOne className="font-semibold">{playlist.name}</HeaderOne>
-            <p>{playlist.description}</p>
+            <p className="whitespace-pre">{playlist.description}</p>
             <div className="flex gap-4">
               <div
                 className={cn(

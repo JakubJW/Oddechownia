@@ -1,10 +1,10 @@
-export type SuccessResult<T> = {
+type SuccessResult<T> = {
   success: true;
   data: T;
   error: null;
 };
 
-export type ErrorResult = {
+type ErrorResult = {
   success: false;
   data: null;
   error: string;

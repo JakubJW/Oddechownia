@@ -46,6 +46,9 @@ export type BaseLesson = typeof schema.lessons.$inferSelect;
 export type BaseVideo = typeof schema.videos.$inferSelect;
 export type BaseWaitlist = typeof schema.waitlist.$inferSelect;
 export type BaseAttachment = typeof schema.attachments.$inferSelect;
+export type BaseComment = typeof schema.comments.$inferSelect;
+export type BaseUser = typeof schema.users.$inferSelect;
+export type BaseUserSubscription = typeof schema.userSubscription.$inferSelect;
 
 export type Lesson = BaseLesson & {
   video?: BaseVideo | null;
@@ -53,7 +56,7 @@ export type Lesson = BaseLesson & {
   playlists?: BasePlaylist[];
 };
 
-export type PlaylistLesson = Omit<Lesson, "playlists"> & {
+export type PlaylistLesson = Omit<Lesson, 'playlists'> & {
   position: number;
   playlistLessonId: number;
 };
@@ -61,6 +64,10 @@ export type PlaylistLesson = Omit<Lesson, "playlists"> & {
 export type Playlist = BasePlaylist & {
   video?: BaseVideo | null;
   lessons: PlaylistLesson[];
+};
+
+export type User = BaseUser & {
+  subscriptions: BaseUserSubscription[];
 };
 
 export function nullToUndefined<T>(data: T): NullToUndefined<T> {

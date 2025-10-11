@@ -3,17 +3,19 @@ import { getVideoByPlaybackId } from '@/actions/video';
 import Container from '@/components/Container/Container';
 import {
   Playlist,
-  PlaylistName,
   PlaylistContent,
   PlaylistLesson,
   PlaylistLessonImage,
   PlaylistLessonName,
+  PlaylistName,
 } from '@/components/PlaylistLesson/PlaylistLesson';
+import Attachments from '@/features/Lesson/Attachments/Attachments';
+import { CommentsSection } from '@/features/Lesson/Comments/CommentsSection';
 import VideoPlayer from '@/features/Lesson/VideoPlayer';
 import { Params } from '@/types/types';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata({
   params,
@@ -50,28 +52,18 @@ export default async function LessonVideo({
   return (
     <Container>
       <div className="grid grid-cols-12 gap-x-6 gap-y-16">
-        <div className="col-span-8">
+        <div className="col-span-12 row-start-1 md:col-span-8">
           <VideoPlayer playbackId={video.publicPlaybackId || undefined} />
           <hgroup className="space-y-4">
             <h1 className="font-bold text-2xl">{currentLesson?.name}</h1>
             <p className="text-gray-500">{currentLesson?.description}</p>
           </hgroup>
-          {currentLesson.attachments && (
-            <div>
-              {currentLesson.attachments.map((attachment) => (
-                <Link
-                  href={attachment.url}
-                  target="_blank"
-                  key={attachment.id}
-									className='block underline'
-                >
-                  {attachment.name}
-                </Link>
-              ))}
-            </div>
-          )}
+          <Attachments attachments={currentLesson.attachments} />
         </div>
-        <div className="col-span-4 flex">
+        <div className="col-span-12 md:col-span-8">
+          <CommentsSection lessonId={currentLesson.id} />
+        </div>
+        <div className="col-span-12 row-start-2 md:row-start-1 row-end-auto md:col-span-4 flex">
           <Playlist>
             <PlaylistName>{playlist.name}</PlaylistName>
             <PlaylistContent>

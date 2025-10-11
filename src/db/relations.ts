@@ -11,6 +11,7 @@ import {
   userOneOffPurchase,
   playlistLesson,
   attachments,
+  comments,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -28,6 +29,7 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
     references: [videos.id],
   }),
   attachments: many(attachments),
+  comments: many(comments),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
@@ -49,6 +51,7 @@ export const coursesRelations = relations(courses, ({ many }) => ({
 export const userRelations = relations(users, ({ many }) => ({
   subscriptions: many(userSubscription),
   purchases: many(userOneOffPurchase),
+  comments: many(comments),
 }));
 
 export const stripeProductsRelations = relations(
@@ -104,5 +107,24 @@ export const attachmentsRelations = relations(attachments, ({ one }) => ({
   lesson: one(lessons, {
     fields: [attachments.lessonId],
     references: [lessons.id],
+  }),
+}));
+
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  user: one(users, {
+    fields: [comments.userId],
+    references: [users.id],
+  }),
+  lesson: one(lessons, {
+    fields: [comments.lessonId],
+    references: [lessons.id],
+  }),
+  parent: one(comments, {
+    fields: [comments.parentId],
+    references: [comments.id],
+    relationName: 'commentReplies'
+  }),
+  replies: many(comments, {
+    relationName: 'commentReplies',
   }),
 }));

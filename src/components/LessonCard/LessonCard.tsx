@@ -1,6 +1,5 @@
 import { Lesson } from '@/db/types';
 import { formatDuration } from '@/lib/utils';
-import { Clock } from 'lucide-react';
 import Image from 'next/image';
 
 const LessonCard = ({ name, description, video }: Partial<Lesson>) => {
@@ -14,14 +13,9 @@ const LessonCard = ({ name, description, video }: Partial<Lesson>) => {
           height={420}
           className="w-full h-[250px] object-cover"
         />
-        <div className="absolute top-2 left-2 space-y-2">
-          <div className="bg-primaryBg text-primaryFg flex gap-2 items-center rounded-md p-2">
-            <Clock />
-            <span className="leading-none">
-              {formatDuration(video?.duration)}
-            </span>
-          </div>
-        </div>
+        <span className="absolute bottom-2 right-2 bg-black text-white text-xs p-1 rounded-sm">
+          {formatDuration(video?.duration)}
+        </span>
       </div>
 
       <div className="flex flex-col p-6 gap-4">

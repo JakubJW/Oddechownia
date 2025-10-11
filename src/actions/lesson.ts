@@ -88,9 +88,14 @@ export const updateLesson = async (
     const rawData = {
       name: formData.get('name'),
       description: formData.get('description'),
-      videoId: Number(formData.get('videoId')),
+      videoId:
+        formData.get('videoId') === 'null'
+          ? null
+          : Number(formData.get('videoId')),
     };
     const parsed = lessonFormSchema.safeParse(rawData);
+
+    console.log(parsed.error?.flatten())
 
     if (!parsed.success) {
       return {

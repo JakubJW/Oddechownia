@@ -11,6 +11,7 @@ import {
   uuid,
   jsonb,
   unique,
+  foreignKey,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
 import { sql } from 'drizzle-orm';
@@ -164,8 +165,8 @@ export const playlistLesson = pgTable(
   },
   (table) => [
     unique('unique_playlist_lesson_constraint').on(
-      table.playlistId,
-      table.lessonId
+      table.lessonId,
+      table.playlistId
     ),
   ]
 );
@@ -195,3 +196,34 @@ export const attachments = pgTable('attachments', {
     .notNull()
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
+
+export const comments = pgTable(
+  'comments',
+  {
+    id: serial('id').primaryKey(),
+    lessonId: integer('lesson_id')
+      .notNull()
+      .references(() => lessons.id, {
+        onDelete: 'cascade',
+      }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    content: text('content').notNull(),
+    parentId: integer('parent_id'),
+    createdAt: text('created_at')
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull(),
+    updatedAt: text('updated_at')
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull()
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+      name: 'comments_underlying_id_fk',
+    }).onDelete('cascade'),
+  ]
+);

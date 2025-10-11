@@ -52,6 +52,35 @@ const changePasswordAuthenticated = async (password: string) => {
   return { data: null, error: null };
 };
 
+const downloadFile = async (
+  fileName: string,
+  bucket: string,
+  folder: string
+) => {
+  const supabase = createAdminClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        persistSession: false,
+      },
+    }
+  );
+
+  const filePath = `${folder}/${fileName}`;
+
+  const { data: fileData, error: downloadError } = await supabase.storage
+    .from(bucket)
+    .download(filePath);
+
+  if (downloadError) {
+  }
+  if (!fileData) {
+  }
+
+  return fileData;
+};
+
 const uploadFile = async (file: File, bucket: string, folder: string) => {
   const supabase = createAdminClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -110,6 +139,7 @@ const deleteFile = async (bucket: string, paths: string[]) => {
 };
 
 export const supabaseService = {
+  downloadFile,
   deleteFile,
   uploadFile,
   updateUserInAuthSchema,

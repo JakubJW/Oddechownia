@@ -48,7 +48,7 @@ export default function SortablePlaylistElement({
         <p className="line-clamp-2">{name}</p>
       </td>
       <td>
-        <p className="line-clamp-2">{description}</p>
+        <p className="line-clamp-2 whitespace-pre">{description}</p>
       </td>
       <td>
         <p className="line-clamp-2">{lessonCount}</p>
