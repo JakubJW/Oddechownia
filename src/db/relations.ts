@@ -12,6 +12,7 @@ import {
   playlistLesson,
   attachments,
   comments,
+  files,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -30,6 +31,10 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
   }),
   attachments: many(attachments),
   comments: many(comments),
+  thumbnail: one(files, {
+    fields: [lessons.thumbnailId],
+    references: [files.id],
+  }),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
@@ -108,6 +113,21 @@ export const attachmentsRelations = relations(attachments, ({ one }) => ({
     fields: [attachments.lessonId],
     references: [lessons.id],
   }),
+  file: one(files, {
+    fields: [attachments.fileId],
+    references: [files.id],
+  }),
+}));
+
+export const filesRelations = relations(files, ({ one }) => ({
+  attachment: one(attachments, {
+    fields: [files.id],
+    references: [attachments.fileId],
+  }),
+  lesson: one(lessons, {
+    fields: [files.id],
+    references: [lessons.thumbnailId],
+  }),
 }));
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
@@ -122,7 +142,7 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
   parent: one(comments, {
     fields: [comments.parentId],
     references: [comments.id],
-    relationName: 'commentReplies'
+    relationName: 'commentReplies',
   }),
   replies: many(comments, {
     relationName: 'commentReplies',

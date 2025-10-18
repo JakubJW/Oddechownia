@@ -7,10 +7,8 @@ import { playlistLesson, playlists } from '@/db/schema';
 import { ActionResult } from './types';
 import { BasePlaylist, Playlist } from '@/db/types';
 import { notFound } from 'next/navigation';
-import {
-  filterService,
-  PlaylistFilters,
-} from '@/services/filters';
+import { filterService, PlaylistFilters } from '@/services/filters';
+import { supabaseService } from '@/services/supabase';
 
 interface ICreatePlaylist {
   name: string;
@@ -170,6 +168,7 @@ export const getPlaylistsWithLessons = async (): Promise<
             lesson: {
               with: {
                 video: true,
+                thumbnail: true,
               },
             },
           },
@@ -185,6 +184,11 @@ export const getPlaylistsWithLessons = async (): Promise<
             ...playlistLesson.lesson,
             position: playlistLesson.position,
             playlistLessonId: playlistLesson.id,
+            thumbnailUrl: supabaseService.getFileUrl(
+              playlistLesson.lesson.thumbnail.name,
+              playlistLesson.lesson.thumbnail.bucket,
+              playlistLesson.lesson.thumbnail.path
+            ).data,
           };
         }),
       };

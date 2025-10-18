@@ -6,10 +6,11 @@ import {
 import { getRequiredUser } from '@/lib/data';
 import { env } from '@/env';
 
-export const BUCKETS = {
-  ATTACHMENTS: 'attachments',
-  WEBSITE_ASSETS: 'website_assets',
-};
+export enum BUCKETS {
+  ATTACHMENTS = 'attachments',
+  THUMBNAILS = 'thumbnails',
+  WEBSITE_ASSETS = 'website_assets',
+}
 
 const updateUserInAuthSchema = async (params: UserAttributes) => {
   const supabase = await createClient();
@@ -50,6 +51,24 @@ const changePasswordAuthenticated = async (password: string) => {
   }
 
   return { data: null, error: null };
+};
+
+const getFileUrl = (name: string, bucket: string, folder: string) => {
+  const supabase = createAdminClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        persistSession: false,
+      },
+    }
+  );
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(bucket).getPublicUrl(`${folder}/${name}`);
+
+  return { data: publicUrl, success: true, error: null };
 };
 
 const downloadFile = async (
@@ -113,7 +132,7 @@ const uploadFile = async (file: File, bucket: string, folder: string) => {
   } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
   return {
-    data: { url: publicUrl, internalName: fileName },
+    data: { url: publicUrl, name: fileName },
     success: true,
     error: null,
   };
@@ -140,6 +159,7 @@ const deleteFile = async (bucket: string, paths: string[]) => {
 
 export const supabaseService = {
   downloadFile,
+  getFileUrl,
   deleteFile,
   uploadFile,
   updateUserInAuthSchema,

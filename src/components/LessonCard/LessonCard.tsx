@@ -2,12 +2,12 @@ import { Lesson } from '@/db/types';
 import { formatDuration } from '@/lib/utils';
 import Image from 'next/image';
 
-const LessonCard = ({ name, description, video }: Partial<Lesson>) => {
+const LessonCard = ({ name, description, video, thumbnailUrl }: Partial<Lesson>) => {
   return (
     <div className="rounded-xl overflow-hidden">
       <div className="relative">
         <Image
-          src={`https://image.mux.com/${video?.publicPlaybackId}/thumbnail.jpg?width=640`}
+          src={thumbnailUrl}
           alt="Obraz"
           width={640}
           height={420}

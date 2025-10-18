@@ -42,6 +42,7 @@ export default async function OnlineYogaStudio() {
                   href={`/studio-jogi-online/${playlist.slug}/video/${lesson.video?.publicPlaybackId}`}
                 >
                   <LessonCard
+                    thumbnailUrl={lesson.thumbnailUrl}
                     key={lesson.id}
                     name={lesson.name}
                     description={lesson.description}

@@ -49,11 +49,13 @@ export type BaseAttachment = typeof schema.attachments.$inferSelect;
 export type BaseComment = typeof schema.comments.$inferSelect;
 export type BaseUser = typeof schema.users.$inferSelect;
 export type BaseUserSubscription = typeof schema.userSubscription.$inferSelect;
+export type BaseFile = typeof schema.files.$inferSelect;
 
 export type Lesson = BaseLesson & {
   video?: BaseVideo | null;
   attachments?: BaseAttachment[];
   playlists?: BasePlaylist[];
+  thumbnail?: BaseFile;
 };
 
 export type PlaylistLesson = Omit<Lesson, 'playlists'> & {
@@ -69,6 +71,8 @@ export type Playlist = BasePlaylist & {
 export type User = BaseUser & {
   subscriptions: BaseUserSubscription[];
 };
+
+export type Attachment = BaseAttachment & { file: BaseFile };
 
 export function nullToUndefined<T>(data: T): NullToUndefined<T> {
   if (Array.isArray(data)) {

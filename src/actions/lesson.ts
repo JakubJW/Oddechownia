@@ -9,6 +9,8 @@ import { BaseLesson, Lesson } from '@/db/types';
 import { filterService, LessonFilters } from '@/services/filters';
 import { formSchema as lessonFormSchema } from '@/features/admin/Lesson/schema';
 import { createAttachment, deleteAttachment } from './attachments';
+import { createFile } from './files';
+import { BUCKETS, supabaseService } from '@/services/supabase';
 
 export const createLesson = async (
   formData: FormData
@@ -19,6 +21,7 @@ export const createLesson = async (
       description: formData.get('description'),
       videoId: Number(formData.get('videoId')),
     };
+
     const parsed = lessonFormSchema.safeParse(rawData);
 
     if (!parsed.success) {
@@ -29,6 +32,24 @@ export const createLesson = async (
       };
     }
 
+    const thumbnail = formData.getAll('thumbnail[]');
+
+    if (!thumbnail) return { data: null, success: false, error: 'Błąd' };
+
+    const {
+      data: thumbnailData,
+      success: fileUploadSuccess,
+      error: fileUplaodError,
+    } = await createFile(thumbnail[0] as File, BUCKETS.ATTACHMENTS, 'lesson');
+
+    if (!fileUploadSuccess) {
+      return {
+        data: null,
+        success: false,
+        error: fileUplaodError,
+      };
+    }
+
     const [lesson] = await db
       .insert(lessons)
       .values({
@@ -36,6 +57,7 @@ export const createLesson = async (
         description: parsed.data.description,
         slug: createSlug(parsed.data.name),
         videoId: parsed.data.videoId,
+        thumbnailId: thumbnailData.id,
       })
       .returning();
 
@@ -44,13 +66,13 @@ export const createLesson = async (
 
     if (newAttachments) {
       for (let i = 0; i < newAttachments.length; i++) {
-        const { error } = await createAttachment(
-          lesson.id,
-          newAttachments[i] as File
-        );
+        const {
+          success: createAttachmentSuccess,
+          error: createAttachmentError,
+        } = await createAttachment(lesson.id, newAttachments[i] as File);
 
-        if (error) {
-          throw new Error(error);
+        if (!createAttachmentSuccess) {
+          return { data: null, success: false, error: createAttachmentError };
         }
       }
     }
@@ -95,8 +117,6 @@ export const updateLesson = async (
     };
     const parsed = lessonFormSchema.safeParse(rawData);
 
-    console.log(parsed.error?.flatten())
-
     if (!parsed.success) {
       return {
         data: null,
@@ -105,12 +125,50 @@ export const updateLesson = async (
       };
     }
 
+    const thumbnail = formData.getAll('thumbnail[]');
+    const removeOldThumbnail = formData.get('removeOldThumbnail')
+      ? Boolean(formData.get('removeOldThumbnail'))
+      : false;
+    let newThumbnailId: number | undefined = undefined;
+
+    if (removeOldThumbnail && thumbnail) {
+      const [lesson] = await db.query.lessons.findMany({
+        columns: {},
+        with: {
+          thumbnail: true,
+        },
+      });
+
+      const {
+        thumbnail: { bucket, path, name },
+      } = lesson;
+
+      await supabaseService.deleteFile(bucket, [`${path}/${name}`]);
+
+      const {
+        data: thumbnailData,
+        success: fileUploadSuccess,
+        error: fileUplaodError,
+      } = await createFile(thumbnail[0] as File, BUCKETS.ATTACHMENTS, 'lesson');
+
+      if (!fileUploadSuccess) {
+        return {
+          data: null,
+          success: false,
+          error: fileUplaodError,
+        };
+      }
+
+      newThumbnailId = thumbnailData.id;
+    }
+
     const [lesson] = await db
       .update(lessons)
       .set({
         name: parsed.data.name,
         description: parsed.data.description,
         slug: createSlug(parsed.data.name),
+        thumbnailId: newThumbnailId,
       })
       .where(eq(lessons.id, id))
       .returning();
@@ -202,15 +260,42 @@ export const getLesson = async (
       filters
     );
 
-    const [data] = await db.query.lessons.findMany({
+    const [lesson] = await db.query.lessons.findMany({
       ...(lessonWhereClause && { where: lessonWhereClause }),
       with: {
         video: true,
-        attachments: true,
+        attachments: {
+          with: {
+            file: true,
+          },
+        },
+        thumbnail: true,
       },
     });
 
-    return { data, success: true, error: null };
+    const {
+      thumbnail: { bucket, path, name },
+    } = lesson;
+    const { data: fileUrl, error: fileUrlError } = supabaseService.getFileUrl(
+      name,
+      bucket,
+      path
+    );
+
+    const domainLesson = {
+      ...lesson,
+      attachments: lesson.attachments.map(({ file, ...rest }) => ({
+        url: supabaseService.getFileUrl(file.name, file.bucket, file.path).data,
+        file,
+        ...rest,
+      })),
+    };
+
+    return {
+      data: { ...domainLesson, thumbnailUrl: fileUrl },
+      success: true,
+      error: null,
+    };
   } catch (e) {
     console.error(
       'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',

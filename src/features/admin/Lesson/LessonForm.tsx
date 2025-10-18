@@ -12,11 +12,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Dropzone,
-  DropzoneContent,
-  DropzoneEmptyState,
-} from '@/components/ui/shadcn-io/dropzone';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Lesson } from '@/db/types';
@@ -30,19 +25,22 @@ import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { defaultValues, formSchema } from './schema';
+import FormAttachments from './Form/Attachments';
+import FormThumbnail from './Form/Thumbnail';
 
 interface LessonFormProps {
   lesson?: Lesson;
 }
 
 export function AdminNewLesson({ lesson }: LessonFormProps) {
+  const [newAttachments, setNewAttachments] = useState<File[]>([]);
+  const [attachmentsToRemove, setAttachmentsToRemove] = useState<number[]>([]);
   const [isUploaded, setIsUploaded] = useState(false);
-  const [thumbnail, setThumbnail] = useState<File[] | undefined>();
-  const [thumbnailPreview, setThumbnailPreview] = useState<
-    string | undefined
-  >();
+  const [thumbnail, setThumbnail] = useState<File[]>([]);
+  const [removeOldThumbnail, setRemoveOldThumbnail] = useState<boolean>(false);
+
   const router = useRouter();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: lesson
@@ -76,8 +74,8 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
       formData.append('description', values.description);
       formData.append('videoId', String(values.videoId));
 
-      for (let i = 0; i < attachments.length; i++) {
-        formData.append('newAttachments[]', attachments[i]);
+      for (let i = 0; i < newAttachments.length; i++) {
+        formData.append('newAttachments[]', newAttachments[i]);
       }
 
       for (let i = 0; i < attachmentsToRemove.length; i++) {
@@ -87,13 +85,22 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
         );
       }
 
-      if (lesson) {
-        return updateLesson(lesson.id, formData);
-      } else {
+      if (!lesson) {
+        for (let i = 0; i < thumbnail.length; i++) {
+          formData.append('thumbnail[]', thumbnail[i]);
+        }
+
         return createLesson(formData);
       }
+
+      for (let i = 0; i < thumbnail.length; i++) {
+        formData.append('thumbnail[]', thumbnail[i]);
+        formData.append('removeOldThumbnail', String(removeOldThumbnail));
+      }
+
+      return updateLesson(lesson.id, formData);
     },
-    [lesson, attachments, attachmentsToRemove]
+    [lesson, newAttachments, attachmentsToRemove, thumbnail, removeOldThumbnail]
   );
 
   const { execute: submitForm, isLoading } = useActionResult(
@@ -108,35 +115,25 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
     }
   );
 
-  const handleDrop = (files: File[]) => {
-    setAttachments((prevAttachments) => [...prevAttachments, ...files]);
-  };
-
-  const handleThumbnailDrop = (files: File[]) => {
-    setThumbnail(files);
-
-    if (files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (typeof e.target?.result === 'string') {
-          setThumbnailPreview(e.target?.result);
-        }
-      };
-      reader.readAsDataURL(files[0]);
-    }
-  };
-
-  const handleRemoveFile = (name: string) => {
-    setAttachments((prevAttachments) =>
-      prevAttachments.filter((file) => file.name !== name)
-    );
-  };
-
   const handleRemoveAttachment = (id: number) => {
     setAttachmentsToRemove((prevAttachmentsToRemove) => [
       ...prevAttachmentsToRemove,
       id,
     ]);
+  };
+
+  const handleRemoveNewAttachment = (name: string) => {
+    setNewAttachments((prevNewAttachments) =>
+      prevNewAttachments.filter((file) => file.name !== name)
+    );
+  };
+
+  const handleAddAttachment = (files: File[]) => {
+    setNewAttachments((prevAttachments) => [...prevAttachments, ...files]);
+  };
+
+  const handleThumbnail = (files: File[]) => {
+    setThumbnail(files);
   };
 
   return (
@@ -181,30 +178,22 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
                 </FormItem>
               )}
             />
+            <FormAttachments
+              attachments={lesson?.attachments}
+              onRemove={(id) => handleRemoveAttachment(id)}
+              onNewRemove={(name) => handleRemoveNewAttachment(name)}
+              onAdd={(files) => handleAddAttachment(files)}
+              newAttachments={newAttachments}
+              attachmentsToRemove={attachmentsToRemove}
+            />
           </div>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Miniaturka</Label>
-              <Dropzone
-                className="aspect-video"
-                accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
-                onDrop={handleThumbnailDrop}
-                src={thumbnail}
-              >
-                <DropzoneEmptyState />
-                <DropzoneContent>
-                  {thumbnailPreview && (
-                    <div className="h-[102px] w-full">
-                      <img
-                        alt="Preview"
-                        className="absolute top-0 left-0 h-full w-full object-cover"
-                        src={thumbnailPreview}
-                      />
-                    </div>
-                  )}
-                </DropzoneContent>
-              </Dropzone>
-            </div>
+            <FormThumbnail
+              removeOldThumbnailHandler={setRemoveOldThumbnail}
+              thumbnail={thumbnail}
+              onDrop={(files) => handleThumbnail(files)}
+              currentThumbnailUrl={lesson?.thumbnailUrl}
+            />
             <div className="space-y-2">
               <Label>Film</Label>
               {lesson && lesson.video ? (
@@ -257,7 +246,7 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
             <div className="flex justify-between">
               <Button
                 type="submit"
-                disabled={isLoading || (!lesson && !isUploaded)}
+                disabled={isLoading}
               >
                 {isLoading
                   ? 'Ładowanie...'

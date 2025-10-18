@@ -1,26 +1,32 @@
 'use server';
 
-import { supabaseService, BUCKETS } from '@/services/supabase';
+import { BUCKETS } from '@/services/supabase';
 import { attachments } from '@/db/schema';
 import { db } from '@/db';
 import { inArray } from 'drizzle-orm';
+import { ActionResult } from './types';
+import { BaseAttachment } from '@/db/types';
+import { createFile, deleteFile } from './files';
 
-export const createAttachment = async (lessonId: number, file: File) => {
+export const createAttachment = async (
+  lessonId: number,
+  file: File
+): Promise<ActionResult<BaseAttachment>> => {
   try {
     const {
-      data: { url, internalName },
-    } = await supabaseService.uploadFile(
-      file,
-      BUCKETS.ATTACHMENTS,
-      'documents'
-    );
+      data: attachmentFile,
+      success: createFileSuccess,
+      error: createFileError,
+    } = await createFile(file, BUCKETS.ATTACHMENTS, 'documents');
+
+    if (!createFileSuccess) {
+      return { data: null, success: false, error: createFileError };
+    }
 
     const [attachment] = await db
       .insert(attachments)
       .values({
-        name: file.name,
-        internalName,
-        url,
+        fileId: attachmentFile.id,
         lessonId,
       })
       .returning();
@@ -42,16 +48,17 @@ export const createAttachment = async (lessonId: number, file: File) => {
 
 export const deleteAttachment = async (ids: number[]) => {
   try {
-    const fileNames = await db
-      .select({ name: attachments.internalName })
-      .from(attachments)
-      .where(inArray(attachments.id, ids));
+    const fileNames = await db.query.attachments.findMany({
+      columns: {},
+      with: {
+        file: true,
+      },
+      where: inArray(attachments.id, ids),
+    });
 
-    const filePaths = fileNames.map(({ name }) => `documents/${name}`);
-    console.log(filePaths);
-    await supabaseService.deleteFile(BUCKETS.ATTACHMENTS, [...filePaths]);
+    const fileIds = fileNames.map(({ file: { id } }) => id);
 
-    await db.delete(attachments).where(inArray(attachments.id, ids));
+    await deleteFile(fileIds);
 
     return { data: null, success: true, error: null };
   } catch (error) {

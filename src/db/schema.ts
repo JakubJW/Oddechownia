@@ -45,6 +45,9 @@ export const lessons = pgTable('lessons', {
   videoId: integer('video_id').references(() => videos.id, {
     onDelete: 'set null',
   }),
+  thumbnailId: integer('thumbnail_id')
+    .notNull()
+    .references(() => files.id, { onDelete: 'cascade' }),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
@@ -185,9 +188,18 @@ export const attachments = pgTable('attachments', {
     .references(() => lessons.id, {
       onDelete: 'cascade',
     }),
+  fileId: integer('file_id')
+    .notNull()
+    .references(() => files.id, { onDelete: 'cascade' }),
+});
+
+export const files = pgTable('files', {
+  id: serial('id').primaryKey(),
   name: varchar('name').notNull(),
-  internalName: varchar('internal_name').notNull(),
-  url: text('url').notNull(),
+  originalName: varchar('original_name').notNull(),
+  mimeType: varchar('mime_type').notNull(),
+  bucket: varchar().notNull(),
+  path: varchar().notNull(),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),

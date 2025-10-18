@@ -1,18 +1,36 @@
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from '@/components/ui/shadcn-io/dropzone';
 import { Label } from '@radix-ui/react-label';
 import { Trash } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { Attachment } from '@/db/types';
+import { memo } from 'react';
 
-const FormAttachments = () => {
-  const [attachments, setAttachments] = useState<File[]>([]);
-  const [attachmentsToRemove, setAttachmentsToRemove] = useState<number[]>([]);
+interface FormAttachmentsProps {
+  attachments?: Attachment[];
+  newAttachments: File[];
+  attachmentsToRemove: number[];
+  onRemove: (id: number) => void;
+  onAdd: (files: File[]) => void;
+  onNewRemove: (name: string) => void;
+}
 
+const FormAttachments = ({
+  attachments,
+  newAttachments,
+  attachmentsToRemove,
+  onAdd,
+  onRemove,
+  onNewRemove,
+}: FormAttachmentsProps) => {
   return (
     <div className="space-y-2">
       <Label>Załączniki</Label>
-      {lesson &&
-        lesson.attachments &&
-        lesson.attachments
+      {attachments &&
+        attachments
           .filter((attachment) => !attachmentsToRemove.includes(attachment.id))
           .map((attachment) => (
             <div
@@ -24,17 +42,18 @@ const FormAttachments = () => {
                 href={attachment.url}
                 target="_blank"
               >
-                {attachment.name}
+                {attachment.file.originalName}
               </Link>
               <button
+                type="button"
                 className="p-1 rounded-md bg-destructive text-destructive-foreground"
-                onClick={() => handleRemoveAttachment(attachment.id)}
+                onClick={() => onRemove(attachment.id)}
               >
                 <Trash className="h-4 w-4" />
               </button>
             </div>
           ))}
-      {attachments.map((file) => (
+      {newAttachments.map((file) => (
         <div
           key={file.name}
           className="flex justify-between items-center"
@@ -47,8 +66,9 @@ const FormAttachments = () => {
             {file.name}
           </Link>
           <button
+            type="button"
             className="p-1 rounded-md bg-destructive text-destructive-foreground"
-            onClick={() => handleRemoveFile(file.name)}
+            onClick={() => onNewRemove(file.name)}
           >
             <Trash className="h-4 w-4" />
           </button>
@@ -56,7 +76,7 @@ const FormAttachments = () => {
       ))}
       <Dropzone
         maxFiles={3}
-        onDrop={handleDrop}
+        onDrop={onAdd}
         onError={console.error}
       >
         <DropzoneEmptyState />
@@ -66,4 +86,4 @@ const FormAttachments = () => {
   );
 };
 
-export default FormAttachments;
+export default memo(FormAttachments);
