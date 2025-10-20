@@ -1,6 +1,6 @@
 'use client';
 
-import { BaseAttachment } from '@/db/types';
+import { BaseAttachment } from '@/server/db/types';
 import { useMutation } from '@tanstack/react-query';
 import { Download } from 'lucide-react';
 export interface AttachmentsProps {

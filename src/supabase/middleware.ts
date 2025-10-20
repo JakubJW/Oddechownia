@@ -35,13 +35,20 @@ export async function updateSession(request: NextRequest) {
   // issues with users being randomly logged out.
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
+  const routesProtectedForLoggedInUsers = ['logowanie', 'rejestracja'];
   const { pathname }: { pathname: string } = request.nextUrl;
+  const segments = pathname.split('/');
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user && pathname === '/logowanie') {
+  if (
+    user &&
+    segments.some((segment) =>
+      routesProtectedForLoggedInUsers.includes(segment)
+    )
+  ) {
     return NextResponse.redirect(new URL('/moje-konto', request.url));
   }
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

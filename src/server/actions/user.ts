@@ -1,13 +1,13 @@
 'use server';
 
-import { users } from '@/db/schema';
-import { db } from '@/db';
+import { users } from '@/server/db/schema';
+import { db } from '@/server/db';
 import { eq } from 'drizzle-orm';
 import { createClient } from '@/supabase/server';
 import { cache } from 'react';
 import { getRequiredUser } from '@/lib/data';
-import { supabaseService } from '@/services/supabase';
-import { userSubscription } from '@/db/schema';
+import { supabaseService } from '@/server/services/supabase.service.';
+import { userSubscription } from '@/server/db/schema';
 
 interface UpdateUserParams {
   firstName: string;

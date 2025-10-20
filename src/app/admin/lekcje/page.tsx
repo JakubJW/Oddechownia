@@ -1,11 +1,11 @@
-import { getLessons } from '@/actions/lesson';
+import { getLessons } from '@/server/actions/lesson';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import LessonCard from '@/components/LessonCard/LessonCard';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import LessonGrid from '@/features/admin/Lesson/LessonGrid';
-import { LessonFilters, SortOrder } from '@/services/filters';
+import { LessonFilters, SortOrder } from '@/server/services/filters.service.';
 import type { SearchParams } from '@/types/types';
 import Filters from '@/components/Filters/Filters';
 

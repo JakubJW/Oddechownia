@@ -1,9 +1,9 @@
 'use server';
 
-import { waitlist } from '@/db/schema';
+import { waitlist } from '@/server/db/schema';
 import { ActionResult } from './types';
-import { BaseWaitlist } from '@/db/types';
-import { db } from '@/db';
+import { BaseWaitlist } from '@/server/db/types';
+import { db } from '@/server/db';
 import { formSchema } from '@/features/Waitlist/schema';
 import { z } from 'zod';
 

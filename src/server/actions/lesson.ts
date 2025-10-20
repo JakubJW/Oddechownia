@@ -1,16 +1,19 @@
 'use server';
 
 import { createSlug } from '@/lib/utils';
-import { db } from '@/db';
+import { db } from '@/server/db';
 import { eq } from 'drizzle-orm';
-import { lessons } from '@/db/schema';
+import { lessons } from '@/server/db/schema';
 import { ActionResult } from './types';
-import { BaseLesson, Lesson } from '@/db/types';
-import { filterService, LessonFilters } from '@/services/filters';
+import { BaseLesson, Lesson } from '@/server/db/types';
+import {
+  filterService,
+  LessonFilters,
+} from '@/server/services/filters.service.';
 import { formSchema as lessonFormSchema } from '@/features/admin/Lesson/schema';
 import { createAttachment, deleteAttachment } from './attachments';
 import { createFile } from './files';
-import { BUCKETS, supabaseService } from '@/services/supabase';
+import { BUCKETS, supabaseService } from '@/server/services/supabase.service.';
 
 export const createLesson = async (
   formData: FormData

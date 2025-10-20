@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import Stripe from 'stripe';
 import ChooseSubscriptionButton from './ChooseSubscriptionButton';
-import { getUser } from '@/actions/user';
+import { getUser } from '@/server/actions/user';
 
 export const subscriptionCardVariants = cva(
   'bg-white relative rounded-lg flex flex-col p-8',

@@ -3,14 +3,14 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/server';
-import { UserRoles } from '@/db/consts';
+import { UserRoles } from '@/server/db/consts';
 import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
 import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
 import { env } from '@/env';
-import { supabaseService } from '@/services/supabase';
-import { db } from '@/db';
-import { users } from '@/db/schema';
-import { stripeService } from '@/services/stripe';
+import { supabaseService } from '@/server/services/supabase.service.';
+import { db } from '@/server/db';
+import { users } from '@/server/db/schema';
+import { stripeService } from '@/server/services/stripe.service.';
 
 export const changePasswordAuthenticated = async (password: string) => {
   const { error } = await supabaseService.changePasswordAuthenticated(password);

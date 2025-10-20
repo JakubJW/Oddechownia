@@ -1,5 +1,5 @@
-import { getPlaylistBySlug } from '@/actions/playlist';
-import { getVideoByPlaybackId } from '@/actions/video';
+import { getLesson } from '@/server/actions/lesson';
+import { getBasePlaylist, getPlaylistBySlug } from '@/server/actions/playlist';
 import Container from '@/components/Container/Container';
 import {
   Playlist,
@@ -20,29 +20,36 @@ import { notFound } from 'next/navigation';
 export async function generateMetadata({
   params,
 }: {
-  params: Params<{ slug: string }>;
+  params: Params<{ playlistSlug: string; lessonSlug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { playlistSlug, lessonSlug } = await params;
+  const { data: lessonData } = await getLesson({
+    slug: lessonSlug,
+  });
+  const { data: playlistData } = await getBasePlaylist({ slug: playlistSlug });
+
   return {
-    title: `${slug} | Studio Jogi Online | Oddechownia`,
+    title: `${lessonData?.name} | ${playlistData?.name} | Studio Jogi Online | Oddechownia`,
   };
 }
 
 export default async function LessonVideo({
   params,
 }: {
-  params: Params<{ playbackId: string; slug: string }>;
+  params: Params<{ playlistSlug: string; lessonSlug: string }>;
 }) {
-  const { playbackId, slug } = await params;
-  const video = await getVideoByPlaybackId(playbackId);
-  const { data: playlist } = await getPlaylistBySlug(slug);
+  const { playlistSlug, lessonSlug } = await params;
+  const { data: lesson, success: lessonSuccess } = await getLesson({
+    slug: lessonSlug,
+  });
+  const { data: playlist } = await getPlaylistBySlug(playlistSlug);
 
-  if (!video || !playlist) {
+  if (!lessonSuccess || !playlist) {
     notFound();
   }
 
   const currentLesson = playlist.lessons.find(
-    (lesson) => lesson?.video?.publicPlaybackId === playbackId
+    (lesson) => lesson?.slug === lessonSlug
   );
 
   if (!currentLesson) {
@@ -53,7 +60,10 @@ export default async function LessonVideo({
     <Container>
       <div className="grid grid-cols-12 gap-x-6 gap-y-16">
         <div className="col-span-12 row-start-1 md:col-span-8">
-          <VideoPlayer playbackId={video.publicPlaybackId || undefined} />
+          <VideoPlayer
+            thumbnailUrl={lesson.thumbnailUrl}
+            playbackId={lesson?.video?.publicPlaybackId || undefined}
+          />
           <hgroup className="space-y-4">
             <h1 className="font-bold text-2xl">{currentLesson?.name}</h1>
             <p className="text-gray-500">{currentLesson?.description}</p>
@@ -67,18 +77,16 @@ export default async function LessonVideo({
           <Playlist>
             <PlaylistName>{playlist.name}</PlaylistName>
             <PlaylistContent>
-              {playlist.lessons.map(({ id, video, name }) => (
+              {playlist.lessons.map(({ id, video, name, slug }) => (
                 <Link
                   key={id}
                   href={`/studio-jogi-online/${playlist.slug}/video/${video?.publicPlaybackId}`}
                 >
-                  <PlaylistLesson
-                    isActive={video?.publicPlaybackId === playbackId}
-                  >
+                  <PlaylistLesson isActive={slug === lessonSlug}>
                     <PlaylistLessonImage
                       duration={video ? video.duration : null}
                       alt={`Miniaturka lekcji o tytule ${name}`}
-                      src={`https://image.mux.com/${video?.publicPlaybackId}/thumbnail.jpg?width=640`}
+                      src={lesson.thumbnailUrl}
                     />
                     <PlaylistLessonName>{name}</PlaylistLessonName>
                   </PlaylistLesson>

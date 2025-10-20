@@ -1,4 +1,4 @@
-import { stripeService } from '@/services/stripe';
+import { stripeService } from '@/server/services/stripe.service.';
 import { NextResponse, NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {

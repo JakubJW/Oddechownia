@@ -1,11 +1,11 @@
 'use server';
 
-import { BUCKETS } from '@/services/supabase';
-import { attachments } from '@/db/schema';
-import { db } from '@/db';
+import { BUCKETS } from '@/server/services/supabase.service.';
+import { attachments } from '@/server/db/schema';
+import { db } from '@/server/db';
 import { inArray } from 'drizzle-orm';
 import { ActionResult } from './types';
-import { BaseAttachment } from '@/db/types';
+import { BaseAttachment } from '@/server/db/types';
 import { createFile, deleteFile } from './files';
 
 export const createAttachment = async (

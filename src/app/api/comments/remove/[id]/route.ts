@@ -1,8 +1,6 @@
-import { db } from '@/db';
-import { comments } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { Params } from '@/types/types';
+import { CommentsService } from '@/server/services/comments.service';
 
 export async function DELETE(
   req: NextRequest,
@@ -11,7 +9,7 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    await db.delete(comments).where(eq(comments.id, Number(id)));
+    await CommentsService.removeComment(Number(id));
 
     return NextResponse.json({ message: 'Success!' }, { status: 200 });
   } catch (error) {

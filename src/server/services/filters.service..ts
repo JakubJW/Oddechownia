@@ -12,8 +12,8 @@ import {
   exists,
 } from 'drizzle-orm';
 import { PgTable, PgColumn } from 'drizzle-orm/pg-core';
-import { playlists, lessons, videos, playlistLesson } from '@/db/schema';
-import { db } from '@/db';
+import { playlists, lessons, videos, playlistLesson } from '@/server/db/schema';
+import { db } from '@/server/db';
 
 export type SortOrder = 'asc' | 'desc';
 export type PlaylistSortOptions = 'name' | 'createdAt' | 'updatedAt';
@@ -70,7 +70,7 @@ class FilterService {
           ilike(playlists.name, `%${filters.search}%`),
           ilike(playlists.description, `%${filters.search}%`)
         );
-        
+
         if (searchCondition) {
           conditions.push(searchCondition);
         }

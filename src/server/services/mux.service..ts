@@ -1,6 +1,6 @@
 import Mux from '@mux/mux-node';
 import { env } from '@/env';
-import { ActionResult } from '@/actions/types';
+import { ActionResult } from '@/server/actions/types';
 
 class MuxService {
   private static _instance: MuxService;

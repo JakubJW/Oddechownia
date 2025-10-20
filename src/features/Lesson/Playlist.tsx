@@ -1,4 +1,4 @@
-import { Lesson } from '@/db/types';
+import { Lesson } from '@/server/db/types';
 import PlaylistElement from './PlaylistElement';
 
 interface PlaylistProps {

@@ -1,9 +1,9 @@
 'use client';
 
-import { attachLessonsToPlaylist } from '@/actions/playlist';
+import { attachLessonsToPlaylist } from '@/server/actions/playlist';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Lesson } from '@/db/types';
+import { Lesson } from '@/server/db/types';
 import { formatDuration } from '@/lib/utils';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';

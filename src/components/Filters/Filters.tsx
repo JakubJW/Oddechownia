@@ -1,6 +1,9 @@
 import SearchForm from './SearchForm';
 import SortingSelect from './SortingSelect';
-import { PlaylistSortOptions, LessonSortOptions } from '@/services/filters';
+import {
+  PlaylistSortOptions,
+  LessonSortOptions,
+} from '@/server/services/filters.service.';
 
 type SortDirection = 'asc' | 'desc';
 type SortByName = 'sortBy';

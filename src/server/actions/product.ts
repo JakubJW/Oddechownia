@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '@/db';
-import { stripePrices, stripeProducts } from '@/db/schema';
+import { db } from '@/server/db';
+import { stripePrices, stripeProducts } from '@/server/db/schema';
 import { eq, and, asc } from 'drizzle-orm';
 
 export const getSubscriptions = async () => {

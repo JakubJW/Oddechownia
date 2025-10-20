@@ -1,14 +1,17 @@
 'use server';
 
 import { createSlug } from '@/lib/utils';
-import { db } from '@/db';
+import { db } from '@/server/db';
 import { eq, asc, desc, inArray, and, max } from 'drizzle-orm';
-import { playlistLesson, playlists } from '@/db/schema';
+import { playlistLesson, playlists } from '@/server/db/schema';
 import { ActionResult } from './types';
-import { BasePlaylist, Playlist } from '@/db/types';
+import { BasePlaylist, Playlist } from '@/server/db/types';
 import { notFound } from 'next/navigation';
-import { filterService, PlaylistFilters } from '@/services/filters';
-import { supabaseService } from '@/services/supabase';
+import {
+  filterService,
+  PlaylistFilters,
+} from '@/server/services/filters.service.';
+import { supabaseService } from '@/server/services/supabase.service.';
 
 interface ICreatePlaylist {
   name: string;
@@ -43,8 +46,8 @@ export const createPlaylist = async ({
       .returning();
 
     return { data: playlist, success: true, error: null };
-  } catch (e) {
-    console.error('Podczas tworzenia playlisty wystąpił błąd.', e);
+  } catch (error) {
+    console.error('Podczas tworzenia playlisty wystąpił błąd.', error);
     return {
       data: null,
       success: false,
@@ -82,32 +85,7 @@ export const updatePlaylist = async (
   }
 };
 
-export const getPublishedPlaylists = async (): Promise<
-  ActionResult<BasePlaylist[]>
-> => {
-  try {
-    const data = await db
-      .select()
-      .from(playlists)
-      .where(eq(playlists.isPublished, true))
-      .orderBy(asc(playlists.position));
-
-    return { data, success: true, error: null };
-  } catch (error) {
-    console.error(
-      'Podczas pobierania playlist wystąpił błąd. Spróbuj ponownie później.',
-      error
-    );
-    return {
-      data: null,
-      success: false,
-      error:
-        'Podczas pobierania playlist wystąpił błąd. Spróbuj ponownie później.',
-    };
-  }
-};
-
-export const getPlaylists = async (
+export const getAdminPlaylists = async (
   filters: PlaylistFilters
 ): Promise<ActionResult<Playlist[]>> => {
   try {

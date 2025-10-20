@@ -1,4 +1,4 @@
-import { getPlaylistBySlug } from '@/actions/playlist';
+import { getPlaylistBySlug } from '@/server/actions/playlist';
 import PlaylistForm from '@/features/admin/Playlist/Form/PlaylistForm';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import LessonList from '@/features/admin/Lesson/LessonList';

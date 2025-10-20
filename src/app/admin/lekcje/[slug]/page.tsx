@@ -1,5 +1,5 @@
 import AdminNewLesson from '@/features/admin/Lesson/LessonForm';
-import { getLesson } from '@/actions/lesson';
+import { getLesson } from '@/server/actions/lesson';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 
 export default async function AdminAddLesson({

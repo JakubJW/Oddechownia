@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '@/db';
-import { posts } from '@/db/schema';
+import { db } from '@/server/db';
+import { posts } from '@/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { PgSelect, PgColumn } from 'drizzle-orm/pg-core';
 import { SQL, asc } from 'drizzle-orm';
@@ -43,7 +43,11 @@ export const getPostBySlug = async (
 export const getPaginatedPosts = async (page?: string) => {
   const query = db.select().from(posts);
 
-  const data = await withPagination(query.$dynamic(), asc(posts.createdAt), Number(page));
+  const data = await withPagination(
+    query.$dynamic(),
+    asc(posts.createdAt),
+    Number(page)
+  );
 
   const [countResult] = await db
     .select({ count: sql`count(*)`.mapWith(Number).as('count') })

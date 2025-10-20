@@ -7,16 +7,19 @@ interface VideoPlayerProps {
   playbackId?: string;
   videoSeries?: string;
   videoTitle?: string;
+  thumbnailUrl: string;
 }
 
 const DynamicVideoPlayer = ({
   playbackId,
   videoSeries,
   videoTitle,
+  thumbnailUrl
 }: VideoPlayerProps) => {
   return (
     <div className="mb-8 w-full aspect-video rounded-xl overflow-hidden">
       <MuxPlayer
+      poster={thumbnailUrl}
         className="w-full aspect-video"
         streamType="on-demand"
         playbackId={playbackId}

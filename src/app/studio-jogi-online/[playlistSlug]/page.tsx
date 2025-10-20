@@ -1,4 +1,4 @@
-import { getPlaylistBySlug, getBasePlaylist } from '@/actions/playlist';
+import { getPlaylistBySlug, getBasePlaylist } from '@/server/actions/playlist';
 import Container from '@/components/Container/Container';
 import CourseVideoCard from '@/components/CourseVideoCard/CourseVideoCard';
 import HeaderOne from '@/components/Headers/HeaderOne';

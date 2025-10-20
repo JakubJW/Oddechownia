@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '@/db';
-import { posts } from '@/db/schema';
+import { db } from '@/server/db';
+import { posts } from '@/server/db/schema';
 import { createClient } from '@/supabase/server';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';

@@ -1,11 +1,11 @@
 'use server';
 
-import { db } from '@/db';
+import { db } from '@/server/db';
 import { eq } from 'drizzle-orm';
-import { videos } from '@/db/schema';
-import { nullToUndefined } from '@/db/types';
+import { videos } from '@/server/db/schema';
+import { nullToUndefined } from '@/server/db/types';
 import { ActionResult } from './types';
-import { BaseVideo } from '@/db/types';
+import { BaseVideo } from '@/server/db/types';
 
 export const createVideo = async ({
   uploadId,

@@ -5,8 +5,8 @@ import Mux from '@mux/mux-node';
 import { NextResponse } from 'next/server';
 import { buffer } from '@/utils/requestBodyBufer';
 import { headers } from 'next/headers';
-import { db } from '@/db';
-import { videos } from '@/db/schema';
+import { db } from '@/server/db';
+import { videos } from '@/server/db/schema';
 import { not, eq, and } from 'drizzle-orm';
 
 const mux = new Mux({

@@ -1,4 +1,4 @@
-import { getUser } from '@/actions/user';
+import { getUser } from '@/server/actions/user';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 

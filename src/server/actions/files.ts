@@ -1,11 +1,11 @@
 'use server';
 
-import { supabaseService } from '@/services/supabase';
-import { BUCKETS } from '@/services/supabase';
-import { db } from '@/db';
-import { files } from '@/db/schema';
+import { supabaseService } from '@/server/services/supabase.service.';
+import { BUCKETS } from '@/server/services/supabase.service.';
+import { db } from '@/server/db';
+import { files } from '@/server/db/schema';
 import { ActionResult } from './types';
-import { BaseFile } from '@/db/types';
+import { BaseFile } from '@/server/db/types';
 import { inArray } from 'drizzle-orm';
 
 export const createFile = async (

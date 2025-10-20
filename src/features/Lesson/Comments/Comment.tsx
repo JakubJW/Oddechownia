@@ -1,38 +1,51 @@
 'use client';
 
-import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-
+import React, { useState } from 'react';
+import { queryClient } from '@/components/QueryClientProvider';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { FetchCommentsResponse } from '@/server/models/comment.models';
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+} from '@tanstack/react-query';
 import { EllipsisVertical } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { ReplyForm } from './Form/ReplyForm';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { queryClient } from '@/components/QueryClientProvider';
 
 interface CommentProps {
   id: number;
   author: string;
   createdAt: Date;
   content: string;
-  userId: string | null;
-  authorId: string;
   lessonId: number;
   replyCount: number;
+  isAuthor: boolean;
+  parentId?: number;
 }
+
+const removeComment = async (commentId: number) => {
+  const res = await fetch(`/api/comments/remove/${commentId}`, {
+    method: 'DELETE',
+  });
+
+  const json = await res.json();
+  return json.data;
+};
 
 export const Comment = ({
   id,
+  parentId,
   author,
   createdAt,
   content,
-  authorId,
-  userId,
+  isAuthor,
   lessonId,
   replyCount,
 }: CommentProps) => {
@@ -40,40 +53,52 @@ export const Comment = ({
   const [showReplies, setShowReplies] = useState<boolean>(false);
   const [replyMode, setReplyMode] = useState<boolean>(false);
 
-  const removeComment = async (commentId: number) => {
-    const res = await fetch(`/api/comments/remove/${commentId}`, {
-      method: 'DELETE',
-    });
-
-    const json = await res.json();
-    return json.data;
-  };
-
-  const fetchReplies = async (commentId: number) => {
-    const res = await fetch(`/api/comments/replies/${commentId}`, {
+  const fetchReplies = async ({ pageParam }: { pageParam: string | null }) => {
+    const res = await fetch(`/api/comments/replies/${id}?cursor=${pageParam}`, {
       method: 'GET',
     });
 
     const json = await res.json();
-    return json.data;
+    return json.data as FetchCommentsResponse;
   };
 
   const mutation = useMutation({
     mutationFn: ({ id }: { id: number }) => {
       return removeComment(id);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['comments'] }),
+    onSuccess: () => {
+      const queryKey = parentId
+        ? ['replies', parentId]
+        : ['comments', lessonId];
+
+      queryClient.setQueryData<InfiniteData<FetchCommentsResponse>>(
+        queryKey,
+        (oldData) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          const newPages = oldData.pages.map(({ data, ...rest }) => {
+            const updatedItems = data.filter((item) => item.id !== id);
+            return { ...rest, data: updatedItems };
+          });
+
+          return { ...oldData, pages: newPages };
+        }
+      );
+
+      queryClient.invalidateQueries({
+        queryKey,
+        refetchType: 'none',
+      });
+    },
   });
 
-  const {
-    isPending,
-    isFetching,
-    isError,
-    data: repliesData,
-    error,
-  } = useQuery({
+  const { isFetching, data: repliesData } = useInfiniteQuery({
+    initialPageParam: null,
+    getNextPageParam: ({ nextCursor }) => nextCursor,
     queryKey: ['replies', id],
-    queryFn: () => fetchReplies(id),
+    queryFn: fetchReplies,
     enabled: showReplies,
   });
 
@@ -115,7 +140,7 @@ export const Comment = ({
             )}
           </div>
         </div>
-        {authorId === userId && (
+        {isAuthor && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -143,28 +168,41 @@ export const Comment = ({
         {replyMode && (
           <ReplyForm
             lessonId={lessonId}
-            userId={userId}
             parentId={id}
             onCancel={() => setReplyMode(false)}
             onSuccess={() => {
               setReplyMode(false);
-              queryClient.invalidateQueries({ queryKey: ['replies', id] });
             }}
           />
         )}
         {repliesData &&
-          repliesData.map((reply) => (
-            <Comment
-              key={reply.id}
-              id={reply.id}
-              author={reply.user.name}
-              content={reply.content}
-              createdAt={new Date(reply.createdAt)}
-              authorId={reply.userId}
-              userId={userId}
-              lessonId={reply.lessonId}
-              replyCount={reply.replyCount}
-            />
+          repliesData?.pages.map((page, i) => (
+            <React.Fragment key={i}>
+              {page.data.map(
+                ({
+                  id,
+                  author,
+                  content,
+                  createdAt,
+                  isAuthor,
+                  lessonId,
+                  replyCount,
+                  parentId,
+                }) => (
+                  <Comment
+                    parentId={parentId}
+                    key={id}
+                    id={id}
+                    author={author}
+                    content={content}
+                    createdAt={new Date(createdAt)}
+                    lessonId={lessonId}
+                    isAuthor={isAuthor}
+                    replyCount={replyCount}
+                  />
+                )
+              )}
+            </React.Fragment>
           ))}
       </div>
     </div>

@@ -1,48 +1,82 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { createComment } from '@/actions/comments';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { formSchema, defaultValues } from './schema';
-import { useActionResult } from '@/hooks/useActionResult';
-import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { queryClient } from '@/components/QueryClientProvider';
+import { useMutation, InfiniteData } from '@tanstack/react-query';
+import {
+  CommentDetailDTO,
+  FetchCommentsResponse,
+} from '@/server/models/comment.models';
 
 interface CommentFormProps {
   lessonId: number;
-  parentId: number | null;
 }
 
-export const CommentForm = ({ lessonId, parentId }: CommentFormProps) => {
-  const [error, setError] = useState<string | null>(null);
+export const CommentForm = ({ lessonId }: CommentFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues,
+    defaultValues: { ...defaultValues, parentId: null },
   });
 
-  const { isLoading, execute: submitForm } = useActionResult(createComment, {
-    onSuccess: () => {
+  const createComment = async (
+    lessonId: number,
+    values: z.infer<typeof formSchema>
+  ) => {
+    const res = await fetch(`/api/comments/${lessonId}`, {
+      method: 'POST',
+      body: JSON.stringify(values),
+    });
+
+    const json = await res.json();
+    return json.data as CommentDetailDTO;
+  };
+
+  const mutation = useMutation({
+    mutationFn: (values: z.infer<typeof formSchema>) =>
+      createComment(lessonId, values),
+    onSuccess: (newComment) => {
       form.reset();
       toast.success('Twój komentarz został dodany.');
-      queryClient.invalidateQueries({ queryKey: ['comments'] });
-    },
-    onError: (error) => {
-      setError(error);
+
+      queryClient.setQueryData<InfiniteData<FetchCommentsResponse>>(
+        ['comments', lessonId],
+        (oldData) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          const firstPage = oldData.pages[0];
+
+          const updatedFirstPage = {
+            ...firstPage,
+            data: [newComment, ...firstPage.data],
+          };
+
+          const newPages = [updatedFirstPage, ...oldData.pages.slice(1)];
+
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        }
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ['comments', lessonId],
+        refetchType: 'none',
+      });
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setError(null);
-    submitForm({
-      ...values,
-      lessonId,
-      parentId,
-    });
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutation.mutate(values);
   };
 
   return (
@@ -72,13 +106,10 @@ export const CommentForm = ({ lessonId, parentId }: CommentFormProps) => {
           <Button
             type="submit"
             className="self-end"
-            disabled={isLoading || !form.formState.isValid}
+            disabled={mutation.isPending || !form.formState.isValid}
           >
-            {isLoading ? 'Dodawanie' : 'Opublikuj'}
+            {mutation.isPending ? 'Dodawanie' : 'Opublikuj'}
           </Button>
-          {error && (
-            <p className="text-sm font-medium text-destructive">{error}</p>
-          )}
         </form>
       </Form>
     </div>

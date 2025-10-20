@@ -1,4 +1,4 @@
-import { getPlaylists } from '@/actions/playlist';
+import { getAdminPlaylists } from '@/server/actions/playlist';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import Playlists from '@/features/admin/Playlist/Playlists';
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Filters from '@/components/Filters/Filters';
 import { SearchParams } from '@/types/types';
-import { PlaylistFilters, SortOrder } from '@/services/filters';
+import { PlaylistFilters, SortOrder } from '@/server/services/filters.service.';
 
 export default async function AdminPlaylists({
   searchParams,
@@ -32,7 +32,7 @@ export default async function AdminPlaylists({
     filters.sortOrder = 'asc' as SortOrder;
   }
 
-  const { data, error, success } = await getPlaylists(filters);
+  const { data, error, success } = await getAdminPlaylists(filters);
 
   if (!success) {
     return <ErrorMessage message={error} />;

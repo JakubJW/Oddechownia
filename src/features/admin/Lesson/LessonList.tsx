@@ -1,7 +1,7 @@
 'use client';
 
 import SortableLessonCard from './SortableLessonCard';
-import { Lesson } from '@/db/types';
+import { Lesson } from '@/server/db/types';
 import { useState } from 'react';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 
 interface LessonListProps {
-  lessons?: Array<Lesson & { position: number, playlistLessonId: number }>;
+  lessons?: Array<Lesson & { position: number; playlistLessonId: number }>;
   courseSlug: string;
 }
 
@@ -20,7 +20,7 @@ export default function LessonList({ lessons, courseSlug }: LessonListProps) {
 
   const calculatePosition = (
     newIndex: number,
-    lessons: Array<Lesson & { position: number, playlistLessonId: number }>
+    lessons: Array<Lesson & { position: number; playlistLessonId: number }>
   ) => {
     let position;
 

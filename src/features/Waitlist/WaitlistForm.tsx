@@ -1,6 +1,6 @@
 'use client';
 
-import { signInToWaitlist } from '@/actions/waitlist';
+import { signInToWaitlist } from '@/server/actions/waitlist';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripeService } from '@/services/stripe';
-import { db } from '@/db';
+import { stripeService } from '@/server/services/stripe.service.';
+import { db } from '@/server/db';
 import { eq } from 'drizzle-orm';
-import { courses } from '@/db/schema';
+import { courses } from '@/server/db/schema';
 import { createClient } from '@/supabase/server';
 import { env } from '@/env';
 

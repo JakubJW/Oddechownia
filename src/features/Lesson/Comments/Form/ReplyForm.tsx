@@ -1,55 +1,130 @@
 import { Button } from '@/components/ui/button';
-import { createComment } from '@/actions/comments';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { formSchema, defaultValues } from './schema';
-import { useActionResult } from '@/hooks/useActionResult';
-import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { useMutation, InfiniteData } from '@tanstack/react-query';
+import { queryClient } from '@/components/QueryClientProvider';
+import {
+  CommentDetailDTO,
+  FetchCommentsResponse,
+} from '@/server/models/comment.models';
 
 interface ReplyFormProps {
   lessonId: number;
-  userId: string;
   parentId: number | null;
   onCancel: () => void;
   onSuccess: () => void;
 }
 
 export const ReplyForm = ({
-  userId,
   lessonId,
   parentId,
   onCancel,
   onSuccess,
 }: ReplyFormProps) => {
-  const [error, setError] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues,
+    defaultValues: { ...defaultValues, parentId },
   });
 
-  const { isLoading, execute: submitForm } = useActionResult(createComment, {
-    onSuccess: () => {
-      form.reset();
-      toast.success('Twoja odpowiedź została dodana.');
-      onSuccess();
-    },
-    onError: (error) => {
-      setError(error);
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setError(null);
-    submitForm({
-      ...values,
-      userId,
-      lessonId,
-      parentId,
+  const createComment = async (
+    lessonId: number,
+    values: z.infer<typeof formSchema>
+  ) => {
+    const res = await fetch(`/api/comments/${lessonId}`, {
+      method: 'POST',
+      body: JSON.stringify(values),
     });
+
+    const json = await res.json();
+    return json.data as CommentDetailDTO;
+  };
+
+  const mutation = useMutation({
+    mutationFn: (values: z.infer<typeof formSchema>) =>
+      createComment(lessonId, values),
+    onSuccess: (newReply) => {
+      form.reset();
+      toast.success('Twój komentarz został dodany.');
+      onSuccess();
+
+      form.reset();
+      toast.success('Twój komentarz został dodany.');
+
+      queryClient.setQueryData<InfiniteData<FetchCommentsResponse>>(
+        ['replies', parentId],
+        (oldData) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          const firstPage = oldData.pages[0];
+
+          const updatedFirstPage = {
+            ...firstPage,
+            data: [newReply, ...firstPage.data],
+          };
+
+          const newPages = [updatedFirstPage, ...oldData.pages.slice(1)].map(
+            (page) => ({
+              ...page,
+              items: page.data.map((comment) => {
+                if (comment.id === parentId) {
+                  return {
+                    ...comment,
+                    replyCount: (comment.replyCount || 0) + 1,
+                  };
+                }
+                return comment;
+              }),
+            })
+          );
+
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        }
+      );
+
+      queryClient.setQueryData<InfiniteData<FetchCommentsResponse>>(
+        ['comments', lessonId],
+        (oldData) => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: page.data.map((comment) => {
+                if (comment.id === parentId) {
+                  return {
+                    ...comment,
+                    replyCount: (comment.replyCount || 0) + 1,
+                  };
+                }
+                return comment;
+              }),
+            })),
+          };
+        }
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ['replies', lessonId],
+        refetchType: 'none',
+      });
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutation.mutate(values);
   };
 
   return (
@@ -88,14 +163,11 @@ export const ReplyForm = ({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !form.formState.isValid}
+              disabled={mutation.isPending || !form.formState.isValid}
             >
-              {isLoading ? 'Dodawanie...' : 'Opublikuj'}
+              {mutation.isPending ? 'Dodawanie...' : 'Opublikuj'}
             </Button>
           </div>
-          {error && (
-            <p className="text-sm font-medium text-destructive">{error}</p>
-          )}
         </form>
       </Form>
     </div>

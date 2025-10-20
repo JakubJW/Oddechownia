@@ -1,6 +1,6 @@
 'use client';
 
-import { Playlist } from '@/db/types';
+import { Playlist } from '@/server/db/types';
 import { useState, useEffect } from 'react';
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import {
@@ -27,8 +27,8 @@ function MyPlaylists({ playlists }: { playlists: Playlist[] }) {
       position =
         (playlists[index - 1].position + playlists[index + 1].position) / 2;
     } else {
-      console.log(index, playlists.length - 1)
-      console.log('trzeci')
+      console.log(index, playlists.length - 1);
+      console.log('trzeci');
       position = playlists[playlists.length - 1].position * 2;
     }
 

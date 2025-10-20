@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { signOut } from '@/actions/auth';
+import { signOut } from '@/server/actions/auth';
 
 export default async function MyAccount() {
   return (

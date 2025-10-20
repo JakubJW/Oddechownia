@@ -1,8 +1,13 @@
-import { Lesson } from '@/db/types';
+import { Lesson } from '@/server/db/types';
 import { formatDuration } from '@/lib/utils';
 import Image from 'next/image';
 
-const LessonCard = ({ name, description, video, thumbnailUrl }: Partial<Lesson>) => {
+const LessonCard = ({
+  name,
+  description,
+  video,
+  thumbnailUrl,
+}: Partial<Lesson>) => {
   return (
     <div className="rounded-xl overflow-hidden">
       <div className="relative">

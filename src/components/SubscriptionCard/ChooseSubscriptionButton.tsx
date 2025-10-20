@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { env } from '@/env';
-import { getUser } from '@/actions/user';
+import { getUser } from '@/server/actions/user';
 
 type User = Awaited<ReturnType<typeof getUser>>;
 

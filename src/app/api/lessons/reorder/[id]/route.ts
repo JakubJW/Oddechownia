@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { playlistLesson } from '@/db/schema';
+import { db } from '@/server/db';
+import { playlistLesson } from '@/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 

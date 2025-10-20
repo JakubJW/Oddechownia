@@ -1,7 +1,7 @@
 'use client';
 
-import { createPlaylist, updatePlaylist } from '@/actions/playlist';
-import { deleteVideo } from '@/actions/video';
+import { createPlaylist, updatePlaylist } from '@/server/actions/playlist';
+import { deleteVideo } from '@/server/actions/video';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Playlist } from '@/db/types';
+import { Playlist } from '@/server/db/types';
 import { useActionResult } from '@/hooks/useActionResult';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MuxPlayer from '@mux/mux-player-react';

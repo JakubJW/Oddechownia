@@ -1,9 +1,9 @@
 import { Params } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq, desc, isNull, lt } from 'drizzle-orm';
-import { attachments } from '@/db/schema';
-import { db } from '@/db';
-import { supabaseService, BUCKETS } from '@/services/supabase';
+import { attachments } from '@/server/db/schema';
+import { db } from '@/server/db';
+import { supabaseService, BUCKETS } from '@/server/services/supabase.service.';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);

@@ -1,6 +1,6 @@
 'use client';
 
-import { signup } from '@/actions/auth';
+import { signup } from '@/server/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {

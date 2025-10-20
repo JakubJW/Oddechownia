@@ -1,7 +1,7 @@
 import Container from '@/components/Container/Container';
 import Carousel from '@/components/Carousel/Carousel';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import { getPlaylistsWithLessons } from '@/actions/playlist';
+import { getPlaylistsWithLessons } from '@/server/actions/playlist';
 import LessonCard from '@/components/LessonCard/LessonCard';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -39,7 +39,7 @@ export default async function OnlineYogaStudio() {
               {playlist.lessons.map((lesson) => (
                 <Link
                   key={lesson.id}
-                  href={`/studio-jogi-online/${playlist.slug}/video/${lesson.video?.publicPlaybackId}`}
+                  href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
                 >
                   <LessonCard
                     thumbnailUrl={lesson.thumbnailUrl}

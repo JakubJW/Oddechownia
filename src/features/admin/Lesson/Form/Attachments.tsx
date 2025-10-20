@@ -6,7 +6,7 @@ import {
 import { Label } from '@radix-ui/react-label';
 import { Trash } from 'lucide-react';
 import Link from 'next/link';
-import { Attachment } from '@/db/types';
+import { Attachment } from '@/server/db/types';
 import { memo } from 'react';
 
 interface FormAttachmentsProps {

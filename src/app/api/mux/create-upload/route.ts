@@ -1,9 +1,9 @@
 'use server';
 
-import { createVideo } from '@/actions/video';
+import { createVideo } from '@/server/actions/video';
 import { NextResponse } from 'next/server';
 import { env } from '@/env';
-import { muxService } from '@/services/mux';
+import { muxService } from '@/server/services/mux.service.';
 
 export async function GET() {
   const {

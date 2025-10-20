@@ -1,9 +1,8 @@
 import { Params } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
-import { and, eq, desc, isNull, lt } from 'drizzle-orm';
-import { comments } from '@/db/schema';
-import { db } from '@/db';
+import { CommentsService } from '@/server/services/comments.service';
 import { encodeCursor, decodeCursor } from '@/lib/utils';
+import { formSchema } from '@/features/Lesson/Comments/Form/schema';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);
@@ -20,36 +19,66 @@ export async function GET(
     const cursor = decodeCursor(searchParams.cursor);
     const perPage = 3;
 
-    const lessonComments = await db.query.comments.findMany({
-      where: and(
-        eq(comments.lessonId, Number(lessonId)),
-        isNull(comments.parentId),
-        cursor ? lt(comments.createdAt, String(cursor)) : undefined
-      ),
-      orderBy: desc(comments.createdAt),
-      with: {
-        replies: { columns: { id: true } },
-        user: { columns: { firstName: true, lastName: true } },
-      },
-      limit: perPage,
-    });
-
-    const formattedComments = lessonComments.map((c) => ({
-      ...c,
-      user: { name: `${c.user.firstName} ${c.user.lastName}` },
-      replyCount: c.replies.length,
-    }));
+    const result = await CommentsService.getComments(
+      Number(lessonId),
+      String(cursor),
+      perPage
+    );
 
     return NextResponse.json({
       data: {
-        data: formattedComments,
+        data: result,
         nextCursor:
-          formattedComments.length === perPage
-            ? encodeCursor(
-                formattedComments[formattedComments.length - 1].createdAt
-              )
+          result.length === perPage
+            ? encodeCursor(result[result.length - 1].createdAt)
             : null,
       },
+      success: true,
+      error: null,
+    });
+  } catch (error) {
+    console.error(
+      'Podczas ładowania komentarzy wystąpił błąd. Spróbuj ponownie później.',
+      error
+    );
+
+    return NextResponse.json({
+      data: null,
+      success: false,
+      error:
+        'Podczas ładowania komentarzy wystąpił błąd. Spróbuj ponownie później.',
+    });
+  }
+}
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Params<{ lessonId: string }> }
+) {
+  try {
+    const { lessonId } = await params;
+    const body = await req.json();
+
+    const parsed = formSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          data: null,
+          success: false,
+          error: 'Bad request',
+        },
+        { status: 400 }
+      );
+    }
+
+    const [result] = await CommentsService.createComment(
+      Number(lessonId),
+      parsed.data
+    );
+
+    return NextResponse.json({
+      data: result,
       success: true,
       error: null,
     });

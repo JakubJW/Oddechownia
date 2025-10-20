@@ -1,8 +1,8 @@
 import { SubscriptionCard } from '@/components/SubscriptionCard/SubscriptionCard';
 import Container from '@/components/Container/Container';
 import HeaderTwo from '@/components/Headers/HeaderTwo';
-import { getSubscriptions } from '@/actions/product';
-import { getUser } from '@/actions/user';
+import { getSubscriptions } from '@/server/actions/product';
+import { getUser } from '@/server/actions/user';
 
 const subscriptions = await getSubscriptions();
 

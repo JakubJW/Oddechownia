@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/logowanie',
-    '/rejestracja',
+    '/rejestracja/:path*',
     '/zapomnialem-hasla',
     '/admin/:path*',
     '/moje-konto/:path*',

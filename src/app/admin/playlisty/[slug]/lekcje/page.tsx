@@ -1,9 +1,9 @@
-import { getLessons } from '@/actions/lesson';
+import { getLessons } from '@/server/actions/lesson';
 import Filters from '@/components/Filters/Filters';
 import { Params, SearchParams } from '@/types/types';
 import LessonTable from '@/features/admin/Lesson/LessonTable';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import { LessonFilters, SortOrder } from '@/services/filters';
+import { LessonFilters, SortOrder } from '@/server/services/filters.service.';
 
 export default async function AdminPlaylistLessons({
   params,

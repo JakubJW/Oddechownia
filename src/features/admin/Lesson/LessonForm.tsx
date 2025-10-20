@@ -1,7 +1,11 @@
 'use client';
 
-import { createLesson, removeLesson, updateLesson } from '@/actions/lesson';
-import { deleteVideo } from '@/actions/video';
+import {
+  createLesson,
+  removeLesson,
+  updateLesson,
+} from '@/server/actions/lesson';
+import { deleteVideo } from '@/server/actions/video';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -14,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Lesson } from '@/db/types';
+import { Lesson } from '@/server/db/types';
 import { useActionResult } from '@/hooks/useActionResult';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MuxPlayer from '@mux/mux-player-react/lazy';

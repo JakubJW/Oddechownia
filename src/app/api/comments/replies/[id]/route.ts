@@ -1,39 +1,39 @@
-import { db } from '@/db';
-import { comments } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
 import { NextResponse, NextRequest } from 'next/server';
 import { Params } from '@/types/types';
+import { CommentsService } from '@/server/services/comments.service';
+import { decodeCursor, encodeCursor } from '@/lib/utils';
+
+const getQueryParams = (url: string) => {
+  return Object.fromEntries(new URL(url).searchParams);
+};
 
 export async function GET(
   req: NextRequest,
-  {
-    params,
-  }: { params: Params<{ id: string; page?: number; perPage?: number }> }
+  { params }: { params: Params<{ id: string }> }
 ) {
   try {
-    const { id, page, perPage } = await params;
+    const { id } = await params;
+    const searchParams = getQueryParams(req.url);
 
-    const replies = await db.query.comments.findMany({
-      with: {
-        replies: { columns: { id: true } },
-        user: { columns: { firstName: true, lastName: true } },
-      },
-      where: eq(comments.parentId, parseInt(id)),
-      orderBy: desc(comments.createdAt),
-      ...{ limit: perPage ? perPage : undefined },
-      ...{ offset: page && perPage ? (page - 1) * perPage : undefined },
-    });
-
-    const formattedReplies = replies.map((r) => ({
-      ...r,
-      user: { name: `${r.user.firstName} ${r.user.lastName}` },
-      replyCount: r.replies.length,
-    }));
-
-    return NextResponse.json(
-      { data: formattedReplies, message: 'Success!' },
-      { status: 200 }
+    const cursor = decodeCursor(searchParams.cursor);
+    const perPage = 3;
+    const result = await CommentsService.getReplies(
+      Number(id),
+      String(cursor),
+      perPage
     );
+
+    return NextResponse.json({
+      data: {
+        data: result,
+        nextCursor:
+          result.length === perPage
+            ? encodeCursor(result[result.length - 1].createdAt)
+            : null,
+      },
+      success: true,
+      error: null,
+    });
   } catch (error) {
     console.log(error);
     return NextResponse.json(
