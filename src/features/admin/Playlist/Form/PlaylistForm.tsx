@@ -1,5 +1,7 @@
 'use client';
 
+import { createPlaylist, updatePlaylist } from '@/server/actions/playlist';
+import { deleteVideo } from '@/server/actions/video';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -12,20 +14,22 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { updatePlaylist, createPlaylist } from '@/actions/playlist';
-import { formSchema, defaultValues } from './schema';
-import { Playlist } from '@/db/types';
 import { useActionResult } from '@/hooks/useActionResult';
-import { useCallback, useState } from 'react';
-import MuxUploader from '@mux/mux-uploader-react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import MuxPlayer from '@mux/mux-player-react';
-import { deleteVideo } from '@/actions/video';
+import MuxUploader from '@mux/mux-uploader-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { defaultValues, formSchema } from './schema';
+import { AdminPlaylistDTO } from '@/server/models/playlist.models';
 
-export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
+export default function PlaylistForm({
+  playlist,
+}: {
+  playlist?: AdminPlaylistDTO;
+}) {
   const router = useRouter();
   const [isUploaded, setIsUploaded] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,10 +67,10 @@ export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
     }
   );
 
-  const handleRemoveVideo = async (playlist: Playlist) => {
-    if (!playlist || !playlist.video || !playlist.video.uploadId) return;
+  const handleRemoveVideo = async (uploadId?: string) => {
+    if (!uploadId) return;
 
-    await deleteVideo(playlist.video.uploadId);
+    await deleteVideo(uploadId);
   };
 
   return (
@@ -121,7 +125,9 @@ export default function PlaylistForm({ playlist }: { playlist?: Playlist }) {
             />
             <Button
               type="button"
-              onClick={async () => await handleRemoveVideo(playlist)}
+              onClick={async () =>
+                await handleRemoveVideo(playlist.video?.uploadId)
+              }
             >
               Usuń film
             </Button>

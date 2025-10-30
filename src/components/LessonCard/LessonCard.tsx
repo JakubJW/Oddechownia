@@ -1,27 +1,26 @@
-import { Lesson } from '@/db/types';
 import { formatDuration } from '@/lib/utils';
-import { Clock } from 'lucide-react';
+import { LessonDTO } from '@/server/models/lesson.models';
 import Image from 'next/image';
 
-const LessonCard = ({ name, description, video }: Partial<Lesson>) => {
+const LessonCard = ({
+  name,
+  description,
+  video,
+  thumbnail,
+}: Pick<LessonDTO, 'name' | 'description' | 'video' | 'thumbnail'>) => {
   return (
     <div className="rounded-xl overflow-hidden">
       <div className="relative">
         <Image
-          src={`https://image.mux.com/${video?.publicPlaybackId}/thumbnail.jpg?width=640`}
+          src={thumbnail}
           alt="Obraz"
           width={640}
           height={420}
           className="w-full h-[250px] object-cover"
         />
-        <div className="absolute top-2 left-2 space-y-2">
-          <div className="bg-primaryBg text-primaryFg flex gap-2 items-center rounded-md p-2">
-            <Clock />
-            <span className="leading-none">
-              {formatDuration(video?.duration)}
-            </span>
-          </div>
-        </div>
+        <span className="absolute bottom-2 right-2 bg-black text-white text-xs p-1 rounded-sm">
+          {formatDuration(video?.duration)}
+        </span>
       </div>
 
       <div className="flex flex-col p-6 gap-4">

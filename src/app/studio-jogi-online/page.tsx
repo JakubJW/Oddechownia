@@ -1,15 +1,28 @@
-import Container from '@/components/Container/Container';
 import Carousel from '@/components/Carousel/Carousel';
-import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import { getPlaylistsWithLessons } from '@/actions/playlist';
+import Container from '@/components/Container/Container';
 import LessonCard from '@/components/LessonCard/LessonCard';
+import { PlaylistsService } from '@/server/services/playlists.service';
+import { Metadata } from 'next';
 import Link from 'next/link';
 
-export default async function OnlineYogaStudio() {
-  const { data: playlists, success, error } = await getPlaylistsWithLessons();
+export const metadata: Metadata = {
+  title: 'Studio Jogi Online | Oddechownia',
+};
 
-  if (!success) {
-    return <ErrorMessage message={error} />;
+export default async function OnlineYogaStudio() {
+  const playlists = await PlaylistsService.getPlaylistsListForUser({
+    isPublished: true,
+  });
+
+  if (!playlists) {
+    return (
+      <section>
+        <Container>
+          <h1>Ups, coś poszło nie tak.</h1>
+          {/* <ErrorMessage message={error} /> */}
+        </Container>
+      </section>
+    );
   }
 
   return (
@@ -27,9 +40,10 @@ export default async function OnlineYogaStudio() {
               {playlist.lessons.map((lesson) => (
                 <Link
                   key={lesson.id}
-                  href={`/studio-jogi-online/${playlist.slug}/video/${lesson.video?.publicPlaybackId}`}
+                  href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
                 >
                   <LessonCard
+                    thumbnail={lesson.thumbnail}
                     key={lesson.id}
                     name={lesson.name}
                     description={lesson.description}

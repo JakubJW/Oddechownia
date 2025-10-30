@@ -5,22 +5,10 @@ import Image from 'next/image';
 import Facebook from '../../../public/facebook.svg';
 import Instagram from '../../../public/instagram.svg';
 import FooterLink from './FooterLink';
+import { routes } from '../Navigation/Navigation';
 
 const footerLinks = [
-  [
-    {
-      content: 'Nasze kursy',
-      href: '/nasze-kursy',
-    },
-    {
-      content: 'Blog',
-      href: '/blog',
-    },
-    {
-      content: 'O nas',
-      href: '/o-nas',
-    },
-  ],
+  [...routes],
   [
     {
       content: 'Kontakt',
@@ -50,11 +38,14 @@ export default function Footer() {
               src={Logo}
               alt="Oddechownia logo"
               priority
-              className='w-[200px]'
+              className="w-[200px]"
             />
           </Link>
           {footerLinks.map((column, index) => (
-            <ul key={index} className='space-y-4'>
+            <ul
+              key={index}
+              className="space-y-4"
+            >
               {column.map(({ href, content }, index) => (
                 <FooterLink
                   key={index}
@@ -66,7 +57,7 @@ export default function Footer() {
           ))}
           <div className="space-x-4">
             <Link
-              className=" bg-primaryFg inline-block p-4 rounded-full"
+              className="bg-primaryFg inline-block p-4 rounded-full"
               href="#"
             >
               <Image
@@ -75,8 +66,9 @@ export default function Footer() {
               />
             </Link>
             <Link
-              className=" bg-primaryFg inline-block p-4 rounded-full"
-              href="#"
+              className="bg-primaryFg inline-block p-4 rounded-full"
+              href="https://www.instagram.com/weronikasyoga/"
+              target="_blank"
             >
               <Image
                 src={Instagram}

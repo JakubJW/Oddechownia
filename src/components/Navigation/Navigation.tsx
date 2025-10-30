@@ -1,16 +1,13 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import Logo from '../../../public/oddechownia.svg';
 import MobileNavigation from './MobileNavigation';
-import NavigationElement from './NavigationLink';
+import NavigationLink from './NavigationLink';
 import type { User } from '@supabase/supabase-js';
 import NavigationAction from './NavigationAction';
 
 export const routes = [
   { content: 'Studio Jogi Online', href: '/studio-jogi-online' },
-  { content: 'Nasze Kursy', href: '/nasze-kursy' },
   { content: 'O nas', href: '/o-nas' },
   { content: 'Blog', href: '/blog' },
 ];
@@ -21,30 +18,31 @@ export interface NavigationProps {
 
 export default function Navigation({ user }: NavigationProps) {
   return (
-    <header className="fixed top-0 z-40 w-full bg-matcha flex items-center justify-between">
-      <div className="container mx-auto px-4 py-4 sm:py-0">
-        <div className="flex justify-between items-center">
-          <nav>
-            <ul className="flex justify-center sm:justify-start items-center">
-              <li>
+    <header className="fixed top-0 z-40 h-[64px] w-full bg-matcha flex items-center justify-between">
+      <div className="container h-full mx-auto px-4">
+        <div className="flex h-full justify-between items-center">
+          <nav className='h-full'>
+            <ul className="h-full flex justify-center sm:justify-start items-center">
+              <li className='h-full py-4'>
                 <Link
-                  className="block mr-8"
+                  className="block mr-8 h-full"
                   href="/"
                 >
                   <Image
                     src={Logo}
                     alt="Oddechownia logo"
                     priority
-                    className='w-[200px]'
+                    className='h-full w-min'
                   />
                 </Link>
               </li>
               {routes.map(({ content, href }, index) => (
                 <li
-                  className="hidden sm:block"
+                  className="hidden sm:block h-full"
                   key={index}
                 >
-                  <NavigationElement
+                  <NavigationLink
+                    isMobile={false}
                     content={content}
                     href={href}
                   />
@@ -52,8 +50,11 @@ export default function Navigation({ user }: NavigationProps) {
               ))}
             </ul>
           </nav>
-          <NavigationAction className='hidden sm:inline-flex' user={user} />
-          <MobileNavigation user={user}/>
+          <NavigationAction
+            className="hidden sm:inline-flex"
+            user={user}
+          />
+          <MobileNavigation user={user} />
         </div>
       </div>
     </header>

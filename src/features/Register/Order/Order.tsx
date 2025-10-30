@@ -1,5 +1,5 @@
 import { OrderSubscriptionCard } from '@/components/SubscriptionCard/OrderSubscriptionCard';
-import { stripeProducts, stripePrices } from '@/db/schema';
+import { stripeProducts, stripePrices } from '@/server/db/schema';
 
 type StripeProductWithPrice = typeof stripeProducts.$inferSelect & {
   stripePrices: (typeof stripePrices.$inferSelect)[];

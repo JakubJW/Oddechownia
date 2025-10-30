@@ -1,7 +1,7 @@
 import Container from '@/components/Container/Container';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { signOut } from '@/actions/auth';
+import { signOut } from '@/server/actions/auth';
 import { getRequiredUser } from '@/lib/data';
 
 export default async function UserLayout({

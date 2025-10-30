@@ -2,7 +2,7 @@ import RegisterForm from '@/features/Register/Form/RegisterForm';
 import Container from '@/components/Container/Container';
 import Order from '@/features/Register/Order/Order';
 import { notFound } from 'next/navigation';
-import { getSubscriptionBySlug } from '@/actions/product';
+import { getSubscriptionBySlug } from '@/server/actions/product';
 // import { getUser } from '@/actions/user';
 // import { redirect } from 'next/navigation';
 

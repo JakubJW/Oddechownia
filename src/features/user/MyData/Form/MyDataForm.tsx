@@ -14,10 +14,10 @@ import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { formSchema } from './schema';
-import { users } from '@/db/schema';
+import { users } from '@/server/db/schema';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { updateUser } from '@/actions/user';
+import { updateUser } from '@/server/actions/user';
 
 type PublicUser = typeof users.$inferSelect;
 

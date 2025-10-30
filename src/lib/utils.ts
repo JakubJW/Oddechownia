@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDuration(duration?: number | null) {
+export function formatDuration(duration?: number) {
   if (!duration) return '--:--:--';
 
   const round = Math.round(duration);
@@ -26,10 +26,36 @@ export function formatDuration(duration?: number | null) {
   return hours + ':' + minutes + ':' + seconds;
 }
 
+export function formatDateTime(date: Date) {
+  const currentDate = new Date();
+}
+
 export function createSlug(value: string) {
   return slugify(value, { lower: true, strict: true });
 }
 
-export function generateThumbnailUrl() {
-  
+export function generateThumbnailUrl() {}
+
+export function encodeCursor(rawCursor: string | number | null) {
+  if (rawCursor === null || rawCursor === undefined) {
+    return null;
+  }
+  const encoded = Buffer.from(String(rawCursor)).toString('base64');
+  return encoded;
+}
+
+export function decodeCursor(encodedCursor: string | null) {
+  if (encodedCursor === null || encodedCursor === undefined) {
+    return null;
+  }
+  try {
+    const decoded = Buffer.from(encodedCursor, 'base64').toString('utf8');
+    if (!isNaN(Number(decoded)) && decoded.trim() !== '') {
+      return Number(decoded);
+    }
+    return decoded;
+  } catch (e) {
+    console.error('Failed to decode cursor:', e);
+    return null;
+  }
 }

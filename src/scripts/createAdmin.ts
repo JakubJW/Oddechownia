@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { createClient } from '@supabase/supabase-js';
-import { UserRoles } from '@/db/consts';
+import { UserRoles } from '@/server/db/consts';
 import nextEnv from '@next/env';
 
 nextEnv.loadEnvConfig(process.cwd());

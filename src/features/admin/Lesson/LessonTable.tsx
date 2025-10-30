@@ -1,15 +1,15 @@
 'use client';
 
-import { attachLessonsToPlaylist } from '@/actions/playlist';
+import { attachLessonsToPlaylist } from '@/server/actions/playlist';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Lesson } from '@/db/types';
 import { formatDuration } from '@/lib/utils';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { AdminLessonDTO } from '@/server/models/lesson.models';
 
 const findLessonsBelongingToPlaylist = (
-  lessons: Lesson[],
+  lessons: AdminLessonDTO[],
   playlistSlug: string
 ) => {
   const result = lessons
@@ -27,7 +27,7 @@ export default function LessonTable({
   lessons,
   playlistSlug,
 }: {
-  lessons: Lesson[];
+  lessons: AdminLessonDTO[];
   playlistSlug: string;
 }) {
   const [lessonsClone, setLessonsClone] = useState(lessons);
@@ -68,7 +68,7 @@ export default function LessonTable({
           </tr>
         </thead>
         <tbody>
-          {lessonsClone.map(({ id, name, video }) => (
+          {lessonsClone.map(({ id, name, video, thumbnail }) => (
             <tr key={id}>
               <td>
                 <Checkbox
@@ -83,7 +83,7 @@ export default function LessonTable({
                   height={120}
                   width={240}
                   alt="Obrazek"
-                  src={`https://image.mux.com/${video?.publicPlaybackId}/thumbnail.jpg?width=640`}
+                  src={thumbnail}
                 />
               </td>
 

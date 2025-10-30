@@ -15,7 +15,7 @@ import { z } from 'zod';
 import { formSchema, defaultValues } from './schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { changePasswordAuthenticated } from '@/actions/auth';
+import { changePasswordAuthenticated } from '@/server/actions/auth';
 
 const SecurityForm = () => {
   const [isLoading, setIsLoading] = useState(false);

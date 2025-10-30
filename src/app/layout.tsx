@@ -6,6 +6,8 @@ import Footer from '@/components/Footer/Footer';
 import { createClient } from '@/supabase/server';
 import { env } from '@/env';
 import Waitlist from '@/features/Waitlist/Waitlist';
+import ToastProvider from '@/components/ToastProvider';
+import QueryClientProvider from '@/components/QueryClientProvider';
 
 export const metadata: Metadata = {
   title: 'Twoje miejsce, by złapać oddech | Oddechownia',
@@ -32,15 +34,19 @@ export default async function RootLayout({
       className={sourceSans.className}
     >
       <body className="antialiased">
-        {env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' ? (
-          <Waitlist />
-        ) : (
-          <>
-            <Navigation user={user} />
-            <main className="mt-[64px] sm:mt-[74px]">{children}</main>
-            <Footer />
-          </>
-        )}
+        <QueryClientProvider>
+          <ToastProvider>
+            {env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' ? (
+              <Waitlist />
+            ) : (
+              <>
+                <Navigation user={user} />
+                <main className="mt-[64px] sm:mt-[74px]">{children}</main>
+                <Footer />
+              </>
+            )}
+          </ToastProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

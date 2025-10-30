@@ -49,7 +49,7 @@ export const PlaylistLessonImage = ({
 }: {
   src: string;
   alt: string;
-  duration: number | null;
+  duration?: number;
 }) => {
   return (
     <div className="relative flex-shrink-0">

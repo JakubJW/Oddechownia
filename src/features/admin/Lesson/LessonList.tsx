@@ -1,7 +1,6 @@
 'use client';
 
 import SortableLessonCard from './SortableLessonCard';
-import { Lesson } from '@/db/types';
 import { useState } from 'react';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
@@ -9,9 +8,10 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from '@dnd-kit/sortable';
+import { AdminEditPlaylistLessonDTO } from '@/server/models/lesson.models';
 
 interface LessonListProps {
-  lessons?: Array<Lesson & { position: number, playlistLessonId: number }>;
+  lessons?: AdminEditPlaylistLessonDTO[];
   courseSlug: string;
 }
 
@@ -20,7 +20,7 @@ export default function LessonList({ lessons, courseSlug }: LessonListProps) {
 
   const calculatePosition = (
     newIndex: number,
-    lessons: Array<Lesson & { position: number, playlistLessonId: number }>
+    lessons: AdminEditPlaylistLessonDTO[]
   ) => {
     let position;
 
@@ -88,13 +88,13 @@ export default function LessonList({ lessons, courseSlug }: LessonListProps) {
           items={lessonsClone.map(({ id }) => id)}
         >
           {lessonsClone.map(
-            ({ id, name, description, slug: lessonSlug, video }) => (
+            ({ id, name, description, slug: lessonSlug, thumbnail }) => (
               <SortableLessonCard
                 id={id}
                 key={id}
                 name={name}
                 description={description}
-                imageUrl={`https://image.mux.com/${video?.publicPlaybackId}/thumbnail.jpg?width=640`}
+                imageUrl={thumbnail}
                 href={`/admin/kurs/${courseSlug}/lekcje/${lessonSlug}`}
               />
             )

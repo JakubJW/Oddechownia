@@ -1,6 +1,6 @@
 'use client';
 
-import { login } from '@/actions/auth';
+import { login } from '@/server/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -24,7 +24,7 @@ export default function LoginForm() {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues
+    defaultValues,
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

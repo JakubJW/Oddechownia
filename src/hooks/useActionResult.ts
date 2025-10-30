@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-import { ActionResult } from '@/actions/types';
+import { ActionResult } from '@/server/actions/types';
 
 interface AsyncActionState<TData> {
   isLoading: boolean;
