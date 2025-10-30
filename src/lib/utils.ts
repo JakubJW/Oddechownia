@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDuration(duration?: number | null) {
+export function formatDuration(duration?: number) {
   if (!duration) return '--:--:--';
 
   const round = Math.round(duration);
@@ -28,8 +28,6 @@ export function formatDuration(duration?: number | null) {
 
 export function formatDateTime(date: Date) {
   const currentDate = new Date();
-
-  
 }
 
 export function createSlug(value: string) {

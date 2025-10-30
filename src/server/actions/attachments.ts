@@ -1,6 +1,6 @@
 'use server';
 
-import { BUCKETS } from '@/server/services/supabase.service.';
+import { BUCKETS } from '@/server/services/supabase.service';
 import { attachments } from '@/server/db/schema';
 import { db } from '@/server/db';
 import { inArray } from 'drizzle-orm';

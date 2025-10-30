@@ -12,7 +12,7 @@ export default async function Membership({}) {
         <input
           type="hidden"
           name="customerId"
-          value={user.stripeCustomerId}
+          value={user.stripeCustomerId!}
         />
         <button type="submit">Zarządzaj</button>
       </form>

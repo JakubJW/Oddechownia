@@ -2,7 +2,7 @@ import { Params } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { CommentsService } from '@/server/services/comments.service';
 import { encodeCursor, decodeCursor } from '@/lib/utils';
-import { formSchema } from '@/features/Lesson/Comments/Form/schema';
+import { formSchema } from '@/features/PlayLessonView/Comments/Form/schema';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);
@@ -42,12 +42,15 @@ export async function GET(
       error
     );
 
-    return NextResponse.json({
-      data: null,
-      success: false,
-      error:
-        'Podczas ładowania komentarzy wystąpił błąd. Spróbuj ponownie później.',
-    });
+    return NextResponse.json(
+      {
+        data: null,
+        success: false,
+        error:
+          'Podczas ładowania komentarzy wystąpił błąd. Spróbuj ponownie później.',
+      },
+      { status: 400 }
+    );
   }
 }
 

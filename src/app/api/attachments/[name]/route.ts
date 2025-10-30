@@ -1,13 +1,7 @@
 import { Params } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
-import { and, eq, desc, isNull, lt } from 'drizzle-orm';
-import { attachments } from '@/server/db/schema';
-import { db } from '@/server/db';
-import { supabaseService, BUCKETS } from '@/server/services/supabase.service.';
-
-const getQueryParams = (url: string) => {
-  return Object.fromEntries(new URL(url).searchParams);
-};
+import { supabaseService, BUCKETS } from '@/server/services/supabase.service';
+import { AttachmentsService } from '@/server/services/attachments.service';
 
 export async function GET(
   req: NextRequest,
@@ -16,12 +10,10 @@ export async function GET(
   try {
     const { name } = await params;
 
-    const [attachment] = await db.query.attachments.findMany({
-      where: eq(attachments.internalName, name),
-    });
+    const [attachment] = await AttachmentsService.getAttachmentsByName(name);
 
     const file = await supabaseService.downloadFile(
-      attachment.internalName,
+      attachment.name,
       BUCKETS.ATTACHMENTS,
       'documents'
     );
@@ -29,7 +21,7 @@ export async function GET(
     return new NextResponse(file, {
       headers: {
         'Content-Type': file!.type,
-        'Content-Disposition': `attachment; filename="${attachment.name}"`,
+        'Content-Disposition': `attachment; filename="${attachment.originalName}"`,
         'Content-Length': String(file?.size),
       },
       status: 200,

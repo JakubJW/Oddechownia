@@ -10,8 +10,8 @@ import { notFound } from 'next/navigation';
 import {
   filterService,
   PlaylistFilters,
-} from '@/server/services/filters.service.';
-import { supabaseService } from '@/server/services/supabase.service.';
+} from '@/server/services/filters.service';
+import { supabaseService } from '@/server/services/supabase.service';
 
 interface ICreatePlaylist {
   name: string;

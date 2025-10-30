@@ -11,8 +11,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { formSchema as editFormSchema } from '@/app/admin/blog/edytuj-artykul/[slug]/schema';
-import { formSchema as createFormSchema } from '@/app/admin/blog/dodaj-artykul/schema';
+import { formSchema as editFormSchema } from '@/app/(admin-layout)/admin/blog/edytuj-artykul/[slug]/schema';
+import { formSchema as createFormSchema } from '@/app/(admin-layout)/admin/blog/dodaj-artykul/schema';
 import { z } from 'zod';
 
 interface PostFormProps {

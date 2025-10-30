@@ -3,7 +3,7 @@ import { eq, desc, isNull, and, InferSelectModel, lt } from 'drizzle-orm';
 import { db } from '../db';
 import { comments, users } from '../db/schema';
 import { getUser } from '../actions/user';
-import { formSchema } from '@/features/Lesson/Comments/Form/schema';
+import { formSchema } from '@/features/PlayLessonView/Comments/Form/schema';
 import z from 'zod';
 
 type CommentWithRepliesAndUser = InferSelectModel<typeof comments> & {
@@ -16,7 +16,7 @@ type CommentWithRepliesAndUser = InferSelectModel<typeof comments> & {
 
 const transformToCommentDetailDto = (
   comments: CommentWithRepliesAndUser[],
-  userId: string
+  userId?: string
 ): CommentDetailDTO[] => {
   return comments.map(({ user, replies, ...rest }) => ({
     ...rest,
@@ -81,9 +81,7 @@ const getComments = async (
 
   const user = await getUser();
 
-  if (!user) throw new Error('Authentication error');
-
-  return transformToCommentDetailDto(result, user.id);
+  return transformToCommentDetailDto(result, user?.id);
 };
 
 const getReplies = async (
@@ -108,9 +106,7 @@ const getReplies = async (
 
   const user = await getUser();
 
-  if (!user) throw new Error('Authentication error');
-
-  return transformToCommentDetailDto(result, user.id);
+  return transformToCommentDetailDto(result, user?.id);
 };
 
 export const CommentsService = {

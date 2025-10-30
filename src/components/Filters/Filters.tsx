@@ -3,7 +3,7 @@ import SortingSelect from './SortingSelect';
 import {
   PlaylistSortOptions,
   LessonSortOptions,
-} from '@/server/services/filters.service.';
+} from '@/server/services/filters.service';
 
 type SortDirection = 'asc' | 'desc';
 type SortByName = 'sortBy';

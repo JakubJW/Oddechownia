@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 import { createClient } from '@/supabase/server';
 import { cache } from 'react';
 import { getRequiredUser } from '@/lib/data';
-import { supabaseService } from '@/server/services/supabase.service.';
+import { supabaseService } from '@/server/services/supabase.service';
 import { userSubscription } from '@/server/db/schema';
 
 interface UpdateUserParams {

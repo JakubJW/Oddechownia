@@ -9,11 +9,11 @@ import { BaseLesson, Lesson } from '@/server/db/types';
 import {
   filterService,
   LessonFilters,
-} from '@/server/services/filters.service.';
+} from '@/server/services/filters.service';
 import { formSchema as lessonFormSchema } from '@/features/admin/Lesson/schema';
 import { createAttachment, deleteAttachment } from './attachments';
 import { createFile } from './files';
-import { BUCKETS, supabaseService } from '@/server/services/supabase.service.';
+import { BUCKETS, supabaseService } from '@/server/services/supabase.service';
 
 export const createLesson = async (
   formData: FormData
@@ -240,65 +240,6 @@ export const getLessons = async (
     });
 
     return { data: result, success: true, error: null };
-  } catch (e) {
-    console.error(
-      'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',
-      e
-    );
-    return {
-      data: null,
-      success: false,
-      error:
-        'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',
-    };
-  }
-};
-
-export const getLesson = async (
-  filters: LessonFilters
-): Promise<ActionResult<Lesson>> => {
-  try {
-    const lessonWhereClause = filterService.buildWhereCondition(
-      lessons,
-      filters
-    );
-
-    const [lesson] = await db.query.lessons.findMany({
-      ...(lessonWhereClause && { where: lessonWhereClause }),
-      with: {
-        video: true,
-        attachments: {
-          with: {
-            file: true,
-          },
-        },
-        thumbnail: true,
-      },
-    });
-
-    const {
-      thumbnail: { bucket, path, name },
-    } = lesson;
-    const { data: fileUrl, error: fileUrlError } = supabaseService.getFileUrl(
-      name,
-      bucket,
-      path
-    );
-
-    const domainLesson = {
-      ...lesson,
-      attachments: lesson.attachments.map(({ file, ...rest }) => ({
-        url: supabaseService.getFileUrl(file.name, file.bucket, file.path).data,
-        file,
-        ...rest,
-      })),
-    };
-
-    return {
-      data: { ...domainLesson, thumbnailUrl: fileUrl },
-      success: true,
-      error: null,
-    };
   } catch (e) {
     console.error(
       'Podczas pobierania lekcji wystąpił błąd. Spróbuj ponownie później.',

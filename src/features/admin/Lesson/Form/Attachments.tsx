@@ -3,14 +3,14 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from '@/components/ui/shadcn-io/dropzone';
+import { AdminEditLessonAttachmentDTO } from '@/server/models/attachment.models';
 import { Label } from '@radix-ui/react-label';
 import { Trash } from 'lucide-react';
 import Link from 'next/link';
-import { Attachment } from '@/server/db/types';
 import { memo } from 'react';
 
 interface FormAttachmentsProps {
-  attachments?: Attachment[];
+  attachments?: AdminEditLessonAttachmentDTO[];
   newAttachments: File[];
   attachmentsToRemove: number[];
   onRemove: (id: number) => void;
@@ -42,7 +42,7 @@ const FormAttachments = ({
                 href={attachment.url}
                 target="_blank"
               >
-                {attachment.file.originalName}
+                {attachment.originalName}
               </Link>
               <button
                 type="button"

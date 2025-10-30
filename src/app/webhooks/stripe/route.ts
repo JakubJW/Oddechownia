@@ -8,7 +8,7 @@ import {
   userSubscription,
 } from '@/server/db/schema';
 import { createSlug } from '@/lib/utils';
-import { stripeService } from '@/server/services/stripe.service.';
+import { stripeService } from '@/server/services/stripe.service';
 import { buffer } from '@/utils/requestBodyBufer';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';

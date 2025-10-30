@@ -3,7 +3,7 @@ import { db } from '@/server/db';
 import { eq } from 'drizzle-orm';
 import { stripeProducts } from '@/server/db/schema';
 import { env } from '@/env';
-import { stripeService } from '@/server/services/stripe.service.';
+import { stripeService } from '@/server/services/stripe.service';
 
 export async function POST(req: NextRequest) {
   const { stripeProductId, customerEmail, clientReferenceId } =

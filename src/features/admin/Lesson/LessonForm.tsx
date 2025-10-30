@@ -18,7 +18,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Lesson } from '@/server/db/types';
 import { useActionResult } from '@/hooks/useActionResult';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MuxPlayer from '@mux/mux-player-react/lazy';
@@ -31,9 +30,10 @@ import { z } from 'zod';
 import { defaultValues, formSchema } from './schema';
 import FormAttachments from './Form/Attachments';
 import FormThumbnail from './Form/Thumbnail';
+import { AdminEditLessonDTO } from '@/server/models/lesson.models';
 
 interface LessonFormProps {
-  lesson?: Lesson;
+  lesson?: AdminEditLessonDTO;
 }
 
 export function AdminNewLesson({ lesson }: LessonFormProps) {
@@ -63,7 +63,7 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
     return router.push(`/admin/lekcje`);
   };
 
-  const handleRemoveVideo = async (lesson: Lesson) => {
+  const handleRemoveVideo = async (lesson: AdminEditLessonDTO) => {
     if (!lesson || !lesson.video || !lesson.video.uploadId) return;
 
     await deleteVideo(lesson.video.uploadId);
@@ -196,7 +196,7 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
               removeOldThumbnailHandler={setRemoveOldThumbnail}
               thumbnail={thumbnail}
               onDrop={(files) => handleThumbnail(files)}
-              currentThumbnailUrl={lesson?.thumbnailUrl}
+              currentThumbnailUrl={lesson?.thumbnail}
             />
             <div className="space-y-2">
               <Label>Film</Label>
@@ -250,7 +250,7 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
             <div className="flex justify-between">
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || (!lesson && !isUploaded)}
               >
                 {isLoading
                   ? 'Ładowanie...'

@@ -2,7 +2,7 @@ import { InferSelectModel } from 'drizzle-orm';
 import { comments } from '../db/schema';
 
 export type CommentSchema = InferSelectModel<typeof comments>;
-export type CommentBaseDTO = Omit<CommentSchema, 'parentId'>;
+export type CommentBaseDTO = Omit<CommentSchema, 'parentId' | 'userId'>;
 export type CommentDTO = CommentBaseDTO & { parentId?: number };
 export type CommentDetailDTO = CommentDTO & {
   author: string;

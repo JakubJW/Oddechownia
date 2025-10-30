@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripeService } from '@/server/services/stripe.service.';
+import { stripeService } from '@/server/services/stripe.service';
 import { db } from '@/server/db';
 import { eq } from 'drizzle-orm';
 import { courses } from '@/server/db/schema';

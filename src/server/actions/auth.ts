@@ -7,10 +7,11 @@ import { UserRoles } from '@/server/db/consts';
 import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
 import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
 import { env } from '@/env';
-import { supabaseService } from '@/server/services/supabase.service.';
+import { supabaseService } from '@/server/services/supabase.service';
 import { db } from '@/server/db';
 import { users } from '@/server/db/schema';
-import { stripeService } from '@/server/services/stripe.service.';
+import { stripeService } from '@/server/services/stripe.service';
+import { eq } from 'drizzle-orm';
 
 export const changePasswordAuthenticated = async (password: string) => {
   const { error } = await supabaseService.changePasswordAuthenticated(password);
@@ -33,14 +34,58 @@ export async function login(formData: FormData) {
     password: parsed.data.password,
   });
 
-  if (error) {
-  }
-
   if (error && error.code === 'invalid_credentials') {
     return { error: 'Nieprawidłowe dane logowania', data: null };
   }
 
   return { data: null, error: null };
+}
+
+export async function adminSignIn(formData: FormData) {
+  const supabase = await createClient();
+
+  const data = Object.fromEntries(formData);
+  const parsed = loginFormSchema.safeParse(data);
+
+  if (!parsed.success) {
+    return { data: null, error: null };
+  }
+
+  const {
+    error,
+    data: { user },
+  } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
+
+  if (!user || (error && error.code === 'invalid_credentials')) {
+    return { error: 'Nieprawidłowe dane logowania', data: null };
+  }
+
+  try {
+    const [userRecord] = await db
+      .select({ role: users.role })
+      .from(users)
+      .where(eq(users.id, user.id));
+
+    if (!userRecord || userRecord.role !== 'admin') {
+      await signOut();
+      return {
+        success: false,
+        error: 'Access denied. You are not authorized as an admin.',
+      };
+    }
+
+    return { data: null, error: null };
+  } catch (dbError) {
+    console.error('DB Role Check Failed:', dbError);
+    await supabase.auth.signOut();
+    return {
+      success: false,
+      error: 'An internal error occurred during role verification.',
+    };
+  }
 }
 
 export async function signup(formData: FormData, stripeProductId: string) {

@@ -1,24 +1,25 @@
-import Container from '@/components/Container/Container';
 import Carousel from '@/components/Carousel/Carousel';
-import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import { getPlaylistsWithLessons } from '@/server/actions/playlist';
+import Container from '@/components/Container/Container';
 import LessonCard from '@/components/LessonCard/LessonCard';
-import Link from 'next/link';
+import { PlaylistsService } from '@/server/services/playlists.service';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Studio Jogi Online | Oddechownia',
 };
 
 export default async function OnlineYogaStudio() {
-  const { data: playlists, success, error } = await getPlaylistsWithLessons();
+  const playlists = await PlaylistsService.getPlaylistsListForUser({
+    isPublished: true,
+  });
 
-  if (!success) {
+  if (!playlists) {
     return (
       <section>
         <Container>
           <h1>Ups, coś poszło nie tak.</h1>
-          <ErrorMessage message={error} />
+          {/* <ErrorMessage message={error} /> */}
         </Container>
       </section>
     );
@@ -42,7 +43,7 @@ export default async function OnlineYogaStudio() {
                   href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
                 >
                   <LessonCard
-                    thumbnailUrl={lesson.thumbnailUrl}
+                    thumbnail={lesson.thumbnail}
                     key={lesson.id}
                     name={lesson.name}
                     description={lesson.description}

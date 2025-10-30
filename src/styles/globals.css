@@ -122,46 +122,4 @@ body {
   .homepage-hero-image {
     height: calc(100vh - var(--navigation-height));
   }
-
-  .stepper {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .stepper__item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .stepper__item:not(:last-child) {
-    @apply flex-1;
-  }
-
-  .stepper__item__bullet {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-foreground);
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background-color: var(--primary-background);
-  }
-
-  .stepper__item__bullet:hover {
-    cursor: pointer;
-  }
-  
-  .stepper__item__bullet-active {
-    background-color: var(--primary-foreground);
-    color: var(--primary-background);
-  }
-
-  .stepper__item:not(:last-child):after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background-color: var(--primary-foreground);
-    margin-inline-end: 0.5rem;
-  }
 }

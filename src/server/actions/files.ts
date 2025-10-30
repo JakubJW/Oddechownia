@@ -1,7 +1,7 @@
 'use server';
 
-import { supabaseService } from '@/server/services/supabase.service.';
-import { BUCKETS } from '@/server/services/supabase.service.';
+import { supabaseService } from '@/server/services/supabase.service';
+import { BUCKETS } from '@/server/services/supabase.service';
 import { db } from '@/server/db';
 import { files } from '@/server/db/schema';
 import { ActionResult } from './types';
