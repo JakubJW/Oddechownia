@@ -18,9 +18,9 @@ import { z } from 'zod';
 import { defaultValues, formSchema } from './schema';
 
 export default function RegisterForm({
-  stripeProductId,
+  priceId,
 }: {
-  stripeProductId: string;
+  priceId?: string;
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,9 +44,8 @@ export default function RegisterForm({
       'privacyPolicyAgreement',
       String(values.privacyPolicyAgreement)
     );
-    formData.append('stripeProductId', stripeProductId);
 
-    const { data } = await signup(formData, stripeProductId);
+    const { data } = await signup(formData, priceId);
 
     window.location.href = data;
   };

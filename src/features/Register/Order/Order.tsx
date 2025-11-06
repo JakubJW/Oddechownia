@@ -1,23 +1,20 @@
 import { OrderSubscriptionCard } from '@/components/SubscriptionCard/OrderSubscriptionCard';
-import { stripeProducts, stripePrices } from '@/server/db/schema';
+import { SubscriptionProductDTO } from '@/server/services/billing.service';
 
-type StripeProductWithPrice = typeof stripeProducts.$inferSelect & {
-  stripePrices: (typeof stripePrices.$inferSelect)[];
-};
+type OrderProps = Pick<
+  SubscriptionProductDTO,
+  'features' | 'interval' | 'amount' | 'intervalCount'
+>;
 
-export default function Order({
-  stripeProduct,
-}: {
-  stripeProduct: StripeProductWithPrice;
-}) {
+export default function Order({ features, interval, intervalCount,amount }: OrderProps) {
   return (
     <div className="flex flex-col col-span-4 col-start-9">
       <p className="font-bold text-xl mb-8">Twoje zamówienie</p>
       <OrderSubscriptionCard
-        features={stripeProduct.marketingFeatures}
-        variant="popular"
-        period={stripeProduct.stripePrices[0].intervalCount}
-        price={stripeProduct.stripePrices[0].unitAmount}
+        features={features}
+        interval={interval}
+        amount={amount}
+        intervalCount={intervalCount}
       />
     </div>
   );

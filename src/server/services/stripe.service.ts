@@ -62,6 +62,27 @@ class StripeService {
       throw error;
     }
   }
+
+  public async listProducts() {
+    const products = await this.stripe.products.list({
+      active: true,
+      limit: 3,
+    });
+
+    return products;
+  }
+
+  public async listPrices() {
+    const prices = await this.stripe.prices.list({
+      active: true,
+      limit: 100,
+      type: 'recurring',
+      expand: ['data.product'],
+    });
+
+    return prices;
+  }
+
   public async createPrice(
     params: Stripe.PriceCreateParams
   ): Promise<Stripe.Price> {
@@ -90,7 +111,9 @@ class StripeService {
     }
   }
 
-  public async createPortalSession(params: Stripe.BillingPortal.SessionCreateParams) {
+  public async createPortalSession(
+    params: Stripe.BillingPortal.SessionCreateParams
+  ) {
     try {
       const portalSession = await this.stripe.billingPortal.sessions.create(
         params

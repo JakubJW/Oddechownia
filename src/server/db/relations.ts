@@ -2,13 +2,9 @@ import { relations } from 'drizzle-orm';
 import {
   lessons,
   playlists,
-  courses,
   videos,
   users,
   userSubscription,
-  stripeProducts,
-  stripePrices,
-  userOneOffPurchase,
   playlistLesson,
   attachments,
   comments,
@@ -48,29 +44,9 @@ export const videosRelations = relations(videos, ({ one }) => ({
   }),
 }));
 
-export const coursesRelations = relations(courses, ({ many }) => ({
-  lessons: many(lessons),
-  userOneOffPurchases: many(userOneOffPurchase),
-}));
-
 export const userRelations = relations(users, ({ many }) => ({
   subscriptions: many(userSubscription),
-  purchases: many(userOneOffPurchase),
   comments: many(comments),
-}));
-
-export const stripeProductsRelations = relations(
-  stripeProducts,
-  ({ many }) => ({
-    stripePrices: many(stripePrices),
-  })
-);
-
-export const stripePricesRelations = relations(stripePrices, ({ one }) => ({
-  stripeProduct: one(stripeProducts, {
-    fields: [stripePrices.stripeProductId],
-    references: [stripeProducts.stripeProductId],
-  }),
 }));
 
 export const userSubscriptionRelations = relations(
@@ -79,20 +55,6 @@ export const userSubscriptionRelations = relations(
     user: one(users, {
       fields: [userSubscription.userId],
       references: [users.id],
-    }),
-  })
-);
-
-export const userOneOffPurchasesRelations = relations(
-  userOneOffPurchase,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [userOneOffPurchase.userId],
-      references: [users.id],
-    }),
-    course: one(courses, {
-      fields: [userOneOffPurchase.courseId],
-      references: [courses.id],
     }),
   })
 );
