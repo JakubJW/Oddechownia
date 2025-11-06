@@ -1,5 +1,3 @@
-import Stripe from 'stripe';
-
 import {
   pgTable,
   serial,
@@ -9,7 +7,6 @@ import {
   boolean,
   integer,
   uuid,
-  jsonb,
   unique,
   foreignKey,
 } from 'drizzle-orm/pg-core';
@@ -24,17 +21,6 @@ export const posts = pgTable('posts', {
   content: text('content').notNull(),
   thumbnailUrl: varchar('thumbnail_url', { length: 256 }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
-
-export const courses = pgTable('courses', {
-  id: serial('id').primaryKey(),
-  name: varchar('name', { length: 256 }).notNull(),
-  description: varchar('description', { length: 256 }).notNull(),
-  slug: varchar('slug', { length: 256 }).notNull(),
-  isPublished: boolean('is_published').notNull(),
-  isOneOff: boolean('is_one_off').default(false).notNull(),
-  priceInCents: integer('price_in_cents'),
-  stripePriceId: varchar('stripe_price_id'),
 });
 
 export const lessons = pgTable('lessons', {
@@ -76,41 +62,7 @@ export const users = pgTable('users', {
   regulationsAgreement: boolean('regulations_agreement').default(false),
   privacyPolicyAgreement: boolean('privacy_policy_agreement').default(false),
   stripeCustomerId: varchar('stripe_customer_id'),
-});
-
-export const stripeProducts = pgTable('stripe_products', {
-  stripeProductId: varchar('stripe_product_id').primaryKey(),
-  name: varchar('name').notNull(),
-  description: varchar('description'),
-  active: boolean('active').default(true).notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  marketingFeatures: jsonb('marketing_features')
-    .$type<Stripe.Product.MarketingFeature[]>()
-    .notNull(),
-});
-
-export const stripePrices = pgTable('stripe_prices', {
-  stripePriceId: varchar('stripe_price_id').primaryKey(),
-  stripeProductId: varchar('stripe_product_id')
-    .notNull()
-    .references(() => stripeProducts.stripeProductId, { onDelete: 'cascade' }),
-  active: boolean('active').default(true).notNull(),
-  unitAmount: integer('unit_amount').notNull(),
-  currency: varchar('currency').notNull(),
-  type: varchar('type').notNull(),
-  interval: varchar('interval'),
-  intervalCount: integer('interval_count'),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  subscriptionStatus: varchar(''),
 });
 
 export const userSubscription = pgTable('user_subscription', {
@@ -121,18 +73,6 @@ export const userSubscription = pgTable('user_subscription', {
   status: varchar('status'),
   stripeSubscriptionId: text('stripe_subscription_id').unique().notNull(),
   currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
-});
-
-export const userOneOffPurchase = pgTable('user_one_off_purchase', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  courseId: integer('course_id').references(() => courses.id, {
-    onDelete: 'cascade',
-  }),
-  stripePaymentIntentId: text('stripe_payment_intent_id'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
 export const playlists = pgTable('playlists', {

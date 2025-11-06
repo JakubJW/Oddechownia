@@ -1,43 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/server/db';
-import { eq } from 'drizzle-orm';
-import { stripeProducts } from '@/server/db/schema';
 import { env } from '@/env';
 import { stripeService } from '@/server/services/stripe.service';
 
 export async function POST(req: NextRequest) {
-  const { stripeProductId, customerEmail, clientReferenceId } =
-    await req.json();
+  const { priceId, customerId, clientReferenceId } = await req.json();
 
-  if (!stripeProductId) {
+  if (!priceId) {
     return NextResponse.json(
-      { message: 'Product ID missing' },
+      { message: 'Price ID is missing' },
       { status: 400 }
-    );
-  }
-
-  if (!customerEmail) {
-    return NextResponse.json(
-      { message: 'Customer email missing' },
-      { status: 400 }
-    );
-  }
-
-  const stripePoduct = await db.query.stripeProducts.findFirst({
-    where: eq(stripeProducts.stripeProductId, stripeProductId),
-    with: {
-      stripePrices: true,
-    },
-  });
-
-  if (!stripePoduct) {
-    return NextResponse.json({ message: 'Product not found' }, { status: 404 });
-  }
-
-  if (!stripePoduct.stripePrices) {
-    return NextResponse.json(
-      { message: 'Product  does not have associated stripe price id' },
-      { status: 422 }
     );
   }
 
@@ -45,13 +16,13 @@ export async function POST(req: NextRequest) {
     mode: 'subscription',
     line_items: [
       {
-        price: stripePoduct.stripePrices[0].stripePriceId,
+        price: priceId,
         quantity: 1,
       },
     ],
-    success_url: `${env.NEXT_PUBLIC_APP_URL}/moje-konto`,
+    customer: customerId,
+    success_url: `${env.NEXT_PUBLIC_APP_URL}/sukces/session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,
-    customer_email: customerEmail,
     client_reference_id: clientReferenceId,
     subscription_data: {
       metadata: { userId: clientReferenceId },

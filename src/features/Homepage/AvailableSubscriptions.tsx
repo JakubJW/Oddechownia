@@ -1,13 +1,12 @@
 import { SubscriptionCard } from '@/components/SubscriptionCard/SubscriptionCard';
 import Container from '@/components/Container/Container';
 import HeaderTwo from '@/components/Headers/HeaderTwo';
-import { getSubscriptions } from '@/server/actions/product';
 import { getUser } from '@/server/actions/user';
-
-const subscriptions = await getSubscriptions();
+import { BillingService } from '@/server/services/billing.service';
 
 export default async function AvailableSubscriptions() {
   const user = await getUser();
+  const subscriptions = await BillingService.getActiveSubscriptionProducts();
 
   return (
     <section>
@@ -29,18 +28,16 @@ export default async function AvailableSubscriptions() {
           )}
 
           {subscriptions.map(
-            ({ stripeProductId, stripePrice, marketingFeatures, name }) => (
+            ({ id, interval, amount, priceId, features, name, intervalCount }) => (
               <SubscriptionCard
-                key={stripeProductId}
+                key={id}
                 name={name}
-                period={stripePrice.intervalCount}
-                price={stripePrice.unitAmount}
-                variant={
-                  stripePrice.intervalCount === 3 ? 'popular' : 'default'
-                }
-                features={marketingFeatures}
+                priceId={priceId}
+                price={amount}
+                intervalCount={intervalCount}
+                interval={interval}
+                features={features}
                 user={user}
-                stripeProductId={stripeProductId}
               />
             )
           )}

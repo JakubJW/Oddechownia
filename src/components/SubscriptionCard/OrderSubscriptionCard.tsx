@@ -1,64 +1,48 @@
-import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
-import Stripe from 'stripe';
+import { SubscriptionProductDTO } from '@/server/services/billing.service';
 
-import { subscriptionCardVariants } from './SubscriptionCard';
-
-export interface SubscriptionCardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof subscriptionCardVariants> {
-  period: number | null;
-  price: number;
-  features: Stripe.Product.MarketingFeature[];
-}
-
-const calculateMonthly = (price: number, period: number | null) => {
-  if (!period) {
+const calculateMonthly = (price: number, intervalCount?: number) => {
+  if (!intervalCount) {
     return '--.--';
   }
 
-  return (price / 100 / period).toFixed(2);
+  return (price / 100 / intervalCount).toFixed(2);
 };
 
 export function OrderSubscriptionCard({
-  period,
-  price,
-  className,
-  variant,
+  intervalCount,
   features,
-}: SubscriptionCardProps) {
+  amount,
+}: Pick<
+  SubscriptionProductDTO,
+  'amount' | 'features' | 'interval' | 'intervalCount'
+>) {
   return (
-    <div className={cn(subscriptionCardVariants({ variant, className }))}>
-      <span className="font-normal text-lg">{period} miesiące</span>{' '}
-      {variant === 'popular' && (
-        <span className="text-sm absolute top-6 right-6 bg-primaryBg p-2 rounded-md text-primaryFg">
-          Popularny
-        </span>
-      )}
+    <div>
+      <span className="font-normal text-lg">{intervalCount} miesiące</span>
       <div className="mt-4">
-        <span
-          className={cn(
-            'font-bold text-3xl',
-            variant === 'popular' && 'text-primaryFg'
-          )}
-        >
-          {(price / 100).toFixed(2)} zł{' '}
+        <span className={cn('font-bold text-3xl')}>
+          {(amount / 100).toFixed(2)} zł
         </span>
         <span className="text-gray-400 text-sm">
-          {calculateMonthly(price, period)} zł/mies.
+          {calculateMonthly(amount, intervalCount)} zł/mies.
         </span>
       </div>
       <ul className="space-y-2 my-4">
-        {features.map(({ name }) => (
-          <li
-            key={name}
-            className="flex gap-2"
-          >
-            <Check className="text-primaryFg flex-shrink-0" />
-            <p>{name}</p>
-          </li>
-        ))}
+        {features.map((feature, index) => {
+          if (!feature) return null;
+
+          return (
+            <li
+              key={index}
+              className="flex gap-2"
+            >
+              <Check className="text-primaryFg flex-shrink-0" />
+              <p>{feature}</p>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

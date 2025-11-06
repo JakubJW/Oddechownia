@@ -88,7 +88,7 @@ export async function adminSignIn(formData: FormData) {
   }
 }
 
-export async function signup(formData: FormData, stripeProductId: string) {
+export async function signup(formData: FormData, priceId?: string) {
   const supabase = await createClient();
 
   const { regulationsAgreement, privacyPolicyAgreement, ...rest } =
@@ -140,20 +140,23 @@ export async function signup(formData: FormData, stripeProductId: string) {
     stripeCustomerId: customer.id,
   });
 
-  const res = await fetch(
-    `${env.NEXT_PUBLIC_APP_URL}/api/checkout/subscription`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        stripeProductId,
-        customerEmail: parsed.data.email,
-        clientReferenceId: user.id,
-      }),
-    }
-  );
+  if (priceId) {
+    const res = await fetch(
+      `${env.NEXT_PUBLIC_APP_URL}/api/checkout/subscription`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId,
+          customerId: customer.id,
+        }),
+      }
+    );
 
-  const { url } = await res.json();
+    const { url } = await res.json();
+
+    return { data: url, error: null };
+  }
 
   if (error) {
     return {
@@ -162,7 +165,7 @@ export async function signup(formData: FormData, stripeProductId: string) {
     };
   }
 
-  return { data: url, error: null };
+  return { data: null, error: null };
 }
 
 export async function signOut() {
