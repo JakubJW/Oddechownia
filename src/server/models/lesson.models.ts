@@ -15,7 +15,6 @@ export type LessonSchema = InferSelectModel<typeof lessons>;
 export type LessonBaseSchema = LessonSchema & {
   video: VideoSchema | null;
   thumbnail: FileSchema;
-  isFavorite: UserFavoriteLessonsSchema;
 };
 
 export type LessonDetailSchema = LessonSchema & {
