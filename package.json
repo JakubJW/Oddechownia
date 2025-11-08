@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "create:admin": "npx tsx src/scripts/createAdmin.ts",
-    "db:push:dev": "npx dotenv-cli -c local -- npx drizzle-kit push",
+    "db:push:dev": "npx drizzle-kit push --url postgresql://postgres.wknpvvtasrhwkqmkvoml:qqPtcjzH8UUzja9g@aws-0-eu-central-1.pooler.supabase.com:6543/postgres --dialect postgresql --schema src/server/db/schema.ts",
     "db:push:local": "npx dotenv-cli -c local -- npx drizzle-kit push",
     "db:push:prod": "npx drizzle-kit push",
     "webhooks:listen": "ngrok http --url=growing-optimum-rattler.ngrok-free.app 3000"

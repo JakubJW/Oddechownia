@@ -11,7 +11,7 @@ export default async function UserLayout({
 }) {
   const user = await getRequiredUser();
 
-  if (!user.hasActiveSubscription) {
+  if (!user.hasActiveSubscription && user.role === 'user') {
     return (
       <div className="col-span-12">
         <p>
