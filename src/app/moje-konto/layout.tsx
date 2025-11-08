@@ -11,11 +11,7 @@ export default async function UserLayout({
 }) {
   const user = await getRequiredUser();
 
-  if (
-    user.subscriptions.every(
-      (subscription) => subscription.status === 'inactive'
-    )
-  ) {
+  if (!user.hasActiveSubscription) {
     return (
       <div className="col-span-12">
         <p>
@@ -40,7 +36,7 @@ export default async function UserLayout({
     <Container>
       <div className="grid grid-cols-12">
         <div className="flex flex-col gap-4 col-span-2">
-          <Link href="/moje-konto/moje-kursy">Moje kursy</Link>
+          <Link href="/moje-konto/ulubione-lekcje">Ulubione lekcje</Link>
           <Link href="/moje-konto/moje-dane">Moje dane</Link>
           <Link href="/moje-konto/czlonkostwo">Członkostwo</Link>
           <Link href="/moje-konto/bezpieczenstwo">Bezpieczeństwo</Link>

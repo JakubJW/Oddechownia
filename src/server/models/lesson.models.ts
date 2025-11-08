@@ -9,16 +9,20 @@ import {
 import { FileSchema } from './file.models';
 import { PlaylistDTO, PlaylistSchema } from './playlist.models';
 import { PlaylistLessonSchema } from './playlistLesson.models';
+import { UserFavoriteLessonsSchema } from './userFavoriteLessons.models';
 
 export type LessonSchema = InferSelectModel<typeof lessons>;
 export type LessonBaseSchema = LessonSchema & {
   video: VideoSchema | null;
   thumbnail: FileSchema;
+  isFavorite: UserFavoriteLessonsSchema;
 };
+
 export type LessonDetailSchema = LessonSchema & {
   video: VideoSchema | null;
   thumbnail: FileSchema;
   attachments: AttachmentSchema[];
+  userFavoriteLessons: UserFavoriteLessonsSchema[];
 };
 
 export type LessonBaseDTO = Omit<
@@ -37,6 +41,7 @@ export type LessonDetailDTO = LessonBaseDTO & {
   position?: number;
   thumbnail: string;
   attachments: AttachmentDTO[];
+  isFavorite: boolean;
 };
 
 export type AdminLessonSchema = LessonSchema & {
@@ -69,4 +74,11 @@ export type AdminEditLessonDTO = LessonBaseDTO & {
   video?: VideoDTO;
   thumbnail: string;
   attachments: AdminEditLessonAttachmentDTO[];
+};
+
+export type FetchFavoriteLessonsResponse = {
+  data: AdminLessonDTO[];
+  nextCursor: string | null;
+  success: boolean;
+  error: string | null;
 };

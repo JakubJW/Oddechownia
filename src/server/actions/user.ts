@@ -2,7 +2,7 @@
 
 import { users } from '@/server/db/schema';
 import { db } from '@/server/db';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { createClient } from '@/supabase/server';
 import { cache } from 'react';
 import { getRequiredUser } from '@/lib/data';
@@ -32,15 +32,21 @@ export const getUser = cache(async () => {
       where: eq(users.id, user.id),
     });
 
-    const subscriptions = await db.query.userSubscription.findMany({
-      where: eq(userSubscription.userId, user.id),
+    const hasActiveSubscription = await db.query.userSubscription.findFirst({
+      where: and(
+        eq(userSubscription.userId, user.id),
+        eq(userSubscription.status, 'active')
+      ),
     });
 
     if (!publicUser) {
       return null;
     }
 
-    return { ...publicUser, subscriptions };
+    return {
+      ...publicUser,
+      hasActiveSubscription: hasActiveSubscription ? true : false,
+    };
   } catch (error) {
     console.log(error);
     return null;
