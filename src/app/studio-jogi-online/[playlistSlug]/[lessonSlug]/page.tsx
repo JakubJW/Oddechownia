@@ -46,7 +46,7 @@ export default async function LessonVideo({
 }) {
   const user = await getUser();
 
-  if (!user || !user.hasActiveSubscription) {
+  if (!user || (!user.hasActiveSubscription && user.role === 'user')) {
     redirect('/');
   }
 
