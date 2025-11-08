@@ -179,3 +179,16 @@ export const comments = pgTable(
     }).onDelete('cascade'),
   ]
 );
+
+export const userFavoriteLessons = pgTable('user_favorite_lessons', {
+  id: serial().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  lessonId: integer('lesson_id')
+    .notNull()
+    .references(() => lessons.id, { onDelete: 'cascade' }),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+});

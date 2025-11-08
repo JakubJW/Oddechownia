@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { Download } from 'lucide-react';
+import { Download, Loader2 } from 'lucide-react';
 import { AttachmentDTO } from '@/server/models/attachment.models';
 import { cn } from '@/lib/utils';
 
@@ -48,17 +48,31 @@ const Attachments = ({ attachments, className }: AttachmentsProps) => {
   }
 
   return (
-    <div className={cn('space-x-2', className)}>
-      {attachments.map(({ id, name, originalName }) => (
-        <button
-          key={id}
-          onClick={() => mutation.mutate({ name, originalName })}
-          className="inline-flex items-center gap-2 p-2 bg-accent underline rounded-md"
-        >
-          <Download className="h-4 w-4" />
-          <span>{originalName}</span>
-        </button>
-      ))}
+    <div className={cn('space-y-4', className)}>
+      <p className="font-regular text-lg">Materiały do pobrania</p>
+      <div className="space-y-2">
+        {attachments.map(({ id, name, originalName }) => (
+          <button
+            key={id}
+            onClick={() => mutation.mutate({ name, originalName })}
+            className="block relative hover:bg-almond bg-accent transition-colors duration-300 p-2 rounded-md overflow-hidden"
+          >
+            <div className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              <span>{originalName}</span>
+            </div>
+            {mutation.isPending && mutation.variables.name === name && (
+              <div
+                className={cn(
+                  'bg-almond opacity-80 absolute top-0 left-0 w-full h-full flex items-center justify-center'
+                )}
+              >
+                <Loader2 className="animate-spin" />
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

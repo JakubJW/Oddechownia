@@ -17,8 +17,8 @@ import { notFound } from 'next/navigation';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { LessonsService } from '@/server/services/lessons.service';
 import { getUser } from '@/server/actions/user';
-import { UserRoles } from '@/server/db/consts';
 import { redirect } from 'next/navigation';
+import FavoritesButton from '@/features/PlayLessonView/Actions/FavoritesButton';
 
 export async function generateMetadata({
   params,
@@ -46,7 +46,7 @@ export default async function LessonVideo({
 }) {
   const user = await getUser();
 
-  if (!user || user.role !== UserRoles.ADMIN) {
+  if (!user || (!user.hasActiveSubscription && user.role === 'user')) {
     redirect('/');
   }
 
@@ -76,11 +76,19 @@ export default async function LessonVideo({
             playbackId={currentLesson.video?.publicPlaybackId}
             videoTitle={currentLesson.name}
           />
-          <hgroup className="space-y-4">
-            <h1 className="font-bold text-2xl">{currentLesson.name}</h1>
-            <p className="text-gray-500">{currentLesson.description}</p>
-          </hgroup>
-          <Attachments attachments={currentLesson.attachments} />
+          <div className="space-y-4">
+            <hgroup className="space-y-4">
+              <div className="flex gap-4 items-start justify-between">
+                <h1 className="font-bold text-2xl">{currentLesson.name}</h1>
+                <FavoritesButton
+                  lessonId={currentLesson.id}
+                  initialIsFavorite={currentLesson.isFavorite}
+                />
+              </div>
+              <p className="text-gray-500">{currentLesson.description}</p>
+            </hgroup>
+            <Attachments attachments={currentLesson.attachments} />
+          </div>
         </div>
         <CommentsSection
           lessonId={currentLesson.id}

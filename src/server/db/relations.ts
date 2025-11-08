@@ -9,6 +9,7 @@ import {
   attachments,
   comments,
   files,
+  userFavoriteLessons,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -31,6 +32,7 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
     fields: [lessons.thumbnailId],
     references: [files.id],
   }),
+  userFavoriteLessons: many(userFavoriteLessons),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
@@ -47,6 +49,7 @@ export const videosRelations = relations(videos, ({ one }) => ({
 export const userRelations = relations(users, ({ many }) => ({
   subscriptions: many(userSubscription),
   comments: many(comments),
+  userFavoriteLessons: many(userFavoriteLessons),
 }));
 
 export const userSubscriptionRelations = relations(
@@ -110,3 +113,17 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     relationName: 'commentReplies',
   }),
 }));
+
+export const userFavoriteLessonsRelations = relations(
+  userFavoriteLessons,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userFavoriteLessons.userId],
+      references: [users.id],
+    }),
+    lesson: one(lessons, {
+      fields: [userFavoriteLessons.lessonId],
+      references: [lessons.id],
+    }),
+  })
+);

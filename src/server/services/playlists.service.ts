@@ -107,6 +107,7 @@ const selectPlaylist = async (filters?: PlaylistFilters) => {
             with: {
               video: true,
               thumbnail: true,
+              userFavoriteLessons: true,
               attachments: {
                 with: {
                   file: true,
