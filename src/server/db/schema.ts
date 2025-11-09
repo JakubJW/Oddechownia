@@ -9,6 +9,8 @@ import {
   uuid,
   unique,
   foreignKey,
+  date,
+  time,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
 import { sql } from 'drizzle-orm';
@@ -191,4 +193,27 @@ export const userFavoriteLessons = pgTable('user_favorite_lessons', {
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
+});
+
+export const liveLessons = pgTable('live_lessons', {
+  id: uuid().primaryKey(),
+  title: varchar('title'),
+  date: date('date'),
+  time: time('time'),
+  duration: integer('duration').notNull(),
+  currentParticipants: integer('current_participants').default(0),
+  isListed: boolean('is_listed'),
+  isPublished: boolean('is_published'),
+  recordingUrl: text('recording_url'),
+  isCompleted: boolean('is_completed').default(false),
+  level: varchar('level'),
+  description: text('description'),
+  meeting_link: text('meeting_link'),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
