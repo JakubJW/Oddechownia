@@ -192,3 +192,24 @@ export const userFavoriteLessons = pgTable('user_favorite_lessons', {
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
 });
+
+export const liveLessons = pgTable('live_lessons', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: varchar('title').notNull(),
+  scheduledAt: timestamp('scheduled_at', { withTimezone: true, mode: 'string' }).notNull(),
+  duration: integer('duration').notNull(),
+  isListed: boolean('is_listed').notNull().default(false),
+  isPublished: boolean('is_published').notNull().default(false),
+  isCompleted: boolean('is_completed').notNull().default(false),
+  description: text('description'),
+  meetingLink: text('meeting_link'),
+  recordingUrl: text('recording_url'),
+  currentParticipants: integer('current_participants').notNull().default(0),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+});

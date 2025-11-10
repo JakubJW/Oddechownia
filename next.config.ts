@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '6mb',
     },
+    serverComponentsExternalPackages: ['pino', 'pino-pretty'],
   },
 };
 
