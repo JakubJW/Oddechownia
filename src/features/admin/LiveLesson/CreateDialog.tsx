@@ -27,12 +27,26 @@ import { createformSchema, defaultValues } from './Form/schema';
 import { z } from 'zod';
 import { useState } from 'react';
 import { queryClient } from '@/components/QueryClientProvider';
+import { CreateLiveLessonResponse } from '@/server/models/liveLesson.models';
+import { toast } from 'sonner';
 
 const createLiveLesson = async (values: z.infer<typeof createformSchema>) => {
   const res = await fetch(`/api/live-lessons/create`, {
     method: 'POST',
     body: JSON.stringify(values),
   });
+
+  if (!res.ok) {
+    const errorBody = await res
+      .json()
+      .catch(() => ({ message: res.statusText }));
+
+    throw new Error(
+      `Failed to fetch comments (Status ${res.status}): ${
+        errorBody.message || 'Unknown error'
+      }`
+    );
+  }
 
   const json = await res.json();
   return json.data as CreateLiveLessonResponse;
@@ -54,6 +68,7 @@ const CreateUpdateDialog = () => {
       form.reset();
       queryClient.invalidateQueries({ queryKey: ['live-lessons'] });
     },
+    onError: (error) => toast.error(error.message),
   });
 
   const onSubmit = async (values: z.infer<typeof createformSchema>) => {

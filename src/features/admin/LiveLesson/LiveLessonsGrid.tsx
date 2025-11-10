@@ -1,14 +1,31 @@
 'use client';
 
-import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
-import React from 'react';
-import { FetchAdminLiveLessonsListResponse } from '@/server/models/liveLesson.models';
-import { Video } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { queryClient } from '@/components/QueryClientProvider';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  AdminLiveLessonRecordDTO,
+  FetchAdminLiveLessonsListResponse,
+  UpdateLiveLessonResponse,
+} from '@/server/models/liveLesson.models';
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useMutation,
+} from '@tanstack/react-query';
+import { Edit, Video } from 'lucide-react';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import z from 'zod';
+import { updateFormSchema } from './Form/schema';
 import UpdateDialog from './UpdateDialog';
 
-const fetchComments = async ({ pageParam }: { pageParam: string | null }) => {
+const fetchLiveLessons = async ({
+  pageParam,
+}: {
+  pageParam: string | null;
+}) => {
   const res = await fetch(`/api/live-lessons/?cursor=${pageParam}`, {
     method: 'GET',
   });
@@ -18,26 +35,63 @@ const fetchComments = async ({ pageParam }: { pageParam: string | null }) => {
       .json()
       .catch(() => ({ message: res.statusText }));
 
-    throw new Error(
-      `Failed to fetch comments (Status ${res.status}): ${
-        errorBody.message || 'Unknown error'
-      }`
-    );
+    throw new Error(errorBody.message || 'Unknown error');
   }
 
   const json = await res.json();
   return json.data as FetchAdminLiveLessonsListResponse;
 };
 
+const update = async ({
+  id,
+  values,
+}: {
+  id: string;
+  values: z.infer<typeof updateFormSchema>;
+}) => {
+  const res = await fetch(`/api/live-lessons/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(values),
+  });
+
+  if (!res.ok) {
+    const errorBody = await res
+      .json()
+      .catch(() => ({ message: res.statusText }));
+
+    throw new Error(errorBody.message || 'Unknown error');
+  }
+
+  const json = await res.json();
+  return json.data as UpdateLiveLessonResponse;
+};
+
 const LiveLessonsGrid = () => {
-  const { data, isError, fetchNextPage, hasNextPage, isFetching, isPending } =
-    useInfiniteQuery({
-      queryKey: ['live-lessons'],
-      initialPageParam: null,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      placeholderData: keepPreviousData,
-      queryFn: fetchComments,
-    });
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [currentLesson, setCurrentLesson] = useState<
+    AdminLiveLessonRecordDTO | undefined
+  >(undefined);
+
+  const { data, isError, isPending } = useInfiniteQuery({
+    queryKey: ['live-lessons'],
+    initialPageParam: null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    placeholderData: keepPreviousData,
+    queryFn: fetchLiveLessons,
+  });
+
+  const mutation = useMutation<
+    UpdateLiveLessonResponse,
+    Error,
+    { id: string; values: z.infer<typeof updateFormSchema> }
+  >({
+    mutationFn: update,
+    onSuccess: () => {
+      setEditDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['live-lessons'] });
+    },
+    onError: (error) => toast.error(error.message),
+  });
 
   if (isPending) {
     return <p>Ładowanie</p>;
@@ -62,7 +116,7 @@ const LiveLessonsGrid = () => {
   }
 
   return (
-    <div className='space-y-2'>
+    <div className="space-y-2">
       {data.pages.map((page, index) => (
         <React.Fragment key={index}>
           {page.data.map((liveLesson) => (
@@ -85,7 +139,18 @@ const LiveLessonsGrid = () => {
                   {!liveLesson.isListed && liveLesson.isCompleted && (
                     <Badge variant="outline">Zapisy zamknięte</Badge>
                   )}
-                  <UpdateDialog liveLesson={liveLesson} />
+                  <Button
+                    type="button"
+                    className="rounded-full"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setCurrentLesson(liveLesson);
+                      setEditDialogOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -125,6 +190,14 @@ const LiveLessonsGrid = () => {
           ))}
         </React.Fragment>
       ))}
+      {currentLesson && (
+        <UpdateDialog
+          mutation={mutation}
+          liveLesson={currentLesson}
+          open={editDialogOpen}
+          setOpen={setEditDialogOpen}
+        />
+      )}
     </div>
   );
 };

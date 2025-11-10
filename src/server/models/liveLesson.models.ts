@@ -23,3 +23,15 @@ export type FetchAdminLiveLessonsListResponse = {
   success: boolean;
   error: string | null;
 };
+
+export type CreateLiveLessonResponse = {
+  message: string;
+  success: boolean;
+  error: string;
+};
+
+export type UpdateLiveLessonResponse = {
+  message: string;
+  success: boolean;
+  error: string;
+};

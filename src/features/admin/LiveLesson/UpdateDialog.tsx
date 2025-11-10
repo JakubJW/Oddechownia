@@ -7,87 +7,80 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Edit } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
-  FormMessage,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { updateFormSchema } from './Form/schema';
-import { z } from 'zod';
-import { useState } from 'react';
-import { queryClient } from '@/components/QueryClientProvider';
+import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { AdminLiveLessonRecordDTO } from '@/server/models/liveLesson.models';
-import { formatTimeForInput, formatDateForInput } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
+import { formatDateForInput, formatTimeForInput } from '@/lib/utils';
+import {
+  AdminLiveLessonRecordDTO,
+  UpdateLiveLessonResponse,
+} from '@/server/models/liveLesson.models';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { memo, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { updateFormSchema } from './Form/schema';
+import { UseMutationResult } from '@tanstack/react-query';
 
-const update = async (id: string, values: z.infer<typeof updateFormSchema>) => {
-  const res = await fetch(`/api/live-lessons/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(values),
-  });
-
-  const json = await res.json();
-  return json.data as UpdateLiveLessonResponse;
-};
-
-const CreateUpdateDialog = ({
+const UpdateDialog = ({
   liveLesson,
+  open,
+  setOpen,
+  mutation,
 }: {
-  liveLesson: AdminLiveLessonRecordDTO;
+  liveLesson?: AdminLiveLessonRecordDTO;
+  open: boolean;
+  setOpen: (state: boolean) => void;
+  mutation: UseMutationResult<
+    UpdateLiveLessonResponse,
+    Error,
+    { id: string; values: z.infer<typeof updateFormSchema> }
+  >;
 }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
       ...liveLesson,
-      date: formatDateForInput(liveLesson.scheduledAt),
-      time: formatTimeForInput(liveLesson.scheduledAt),
+      date: liveLesson ? formatDateForInput(liveLesson.scheduledAt) : undefined,
+      time: liveLesson ? formatTimeForInput(liveLesson.scheduledAt) : undefined,
     },
     mode: 'all',
   });
 
-  const mutation = useMutation({
-    mutationFn: (values: z.infer<typeof updateFormSchema>) =>
-      update(liveLesson.id, values),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['live-lessons'] }),
-  });
+  useEffect(() => {
+    if (!liveLesson) return;
+
+    form.reset({
+      ...liveLesson,
+      date: liveLesson ? formatDateForInput(liveLesson.scheduledAt) : undefined,
+      time: liveLesson ? formatTimeForInput(liveLesson.scheduledAt) : undefined,
+    });
+  }, [liveLesson, form]);
 
   const onSubmit = async (values: z.infer<typeof updateFormSchema>) => {
-    mutation.mutate({ ...values });
+    if (!liveLesson) return;
+    mutation.mutate({ id: liveLesson.id, values });
   };
 
   return (
     <Dialog
-      open={dialogOpen}
-      onOpenChange={setDialogOpen}
+      open={open}
+      onOpenChange={setOpen}
     >
       <Form {...form}>
         <form
           id="update-live-lesson-form"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <DialogTrigger asChild>
-            <Button
-              type="button"
-              className="rounded-full"
-              variant="ghost"
-              size="icon"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Utwórz nowe zajęcia na żywo</DialogTitle>
@@ -224,7 +217,7 @@ const CreateUpdateDialog = ({
                     <FormLabel>Zajęcia zakończone</FormLabel>
                     <FormControl>
                       <Switch
-                        defaultChecked={liveLesson.isCompleted}
+                        defaultChecked={liveLesson?.isCompleted}
                         onCheckedChange={(checked) => field.onChange(checked)}
                       />
                     </FormControl>
@@ -240,7 +233,7 @@ const CreateUpdateDialog = ({
                     <FormLabel>Zamknij zapisy (ukryj publicznie)</FormLabel>
                     <FormControl>
                       <Switch
-                        defaultChecked={liveLesson.isListed}
+                        defaultChecked={liveLesson?.isListed}
                         onCheckedChange={(checked) => field.onChange(checked)}
                       />
                     </FormControl>
@@ -258,7 +251,7 @@ const CreateUpdateDialog = ({
                     </FormLabel>
                     <FormControl>
                       <Switch
-                        defaultChecked={liveLesson.isPublished}
+                        defaultChecked={liveLesson?.isPublished}
                         onCheckedChange={(checked) => field.onChange(checked)}
                       />
                     </FormControl>
@@ -270,7 +263,7 @@ const CreateUpdateDialog = ({
             <div className="flex gap-2 justify-end pt-4">
               <Button
                 variant="outline"
-                onClick={() => setDialogOpen(false)}
+                onClick={() => setOpen(false)}
               >
                 Anuluj
               </Button>
@@ -278,7 +271,7 @@ const CreateUpdateDialog = ({
                 type="submit"
                 form="update-live-lesson-form"
               >
-                Utwórz zajęcia
+                Zapisz zmiany
               </Button>
             </div>
           </DialogContent>
@@ -288,4 +281,4 @@ const CreateUpdateDialog = ({
   );
 };
 
-export default CreateUpdateDialog;
+export default memo(UpdateDialog);

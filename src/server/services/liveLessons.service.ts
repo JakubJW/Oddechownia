@@ -6,14 +6,14 @@ import { and, eq, desc, lt, gte, asc } from 'drizzle-orm';
 import { AdminLiveLessonRecordDTO } from '../models/liveLesson.models';
 
 const create = async (values: z.infer<typeof createformSchema>) => {
-  const result = await db.insert(liveLessons).values({
+  await db.insert(liveLessons).values({
     ...values,
     scheduledAt: `${values.date}T${values.time}`,
   });
 };
 
 const update = async (id: string, values: z.infer<typeof createformSchema>) => {
-  const result = await db
+  await db
     .update(liveLessons)
     .set({
       ...values,
