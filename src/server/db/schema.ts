@@ -9,8 +9,6 @@ import {
   uuid,
   unique,
   foreignKey,
-  date,
-  time,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
 import { sql } from 'drizzle-orm';
@@ -196,19 +194,17 @@ export const userFavoriteLessons = pgTable('user_favorite_lessons', {
 });
 
 export const liveLessons = pgTable('live_lessons', {
-  id: uuid().primaryKey(),
-  title: varchar('title'),
-  date: date('date'),
-  time: time('time'),
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: varchar('title').notNull(),
+  scheduledAt: timestamp('scheduled_at', { withTimezone: true, mode: 'string' }).notNull(),
   duration: integer('duration').notNull(),
-  currentParticipants: integer('current_participants').default(0),
-  isListed: boolean('is_listed'),
-  isPublished: boolean('is_published'),
-  recordingUrl: text('recording_url'),
-  isCompleted: boolean('is_completed').default(false),
-  level: varchar('level'),
+  isListed: boolean('is_listed').notNull().default(false),
+  isPublished: boolean('is_published').notNull().default(false),
+  isCompleted: boolean('is_completed').notNull().default(false),
   description: text('description'),
-  meeting_link: text('meeting_link'),
+  meetingLink: text('meeting_link'),
+  recordingUrl: text('recording_url'),
+  currentParticipants: integer('current_participants').notNull().default(0),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
