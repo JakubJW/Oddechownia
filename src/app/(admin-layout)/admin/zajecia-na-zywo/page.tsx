@@ -1,7 +1,7 @@
 import CreateDialog from '@/features/admin/LiveLesson/CreateDialog';
 import LiveLessonsGrid from '@/features/admin/LiveLesson/LiveLessonsGrid';
 
-const AdminLiveLessons = () => {
+export default function AdminLiveLessons() {
   return (
     <section>
       <div className="flex justify-between items-center mb-4">
@@ -11,6 +11,4 @@ const AdminLiveLessons = () => {
       <LiveLessonsGrid />
     </section>
   );
-};
-
-export default AdminLiveLessons;
+}
