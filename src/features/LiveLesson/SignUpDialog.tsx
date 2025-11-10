@@ -1,5 +1,5 @@
 const SignUpDialog = () => {
-    return (  );
-}
- 
+  return <></>;
+};
+
 export default SignUpDialog;
