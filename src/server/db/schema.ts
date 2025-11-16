@@ -62,7 +62,7 @@ export const users = pgTable('users', {
   regulationsAgreement: boolean('regulations_agreement').default(false),
   privacyPolicyAgreement: boolean('privacy_policy_agreement').default(false),
   stripeCustomerId: varchar('stripe_customer_id'),
-  subscriptionStatus: varchar(''),
+  subscriptionStatus: varchar('subscription_status'),
 });
 
 export const userSubscription = pgTable('user_subscription', {
@@ -196,7 +196,10 @@ export const userFavoriteLessons = pgTable('user_favorite_lessons', {
 export const liveLessons = pgTable('live_lessons', {
   id: uuid('id').defaultRandom().primaryKey(),
   title: varchar('title').notNull(),
-  scheduledAt: timestamp('scheduled_at', { withTimezone: true, mode: 'string' }).notNull(),
+  scheduledAt: timestamp('scheduled_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).notNull(),
   duration: integer('duration').notNull(),
   isListed: boolean('is_listed').notNull().default(false),
   isPublished: boolean('is_published').notNull().default(false),
@@ -213,3 +216,41 @@ export const liveLessons = pgTable('live_lessons', {
     .notNull()
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
+
+export const liveLessonsRegistrations = pgTable(
+  'live_lessons_registrations',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    lessonId: uuid()
+      .notNull()
+      .references(() => liveLessons.id, { onDelete: 'cascade' }),
+    name: varchar('name').notNull(),
+    email: varchar('email').notNull(),
+    userId: uuid('userId').references(() => users.id, { onDelete: 'cascade' }),
+    checkoutSessionId: text('checkout_session_id'),
+    accessMethod: varchar('access_method')
+      .$type<'paid_one_time' | 'subscription_entitlement'>()
+      .notNull(),
+    paymentStatus: varchar('payment_status').$type<
+      'unpaid' | 'paid' | 'failed' | null
+    >(),
+    stripePriceId: text('stripe_price_id'),
+    billingPeriodStart: timestamp('billing_period_start', {
+      withTimezone: true,
+      mode: 'string',
+    }),
+    createdAt: text('created_at')
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull(),
+    updatedAt: text('updated_at')
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull()
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  },
+  (table) => [
+    unique('unique_live_lesson_registration_constraint').on(
+      table.email,
+      table.lessonId
+    ),
+  ]
+);

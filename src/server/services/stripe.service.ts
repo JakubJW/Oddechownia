@@ -72,13 +72,8 @@ class StripeService {
     return products;
   }
 
-  public async listPrices() {
-    const prices = await this.stripe.prices.list({
-      active: true,
-      limit: 100,
-      type: 'recurring',
-      expand: ['data.product'],
-    });
+  public async listPrices(params: Stripe.PriceListParams) {
+    const prices = await this.stripe.prices.list(params);
 
     return prices;
   }
@@ -120,6 +115,45 @@ class StripeService {
       );
 
       return portalSession.url;
+    } catch (error) {
+      console.error('Error constructing portal session:', error);
+      throw error;
+    }
+  }
+
+  public async listSubscriptions(params?: Stripe.SubscriptionListParams) {
+    try {
+      const subscription = await this.stripe.subscriptions.list(params);
+
+      return subscription;
+    } catch (error) {
+      console.error('Error constructing portal session:', error);
+      throw error;
+    }
+  }
+
+  public async retrieveSubscription(
+    id: string,
+    params?: Stripe.SubscriptionRetrieveParams
+  ) {
+    try {
+      const subscription = await this.stripe.subscriptions.retrieve(id, params);
+
+      return subscription;
+    } catch (error) {
+      console.error('Error constructing portal session:', error);
+      throw error;
+    }
+  }
+
+  public async retrieveSession(
+    id: string,
+    params?: Stripe.Checkout.SessionRetrieveParams
+  ) {
+    try {
+      const session = await this.stripe.checkout.sessions.retrieve(id, params);
+
+      return session;
     } catch (error) {
       console.error('Error constructing portal session:', error);
       throw error;

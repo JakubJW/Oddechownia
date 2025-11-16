@@ -37,7 +37,7 @@ const UpdateDialog = ({
   setOpen,
   mutation,
 }: {
-  liveLesson?: AdminLiveLessonRecordDTO;
+  liveLesson: AdminLiveLessonRecordDTO;
   open: boolean;
   setOpen: (state: boolean) => void;
   mutation: UseMutationResult<
@@ -50,21 +50,25 @@ const UpdateDialog = ({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
       ...liveLesson,
-      date: liveLesson ? formatDateForInput(liveLesson.scheduledAt) : undefined,
-      time: liveLesson ? formatTimeForInput(liveLesson.scheduledAt) : undefined,
+      date: formatDateForInput(liveLesson.scheduledAt),
+      time: formatTimeForInput(liveLesson.scheduledAt),
     },
     mode: 'all',
   });
 
   useEffect(() => {
-    if (!liveLesson) return;
-
     form.reset({
       ...liveLesson,
-      date: liveLesson ? formatDateForInput(liveLesson.scheduledAt) : undefined,
-      time: liveLesson ? formatTimeForInput(liveLesson.scheduledAt) : undefined,
+      date: formatDateForInput(liveLesson.scheduledAt),
+      time: formatTimeForInput(liveLesson.scheduledAt),
     });
   }, [liveLesson, form]);
+
+  const [date, time] = form.watch(['date', 'time']);
+
+  useEffect(() => {
+    form.setValue('scheduledAt', new Date(`${date}T${time}`).toISOString());
+  }, [date, time, form]);
 
   const onSubmit = async (values: z.infer<typeof updateFormSchema>) => {
     if (!liveLesson) return;
@@ -89,6 +93,21 @@ const UpdateDialog = ({
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="scheduledAt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="string"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="title"

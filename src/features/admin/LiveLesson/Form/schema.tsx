@@ -3,9 +3,10 @@ import { nonEmptyString } from '@/shared/formUtils';
 import { ERROR_MESSAGES } from '@/shared/messages';
 
 export const createformSchema = z.object({
-  title: z.string().pipe(nonEmptyString),
+  title: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   date: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   time: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
+  scheduledAt: z.string(),
   duration: z.coerce
     .number({
       invalid_type_error: 'Czas trwania musi być liczbą.',
@@ -37,6 +38,7 @@ export const defaultValues: z.infer<typeof createformSchema> = {
   title: '',
   date: '',
   time: '',
+  scheduledAt: new Date().toISOString(),
   duration: 15,
   description: undefined,
   meetingLink: undefined,

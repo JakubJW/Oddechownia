@@ -3,7 +3,6 @@
 import { Check } from 'lucide-react';
 import { getUser } from '@/server/actions/user';
 import { useRouter } from 'next/navigation';
-import { env } from 'process';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 
@@ -45,18 +44,15 @@ export function SubscriptionCard({
     try {
       setIsLoading(true);
 
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_APP_URL}/api/checkout/subscription`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            priceId,
-            customerEmail: user.email,
-            clientReferenceId: user.id,
-          }),
-        }
-      );
+      const res = await fetch(`/api/checkout/subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId,
+          customerEmail: user.email,
+          clientReferenceId: user.id,
+        }),
+      });
 
       if (!res.ok) {
         throw new Error('Failed to create checkout session.');

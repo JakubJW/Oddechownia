@@ -41,7 +41,9 @@ export default async function RootLayout({
             ) : (
               <>
                 <Navigation user={user} />
-                <main className="mt-[64px] sm:mt-[74px]">{children}</main>
+                <main className="mt-[64px]">
+                  {children}
+                </main>
                 <Footer />
               </>
             )}

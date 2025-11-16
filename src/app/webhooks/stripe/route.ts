@@ -1,9 +1,11 @@
 'use server';
 
 import { db } from '@/server/db';
-import { userSubscription } from '@/server/db/schema';
+import { users } from '@/server/db/schema';
+import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { stripeService } from '@/server/services/stripe.service';
 import { buffer } from '@/utils/requestBodyBufer';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -28,18 +30,28 @@ export async function POST(req: Request) {
 
   switch (event.type) {
     case 'checkout.session.completed': {
-      const { mode } = event.data.object;
+      const { mode, id } = event.data.object;
 
-      if (mode !== 'subscription') {
-        return NextResponse.json(
-          { message: 'Unhandled session mode.' },
-          { status: 400 }
-        );
+      if (mode === 'payment') {
+        try {
+          await LiveLessonsRegistrationsService.fullfillLiveLessonPurchase(id);
+
+          return NextResponse.json(
+            { message: 'Payment processed successfully' },
+            { status: 200 }
+          );
+        } catch (error) {
+          return NextResponse.json(
+            { message: 'Bad request' },
+            { status: 400 }
+          );
+        }
       }
 
-      const { subscription, client_reference_id } = event.data.object;
+      const { subscription: subscriptionId, client_reference_id } =
+        event.data.object;
 
-      if (!subscription) {
+      if (!subscriptionId) {
         console.error(
           'Missing subscription field in webhook session.checkout.completed event handler'
         );
@@ -65,32 +77,30 @@ export async function POST(req: Request) {
         );
       }
 
-      await db.insert(userSubscription).values({
-        userId: client_reference_id,
-        stripeSubscriptionId: subscription as string,
-      });
+      const subscription = await stripeService.retrieveSubscription(
+        subscriptionId as string
+      );
+
+      await db
+        .update(users)
+        .set({
+          subscriptionStatus: subscription.status,
+        })
+        .where(eq(users.id, client_reference_id));
 
       return NextResponse.json({ message: 'Success' }, { status: 200 });
     }
 
     case 'customer.subscription.created':
     case 'customer.subscription.updated': {
-      const { status, id, metadata } = event.data.object;
+      const { status, customer } = event.data.object;
 
       await db
-        .insert(userSubscription)
-        .values({
-          status: status,
-          stripeSubscriptionId: id,
-          userId: metadata.userId,
+        .update(users)
+        .set({
+          subscriptionStatus: status,
         })
-        .onConflictDoUpdate({
-          target: userSubscription.stripeSubscriptionId,
-          set: {
-            status: status,
-            userId: metadata.userId,
-          },
-        });
+        .where(eq(users.stripeCustomerId, customer as string));
 
       return NextResponse.json({ message: 'Success' }, { status: 200 });
     }

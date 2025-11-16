@@ -35,3 +35,45 @@ export type UpdateLiveLessonResponse = {
   success: boolean;
   error: string;
 };
+
+export type LiveLessonSignUpResponse = { url: string };
+
+export type FetchUserLiveLessonsResponse = {
+  data: LiveLessonCardUserDashboardDTO[];
+  nextCursor: string | null;
+  success: boolean;
+  error: string | null;
+};
+
+export type LiveLessonCardDTO = {
+  id: string;
+  title: string;
+  scheduledAt: string;
+  duration: number;
+  isListed: boolean;
+  description?: string;
+  isRegistered: boolean;
+  isPaymentPending: boolean;
+  registrationId?: string;
+} & Eligibility;
+
+export type Eligibility =
+  | {
+      isEligibleForFree: false;
+      freeEligibilitiesUsed: number | null;
+    }
+  | {
+      isEligibleForFree: true;
+      freeEligibilitiesUsed: number;
+    };
+
+export type LiveLessonCardUserDashboardDTO = {
+  id: string;
+  title: string;
+  description?: string;
+  scheduledAt: string;
+  duration: number;
+  status: 'upcoming' | 'live' | 'completed';
+  meetingUrl?: string;
+  recordingUrl?: string;
+};

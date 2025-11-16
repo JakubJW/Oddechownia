@@ -72,13 +72,14 @@ const LiveLessonsGrid = () => {
     AdminLiveLessonRecordDTO | undefined
   >(undefined);
 
-  const { data, isError, isPending } = useInfiniteQuery({
-    queryKey: ['live-lessons'],
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    placeholderData: keepPreviousData,
-    queryFn: fetchLiveLessons,
-  });
+  const { data, isError, isPending, hasNextPage, fetchNextPage, isFetching } =
+    useInfiniteQuery({
+      queryKey: ['live-lessons'],
+      initialPageParam: null,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      placeholderData: keepPreviousData,
+      queryFn: fetchLiveLessons,
+    });
 
   const mutation = useMutation<
     UpdateLiveLessonResponse,
@@ -198,6 +199,14 @@ const LiveLessonsGrid = () => {
           setOpen={setEditDialogOpen}
         />
       )}
+      {hasNextPage && (
+        <Button
+          disabled={isFetching}
+          onClick={() => fetchNextPage()}
+        >
+          {isFetching ? 'Ładowanie...' : 'Pokaż więcej'}
+        </Button>
+      )}{' '}
     </div>
   );
 };
