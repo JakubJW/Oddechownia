@@ -51,7 +51,7 @@ export default async function LessonVideo({
   }
 
   const { playlistSlug, lessonSlug } = await params;
-  const playlist = await PlaylistsService.getPlaylist({
+  const playlist = await PlaylistsService.getPlaylist(user, {
     slug: playlistSlug,
   });
 

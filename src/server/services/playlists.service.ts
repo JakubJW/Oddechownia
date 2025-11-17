@@ -15,6 +15,7 @@ import {
 import { transformVideoToDto } from './videos.service';
 import { LessonsService } from './lessons.service';
 import { LessonDetailDTO, LessonDTO } from '../models/lesson.models';
+import { User } from '../actions/user';
 
 export type LessonWithVideoSelect = InferSelectModel<typeof lessons> & {
   video: InferSelectModel<typeof videos> | null;
@@ -76,7 +77,8 @@ const getPlaylistsListForUser = async (filters?: PlaylistFilters) => {
 };
 
 const transformSelectPlaylistToDTO = (
-  playlist: SelectPlaylistResult
+  playlist: SelectPlaylistResult,
+  user: User,
 ): PlaylistDetailDTO<LessonDetailDTO[]> | undefined => {
   if (!playlist) return undefined;
 
@@ -87,7 +89,7 @@ const transformSelectPlaylistToDTO = (
     slug: playlist.slug,
     position: playlist.position,
     lessons: playlist.playlistLessons.flatMap(({ lesson, position }) =>
-      LessonsService.transformLessonsToDetailDTO([lesson], position)
+      LessonsService.transformLessonsToDetailDTO([lesson], user, position)
     ),
     video: transformVideoToDto(playlist.video),
   };
@@ -123,10 +125,10 @@ const selectPlaylist = async (filters?: PlaylistFilters) => {
   return result;
 };
 
-const getPlaylist = async (filters?: PlaylistFilters) => {
+const getPlaylist = async (user: User, filters?: PlaylistFilters) => {
   const result = await selectPlaylist(filters);
 
-  return transformSelectPlaylistToDTO(result);
+  return transformSelectPlaylistToDTO(result, user);
 };
 
 export type SelectPlaylistResult = Awaited<ReturnType<typeof selectPlaylist>>;
