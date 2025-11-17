@@ -25,7 +25,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createformSchema, defaultValues } from './Form/schema';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { queryClient } from '@/components/QueryClientProvider';
 import { CreateLiveLessonResponse } from '@/server/models/liveLesson.models';
 import { toast } from 'sonner';
@@ -71,6 +71,14 @@ const CreateUpdateDialog = () => {
     onError: (error) => toast.error(error.message),
   });
 
+  const [date, time] = form.watch(['date', 'time']);
+
+  useEffect(() => {
+    if (!date || !time) return;
+    
+    form.setValue('scheduledAt', new Date(`${date}T${time}`).toISOString());
+  }, [date, time, form]);
+
   const onSubmit = async (values: z.infer<typeof createformSchema>) => {
     mutation.mutate({ ...values });
   };
@@ -99,6 +107,21 @@ const CreateUpdateDialog = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="scheduledAt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="string"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="title"

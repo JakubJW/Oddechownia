@@ -41,5 +41,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/b
 
 Start ngrok server for webhooks handling
 
-```bash 
+```bash
 ngrok http --url=growing-optimum-rattler.ngrok-free.app 3000
+```

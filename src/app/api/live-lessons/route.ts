@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LiveLessonsService } from '@/server/services/liveLessons.service';
-import { encodeCursor, decodeCursor } from '@/lib/utils';
+import { decodeCursor, encodeCursor } from '@/lib/utils';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);
@@ -11,14 +11,17 @@ export async function GET(req: NextRequest) {
     const searchParams = getQueryParams(req.url);
 
     const cursor = decodeCursor(searchParams.cursor);
-    const perPage = 3;
+    const perPage = 2;
 
-    const result = await LiveLessonsService.getMany(String(cursor), perPage);
+    const result = await LiveLessonsService.getMany(cursor, perPage);
 
     return NextResponse.json({
       data: {
         data: result,
-        nextCursor: null,
+        nextCursor:
+          result.length === perPage
+            ? encodeCursor(result[result.length - 1].scheduledAt)
+            : null,
       },
       success: true,
       error: null,

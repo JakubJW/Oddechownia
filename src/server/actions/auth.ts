@@ -101,7 +101,6 @@ export async function signup(formData: FormData, priceId?: string) {
   });
 
   if (!parsed.success) {
-    console.log(parsed.error.flatten());
     return { data: null, error: null };
   }
 

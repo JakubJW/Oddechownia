@@ -45,14 +45,14 @@ export function encodeCursor(rawCursor: string | number | null) {
 }
 
 export function decodeCursor(encodedCursor: string | null) {
-  if (encodedCursor === null || encodedCursor === undefined) {
+  if (encodedCursor === 'null' || encodedCursor === null || encodedCursor === undefined) {
     return null;
   }
   try {
     const decoded = Buffer.from(encodedCursor, 'base64').toString('utf8');
-    if (!isNaN(Number(decoded)) && decoded.trim() !== '') {
-      return Number(decoded);
-    }
+    // if (!isNaN(Number(decoded)) && decoded.trim() !== '') {
+    //   return Number(decoded);
+    // }
     return decoded;
   } catch (e) {
     console.error('Failed to decode cursor:', e);
@@ -70,7 +70,9 @@ export function formatDateForInput(timestamp: string): string {
 
 export function formatTimeForInput(timestamp: string): string {
   const date = new Date(timestamp);
+
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
+
   return `${hours}:${minutes}`;
 }

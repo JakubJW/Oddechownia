@@ -17,6 +17,8 @@ interface UpdateUserParams {
   regulationsAgreement: boolean;
 }
 
+export type User = Awaited<ReturnType<typeof getUser>>;
+
 export const getUser = cache(async () => {
   try {
     const supabase = await createClient();
@@ -32,20 +34,13 @@ export const getUser = cache(async () => {
       where: eq(users.id, user.id),
     });
 
-    const hasActiveSubscription = await db.query.userSubscription.findFirst({
-      where: and(
-        eq(userSubscription.userId, user.id),
-        eq(userSubscription.status, 'active')
-      ),
-    });
-
     if (!publicUser) {
       return null;
     }
 
     return {
       ...publicUser,
-      hasActiveSubscription: hasActiveSubscription ? true : false,
+      hasActiveSubscription: publicUser.subscriptionStatus === 'active',
     };
   } catch (error) {
     console.log(error);

@@ -25,9 +25,19 @@ type SortOptions =
       options: SortOption<SortDirection>[];
     };
 
+type FiltersOptions = {
+  placeholder: string;
+  name: 'status';
+  options: [
+    { label: 'Nadchodzące'; value: 'upcoming' },
+    { label: 'Zakończone'; value: 'completed' }
+  ];
+}[];
+
 type FiltersConfig = {
   search: boolean;
-  sortOptions: SortOptions[];
+  sortOptions?: SortOptions[];
+  filtersOptions?: FiltersOptions;
 };
 
 export default function Filters({
@@ -41,14 +51,24 @@ export default function Filters({
     <div className="flex justify-end gap-2">
       {config.search && <SearchForm />}
       <form className="flex gap-2">
-        {config.sortOptions.map(({ placeholder, name, options }) => (
-          <SortingSelect
-            key={name}
-            placeholder={placeholder}
-            name={name}
-            options={options}
-          />
-        ))}
+        {config.sortOptions &&
+          config.sortOptions.map(({ placeholder, name, options }) => (
+            <SortingSelect
+              key={name}
+              placeholder={placeholder}
+              name={name}
+              options={options}
+            />
+          ))}
+        {config.filtersOptions &&
+          config.filtersOptions.map(({ placeholder, name, options }) => (
+            <SortingSelect
+              key={name}
+              placeholder={placeholder}
+              name={name}
+              options={options}
+            />
+          ))}
       </form>
       {children}
     </div>
