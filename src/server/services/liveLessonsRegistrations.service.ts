@@ -1,4 +1,4 @@
-import { and, eq, gte, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { liveLessons, liveLessonsRegistrations } from '@/server/db/schema';
 import { db } from '@/server/db';
 import { LiveLessonSignUpValues } from '@/features/LiveLesson/Form/schema';
@@ -13,17 +13,9 @@ import {
   AuthorizationError,
   ConflictError,
 } from '../lib/errors';
+import { LiveLessonRegistrationCardDTO } from '../models/liveLessonRegistration.models';
 
 const log = logger.child({ module: 'live-lessons-registrations' });
-
-const getUserRegistrations = async (userId: string) => {
-  const result = await db.query.liveLessonsRegistrations.findMany({
-    columns: { lessonId: true, paymentStatus: true },
-    where: eq(liveLessonsRegistrations.userId, userId),
-  });
-
-  return result;
-};
 
 const create = async (
   id: string,
@@ -208,7 +200,7 @@ const handleFreeRegistration = async (
     );
   }
 
-  if (!user.hasActiveSubscription) {
+  if (user.role !== 'admin' && !user.hasActiveSubscription) {
     throw new AuthorizationError(
       'Free live lesson registration (no active subscription).',
       'Aby zapisać się na zajęcia za darmo, musisz posiadać aktywną subskcrypcję.'
@@ -308,8 +300,35 @@ const fullfillLiveLessonPurchase = async (sessionId: string) => {
   }
 };
 
+const getLessonRegistrations = async (
+  lessonId: string
+): Promise<LiveLessonRegistrationCardDTO[]> => {
+  try {
+    const result = await db.query.liveLessonsRegistrations.findMany({
+      where: eq(liveLessonsRegistrations.lessonId, lessonId),
+      orderBy: desc(liveLessonsRegistrations.createdAt),
+    });
+
+    return result.map((registration) => ({
+      id: registration.id,
+      name: registration.name,
+      email: registration.email,
+      createdAt: registration.createdAt,
+      paymentStatus: registration.paymentStatus ?? undefined,
+    }));
+  } catch (error) {
+    log.error(error);
+
+    throw new AppError(
+      'An unknown error occured user registrations fetch.',
+      500,
+      'Podczas pobierania listy zapisanych użytkowników wystąpił niespodziewany błąd.'
+    );
+  }
+};
+
 export const LiveLessonsRegistrationsService = {
-  getUserRegistrations,
+  getLessonRegistrations,
   create,
   checkEntitlementEligibility,
   getEntitlementUsage,

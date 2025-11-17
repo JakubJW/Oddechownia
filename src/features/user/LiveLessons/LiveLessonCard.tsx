@@ -44,7 +44,7 @@ export function LiveLessonCard({
           background: 'linear-gradient(to right, #B9C499, #9EAFBF, #EBDFD3)',
         }}
       />
-      <CardHeader className='flex-grow'>
+      <CardHeader className="flex-grow">
         <div className="flex items-start justify-between gap-2">
           <CardTitle
             className="text-xl font-semibold text-balance leading-tight flex-1"
@@ -63,14 +63,6 @@ export function LiveLessonCard({
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                 </span>
                 <span>{statusText[status]}</span>
-              </Badge>
-            )}
-            {status !== 'live' && (
-              <Badge
-                className="shrink-0"
-                style={statusStyles[status]}
-              >
-                {statusText[status]}
               </Badge>
             )}
           </div>

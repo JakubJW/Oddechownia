@@ -1,10 +1,10 @@
-import Filters from '@/components/Filters/Filters';
+// import Filters from '@/components/Filters/Filters';
 import { Grid } from '@/features/user/LiveLessons/Grid';
 
 export default async function UserLiveLessons() {
   return (
     <div>
-      <Filters
+      {/* <Filters
         config={{
           search: false,
           filtersOptions: [
@@ -18,7 +18,7 @@ export default async function UserLiveLessons() {
             },
           ],
         }}
-      />
+      /> */}
       <Grid />
     </div>
   );

@@ -1,5 +1,6 @@
 import { InferSelectModel } from 'drizzle-orm';
 import { liveLessons } from '../db/schema';
+import { LiveLessonRegistrationCardDTO } from './liveLessonRegistration.models';
 
 export type LiveLessonSchema = InferSelectModel<typeof liveLessons>;
 
@@ -22,6 +23,10 @@ export type FetchAdminLiveLessonsListResponse = {
   nextCursor: string | null;
   success: boolean;
   error: string | null;
+};
+
+export type FetchAdminLiveLessonsParticipantsListResponse = {
+  data: LiveLessonRegistrationCardDTO[];
 };
 
 export type CreateLiveLessonResponse = {

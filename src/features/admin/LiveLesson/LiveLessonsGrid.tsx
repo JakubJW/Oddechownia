@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import z from 'zod';
 import { updateFormSchema } from './Form/schema';
 import UpdateDialog from './UpdateDialog';
+import ParticipantsDialog from './ParticipantsDialog';
 
 const fetchLiveLessons = async ({
   pageParam,
@@ -68,6 +69,9 @@ const update = async ({
 
 const LiveLessonsGrid = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [participantsDialogOpen, setParticipantsDialogOpen] = useState(false);
+  const [currentParticipantsLessonId, setCurrentParticipantsLessonId] =
+    useState<string | undefined>(undefined);
   const [currentLesson, setCurrentLesson] = useState<
     AdminLiveLessonRecordDTO | undefined
   >(undefined);
@@ -169,7 +173,16 @@ const LiveLessonsGrid = () => {
                     )}
                   </span>
                   <span>⏱️ {liveLesson.duration} min</span>
-                  <span>👥 {liveLesson.currentParticipants} zapisanych</span>
+                  <button
+                    type="button"
+                    className='hover:underline'
+                    onClick={() => {
+                      setCurrentParticipantsLessonId(liveLesson.id);
+                      setParticipantsDialogOpen(true);
+                    }}
+                  >
+                    👥 {liveLesson.currentParticipants} zapisanych
+                  </button>
                 </div>
                 {liveLesson.description && (
                   <p className="mt-2 text-sm text-muted-foreground">
@@ -191,6 +204,15 @@ const LiveLessonsGrid = () => {
           ))}
         </React.Fragment>
       ))}
+
+      {hasNextPage && (
+        <Button
+          disabled={isFetching}
+          onClick={() => fetchNextPage()}
+        >
+          {isFetching ? 'Ładowanie...' : 'Pokaż więcej'}
+        </Button>
+      )}
       {currentLesson && (
         <UpdateDialog
           mutation={mutation}
@@ -199,14 +221,13 @@ const LiveLessonsGrid = () => {
           setOpen={setEditDialogOpen}
         />
       )}
-      {hasNextPage && (
-        <Button
-          disabled={isFetching}
-          onClick={() => fetchNextPage()}
-        >
-          {isFetching ? 'Ładowanie...' : 'Pokaż więcej'}
-        </Button>
-      )}{' '}
+      {currentParticipantsLessonId && (
+        <ParticipantsDialog
+          lessonId={currentParticipantsLessonId}
+          open={participantsDialogOpen}
+          setOpen={setParticipantsDialogOpen}
+        />
+      )}
     </div>
   );
 };
