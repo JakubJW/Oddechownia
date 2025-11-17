@@ -19,6 +19,7 @@ import { PlaylistLessonSchema } from '../models/playlistLesson.models';
 import { VideoSchema } from '../models/video.models';
 import { FileSchema } from '../models/file.models';
 import { and, desc, eq, inArray, lt } from 'drizzle-orm';
+import { User } from '../actions/user';
 
 const transformLessonToDTO = (
   lessons: LessonBaseSchema[],
@@ -41,6 +42,7 @@ const transformLessonToDTO = (
 
 const transformLessonsToDetailDTO = (
   lessons: LessonDetailSchema[],
+  user: User,
   position: number
 ): LessonDetailDTO[] => {
   return lessons.map((lesson) => ({
@@ -50,7 +52,7 @@ const transformLessonsToDetailDTO = (
     slug: lesson.slug,
     position,
     isFavorite: lesson.userFavoriteLessons.some(
-      (favoriteLesson) => favoriteLesson.lessonId === lesson.id
+      (favoriteLesson) => favoriteLesson.lessonId === lesson.id && favoriteLesson.userId === user?.id
     ),
     thumbnail: supabaseService.getFileUrl(
       lesson.thumbnail.name,
