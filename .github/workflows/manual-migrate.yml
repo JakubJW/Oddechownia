@@ -26,6 +26,8 @@ jobs:
         run: ls -la ./drizzle || true
 
       - name: Run Drizzle migrations (Development)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           echo "Running drizzle-kit migrate against Development DATABASE_URL..."
           npx drizzle-kit migrate --config=drizzle-dev.config.ts
