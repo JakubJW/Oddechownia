@@ -17,10 +17,10 @@ jobs:
 
       - name: Trigger Vercel deploy via Deploy Hook
         env:
-          VERCEL_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          VERCEL_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
         run: |
           if [ -z "$VERCEL_HOOK" ]; then
-            echo "ERROR: VERCEL_DEPLOY_HOOK_URL secret not set."
+            echo "ERROR: VERCEL_DEPLOY_HOOK secret not set."
             exit 1
           fi
           echo "Posting to Vercel deploy hook..."
