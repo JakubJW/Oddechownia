@@ -39,16 +39,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function LessonVideo({
+export default async function PlaylistLessonPlayback({
   params,
 }: {
   params: Params<{ playlistSlug: string; lessonSlug: string }>;
 }) {
   const user = await getUser();
-
-  if (!user || (!user.hasActiveSubscription && user.role === 'user')) {
-    redirect('/');
-  }
 
   const { playlistSlug, lessonSlug } = await params;
   const playlist = await PlaylistsService.getPlaylist(user, {
@@ -57,6 +53,13 @@ export default async function LessonVideo({
 
   if (!playlist) {
     notFound();
+  }
+
+  if (
+    (!user && !playlist.isAccessibleForFree) ||
+    (user && !user.hasActiveSubscription && user.role === 'user')
+  ) {
+    redirect('/dolacz-do-nas');
   }
 
   const currentLesson = playlist.lessons.find(
@@ -80,10 +83,12 @@ export default async function LessonVideo({
             <hgroup className="space-y-4">
               <div className="flex gap-4 items-start justify-between">
                 <h1 className="font-bold text-2xl">{currentLesson.name}</h1>
-                <FavoritesButton
-                  lessonId={currentLesson.id}
-                  initialIsFavorite={currentLesson.isFavorite}
-                />
+                {user && (
+                  <FavoritesButton
+                    lessonId={currentLesson.id}
+                    initialIsFavorite={currentLesson.isFavorite}
+                  />
+                )}
               </div>
               <p className="text-gray-500">{currentLesson.description}</p>
             </hgroup>
@@ -91,6 +96,7 @@ export default async function LessonVideo({
           </div>
         </div>
         <CommentsSection
+          user={user}
           lessonId={currentLesson.id}
           className="col-span-12 md:col-span-8"
         />

@@ -1,16 +1,20 @@
 import { z } from 'zod';
 import { nonEmptyString } from '@/shared/formUtils';
 
+export type PlaylistFormValues = z.infer<typeof formSchema>;
+
 export const formSchema = z.object({
   name: z.string().pipe(nonEmptyString),
   description: z.string().pipe(nonEmptyString),
-  videoId: z.number().optional().nullable(),
+  videoId: z.number().optional(),
   isPublished: z.boolean(),
+  isAccessibleForFree: z.boolean(),
 });
 
-export const defaultValues = {
+export const defaultValues: PlaylistFormValues = {
   name: '',
   description: '',
   isPublished: false,
-  videoId: undefined
+  isAccessibleForFree: false,
+  videoId: undefined,
 };

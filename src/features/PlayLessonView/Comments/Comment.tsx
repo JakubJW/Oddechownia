@@ -20,6 +20,7 @@ import { EllipsisVertical } from 'lucide-react';
 import { ReplyForm } from './Form/ReplyForm';
 import { cn } from '@/lib/utils';
 import { CommentDetailDTO } from '@/server/models/comment.models';
+import { User } from '@/server/actions/user';
 
 const removeComment = async (commentId: number) => {
   const res = await fetch(`/api/comments/remove/${commentId}`, {
@@ -36,12 +37,13 @@ export const Comment = ({
   author,
   createdAt,
   updatedAt,
+  user,
   content,
   isAuthor,
   lessonId,
   replyCount,
   isAdmin,
-}: CommentDetailDTO) => {
+}: CommentDetailDTO & { user: User }) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [showReplies, setShowReplies] = useState<boolean>(false);
   const [replyMode, setReplyMode] = useState<boolean>(false);
@@ -115,12 +117,14 @@ export const Comment = ({
           </span>
           <p>{content}</p>
           <div className="space-x-2">
-            <button
-              className="text-sm inline-flex gap-1 items-center"
-              onClick={() => setReplyMode(true)}
-            >
-              Odpowiedz
-            </button>
+            {user && (
+              <button
+                className="text-sm inline-flex gap-1 items-center"
+                onClick={() => setReplyMode(true)}
+              >
+                Odpowiedz
+              </button>
+            )}
             {replyCount > 0 && !repliesData && (
               <button
                 disabled={isFetching}
@@ -189,6 +193,7 @@ export const Comment = ({
                     parentId={parentId}
                     key={id}
                     id={id}
+                    user={user}
                     author={author}
                     content={content}
                     createdAt={createdAt}

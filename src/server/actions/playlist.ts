@@ -12,20 +12,11 @@ import {
   PlaylistFilters,
 } from '@/server/services/filters.service';
 import { supabaseService } from '@/server/services/supabase.service';
+import { PlaylistFormValues } from '@/features/admin/Playlist/Form/schema';
 
-interface ICreatePlaylist {
-  name: string;
-  description: string;
-  isPublished: boolean;
-  videoId?: number | null;
-}
-
-export const createPlaylist = async ({
-  name,
-  description,
-  isPublished,
-  videoId,
-}: ICreatePlaylist): Promise<ActionResult<BasePlaylist>> => {
+export const createPlaylist = async (
+  values: PlaylistFormValues
+): Promise<ActionResult<BasePlaylist>> => {
   try {
     const [lastPlaylist] = await db
       .select()
@@ -36,12 +27,9 @@ export const createPlaylist = async ({
     const [playlist] = await db
       .insert(playlists)
       .values({
-        name,
-        description,
-        isPublished,
-        slug: createSlug(name),
+        ...values,
+        slug: createSlug(values.name),
         position: lastPlaylist ? lastPlaylist.position * 2 : 1024,
-        videoId,
       })
       .returning();
 
@@ -59,13 +47,13 @@ export const createPlaylist = async ({
 
 export const updatePlaylist = async (
   slug: string,
-  payload: ICreatePlaylist
+  values: PlaylistFormValues
 ): Promise<ActionResult<BasePlaylist>> => {
   try {
     const [data] = await db
       .update(playlists)
       .set({
-        ...payload,
+        ...values,
       })
       .where(eq(playlists.slug, slug))
       .returning();

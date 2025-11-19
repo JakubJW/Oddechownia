@@ -21,8 +21,7 @@ import MuxUploader from '@mux/mux-uploader-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { defaultValues, formSchema } from './schema';
+import { defaultValues, formSchema, PlaylistFormValues } from './schema';
 import { AdminPlaylistDTO } from '@/server/models/playlist.models';
 
 export default function PlaylistForm({
@@ -32,20 +31,14 @@ export default function PlaylistForm({
 }) {
   const router = useRouter();
   const [isUploaded, setIsUploaded] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<PlaylistFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: playlist
-      ? {
-          name: playlist.name,
-          description: playlist.description,
-          isPublished: playlist.isPublished,
-        }
-      : defaultValues,
+    defaultValues: playlist ? { ...playlist } : defaultValues,
     mode: 'all',
   });
 
   const handleFormSubmissionAction = useCallback(
-    async (values: z.infer<typeof formSchema>) => {
+    async (values: PlaylistFormValues) => {
       if (playlist) {
         return updatePlaylist(playlist.slug, values);
       }
@@ -180,6 +173,34 @@ export default function PlaylistForm({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="isAccessibleForFree"
+          render={({ field }) => (
+            <FormItem>
+              <FormItem>
+                <FormControl>
+                  <div className="flex gap-4">
+                    <Checkbox
+                      id="accessible-for-free"
+                      checked={field.value}
+                      onCheckedChange={(checked: boolean) =>
+                        field.onChange(checked)
+                      }
+                    />
+                    <label
+                      htmlFor="accessible-for-free"
+                      className="text-sm font-medium leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Dostępna za darmo
+                    </label>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormItem>
+          )}
+        />
         {form.formState.errors.root?.serverError && (
           <p className="text-sm font-medium text-destructive">
             {form.formState.errors.root?.serverError.message}
@@ -192,8 +213,8 @@ export default function PlaylistForm({
           {isLoading
             ? 'Ładowanie...'
             : playlist
-            ? 'Zapisz zmiany'
-            : 'Utwórz playlistę'}
+              ? 'Zapisz zmiany'
+              : 'Utwórz playlistę'}
         </Button>
       </form>
     </Form>

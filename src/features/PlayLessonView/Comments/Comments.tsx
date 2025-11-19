@@ -5,12 +5,14 @@ import { Comment } from '@/features/PlayLessonView/Comments/Comment';
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
 import { FetchCommentsResponse } from '@/server/models/comment.models';
+import { User } from '@/server/actions/user';
 
 interface CommentsProps {
   lessonId: number;
+  user: User
 }
 
-export const Comments = ({ lessonId }: CommentsProps) => {
+export const Comments = ({ lessonId, user }: CommentsProps) => {
   const fetchComments = async ({ pageParam }: { pageParam: string | null }) => {
     const res = await fetch(`/api/comments/${lessonId}?cursor=${pageParam}`);
 
@@ -81,6 +83,7 @@ export const Comments = ({ lessonId }: CommentsProps) => {
                 className="bg-white p-4 rounded-md border "
               >
                 <Comment
+                user={user}
                   isAdmin={isAdmin}
                   id={id}
                   author={author}

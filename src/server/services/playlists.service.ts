@@ -42,6 +42,7 @@ const transformToPlaylistDetailDto = (
     id: playlist.id,
     name: playlist.name,
     description: playlist.description,
+    isAccessibleForFree: playlist.isAccessibleForFree,
     position: playlist.position,
     slug: playlist.slug,
     video: transformVideoToDto(playlist.video),
@@ -78,7 +79,7 @@ const getPlaylistsListForUser = async (filters?: PlaylistFilters) => {
 
 const transformSelectPlaylistToDTO = (
   playlist: SelectPlaylistResult,
-  user: User,
+  user: User
 ): PlaylistDetailDTO<LessonDetailDTO[]> | undefined => {
   if (!playlist) return undefined;
 
@@ -92,6 +93,7 @@ const transformSelectPlaylistToDTO = (
       LessonsService.transformLessonsToDetailDTO([lesson], user, position)
     ),
     video: transformVideoToDto(playlist.video),
+    isAccessibleForFree: playlist.isAccessibleForFree,
   };
 };
 
@@ -185,6 +187,7 @@ const transformToAdminEditPlaylistDTO = (
       name: playlist.name,
       description: playlist.description,
       isPublished: playlist.isPublished,
+      isAccessibleForFree: playlist.isAccessibleForFree,
     },
     lessons: LessonsService.transformPlaylistLessonsToAdminEditPlaylistDTO(
       playlist.playlistLessons
