@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   trigger-vercel:
-    environment: Delevopment
+    environment: Development
     runs-on: ubuntu-latest
     steps:
       - name: Show run info
