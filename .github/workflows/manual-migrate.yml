@@ -1,0 +1,32 @@
+name: "Manual: Drizzle migrate (dev)"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manual-migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Show committed migrations (for logs)
+        run: ls -la ./drizzle || true
+
+      - name: Run Drizzle migrations (DEV)
+        env:
+          DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
+        run: |
+          echo "Running drizzle-kit migrate against STAGING_DATABASE_URL..."
+          npx drizzle-kit migrate --connection "$DATABASE_URL" --dialect postgresql
