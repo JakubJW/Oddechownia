@@ -8,10 +8,6 @@ on:
         description: 'Branch to deploy (default: dev)'
         required: true
         default: 'dev'
-      run_build:
-        description: 'Run npm build before deploying? (true|false)'
-        required: true
-        default: 'false'
   push:
     branches:
       - dev
@@ -41,10 +37,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: (Optional) Run build (set run_build=true in manual run)
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' || github.event_name == 'workflow_dispatch' && (github.event.inputs.run_build == 'true' || github.event.inputs.run_build == 'True') }}
-        run: npm run build
 
       - name: Install Vercel CLI
         run: npm install -g vercel@28
