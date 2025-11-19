@@ -1,32 +1,62 @@
-name: "Manual: Trigger Vercel Deploy"
+name: "Manual: Deploy to Vercel (Development)"
 
+# Run manually or automatically on pushes to dev
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy (default: dev)'
+        required: true
+        default: 'dev'
+      run_build:
+        description: 'Run npm build before deploying? (true|false)'
+        required: true
+        default: 'false'
+  push:
+    branches:
+      - dev
 
 permissions:
   contents: read
 
 jobs:
-  trigger-vercel:
+  deploy-dev:
     environment: Development
     runs-on: ubuntu-latest
     steps:
-      - name: Show run info
-        run: |
-          echo "Manual Vercel deploy test"
-          echo "Triggered by: ${{ github.actor }} / ${{ github.sha }}"
+      - name: Checkout (push)
+        if: github.event_name == 'push'
+        uses: actions/checkout@v4
 
-      - name: Trigger Vercel deploy via Deploy Hook
+      - name: Checkout (manual)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: (Optional) Run build (set run_build=true in manual run)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' || github.event_name == 'workflow_dispatch' && (github.event.inputs.run_build == 'true' || github.event.inputs.run_build == 'True') }}
+        run: npm run build
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@28
+
+      - name: Deploy to Vercel (preview)
         env:
-          VERCEL_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          if [ -z "$VERCEL_HOOK" ]; then
-            echo "ERROR: VERCEL_DEPLOY_HOOK secret not set."
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "ERROR: VERCEL_TOKEN secret is not set in repo secrets."
             exit 1
           fi
-          echo "Posting to Vercel deploy hook..."
-          # include commit/meta to help debugging in Vercel logs if desired
-          payload="{\"ref\":\"${GITHUB_REF:-'manual'}\",\"commit\":\"${GITHUB_SHA:-'manual'}\",\"actor\":\"${GITHUB_ACTOR}\"}"
-          curl -sS -X POST "$VERCEL_HOOK" -H "Content-Type: application/json" -d "$payload" \
-            || (echo "Deploy hook POST failed" && exit 1)
-          echo "Deploy hook POSTed. Check Vercel dashboard for the new deployment."
+          echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)"
+          # No --prod -> preview deployment of the currently checked-out branch
+          vercel --token "$VERCEL_TOKEN" --confirm
