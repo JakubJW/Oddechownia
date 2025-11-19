@@ -1,1 +1,0 @@
-ALTER TABLE "lessons" ADD COLUMN "attachment_url" varchar;
