@@ -36,4 +36,4 @@ jobs:
           fi
           echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)"
           # No --prod -> preview deployment of the currently checked-out branch
-          vercel --token "$VERCEL_TOKEN" --target=preview
+          vercel --token "$VERCEL_TOKEN" --yes --target=preview
