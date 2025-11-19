@@ -1,17 +1,14 @@
-name: "Manual: Deploy to Vercel (Development)"
+name: "Manual: Deploy to dev Vercel"
 
 # Run manually or automatically on pushes to dev
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - dev
 
 permissions:
   contents: read
 
 jobs:
-  deploy-dev:
+  vercel-deploy:
     environment: Development
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +23,7 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel
 
-      - name: Deploy to Vercel (preview)
+      - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
@@ -34,6 +31,5 @@ jobs:
             echo "ERROR: VERCEL_TOKEN secret is not set in repo secrets."
             exit 1
           fi
-          echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)"
-          # No --prod -> preview deployment of the currently checked-out branch
+          echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)..."
           vercel --token "$VERCEL_TOKEN" --yes --target=preview
