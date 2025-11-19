@@ -1,2 +1,0 @@
-ALTER TABLE "playlist_lesson" DROP CONSTRAINT "playlist_lesson_lesson_id_unique";--> statement-breakpoint
-ALTER TABLE "playlist_lesson" ADD CONSTRAINT "unique_playlist_lesson_constraint" UNIQUE("playlist_id","lesson_id");
