@@ -25,9 +25,7 @@ jobs:
       - name: Show committed migrations (for logs)
         run: ls -la ./drizzle || true
 
-      - name: Run Drizzle migrations (DEV)
-        env:
-          DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
+      - name: Run Drizzle migrations (Development)
         run: |
-          echo "Running drizzle-kit migrate against STAGING_DATABASE_URL..."
-          npx drizzle-kit migrate --connection "$DATABASE_URL" --dialect postgresql
+          echo "Running drizzle-kit migrate against Development DATABASE_URL..."
+          npx drizzle-kit migrate --config=drizzle-dev.config.ts
