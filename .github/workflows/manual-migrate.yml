@@ -8,6 +8,7 @@ permissions:
 
 jobs:
   manual-migrate:
+    environment: Development
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
