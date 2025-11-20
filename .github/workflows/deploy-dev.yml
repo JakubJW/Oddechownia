@@ -22,15 +22,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Drizzle CLI
+      - name: Install Drizzle CLI (lightweight)
         run: |
           DRIZZLE_VERSION=$(node -p "require('./package.json').devDependencies['drizzle-kit']")
-          echo "Installing Drizzle CLI $DRIZZLE_VERSION"
-          mkdir -p tools
-          npm install --prefix ./tools drizzle-kit@$DRIZZLE_VERSION
-
-      - name: Show committed migrations
-        run: ls -la ./drizzle || true
+          echo "Installing Drizzle CLI $DRIZZLE_VERSION into ./tools"
+          npm install --prefix ./tools drizzle-kit@"$DRIZZLE_VERSION" --no-audit --no-fund
 
       - name: Run Drizzle migrations
         env:
@@ -41,7 +37,7 @@ jobs:
             exit 1
           fi
           echo "Running migrations..."
-          ./tools/node_modules/.bin/drizzle-kit migrate --config=drizzle-dev.config.ts
+          npx --prefix ./tools drizzle-kit migrate --config ./drizzle-dev.config.ts
 
       - name: Install Vercel CLI
         run: npm install -g vercel
