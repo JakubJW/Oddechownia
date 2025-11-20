@@ -1,0 +1,33 @@
+name: "Manual: Drizzle migrate (dev)"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manual-migrate:
+    environment: Development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Show committed migrations (for logs)
+        run: ls -la ./drizzle || true
+
+      - name: Run Drizzle migrations (Development)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Running drizzle-kit migrate against Development DATABASE_URL..."
+          npx drizzle-kit migrate --config=drizzle-dev.config.ts

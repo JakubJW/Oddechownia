@@ -1,0 +1,51 @@
+name: "Deploy dev"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      dev
+      
+permissions:
+  contents: read
+
+jobs:
+  deploy-dev:
+    environment: Development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Drizzle migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "ERROR: DATABASE_URL secret is not set in repo secrets."
+            exit 1
+          fi
+          echo "Running migrations..."
+          npx drizzle-kit migrate --config ./drizzle-dev.config.ts
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      
+      - name: Deploy to Vercel (preview)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "ERROR: VERCEL_TOKEN secret is not set in repo secrets."
+            exit 1
+          fi
+          echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)..."
+          vercel --token "$VERCEL_TOKEN" --yes --target=preview
