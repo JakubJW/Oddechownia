@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  apply-migrations:
+  deploy-dev:
     environment: Development
     runs-on: ubuntu-latest
     steps:
@@ -21,6 +21,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Install Drizzle CLI
+        run: |
+          DRIZZLE_VERSION=$(node -p "require('./package.json').devDependencies['drizzle-kit']")
+          echo "Installing Drizzle CLI $DRIZZLE_VERSION"
+          mkdir -p tools
+          npm install --prefix ./tools drizzle-kit@$DRIZZLE_VERSION
 
       - name: Show committed migrations
         run: ls -la ./drizzle || true
@@ -34,23 +41,11 @@ jobs:
             exit 1
           fi
           echo "Running migrations..."
-          npx drizzle-kit migrate --config=drizzle-dev.config.ts
-
-  vercel-deploy:
-    environment: Development
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          ./tools/node_modules/.bin/drizzle-kit migrate --config=drizzle-dev.config.ts
 
       - name: Install Vercel CLI
         run: npm install -g vercel
-
+      
       - name: Deploy to Vercel (preview)
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
