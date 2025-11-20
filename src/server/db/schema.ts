@@ -92,6 +92,9 @@ export const playlists = pgTable('playlists', {
   videoId: integer('video_id').references(() => videos.id, {
     onDelete: 'set null',
   }),
+  isAccessibleForFree: boolean('is_accessible_for_free')
+    .notNull()
+    .default(false),
 });
 
 export const playlistLesson = pgTable(

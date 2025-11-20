@@ -255,8 +255,8 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
                 {isLoading
                   ? 'Ładowanie...'
                   : lesson
-                  ? 'Zapisz zmiany'
-                  : 'Utwórz lekcję'}
+                    ? 'Zapisz zmiany'
+                    : 'Utwórz lekcję'}
               </Button>
               {lesson && (
                 <Button

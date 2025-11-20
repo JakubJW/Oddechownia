@@ -11,7 +11,7 @@ export async function POST() {
       from: 'Acme <onboarding@resend.dev>',
       to: ['jakub.2115.wysocki@gmail.com'],
       subject: 'Hello world',
-      react: EmailTemplate({ firstName: 'John' }),
+      react: EmailTemplate({ firstName: 'Jakub' }),
     });
 
     if (error) {

@@ -52,7 +52,9 @@ const transformLessonsToDetailDTO = (
     slug: lesson.slug,
     position,
     isFavorite: lesson.userFavoriteLessons.some(
-      (favoriteLesson) => favoriteLesson.lessonId === lesson.id && favoriteLesson.userId === user?.id
+      (favoriteLesson) =>
+        favoriteLesson.lessonId === lesson.id &&
+        favoriteLesson.userId === user?.id
     ),
     thumbnail: supabaseService.getFileUrl(
       lesson.thumbnail.name,
@@ -85,6 +87,7 @@ const transformAdminLessonListToDTO = (
       name: playlist.name,
       description: playlist.description,
       slug: playlist.slug,
+      isAccessibleForFree: playlist.isAccessibleForFree,
     })),
   }));
 };
@@ -253,7 +256,9 @@ const transformToFavoriteLessonsDTO = (lessons: SelectUserFavoriteLessons) => {
       lesson.thumbnail.path
     ).data,
     addedAt: lesson.userFavoriteLessons.map((lesson) => lesson.createdAt)[0],
-    playlists: lesson.playlistLessons.map((lessonPlaylist) => ({ ...lessonPlaylist.playlist }))
+    playlists: lesson.playlistLessons.map((lessonPlaylist) => ({
+      ...lessonPlaylist.playlist,
+    })),
   }));
 };
 
