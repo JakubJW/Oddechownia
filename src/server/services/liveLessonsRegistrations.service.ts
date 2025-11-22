@@ -59,52 +59,6 @@ const create = async (
   );
 };
 
-const finishUserAbandonedPaidRegistration = async (
-  id: string,
-  values: LiveLessonSignUpValues,
-  stripePriceId: string,
-  user: User
-) => {
-  if (!user) {
-    throw new AuthenticationError(
-      'Free live lesson registration (user not logged in).',
-      'Aby móc dokończyć płaność, musisz być zalogowany.'
-    );
-  }
-
-  const unpaidAttempt = await db.query.liveLessonsRegistrations.findFirst({
-    columns: {
-      id: true,
-    },
-    where: and(
-      eq(liveLessonsRegistrations.lessonId, id),
-      eq(liveLessonsRegistrations.userId, user.id!),
-      eq(liveLessonsRegistrations.paymentStatus, 'unpaid'),
-      eq(liveLessonsRegistrations.accessMethod, 'paid_one_time')
-    ),
-  });
-
-  if (unpaidAttempt) {
-    const session = await stripeService.createCheckoutSession({
-      mode: 'payment',
-      line_items: [
-        {
-          price: stripePriceId,
-          quantity: 1,
-        },
-      ],
-      success_url: `${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo/sukces/{CHECKOUT_SESSION_ID}`,
-      cancel_url: `${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo`,
-      ...customerDetails,
-      metadata: {
-        registrationId: id,
-      },
-    });
-
-    return { sessionUrl: session.url };
-  }
-};
-
 const getEntitlementUsage = async (user: User, cycleStart: string) => {
   if (!user) return 2;
 
