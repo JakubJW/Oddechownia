@@ -208,7 +208,7 @@ export default function PlaylistForm({
         )}
         <Button
           type="submit"
-          disabled={isLoading || (!playlist && !isUploaded)}
+          disabled={isLoading}
         >
           {isLoading
             ? 'Ładowanie...'

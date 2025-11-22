@@ -16,12 +16,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { defaultValues, formSchema } from './schema';
+import { redirect } from 'next/navigation';
 
-export default function RegisterForm({
-  priceId,
-}: {
-  priceId?: string;
-}) {
+export default function RegisterForm({ priceId }: { priceId?: string }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues,
@@ -47,7 +44,11 @@ export default function RegisterForm({
 
     const { data } = await signup(formData, priceId);
 
-    window.location.href = data;
+    if (data?.url) {
+      window.location.href = data.url;
+    } else {
+      redirect('/moje-konto');
+    }
   };
 
   return (

@@ -59,7 +59,6 @@ export type LiveLessonCardDTO = {
   description?: string;
   isRegistered: boolean;
   isPaymentPending: boolean;
-  registrationId?: string;
 } & Eligibility;
 
 export type Eligibility =

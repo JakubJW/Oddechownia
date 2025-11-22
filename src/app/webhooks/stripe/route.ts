@@ -2,6 +2,7 @@
 
 import { db } from '@/server/db';
 import { users } from '@/server/db/schema';
+import { AuthService } from '@/server/services/auth.service';
 import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { stripeService } from '@/server/services/stripe.service';
 import { buffer } from '@/utils/requestBodyBufer';
@@ -41,54 +42,18 @@ export async function POST(req: Request) {
             { status: 200 }
           );
         } catch (error) {
-          return NextResponse.json(
-            { message: 'Bad request' },
-            { status: 400 }
-          );
+          return NextResponse.json({ message: 'Bad request' }, { status: 400 });
         }
       }
 
-      const { subscription: subscriptionId, client_reference_id } =
-        event.data.object;
-
-      if (!subscriptionId) {
-        console.error(
-          'Missing subscription field in webhook session.checkout.completed event handler'
-        );
-        return NextResponse.json(
-          {
-            message:
-              'Missing subscription field in webhook session.checkout.completed event handler',
-          },
-          { status: 400 }
-        );
+      if (mode === 'subscription') {
+        try {
+          await AuthService.fulfillSubscriptionPurchase(id);
+          return NextResponse.json({ message: 'Success' }, { status: 200 });
+        } catch (error) {
+          return NextResponse.json({ message: 'Bad request' }, { status: 400 });
+        }
       }
-
-      if (!client_reference_id) {
-        console.error(
-          'Missing client_reference_id field in webhook session.checkout.completed event handler'
-        );
-        return NextResponse.json(
-          {
-            message:
-              'Missing metadata field in webhook session.checkout.completed event handler',
-          },
-          { status: 400 }
-        );
-      }
-
-      const subscription = await stripeService.retrieveSubscription(
-        subscriptionId as string
-      );
-
-      await db
-        .update(users)
-        .set({
-          subscriptionStatus: subscription.status,
-        })
-        .where(eq(users.id, client_reference_id));
-
-      return NextResponse.json({ message: 'Success' }, { status: 200 });
     }
 
     case 'customer.subscription.created':

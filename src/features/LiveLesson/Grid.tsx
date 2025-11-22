@@ -79,12 +79,8 @@ export const Grid = ({ lessons, user }: GridProps) => {
         <Card key={lesson.id}>
           <CardHeader>
             <CardTitle>{lesson.title}</CardTitle>
-            <div className="flex flex-col gap-1 items-end">
-              {lesson.isRegistered && (
-                <Badge className="bg-primary/20 text-primary hover:bg-primary/30">
-                  Zapisano
-                </Badge>
-              )}
+            <div className="flex gap-1">
+              {lesson.isRegistered && <Badge>Zapisano</Badge>}
               {lesson.isPaymentPending && (
                 <Badge variant="outline">Płatność oczekująca</Badge>
               )}
@@ -98,7 +94,7 @@ export const Grid = ({ lessons, user }: GridProps) => {
                   {new Date(lesson.scheduledAt).toLocaleDateString('pl-PL', {
                     month: 'long',
                     day: 'numeric',
-                    year: 'numeric'
+                    year: 'numeric',
                   })}
                 </span>
               </div>
@@ -130,8 +126,7 @@ export const Grid = ({ lessons, user }: GridProps) => {
             </Button>
           </CardContent>
         </Card>
-      )
-      )}
+      ))}
       {currentLesson && (
         <SignUpDialog
           mutation={mutation}

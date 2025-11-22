@@ -15,6 +15,27 @@
       "when": 1763598410827,
       "tag": "0001_sweet_kingpin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763823781404,
+      "tag": "0002_shiny_aqueduct",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763825606787,
+      "tag": "0003_peaceful_aqueduct",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763841642444,
+      "tag": "0004_optimal_smasher",
+      "breakpoints": true
     }
   ]
 }

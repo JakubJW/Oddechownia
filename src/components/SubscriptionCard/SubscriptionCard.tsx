@@ -49,7 +49,7 @@ export function SubscriptionCard({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceId,
-          customerEmail: user.email,
+          customerId: user.stripeCustomerId,
           clientReferenceId: user.id,
         }),
       });

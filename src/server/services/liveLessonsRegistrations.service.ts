@@ -1,5 +1,5 @@
-import { and, desc, eq, gte, sql } from 'drizzle-orm';
-import { liveLessons, liveLessonsRegistrations } from '@/server/db/schema';
+import { and, desc, eq, gte, or } from 'drizzle-orm';
+import { liveLessonsRegistrations } from '@/server/db/schema';
 import { db } from '@/server/db';
 import { LiveLessonSignUpValues } from '@/features/LiveLesson/Form/schema';
 import { BillingService } from './billing.service';
@@ -14,6 +14,13 @@ import {
   ConflictError,
 } from '../lib/errors';
 import { LiveLessonRegistrationCardDTO } from '../models/liveLessonRegistration.models';
+import { EmailService } from './emails.service';
+
+export type PurchaseConfirmationDTO = {
+  registrationId: string;
+  lessonTitle: string;
+  scheduledAt: string;
+};
 
 const log = logger.child({ module: 'live-lessons-registrations' });
 
@@ -50,6 +57,52 @@ const create = async (
     user,
     billingPeriodStart
   );
+};
+
+const finishUserAbandonedPaidRegistration = async (
+  id: string,
+  values: LiveLessonSignUpValues,
+  stripePriceId: string,
+  user: User
+) => {
+  if (!user) {
+    throw new AuthenticationError(
+      'Free live lesson registration (user not logged in).',
+      'Aby móc dokończyć płaność, musisz być zalogowany.'
+    );
+  }
+
+  const unpaidAttempt = await db.query.liveLessonsRegistrations.findFirst({
+    columns: {
+      id: true,
+    },
+    where: and(
+      eq(liveLessonsRegistrations.lessonId, id),
+      eq(liveLessonsRegistrations.userId, user.id!),
+      eq(liveLessonsRegistrations.paymentStatus, 'unpaid'),
+      eq(liveLessonsRegistrations.accessMethod, 'paid_one_time')
+    ),
+  });
+
+  if (unpaidAttempt) {
+    const session = await stripeService.createCheckoutSession({
+      mode: 'payment',
+      line_items: [
+        {
+          price: stripePriceId,
+          quantity: 1,
+        },
+      ],
+      success_url: `${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo/sukces/{CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo`,
+      ...customerDetails,
+      metadata: {
+        registrationId: id,
+      },
+    });
+
+    return { sessionUrl: session.url };
+  }
 };
 
 const getEntitlementUsage = async (user: User, cycleStart: string) => {
@@ -113,40 +166,24 @@ const handlePaidRegistration = async (
   stripePriceId: string,
   user: User
 ) => {
-  const customerDetails = buildCustomerData(user, values);
-
-  if (user) {
-    const unpaidAttempt = await db.query.liveLessonsRegistrations.findFirst({
-      columns: {
-        id: true,
-      },
+  const existingRegistration =
+    await db.query.liveLessonsRegistrations.findFirst({
       where: and(
         eq(liveLessonsRegistrations.lessonId, id),
-        eq(liveLessonsRegistrations.userId, user.id),
-        eq(liveLessonsRegistrations.paymentStatus, 'unpaid')
+        eq(liveLessonsRegistrations.accessMethod, 'paid_one_time'),
+        eq(liveLessonsRegistrations.paymentStatus, 'paid'),
+        or(eq(liveLessonsRegistrations.email, values.email))
       ),
     });
 
-    if (unpaidAttempt) {
-      const session = await stripeService.createCheckoutSession({
-        mode: 'payment',
-        line_items: [
-          {
-            price: stripePriceId,
-            quantity: 1,
-          },
-        ],
-        success_url: `${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo/sukces/{CHECKOUT_SESSION_ID}`,
-        cancel_url: `${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo`,
-        ...customerDetails,
-        metadata: {
-          registrationId: id,
-        },
-      });
-
-      return { sessionUrl: session.url };
-    }
+  if (existingRegistration) {
+    throw new ConflictError(
+      'Free live lesson registration (found existing registration).',
+      'Jesteś już zapisany na te zajęcia.'
+    );
   }
+
+  const customerDetails = buildCustomerData(user, values);
 
   const [registration] = await db
     .insert(liveLessonsRegistrations)
@@ -211,8 +248,8 @@ const handleFreeRegistration = async (
     await db.query.liveLessonsRegistrations.findFirst({
       where: and(
         eq(liveLessonsRegistrations.lessonId, id),
-        eq(liveLessonsRegistrations.userId, user.id),
-        eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement')
+        eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement'),
+        or(eq(liveLessonsRegistrations.userId, user.id))
       ),
     });
 
@@ -232,72 +269,56 @@ const handleFreeRegistration = async (
     billingPeriodStart,
   });
 
-  await db
-    .update(liveLessons)
-    .set({ currentParticipants: sql`${liveLessons.currentParticipants} + 1` })
-    .where(eq(liveLessons.id, id));
-
   return;
 };
 
-const fullfillLiveLessonPurchase = async (sessionId: string) => {
-  try {
-    const session = await stripeService.retrieveSession(sessionId);
+const fullfillLiveLessonPurchase = async (
+  sessionId: string
+): Promise<PurchaseConfirmationDTO> => {
+  const session = await stripeService.retrieveSession(sessionId);
 
-    if (!session.metadata || !session.metadata.registrationId) {
-      throw new Error(
-        'Podczas procesowania płatności wystąpił błąd. Skontaktuj się z administratorem systemu.'
+  if (session.payment_status !== 'paid') {
+    throw new Error('Payment not completed.');
+  }
+
+  const registrationId = session.metadata?.registrationId;
+  if (!registrationId) throw new Error('Missing registration ID metadata.');
+
+  const existing = await db.query.liveLessonsRegistrations.findFirst({
+    where: eq(liveLessonsRegistrations.id, registrationId),
+    with: { lesson: true },
+  });
+
+  if (!existing) throw new Error('Registration record not found.');
+
+  if (existing.paymentStatus !== 'paid') {
+    await db
+      .update(liveLessonsRegistrations)
+      .set({ paymentStatus: 'paid', checkoutSessionId: sessionId })
+      .where(eq(liveLessonsRegistrations.id, registrationId));
+
+    if (!existing.userId) {
+      await EmailService.sendLiveLessonRegistrationConfirmaion(
+        existing.email,
+        existing.name.split(' ')[0],
+        existing.lesson.title,
+        existing.lesson.scheduledAt
+      );
+
+      await EmailService.scheduleLiveLessonRemind(
+        existing.email,
+        existing.name.split(' ')[0],
+        existing.lesson.title,
+        existing.lesson.scheduledAt
       );
     }
-
-    if (session.payment_status === 'paid') {
-      await db
-        .update(liveLessonsRegistrations)
-        .set({
-          paymentStatus: session.payment_status,
-        })
-        .where(
-          eq(liveLessonsRegistrations.id, session.metadata.registrationId)
-        );
-
-      const registration = await db.query.liveLessonsRegistrations.findFirst({
-        columns: { id: true },
-        where: eq(liveLessonsRegistrations.id, session.metadata.registrationId),
-        with: {
-          lesson: {
-            columns: { id: true },
-          },
-        },
-      });
-
-      if (!registration) {
-        throw new AppError(
-          "There's no registration associated with registrationId in session's metadata field.",
-          500,
-          'Przepraszamy, podczas zapisu na lekcję wystąpił niespodziewany błąd. Skontaktuj się z administratorem systemu.'
-        );
-      }
-
-      await db
-        .update(liveLessons)
-        .set({
-          currentParticipants: sql`${liveLessons.currentParticipants} + 1`,
-        })
-        .where(eq(liveLessons.id, registration.lesson.id));
-    }
-
-    log.debug('Live lesson purchase processing completed.');
-
-    return session.metadata.registrationId;
-  } catch (error) {
-    log.error(error);
-
-    throw new AppError(
-      'An unknown error occured during paid registration fullfillment.',
-      500,
-      'Przepraszamy, podczas zapisu na lekcję wystąpił niespodziewany błąd. Skontaktuj się z administratorem systemu.'
-    );
   }
+
+  return {
+    registrationId: existing.id,
+    lessonTitle: existing.lesson.title,
+    scheduledAt: existing.lesson.scheduledAt,
+  };
 };
 
 const getLessonRegistrations = async (

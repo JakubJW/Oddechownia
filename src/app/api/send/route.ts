@@ -1,13 +1,10 @@
 import { EmailTemplate } from '@/components/emails/EmailTemplate';
-import { Resend } from 'resend';
-import { env } from '@/env';
-import { NextRequest, NextResponse } from 'next/server';
-
-const resend = new Resend(env.NEXT_RESEND_API_KEY);
+import { EmailService } from '@/server/services/emails.service';
+import { NextResponse } from 'next/server';
 
 export async function POST() {
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await EmailService.send({
       from: 'Acme <onboarding@resend.dev>',
       to: ['jakub.2115.wysocki@gmail.com'],
       subject: 'Hello world',

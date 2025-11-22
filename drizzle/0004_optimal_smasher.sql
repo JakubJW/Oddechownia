@@ -1,0 +1,1 @@
+ALTER TABLE "live_lessons_registrations" DROP CONSTRAINT "unique_live_lesson_registration_constraint";

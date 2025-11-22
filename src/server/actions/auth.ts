@@ -140,21 +140,24 @@ export async function signup(formData: FormData, priceId?: string) {
   });
 
   if (priceId) {
-    const res = await fetch(
-      `${env.NEXT_PUBLIC_APP_URL}/api/checkout/subscription`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId,
-          customerId: customer.id,
-        }),
-      }
-    );
+    const session = await stripeService.createCheckoutSession({
+      mode: 'subscription',
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      customer: customer.id,
+      success_url: `${env.NEXT_PUBLIC_APP_URL}/rejestracja/{CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,
+      client_reference_id: user.id,
+      subscription_data: {
+        metadata: { userId: user.id },
+      },
+    });
 
-    const { url } = await res.json();
-
-    return { data: url, error: null };
+    return { data: { url: session.url }, error: null };
   }
 
   if (error) {

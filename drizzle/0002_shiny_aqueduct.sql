@@ -1,0 +1,1 @@
+ALTER TABLE "live_lessons" DROP COLUMN "current_participants";

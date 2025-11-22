@@ -1,5 +1,8 @@
-import { createformSchema } from '@/features/admin/LiveLesson/Form/schema';
-import { and, asc, desc, eq, gt, gte, lt } from 'drizzle-orm';
+import {
+  createformSchema,
+  updateFormSchema,
+} from '@/features/admin/LiveLesson/Form/schema';
+import { and, asc, eq, gt, or } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
 import { liveLessons, liveLessonsRegistrations } from '../db/schema';
@@ -11,7 +14,19 @@ import {
 } from '../models/liveLesson.models';
 import { LiveLessonsRegistrationsService } from './liveLessonsRegistrations.service';
 import { User } from '../actions/user';
-import { AuthenticationError } from '../lib/errors';
+import { AuthenticationError, NotFoundError } from '../lib/errors';
+import { EmailService, templates } from './emails.service';
+import { CreateBatchOptions } from 'resend';
+
+function normalizeInput<T extends Record<string, unknown>>(input: T): T {
+  const normalized = { ...input };
+  for (const key in normalized) {
+    if (normalized[key] === undefined) {
+      (normalized as Record<string, unknown>)[key] = null;
+    }
+  }
+  return normalized;
+}
 
 const log = logger.child({ module: 'live-lessons' });
 
@@ -21,13 +36,39 @@ const create = async (values: z.infer<typeof createformSchema>) => {
   });
 };
 
-const update = async (id: string, values: z.infer<typeof createformSchema>) => {
-  await db
+const update = async (id: string, values: z.infer<typeof updateFormSchema>) => {
+  const currentLesson = await db.query.liveLessons.findFirst({
+    columns: { recordingUrl: true },
+    where: eq(liveLessons.id, id),
+  });
+
+  if (!currentLesson) {
+    throw new NotFoundError('Live lesson');
+  }
+
+  const cleanValues = normalizeInput(values);
+
+  const [updatedLesson] = await db
     .update(liveLessons)
-    .set({
-      ...values,
-    })
-    .where(eq(liveLessons.id, id));
+    .set({ ...values })
+    .where(eq(liveLessons.id, id))
+    .returning();
+
+  const recordingChanged =
+    cleanValues.recordingUrl !== currentLesson.recordingUrl;
+
+  const shouldNotify =
+    recordingChanged && typeof updatedLesson.recordingUrl === 'string';
+
+  if (shouldNotify) {
+    await notifyRegistrantsAboutRecording(
+      updatedLesson.id,
+      updatedLesson.title,
+      updatedLesson.recordingUrl!
+    );
+  }
+
+  return updatedLesson;
 };
 
 const transformToAdminLiveLessonRecordListDTO = (
@@ -44,7 +85,7 @@ const transformToAdminLiveLessonRecordListDTO = (
     description: lesson.description ?? undefined,
     meetingLink: lesson.meetingLink ?? undefined,
     recordingUrl: lesson.recordingUrl ?? undefined,
-    currentParticipants: lesson.currentParticipants,
+    currentParticipants: lesson.registrations.length,
   }));
 };
 
@@ -59,6 +100,18 @@ const selectAdminLiveLessons = async (
   const result = await db.query.liveLessons.findMany({
     where: cursorCondition,
     orderBy: asc(liveLessons.scheduledAt),
+    with: {
+      registrations: {
+        columns: { id: true },
+        where: or(
+          and(
+            eq(liveLessonsRegistrations.paymentStatus, 'paid'),
+            eq(liveLessonsRegistrations.accessMethod, 'paid_one_time')
+          ),
+          eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement')
+        ),
+      },
+    },
     limit: perPage,
   });
 
@@ -78,28 +131,17 @@ const getMany = async (cursor: string | null, perPage: number = 6) => {
 async function getLiveLessonsWithUserStatus(
   user: User
 ): Promise<LiveLessonCardDTO[]> {
-  const currentTimestamp = new Date();
-
-  const rawData = await db
-    .select({
-      lesson: liveLessons,
-      registration: liveLessonsRegistrations,
-    })
-    .from(liveLessons)
-    .leftJoin(
-      liveLessonsRegistrations,
-      and(
-        eq(liveLessonsRegistrations.lessonId, liveLessons.id),
-        user ? eq(liveLessonsRegistrations.userId, user.id) : undefined
-      )
-    )
-    .where(
-      and(
-        eq(liveLessons.isCompleted, false),
-        gte(liveLessons.scheduledAt, currentTimestamp.toISOString())
-      )
-    )
-    .orderBy(asc(liveLessons.scheduledAt));
+  const lessons = await db.query.liveLessons.findMany({
+    with: {
+      registrations: user
+        ? {
+            where: eq(liveLessonsRegistrations.userId, user.id),
+          }
+        : undefined,
+    },
+    where: eq(liveLessons.isListed, false),
+    orderBy: liveLessons.scheduledAt,
+  });
 
   const { isEligible, lessonsUsed } =
     await LiveLessonsRegistrationsService.checkEntitlementEligibility(user);
@@ -115,8 +157,15 @@ async function getLiveLessonsWithUserStatus(
     ? { isEligibleForFree: isEligible, freeEligibilitiesUsed: lessonsUsed }
     : { isEligibleForFree: isEligible, freeEligibilitiesUsed: lessonsUsed };
 
-  return rawData.map(({ lesson, registration }) => {
-    const isRegistered = registration !== null;
+  return lessons.map((lesson) => {
+    const myRegistrations =
+      lesson.registrations?.filter((r) => r.userId === user?.id) || [];
+    const isAlreadyPaid = myRegistrations.some(
+      (r) => r.paymentStatus === 'paid'
+    );
+    const isPaymentPending =
+      !isAlreadyPaid &&
+      myRegistrations.some((r) => r.paymentStatus === 'unpaid');
 
     return {
       id: lesson.id,
@@ -124,11 +173,9 @@ async function getLiveLessonsWithUserStatus(
       scheduledAt: lesson.scheduledAt,
       duration: lesson.duration,
       isListed: lesson.isListed,
-      participantsCount: lesson.currentParticipants,
-      isRegistered: isRegistered,
+      isRegistered: myRegistrations.length > 0,
       ...eligibility,
-      isPaymentPending: isRegistered && registration.paymentStatus === 'unpaid',
-      registrationId: registration?.id,
+      isPaymentPending,
     };
   });
 }
@@ -147,9 +194,18 @@ const getUserLessons = async (
     .from(liveLessons)
     .innerJoin(
       liveLessonsRegistrations,
-      and(
-        eq(liveLessonsRegistrations.lessonId, liveLessons.id),
-        eq(liveLessonsRegistrations.userId, user.id)
+      or(
+        and(
+          eq(liveLessonsRegistrations.lessonId, liveLessons.id),
+          eq(liveLessonsRegistrations.userId, user.id),
+          eq(liveLessonsRegistrations.accessMethod, 'paid_one_time'),
+          eq(liveLessonsRegistrations.paymentStatus, 'paid')
+        ),
+        and(
+          eq(liveLessonsRegistrations.lessonId, liveLessons.id),
+          eq(liveLessonsRegistrations.userId, user.id),
+          eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement')
+        )
       )
     )
     .orderBy(asc(liveLessons.scheduledAt));
@@ -161,7 +217,6 @@ const getUserLessons = async (
     duration: lesson.duration,
     isListed: lesson.isListed,
     description: lesson.description ?? undefined,
-    participantsCount: lesson.currentParticipants,
     status:
       new Date(lesson.scheduledAt) > new Date()
         ? 'upcoming'
@@ -171,6 +226,40 @@ const getUserLessons = async (
     meetingUrl: lesson.meetingLink ?? undefined,
     recordingUrl: lesson.recordingUrl ?? undefined,
   }));
+};
+
+const notifyRegistrantsAboutRecording = async (
+  lessonId: string,
+  lessonTitle: string,
+  recordingUrl: string
+) => {
+  const registrations = await db.query.liveLessonsRegistrations.findMany({
+    columns: { name: true, email: true },
+    where: and(
+      eq(liveLessonsRegistrations.lessonId, lessonId),
+      eq(liveLessonsRegistrations.paymentStatus, 'paid'),
+      eq(liveLessonsRegistrations.accessMethod, 'paid_one_time')
+    ),
+  });
+
+  if (!registrations.length) return;
+
+  const recipientsData: CreateBatchOptions = registrations.map((r) => ({
+    to: r.email,
+    template: {
+      id: templates.liveLesson.recordingAvailable,
+      variables: {
+        RECIPIENT_NAME: r.name,
+        LIVE_LESSON_TITLE: lessonTitle,
+        LIVE_LESSON_RECORDING_URL: recordingUrl,
+      },
+    },
+  }));
+
+  const { error } = await EmailService.sendBatch(recipientsData);
+  if (error) {
+    log.error({ message: 'Failed to send recording notifications', error });
+  }
 };
 
 export const LiveLessonsService = {
