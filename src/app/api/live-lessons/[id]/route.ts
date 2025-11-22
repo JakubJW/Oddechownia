@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LiveLessonsService } from '@/server/services/liveLessons.service';
 import { logger } from '@/server/lib/logger.service';
+import { NotFoundError } from '@/server/lib/errors';
 
 export async function PATCH(
   req: NextRequest,
@@ -16,6 +17,13 @@ export async function PATCH(
 
     return NextResponse.json({ message: 'Success!' }, { status: 200 });
   } catch (error) {
+    if (error instanceof NotFoundError) {
+      return NextResponse.json(
+        { message: error.message },
+        { status: error.status }
+      );
+    }
+    
     log.error(
       {
         operation: 'update',

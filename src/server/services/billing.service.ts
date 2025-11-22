@@ -73,7 +73,7 @@ const getActiveSubscriptionProducts = async (): Promise<
 };
 
 const getCurrentBillingCycle = async (user: User) => {
-  if (!user) {
+  if (!user || !user.hasActiveSubscription) {
     return {
       start: undefined,
       end: undefined,

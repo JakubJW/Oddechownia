@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       },
     ],
     customer: customerId,
-    success_url: `${env.NEXT_PUBLIC_APP_URL}/sukces/session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${env.NEXT_PUBLIC_APP_URL}/rejestracja/{CHECKOUT_SESSION_ID}`,
     cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,
     client_reference_id: clientReferenceId,
     subscription_data: {

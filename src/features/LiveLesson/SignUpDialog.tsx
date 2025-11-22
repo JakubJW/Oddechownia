@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { formatTimeForInput } from '@/lib/utils';
-import { getUser } from '@/server/actions/user';
 import { LiveLessonCardDTO } from '@/server/models/liveLesson.models';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UseMutationResult } from '@tanstack/react-query';
@@ -28,15 +27,10 @@ import {
   liveLessonSignUpFormSchema,
 } from './Form/schema';
 import { LiveLessonSignUpResponse } from '@/server/models/liveLesson.models';
+import { User } from '@/server/actions/user';
 
-const SignUpDialog = ({
-  liveLesson,
-  open,
-  setOpen,
-  user,
-  mutation,
-}: {
-  user: Awaited<ReturnType<typeof getUser>>;
+type SignUpDialogProps = {
+  user: User;
   liveLesson: LiveLessonCardDTO;
   open: boolean;
   setOpen: (state: boolean) => void;
@@ -45,7 +39,15 @@ const SignUpDialog = ({
     Error,
     { id: string; values: LiveLessonSignUpValues }
   >;
-}) => {
+};
+
+const SignUpDialog = ({
+  liveLesson,
+  open,
+  setOpen,
+  user,
+  mutation,
+}: SignUpDialogProps) => {
   const form = useForm({
     resolver: zodResolver(liveLessonSignUpFormSchema),
     defaultValues: user
