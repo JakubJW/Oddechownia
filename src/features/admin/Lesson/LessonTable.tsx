@@ -7,6 +7,7 @@ import { formatDuration } from '@/lib/utils';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { AdminLessonDTO } from '@/server/models/lesson.models';
+import { redirect } from 'next/navigation';
 
 const findLessonsBelongingToPlaylist = (
   lessons: AdminLessonDTO[],
@@ -55,6 +56,8 @@ export default function LessonTable({
     if (!success) {
       console.log(error);
     }
+
+    redirect(`/admin/playlisty/${playlistSlug}`);
   };
 
   return (

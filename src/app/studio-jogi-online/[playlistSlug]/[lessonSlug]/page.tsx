@@ -115,7 +115,7 @@ export default async function PlaylistLessonPlayback({
               {playlist.lessons.map(({ id, video, name, slug }) => (
                 <Link
                   key={id}
-                  href={`/studio-jogi-online/${playlist.slug}/video/${video?.publicPlaybackId}`}
+                  href={`/studio-jogi-online/${playlist.slug}/${slug}`}
                 >
                   <PlaylistLesson isActive={slug === lessonSlug}>
                     <PlaylistLessonImage
