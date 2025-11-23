@@ -122,4 +122,32 @@ body {
   .homepage-hero-image {
     height: calc(100vh - var(--navigation-height));
   }
+
+  .lesson-card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    
+    .lesson-card-thumbnail {
+      transform: scale(1.05);
+    }
+
+    .lesson-card-play-overlay {
+      opacity: 1;
+    }
+  }
+
+  .slider-arrow-button {
+      @apply  absolute top-1/2 -translate-y-1/2 p-3 bg-transparent transition-colors duration-300 hover:bg-primaryBg rounded-full;
+
+    .slider-arrow-icon {
+      @apply text-primaryFg h-4 w-4;
+    }
+  }
+
+  .slider-arrow-button__left {
+    @apply left-0;
+  }
+
+  .slider-arrow-button__right {
+    @apply right-0;
+  }
 }
