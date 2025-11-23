@@ -49,6 +49,12 @@ const transformToPlaylistDetailDto = (
     lessons: playlist.playlistLessons.flatMap(({ lesson, position }) =>
       LessonsService.transformLessonToDTO([lesson], position)
     ),
+    totalDurationInSeconds: playlist.playlistLessons.reduce(
+      (total, { lesson }) => {
+        return total + (lesson.video?.duration || 0);
+      },
+      0
+    ),
   }));
 };
 
@@ -94,6 +100,12 @@ const transformSelectPlaylistToDTO = (
     ),
     video: transformVideoToDto(playlist.video),
     isAccessibleForFree: playlist.isAccessibleForFree,
+    totalDurationInSeconds: playlist.playlistLessons.reduce(
+      (total, { lesson }) => {
+        return total + (lesson.video?.duration || 0);
+      },
+      0
+    ),
   };
 };
 

@@ -1,9 +1,8 @@
-import Carousel from '@/components/Carousel/Carousel';
 import Container from '@/components/Container/Container';
-import LessonCard from '@/components/LessonCard/LessonCard';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { Metadata } from 'next';
-import Link from 'next/link';
+
+import PlaylistCard from '@/components/PlaylistCard';
 
 export const metadata: Metadata = {
   title: 'Studio Jogi Online | Oddechownia',
@@ -27,33 +26,15 @@ export default async function OnlineYogaStudio() {
 
   return (
     <section>
-      <Container>
-        {playlists.map((playlist) => (
-          <div key={playlist.id}>
-            <div className="flex justify-between">
-              <div>{playlist.name}</div>
-              <Link href={`/studio-jogi-online/${playlist.slug}`}>
-                Zobacz wszystkie
-              </Link>
-            </div>
-            <Carousel key={playlist.id}>
-              {playlist.lessons.map((lesson) => (
-                <Link
-                  key={lesson.id}
-                  href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
-                >
-                  <LessonCard
-                    thumbnail={lesson.thumbnail}
-                    key={lesson.id}
-                    name={lesson.name}
-                    description={lesson.description}
-                    video={lesson.video}
-                  />
-                </Link>
-              ))}
-            </Carousel>
-          </div>
-        ))}
+      <Container className="py-10">
+        <div className="space-y-12">
+          {playlists.map((playlist) => (
+            <PlaylistCard
+              key={playlist.id}
+              playlist={playlist}
+            />
+          ))}
+        </div>
       </Container>
     </section>
   );

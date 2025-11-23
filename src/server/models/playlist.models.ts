@@ -13,6 +13,7 @@ export type PlaylistDTO = PlaylistBaseDTO;
 export type PlaylistDetailDTO<T> = PlaylistBaseDTO & {
   video?: VideoDTO;
   lessons: T;
+  totalDurationInSeconds: number;
 };
 
 export type AdminPlaylistDTO = PlaylistBaseDTO & {
