@@ -247,3 +247,27 @@ export const liveLessonsRegistrations = pgTable('live_lessons_registrations', {
     .notNull()
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
+
+export const userPracticeSchedules = pgTable('user_practice_schedules', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id),
+  lessonId: integer('lesson_id')
+    .notNull()
+    .references(() => lessons.id),
+  playlistId: integer('playlist_id').references(() => playlists.id),
+  scheduledAt: timestamp('scheduled_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).notNull(),
+  isCompleted: boolean('is_completed').default(false),
+  sendReminder: boolean('send_reminder').default(false),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+});
