@@ -13,6 +13,7 @@ import {
 } from '@/server/services/filters.service';
 import { supabaseService } from '@/server/services/supabase.service';
 import { PlaylistFormValues } from '@/features/admin/Playlist/Form/schema';
+import { revalidatePath } from 'next/cache';
 
 export const createPlaylist = async (
   values: PlaylistFormValues
@@ -313,6 +314,7 @@ export const attachLessonsToPlaylist = async (
       }
     });
 
+    revalidatePath(`/admin/playlisty/${slug}`);
     return { data: null, success: true, error: null };
   } catch (error) {
     console.error(
