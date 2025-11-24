@@ -5,10 +5,10 @@ import { LessonsService } from '@/server/services/lessons.service';
 export default async function AdminAddLesson({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug } = await params;
-  const lesson = await LessonsService.getLessonForAdminEdit({ slug });
+  const { id } = await params;
+  const lesson = await LessonsService.getLessonForAdminEdit({ id: Number(id) });
 
   if (!lesson) {
     return (

@@ -43,16 +43,18 @@ export const createFile = async (
 
 export const deleteFile = async (ids: number[]) => {
   try {
-    const result = await db.query.files.findMany({
+    const filesToDelete = await db.query.files.findMany({
       columns: { id: true, bucket: true, path: true, name: true },
       where: inArray(files.id, ids),
     });
 
-    for (let i = 0; i < result.length; i++) {
-      await supabaseService.deleteFile(result[i].bucket, [
-        `${result[i].path}/${result[i].name}`,
-      ]);
-    }
+    await Promise.all(
+      filesToDelete.map(async (file) => {
+        await supabaseService.deleteFile(file.bucket, [
+          `${file.path}/${file.name}`,
+        ]);
+      })
+    );
 
     await db.delete(files).where(inArray(files.id, ids));
 

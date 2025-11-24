@@ -1,5 +1,5 @@
 {
-  "id": "232b1f77-26b6-446b-bc0f-d8a7c27fff42",
+  "id": "fa435b9c-956f-435d-8876-783e2475b066",
   "prevId": "0188ba94-37d1-4faf-91ce-48139a38075f",
   "version": "7",
   "dialect": "postgresql",
@@ -803,118 +803,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.user_practice_schedules": {
-      "name": "user_practice_schedules",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "lesson_id": {
-          "name": "lesson_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "playlist_id": {
-          "name": "playlist_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "scheduled_at": {
-          "name": "scheduled_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "is_completed": {
-          "name": "is_completed",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "send_reminder": {
-          "name": "send_reminder",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "(CURRENT_TIMESTAMP)"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "(CURRENT_TIMESTAMP)"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "user_practice_schedules_user_id_users_id_fk": {
-          "name": "user_practice_schedules_user_id_users_id_fk",
-          "tableFrom": "user_practice_schedules",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "user_practice_schedules_lesson_id_lessons_id_fk": {
-          "name": "user_practice_schedules_lesson_id_lessons_id_fk",
-          "tableFrom": "user_practice_schedules",
-          "tableTo": "lessons",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "user_practice_schedules_playlist_id_playlists_id_fk": {
-          "name": "user_practice_schedules_playlist_id_playlists_id_fk",
-          "tableFrom": "user_practice_schedules",
-          "tableTo": "playlists",
-          "columnsFrom": [
-            "playlist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.user_subscription": {
       "name": "user_subscription",
       "schema": "",
@@ -1097,6 +985,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'preparing'"
+        },
+        "asset_id": {
+          "name": "asset_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

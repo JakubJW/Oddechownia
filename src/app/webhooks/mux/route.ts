@@ -37,9 +37,9 @@ export async function POST(req: Request) {
   try {
     switch (event.type) {
       case 'video.asset.created': {
-        const { upload_id, playback_ids, status } = event.data;
+        const { upload_id, playback_ids, status, id } = event.data;
 
-        if (!upload_id || !playback_ids) {
+        if (!upload_id || !playback_ids || !id) {
           return NextResponse.json({ message: '' }, { status: 400 });
         }
 
@@ -66,6 +66,7 @@ export async function POST(req: Request) {
         await db
           .update(videos)
           .set({
+            assetId: id,
             publicPlaybackId: publicPlaybackRow.id,
             privatePlaybackId: privatePlaybackRow.id,
             status,
@@ -122,12 +123,12 @@ export async function POST(req: Request) {
       }
       case 'video.asset.deleted':
         {
-          const { upload_id } = event.data;
-          if (!upload_id) {
+          const { id } = event.data;
+          if (!id) {
             return NextResponse.json({ message: '' }, { status: 400 });
           }
 
-          await db.delete(videos).where(eq(videos.uploadId, upload_id));
+          await db.delete(videos).where(eq(videos.assetId, id));
         }
         return NextResponse.json(
           { message: 'Asset deleted successfully' },
