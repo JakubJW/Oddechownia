@@ -33,7 +33,7 @@ export const lessons = pgTable('lessons', {
   }),
   thumbnailId: integer('thumbnail_id')
     .notNull()
-    .references(() => files.id, { onDelete: 'cascade' }),
+    .references(() => files.id, { onDelete: 'restrict' }),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
@@ -51,6 +51,7 @@ export const videos = pgTable('videos', {
   duration: integer('duration'),
   aspectRatio: varchar('aspect_ratio'),
   status: varchar().default('preparing').notNull(),
+  assetId: varchar('asset_id'),
 });
 
 export const users = pgTable('users', {

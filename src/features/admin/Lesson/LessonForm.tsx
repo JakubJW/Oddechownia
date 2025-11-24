@@ -31,6 +31,19 @@ import { defaultValues, formSchema } from './schema';
 import FormAttachments from './Form/Attachments';
 import FormThumbnail from './Form/Thumbnail';
 import { AdminEditLessonDTO } from '@/server/models/lesson.models';
+import { Info } from 'lucide-react';
+import {
+  DialogHeader,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 interface LessonFormProps {
   lesson?: AdminEditLessonDTO;
@@ -39,7 +52,6 @@ interface LessonFormProps {
 export function AdminNewLesson({ lesson }: LessonFormProps) {
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
   const [attachmentsToRemove, setAttachmentsToRemove] = useState<number[]>([]);
-  const [isUploaded, setIsUploaded] = useState(false);
   const [thumbnail, setThumbnail] = useState<File[]>([]);
   const [removeOldThumbnail, setRemoveOldThumbnail] = useState<boolean>(false);
 
@@ -64,9 +76,9 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
   };
 
   const handleRemoveVideo = async (lesson: AdminEditLessonDTO) => {
-    if (!lesson || !lesson.video || !lesson.video.uploadId) return;
+    if (!lesson || !lesson.video || !lesson.video.assetId) return;
 
-    await deleteVideo(lesson.video.uploadId);
+    await deleteVideo(lesson.video.assetId);
 
     revalidatePath(`/admin/lekcje/${lesson.slug}`);
   };
@@ -114,6 +126,7 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
         router.push(`/admin/lekcje`);
       },
       onError: (error) => {
+        console.log(error);
         form.setError('root.serverError', { type: 'server', message: error });
       },
     }
@@ -211,32 +224,74 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
                       player_name: 'Video Course Starter Kit',
                     }}
                   />
-                  <Button
-                    type="button"
-                    onClick={async () => await handleRemoveVideo(lesson)}
-                  >
-                    Usuń film
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        className="border-red-500 bg-red-500 text-red-100"
+                        type="button"
+                      >
+                        Usuń film
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>
+                          Czy na pewno chcesz usunąć film?
+                        </DialogTitle>
+                        <DialogDescription>
+                          Tej akcji nie można cofnąć. Aby móc przesłać kolejny
+                          film, odśwież stronę.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <DialogClose>
+                          <Button
+                            variant="outline"
+                            type="button"
+                            className="border-border text-muted-foreground bg-muted"
+                          >
+                            Anuluj
+                          </Button>
+                        </DialogClose>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="border-red-500 bg-red-500 text-red-100"
+                          onClick={async () => await handleRemoveVideo(lesson)}
+                        >
+                          Zatwierdź
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </>
               ) : (
-                <MuxUploader
-                  endpoint={async () => {
-                    const { result, error } = await fetch(
-                      '/api/mux/create-upload'
-                    ).then((res) => res.json());
-                    if (error) {
-                      return console.error(error);
+                <>
+                  <MuxUploader
+                    endpoint={async () => {
+                      const { result, error } = await fetch(
+                        '/api/mux/create-upload'
+                      ).then((res) => res.json());
+                      if (error) {
+                        return console.error(error);
+                      }
+                      form.setValue('videoId', result.data.id);
+                      return result.upload_url;
+                    }}
+                    type="bar"
+                    style={
+                      {
+                        '--button-border-radius': '40px',
+                      } as React.CSSProperties
                     }
-                    form.setValue('videoId', result.data.id);
-                    return result.upload_url;
-                  }}
-                  type="bar"
-                  style={
-                    { '--button-border-radius': '40px' } as React.CSSProperties
-                  }
-                  onSuccess={() => setIsUploaded(true)}
-                  className="w-full mb-6"
-                />
+                    className="w-full mb-6"
+                  />
+                  <span className="text-sm mt-2 flex items-center text-muted-foreground">
+                    <Info className="h-4 w-4 mr-2" />
+                    Aby uniknąć powstawaniu osieroconych filmów, najpierw utwórz
+                    lekcję, a dopiero potem prześlij wideo.
+                  </span>
+                </>
               )}
             </div>
           </div>
@@ -250,7 +305,7 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
             <div className="flex justify-between">
               <Button
                 type="submit"
-                disabled={isLoading || (!lesson && !isUploaded)}
+                disabled={isLoading}
               >
                 {isLoading
                   ? 'Ładowanie...'
@@ -259,12 +314,49 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
                     : 'Utwórz lekcję'}
               </Button>
               {lesson && (
-                <Button
-                  type="button"
-                  onClick={async () => await handleRemoveLesson(lesson.id)}
-                >
-                  Usuń lekcję
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="border-red-500 bg-red-500 text-red-100"
+                      type="button"
+                    >
+                      Usuń lekcję
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        Czy na pewno chcesz usunąć lekcję?
+                      </DialogTitle>
+                      <DialogDescription>
+                        Tej akcji nie można cofnąć. Usunięta lekcja zniknie ze
+                        wszystkich playlist, do których jest dodana, a także z
+                        ulubionych lekcji użytkowników oraz ich kalendarzy.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <DialogClose>
+                        <Button
+                          variant="outline"
+                          type="button"
+                          className="border-border text-muted-foreground bg-muted"
+                        >
+                          Anuluj
+                        </Button>
+                      </DialogClose>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="border-red-500 bg-red-500 text-red-100"
+                        onClick={async () =>
+                          await handleRemoveLesson(lesson.id)
+                        }
+                      >
+                        Zatwierdź
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               )}
             </div>
           </div>

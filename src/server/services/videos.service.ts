@@ -10,6 +10,7 @@ export const transformVideoToDto = (
         privatePlaybackId: video.privatePlaybackId ?? undefined,
         duration: video.duration ?? undefined,
         aspectRatio: video.aspectRatio ?? undefined,
+        assetId: video.assetId ?? undefined,
       }
     : undefined;
 };

@@ -23,6 +23,8 @@ export default async function AdminLessons({
 
   if (query['sortBy']) {
     filters.sortBy = query['sortBy'] as string;
+  } else {
+    filters.sortBy = 'name';
   }
 
   if (query['sortOrder']) {
@@ -73,9 +75,9 @@ export default async function AdminLessons({
         }}
       />
       <LessonGrid>
-        {lessons.map(({ id, name, description, video, slug, thumbnail }) => (
+        {lessons.map(({ id, name, description, video, thumbnail }) => (
           <Link
-            href={`/admin/lekcje/${slug}`}
+            href={`/admin/lekcje/${id}`}
             key={id}
             className="hover:opacity-80"
           >

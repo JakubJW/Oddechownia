@@ -175,6 +175,7 @@ const transformToAdminEditLessonDTO = (
 
 const selectLessonForAdminEdit = async (filters?: LessonFilters) => {
   const where = filterService.buildWhereCondition(lessons, filters);
+  const orderBy = filterService.buildOrderByClause(lessons, filters);
 
   const result = await db.query.lessons.findFirst({
     where,
@@ -187,6 +188,7 @@ const selectLessonForAdminEdit = async (filters?: LessonFilters) => {
         },
       },
     },
+    orderBy,
   });
 
   return result;

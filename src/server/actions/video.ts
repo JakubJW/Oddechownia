@@ -6,6 +6,7 @@ import { videos } from '@/server/db/schema';
 import { nullToUndefined } from '@/server/db/types';
 import { ActionResult } from './types';
 import { BaseVideo } from '@/server/db/types';
+import { muxService } from '../services/mux.service';
 
 export const createVideo = async ({
   uploadId,
@@ -34,9 +35,10 @@ export const createVideo = async ({
   }
 };
 
-export const deleteVideo = async (uploadId: string) => {
+export const deleteVideo = async (assetId: string) => {
   try {
-    await db.delete(videos).where(eq(videos.uploadId, uploadId));
+    await muxService.deleteAsset(assetId);
+    await db.delete(videos).where(eq(videos.assetId, assetId));
   } catch (e) {
     console.error('Unable to delete video', e);
   }
