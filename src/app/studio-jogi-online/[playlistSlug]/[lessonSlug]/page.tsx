@@ -104,7 +104,7 @@ export default async function PlaylistLessonPlayback({
           <Playlist>
             <PlaylistName>{playlist.name}</PlaylistName>
             <PlaylistContent>
-              {playlist.lessons.map(({ id, video, name, slug }) => (
+              {playlist.lessons.map(({ id, video, name, slug, thumbnail }) => (
                 <Link
                   key={id}
                   href={`/studio-jogi-online/${playlist.slug}/${slug}`}
@@ -112,8 +112,8 @@ export default async function PlaylistLessonPlayback({
                   <PlaylistLesson isActive={slug === lessonSlug}>
                     <PlaylistLessonImage
                       duration={video?.duration}
-                      alt={`Miniaturka lekcji o tytule ${name}`}
-                      src={currentLesson.thumbnail}
+                      alt={name}
+                      src={thumbnail}
                     />
                     <PlaylistLessonName>{name}</PlaylistLessonName>
                   </PlaylistLesson>
