@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       user.id,
       lessonId,
       playlistId,
-      new Date(scheduledAt)
+      scheduledAt
     );
 
     return NextResponse.json({ success: true }, { status: 201 });

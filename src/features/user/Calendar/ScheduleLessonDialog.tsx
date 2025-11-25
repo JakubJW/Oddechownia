@@ -124,7 +124,7 @@ export function ScheduleLessonDialog({
           <DialogTitle>Zaplanuj praktykę</DialogTitle>
           <DialogDescription>
             Wybierz termin, w którym chcesz wykonać lekcję{' '}
-            <strong>"{defaultTitle}"</strong>.
+            <strong>&quot;{defaultTitle}&quot;</strong>.
           </DialogDescription>
         </DialogHeader>
 

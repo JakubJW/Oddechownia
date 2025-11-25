@@ -11,7 +11,7 @@ export const useCalendarEvents = (currentDate: Date) => {
   return useQuery({
     // Unique key includes the month range to trigger refetch on navigation
     queryKey: ['calendar-events', start.toISOString(), end.toISOString()],
-
+    staleTime: 1000 * 60 * 10,
     queryFn: async () => {
       const params = new URLSearchParams({
         start: start.toISOString(),
@@ -28,8 +28,5 @@ export const useCalendarEvents = (currentDate: Date) => {
         ...event,
       })) as CalendarEvent[];
     },
-
-    // Keep data while fetching new month to prevent flickering
-    placeholderData: (previousData) => previousData,
   });
 };
