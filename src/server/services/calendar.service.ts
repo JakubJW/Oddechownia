@@ -45,8 +45,7 @@ export interface LiveLessonEvent extends BaseEvent {
 export interface PracticeSessionEvent extends BaseEvent {
   type: 'practice-session';
   isCompleted: boolean;
-  playlistName?: string;
-  lessonId: number;
+  lessonUrl: string;
 }
 
 export type CalendarEvent = LiveLessonEvent | PracticeSessionEvent;
@@ -68,13 +67,24 @@ export const createSchedule = async (
 export const updateSchedule = async (
   id: string,
   userId: string,
-  isCompleted: boolean
+  values: { scheduledAt?: string; isCompleted?: boolean }
 ) => {
   await db
     .update(userPracticeSchedules)
     .set({
-      isCompleted,
+      ...values,
     })
+    .where(
+      and(
+        eq(userPracticeSchedules.userId, userId),
+        eq(userPracticeSchedules.id, id)
+      )
+    );
+};
+
+export const deleteSchedule = async (id: string, userId: string) => {
+  await db
+    .delete(userPracticeSchedules)
     .where(
       and(
         eq(userPracticeSchedules.userId, userId),
@@ -96,7 +106,7 @@ export const getUserSchedule = async (
     ),
     with: {
       lesson: {
-        columns: { name: true },
+        columns: { name: true, slug: true },
         with: {
           video: {
             columns: { duration: true },
@@ -104,7 +114,7 @@ export const getUserSchedule = async (
         },
       },
       playlist: {
-        columns: { name: true },
+        columns: { name: true, slug: true },
       },
     },
   });
@@ -134,23 +144,6 @@ export const getUserSchedule = async (
     },
   });
 
-  const liveData = await db.query.liveLessonsRegistrations.findMany({
-    where: or(
-      and(
-        eq(liveLessonsRegistrations.userId, userId),
-        eq(liveLessonsRegistrations.paymentStatus, 'paid'),
-        eq(liveLessonsRegistrations.accessMethod, 'paid_one_time')
-      ),
-      and(
-        eq(liveLessonsRegistrations.userId, userId),
-        eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement')
-      )
-    ),
-    with: {
-      lesson: true,
-    },
-  });
-
   const events: CalendarEvent[] = [];
 
   for (const item of practiceData) {
@@ -159,9 +152,8 @@ export const getUserSchedule = async (
       id: item.id,
       date: item.scheduledAt,
       title: item.lesson.name,
-      lessonId: item.lessonId,
+      lessonUrl: `/studio-jogi-online/${item.playlist?.slug}/${item.lesson.slug}`,
       isCompleted: item.isCompleted || false,
-      playlistName: item.playlist?.name,
       duration: item.lesson.video!.duration!,
     });
   }
@@ -304,6 +296,7 @@ export const schedulePlaylist = async (
 export const CalendarService = {
   createSchedule,
   updateSchedule,
+  deleteSchedule,
   getUserSchedule,
   schedulePlaylist,
 };

@@ -30,7 +30,7 @@ export default async function UserLayout({
       )}
       <Container className="py-4">
         <div className="grid grid-cols-12">
-          {/* <div className="flex flex-col gap-4 col-span-2">
+          <div className="flex flex-col gap-4 col-span-2">
             <Link href="/moje-konto">Dashboard</Link>
             <Link href="/moje-konto/ulubione-lekcje">Ulubione lekcje</Link>
             <Link href="/moje-konto/zajecia-na-zywo">Zajęcia na żywo</Link>
@@ -40,8 +40,8 @@ export default async function UserLayout({
             <form action={signOut}>
               <button type="submit">Wyloguj</button>
             </form>
-          </div> */}
-          <div className="col-span-12">
+          </div>
+          <div className="col-span-10">
             <div>{children}</div>
           </div>
         </div>

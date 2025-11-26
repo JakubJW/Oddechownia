@@ -31,30 +31,6 @@ export const CalendarDayCell = ({
   const MAX_INLINE = 2;
   const hiddenCount = Math.max(0, events.length - MAX_INLINE);
 
-  //  <div className="p-3 border-b flex justify-between items-center">
-  //         <span className="font-semibold text-sm">
-  //           {format(day, 'd LLLL yyyy', { locale: pl })}
-  //         </span>
-  //         <span className="text-xs text-muted-foreground">
-  //           {events.length} wydarzeń
-  //         </span>
-  //       </div>
-
-  //       <div className="max-h-[300px] overflow-y-auto space-y-1">
-  //         {events.length === 0 ? (
-  //           <div className="p-4 text-center text-sm text-muted-foreground">
-  //             Brak zaplanowanych zajęć
-  //           </div>
-  //         ) : (
-  //           events.map((event) => (
-  //             <CalendarDayEvent
-  //               key={event.id}
-  //               event={event}
-  //             />
-  //           ))
-  //         )}
-  //       </div>
-
   return (
     <DayDetailsModal
       day={day}
@@ -72,7 +48,7 @@ export const CalendarDayCell = ({
             Brak zaplanowanych zajęć
           </div>
         )
-      } // Pass the list logic here
+      }
     >
       <div
         onClick={() => onSelect(day)}
@@ -95,7 +71,6 @@ export const CalendarDayCell = ({
           </span>
         </div>
 
-        {/* --- Event List Placeholder --- */}
         <div className="flex-1 flex flex-col gap-1 mt-1">
           {events.slice(0, MAX_INLINE).map((event) => (
             <CalendarDayCellEvent

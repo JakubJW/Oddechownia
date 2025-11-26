@@ -45,11 +45,11 @@ export function DayDetailsModal({
       >
         <PopoverTrigger asChild>{children}</PopoverTrigger>
         <PopoverContent
-          className="w-64 p-3"
+          className="w-80"
           align="start"
         >
-          <div className="bg-muted/50 p-3 mb-2 border-b flex justify-between items-center rounded-t-md -mx-3 -mt-3">
-            <span className="font-semibold text-sm">{title}</span>
+          <div className="bg-muted/50 border-b flex pb-4 justify-between items-center">
+            <span className="font-semibold text-sm ">{title}</span>
             <span className="text-xs text-muted-foreground">{eventCount}</span>
           </div>
           {content}
