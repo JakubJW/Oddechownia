@@ -80,34 +80,25 @@ export function SchedulePlaylistDialog({
     defaultValues: {
       mode: 'automatic',
       playlistId: playlistId,
+      startDate: new Date(),
       startTime: '18:00',
       interval: ScheduleIntervals.DAILY,
-      startDate: new Date(),
-      // Pre-fill lessons for manual mode
       lessons: lessons.map((l) => ({
         lessonId: l.lessonId,
         lessonTitle: l.title,
         scheduledAt: new Date(),
         included: true,
       })),
-    },
+    } as any,
   });
 
-  // Watchers for UI logic
-  const watchedMode = form.watch('mode');
-  const watchedStartDate = form.watch('startDate');
-
-  // Sync mode with Tabs
   useEffect(() => {
     form.setValue('mode', activeTab);
   }, [activeTab, form]);
 
-  // If user changes Start Date in manual mode, update all rows to start from there?
-  // Or just leave them. Let's leave them for now, user edits manually.
-
   const { fields, update } = useFieldArray({
     control: form.control,
-    name: 'lessons' as never, // TS quirk with Discriminated Unions in RHF
+    name: 'lessons' as never,
   });
 
   const mutation = useMutation({

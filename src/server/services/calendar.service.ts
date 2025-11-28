@@ -16,6 +16,8 @@ import { LiveLessonsRegistrationsService } from './liveLessonsRegistrations.serv
 import { getUser } from '../actions/user';
 
 export type CalendarEventType = 'live-lesson' | 'practice-session';
+export type LiveLessonStatus = 'upcoming' | 'live' | 'completed';
+export type LiveLessonRecordingStatus = 'available' | 'preparing';
 
 // Base properties
 interface BaseEvent {
@@ -29,16 +31,15 @@ interface BaseEvent {
 // 1. Live Lesson (Read Only, State-Aware)
 export interface LiveLessonEvent extends BaseEvent {
   type: 'live-lesson';
-  status:
-    | 'upcoming'
-    | 'live'
-    | 'processing_recording'
-    | 'completed'
-    | 'recording_available';
+  status: LiveLessonStatus;
   meetingLink?: string;
+  recordingStatus?: LiveLessonRecordingStatus;
   recordingUrl?: string;
   isPaymentPending: boolean;
   isRegistered: boolean;
+  isEligibleForFree: boolean;
+  freeEligibilitiesUsed: number;
+  description?: string;
 }
 
 // 2. Practice Session (Editable)
@@ -158,11 +159,15 @@ export const getUserSchedule = async (
     });
   }
   const user = await getUser();
-  const { isEligible, lessonsUsed } =
-    await LiveLessonsRegistrationsService.checkEntitlementEligibility(user);
 
   for (const item of allLessons) {
     const registrations = item.registrations;
+
+    const { isEligible, lessonsUsed } =
+      await LiveLessonsRegistrationsService.checkEntitlementEligibility(
+        user,
+        item
+      );
 
     const eligibility = isEligible
       ? { isEligibleForFree: isEligible, freeEligibilitiesUsed: lessonsUsed }
@@ -177,9 +182,11 @@ export const getUserSchedule = async (
       id: item.id,
       date: item.scheduledAt,
       title: item.title,
+      description: item.description ?? undefined,
       status: getLiveLessonStatus(item),
       meetingLink: item.meetingLink || undefined,
-      recordingUrl: item.recordingUrl || undefined,
+      recordingStatus: item.recordingUrl ? 'available' : 'preparing',
+      recordingUrl: item.recordingUrl ?? undefined,
       duration: item.duration,
       isRegistered: registrations.length > 0,
       ...eligibility,
@@ -192,17 +199,14 @@ export const getUserSchedule = async (
   );
 };
 
-function getLiveLessonStatus(lesson: LiveLessonSchema) {
+function getLiveLessonStatus(lesson: LiveLessonSchema): LiveLessonStatus {
   const now = new Date();
   const start = new Date(lesson.scheduledAt);
   const end = new Date(start.getTime() + lesson.duration * 60000);
 
-  if (lesson.isCompleted) return 'completed';
   if (now < start) return 'upcoming';
-  if (now >= start && now <= end) return 'live';
-  if (lesson.recordingUrl) return 'recording_available';
-
-  return 'processing_recording';
+  if (now >= end || lesson.isCompleted) return 'completed';
+  return 'live';
 }
 
 // Helper to calculate dates
@@ -239,19 +243,17 @@ export const schedulePlaylist = async (
   }[] = [];
 
   if (data.mode === 'automatic') {
-    // 1. Fetch all lessons in the playlist, ORDERED correctly
     const lessonsInPlaylist = await db.query.playlistLesson.findMany({
       where: eq(playlistLesson.playlistId, playlistId),
-      orderBy: (playlistLesson, { asc }) => [asc(playlistLesson.position)], // ASSUMPTION: 'order' column exists
+      orderBy: (playlistLesson, { asc }) => [asc(playlistLesson.position)],
       with: {
-        lesson: true, // We need the lesson data? Actually maybe just IDs is enough if we trust the order
+        lesson: true,
       },
     });
 
     let currentDate = new Date(data.startDate);
     currentDate.setHours(hours, minutes, 0, 0);
 
-    // If "Work Days" is selected and start date is weekend, move to Monday
     if (data.interval === ScheduleIntervals.WORK_DAYS) {
       while (isWeekend(currentDate)) {
         currentDate = addDays(currentDate, 1);
@@ -266,11 +268,9 @@ export const schedulePlaylist = async (
         scheduledAt: currentDate.toISOString(),
       });
 
-      // Calculate date for next lesson
       currentDate = calculateNextDate(currentDate, data.interval);
     }
   } else if (data.mode === 'manual') {
-    // 2. Manual mode: Iterate over the submitted array
     for (const item of data.lessons) {
       if (!item.included) continue;
 

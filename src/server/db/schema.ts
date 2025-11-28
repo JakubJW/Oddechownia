@@ -236,10 +236,6 @@ export const liveLessonsRegistrations = pgTable('live_lessons_registrations', {
     'unpaid' | 'paid' | 'failed' | null
   >(),
   stripePriceId: text('stripe_price_id'),
-  billingPeriodStart: timestamp('billing_period_start', {
-    withTimezone: true,
-    mode: 'string',
-  }),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),

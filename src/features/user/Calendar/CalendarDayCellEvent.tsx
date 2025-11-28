@@ -2,9 +2,8 @@ import {
   CalendarEvent,
   LiveLessonEvent,
 } from '@/server/services/calendar.service';
-import { CalendarEventType } from '@/server/services/calendar.service';
 import { cn } from '@/lib/utils';
-import { CircleAlert, CircleCheck, Video } from 'lucide-react';
+import { CircleAlert, Video } from 'lucide-react';
 
 export const getLiveLessonStyles = (event: LiveLessonEvent) => {
   if (!event.isRegistered) {

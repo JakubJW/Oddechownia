@@ -164,7 +164,14 @@ const CaledarGrid = ({
         </div>
         {selectedLesson && (
           <SignUpDialog
-            liveLesson={selectedLesson}
+            liveLesson={{
+              id: selectedLesson.id,
+              title: selectedLesson.title,
+              description: selectedLesson.description,
+              scheduledAt: selectedLesson.date,
+              isEligibleForFree: selectedLesson.isEligibleForFree,
+              freeEligibilitiesUsed: selectedLesson.freeEligibilitiesUsed,
+            }}
             open={isSignUpOpen}
             setOpen={setIsSignUpOpen}
             user={user}

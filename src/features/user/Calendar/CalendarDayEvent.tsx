@@ -48,40 +48,140 @@ const ActionButton = ({ event }: { event: LiveLessonEvent }) => {
   const { onSignUp } = useCalendarContext();
 
   if (event.isRegistered && !event.isPaymentPending) {
-    if (!event.recordingUrl) {
-      return <Badge>Przygotowywanie nagrania</Badge>;
-    } else {
-      return <Badge>Dostępne nagranie</Badge>;
+    switch (event.status) {
+      case 'upcoming':
+        return <Badge className="shrink-0">Nadchodzące</Badge>;
+      case 'live':
+        return (
+          <a
+            href={event.meetingLink!}
+            target="_blank"
+          >
+            <Badge className="shrink-0">Dołącz</Badge>
+          </a>
+        );
+      case 'completed': {
+        switch (event.recordingStatus) {
+          case 'available':
+            return (
+              <a
+                href={event.recordingUrl!}
+                target="_blank"
+              >
+                <Badge className="shrink-0">Obejrzyj nagranie</Badge>
+              </a>
+            );
+          case 'preparing':
+            return <Badge className="shrink-0">Przygotowywanie nagrania</Badge>;
+        }
+      }
     }
   } else if (event.isRegistered && event.isPaymentPending) {
-    return <Badge>Dokończ płatność</Badge>;
+    return <Badge onClick={() => onSignUp(event)}>Dokończ płatność</Badge>;
   } else {
-    if (event.status === 'completed') {
-      return <Badge>Zakończone</Badge>;
-    } else {
-      return <Badge onClick={() => onSignUp(event)}>Zapisz się</Badge>;
+    switch (event.status) {
+      case 'upcoming':
+        return (
+          <Badge
+            className="shrink-0"
+            onClick={() => onSignUp(event)}
+          >
+            Zapisz się
+          </Badge>
+        );
+      case 'live':
+        return <Badge className="shrink-0">Trwa</Badge>;
+      case 'completed': {
+        return (
+          <Badge className="shrink-0 bg-muted text-muted-foreground">
+            Zakończone
+          </Badge>
+        );
+      }
     }
   }
 };
 
 const LiveLessonDayEvent = ({ event }: { event: LiveLessonEvent }) => {
   return (
-    <>
-      <div className="flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full  bg-emerald-400" />
-        <span className="text-sm font-medium text-foreground">
-          {event.title}
-        </span>
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between items-start gap-2">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="size-2 rounded-full bg-emerald-400 shrink-0" />
+            <p className="text-sm font-medium truncate">{event.title}</p>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {getItemContent(event.type)}
+          </span>
+        </div>
+        <ActionButton event={event} />
       </div>
-      <div className="flex flex-col items-start gap-2 text-xs text-muted-foreground">
-        <span>{getItemContent(event.type)}</span>
-        <div className="space-x-2">
-          <span>🕒 {formatTime(event.date)}</span>
-          {event.duration && <span>⏳ {event.duration} min</span>}
+      <div className="text-xs text-muted-foreground flex gap-2 items-center">
+        <div className="flex items-center gap-1">
+          <Clock className="size-3" />
+          <span>{formatTime(event.date)}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <ClockFading className="size-3" />
+          <span>{event.duration} min</span>
         </div>
       </div>
-      <ActionButton event={event} />
-    </>
+    </div>
+  );
+};
+
+const ScheduledPracticeActions = ({
+  event,
+}: {
+  event: PracticeSessionEvent;
+}) => {
+  const router = useRouter();
+  const deleteMutation = useDeletePractice();
+
+  return (
+    <div className="flex gap-2">
+      <Button
+        size="icon"
+        variant="secondary"
+        className="size-7 text-muted-foreground hover:text-violet-700 hover:bg-violet-100 rounded-full transition-colors duration-300"
+        onClick={() => router.push(event.lessonUrl)}
+      >
+        <Play className="size-4" />
+      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            size="icon"
+            variant="secondary"
+            className="size-7 rounded-full text-destructive hover:bg-destructive/20 transition-colors duration-300"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Usunąć praktykę?</AlertDialogTitle>
+            <AlertDialogDescription>
+              To usunie &quot;{event.title}&quot; z Twojego kalendarza. Tej
+              operacji nie można cofnąć.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteMutation.mutate(event.id)}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending && (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              )}
+              Usuń
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 };
 
@@ -90,14 +190,11 @@ const ScheduledPracticeDayEvent = ({
 }: {
   event: PracticeSessionEvent;
 }) => {
-  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [dateVal, setDateVal] = useState(
     format(new Date(event.date), 'yyyy-MM-dd')
   );
   const [timeVal, setTimeVal] = useState(formatTime(event.date));
-
-  const deleteMutation = useDeletePractice();
   const updateMutation = useUpdatePractice({
     onSuccess: () => setIsEditing(false),
   });
@@ -116,8 +213,8 @@ const ScheduledPracticeDayEvent = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-md hover:bg-muted/10 transition-colors group">
-      <div className="flex items-start justify-between">
+    <div className="flex flex-col gap-2 rounded-md hover:bg-muted/10">
+      <div className="flex justify-between">
         <div>
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full bg-violet-400 shrink-0" />
@@ -127,48 +224,7 @@ const ScheduledPracticeDayEvent = ({
             {getItemContent(event.type)}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            size="icon"
-            variant="ghost"
-            className="size-7 text-muted-foreground hover:bg-muted rounded-full"
-            onClick={() => router.push(event.lessonUrl)}
-          >
-            <Play className="size-4" />
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="size-7 rounded-full text-destructive hover:bg-destructive/20"
-              >
-                <Trash2 className="size-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Usunąć praktykę?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  To usunie &quot;{event.title}&quot; z Twojego kalendarza. Tej
-                  operacji nie można cofnąć.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Anuluj</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => deleteMutation.mutate(event.id)}
-                  className="bg-destructive hover:bg-destructive/90"
-                >
-                  {updateMutation.isPending && (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  )}
-                  Usuń
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        <ScheduledPracticeActions event={event} />
       </div>
 
       {isEditing ? (
@@ -178,28 +234,27 @@ const ScheduledPracticeDayEvent = ({
               type="date"
               value={dateVal}
               onChange={(e) => setDateVal(e.target.value)}
-              className="h-8 text-xs px-2"
+              className="flex-1 h-8 text-xs px-2"
             />
             <Input
               type="time"
               value={timeVal}
               onChange={(e) => setTimeVal(e.target.value)}
-              className="h-8 text-xs px-2"
+              className="flex-1 h-8 text-xs px-2"
             />
           </div>
-
-          <div className="flex justify-end gap-2">
+          <div className="flex gap-2 text-xs">
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 px-2 text-xs"
+              className="flex-1 h-7 px-2"
               onClick={handleCancel}
             >
               Anuluj
             </Button>
             <Button
               size="sm"
-              className="h-7 px-2 text-xs"
+              className="flex-1 h-7 px-2"
               onClick={handleSave}
               disabled={updateMutation.isPending}
             >
@@ -221,7 +276,7 @@ const ScheduledPracticeDayEvent = ({
             <span>{formatDuration(event.duration)}</span>
           </div>
           <button
-            className="flex underline gap-1 items-center text-muted-foreground hover:bg-muted rounded-full"
+            className="flex underline gap-1 items-center text-muted-foreground rounded-full"
             onClick={() => setIsEditing(true)}
           >
             Edytuj <Pencil className="size-3"></Pencil>

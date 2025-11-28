@@ -3,7 +3,10 @@
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogContent, DialogDescription, DialogHeader, DialogTitle
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -31,7 +34,15 @@ import { User } from '@/server/actions/user';
 
 type SignUpDialogProps = {
   user: User;
-  liveLesson: LiveLessonCardDTO;
+  liveLesson: Pick<
+    LiveLessonCardDTO,
+    | 'id'
+    | 'title'
+    | 'description'
+    | 'scheduledAt'
+    | 'isEligibleForFree'
+    | 'freeEligibilitiesUsed'
+  >;
   open: boolean;
   setOpen: (state: boolean) => void;
   mutation: UseMutationResult<
@@ -126,9 +137,9 @@ const SignUpDialog = ({
               {liveLesson.isEligibleForFree && (
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-sm">
                   <p className="font-medium text-primary">
-                    {liveLesson.freeEligibilitiesUsed < 2
-                      ? `✨ Darmowe zajęcia (${liveLesson.freeEligibilitiesUsed} z 2 w tym miesiącu)`
-                      : `Wykorzystano darmowe zajęcia (2/2 w tym miesiącu)`}
+                    {liveLesson.freeEligibilitiesUsed! < 2
+                      ? `✨ Darmowe zajęcia (${liveLesson.freeEligibilitiesUsed} z 2)`
+                      : `Wykorzystano darmowe zajęcia`}
                   </p>
                 </div>
               )}

@@ -8,9 +8,9 @@ import NavigationAction from './NavigationAction';
 
 export const routes = [
   { content: 'Studio Jogi Online', href: '/studio-jogi-online' },
-  { content: 'O nas', href: '/o-nas' },
-  { content: 'Blog', href: '/blog' },
+  // { content: 'O nas', href: '/o-nas' },
   { content: 'Zajęcia na żywo', href: '/zajecia-na-zywo' },
+  { content: 'Blog', href: '/blog' },
 ];
 
 export interface NavigationProps {

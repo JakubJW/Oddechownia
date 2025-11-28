@@ -1,4 +1,3 @@
-// src/features/calendar/components/AddToCalendarButton.tsx
 'use client';
 
 import { CalendarPlus } from 'lucide-react';
@@ -32,7 +31,7 @@ export const SchedulePlaylistButton = ({
         lessons={playlist.lessons.map((l) => ({
           lessonId: l.id,
           title: l.name,
-          duration: l.video!.duration,
+          duration: l.video!.duration!,
         }))}
       />
     </>
