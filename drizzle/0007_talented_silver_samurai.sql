@@ -1,0 +1,1 @@
+ALTER TABLE "live_lessons_registrations" DROP COLUMN "billing_period_start";

@@ -50,6 +50,13 @@
       "when": 1764018724553,
       "tag": "0006_misty_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1764312586360,
+      "tag": "0007_talented_silver_samurai",
+      "breakpoints": true
     }
   ]
 }
