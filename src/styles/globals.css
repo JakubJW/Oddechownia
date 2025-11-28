@@ -46,11 +46,11 @@ body {
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --almond: #EBDFD3;
+    --almond: 30 37% 87%;
     --almond-foreground: #f5efe9;
-    --steel-blue: #9EAFBF;
+    --steel-blue: 209 20% 68%;
     --steel-blue-foreground: #cfd7df;
-    --matcha: #B9C499;
+    --matcha: 75 27% 68%;
     --matcha-foreground: #dce2cc;
     --rich-black: #00171F;
     --rich-black-foreground: #808b8f;

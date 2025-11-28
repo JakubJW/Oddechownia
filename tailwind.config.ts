@@ -27,8 +27,8 @@ export default {
     extend: {
       colors: {
         foreground: 'var(--foreground)',
-        primaryFg: 'var(--matcha)',
-        primaryBg: 'var(--almond)',
+        primaryFg: 'hsl(var(--matcha))',
+        primaryBg: 'hsl(var(--almond))',
         redFg: 'var(--red-foreground)',
         redBg: 'var(--red-background)',
         greenFg: 'var(--green-foreground)',
@@ -66,7 +66,7 @@ export default {
           foreground: 'hsl(var(--destructive-foreground))',
         },
         matcha: {
-          DEFAULT: 'var(--matcha)',
+          DEFAULT: 'hsl(var(--matcha))',
           foreground: 'var(--matcha-foreground)',
         },
         almond: {
@@ -74,7 +74,7 @@ export default {
           foreground: 'var(--almond-foreground)',
         },
         steelBlue: {
-          DEFAULT: 'var(--steel-blue)',
+          DEFAULT: 'hsl(var(--steel-blue))',
           foreground: 'var(--steel-blue-foreground)',
         },
         richBlack: {
