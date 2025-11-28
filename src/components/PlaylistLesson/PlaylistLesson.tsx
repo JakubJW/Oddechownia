@@ -9,7 +9,7 @@ export const Playlist = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const PlaylistName = ({ children }: { children: React.ReactNode }) => {
-  return <p className="font-semibold text-lg mb-4">{children}</p>;
+  return <p className="font-semibold text-lg mb-4 line-clamp-2">{children}</p>;
 };
 
 export const PlaylistContent = ({
@@ -30,8 +30,8 @@ export const PlaylistLesson = ({
   return (
     <div
       className={cn(
-        isActive && 'bg-primaryBg',
-        'flex gap-4 -mx-6 px-6 py-2 relative'
+        'flex gap-4 -mx-6 px-6 py-2 relative transition-colors duration-300',
+        isActive ? 'bg-matcha/50' : 'hover:bg-matcha/20'
       )}
     >
       {isActive && (
@@ -72,5 +72,12 @@ export const PlaylistLessonName = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return <p className="font-bold">{children}</p>;
+  return (
+    <p
+      title={children as string}
+      className="text-md font-semibold line-clamp-2 mb-auto"
+    >
+      {children}
+    </p>
+  );
 };
