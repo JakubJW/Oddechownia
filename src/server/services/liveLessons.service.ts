@@ -2,7 +2,7 @@ import {
   createformSchema,
   updateFormSchema,
 } from '@/features/admin/LiveLesson/Form/schema';
-import { and, asc, eq, gt, or } from 'drizzle-orm';
+import { and, asc, desc, eq, lt, or } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
 import { liveLessons, liveLessonsRegistrations } from '../db/schema';
@@ -12,7 +12,6 @@ import {
   LiveLessonCardDTO,
   LiveLessonCardUserDashboardDTO,
 } from '../models/liveLesson.models';
-import { LiveLessonsRegistrationsService } from './liveLessonsRegistrations.service';
 import { User } from '../actions/user';
 import { AuthenticationError, NotFoundError } from '../lib/errors';
 import { EmailService, templates } from './emails.service';
@@ -94,12 +93,12 @@ const selectAdminLiveLessons = async (
   perPage: number = 6
 ) => {
   const cursorCondition = cursor
-    ? gt(liveLessons.scheduledAt, cursor)
+    ? lt(liveLessons.scheduledAt, cursor)
     : undefined;
 
   const result = await db.query.liveLessons.findMany({
     where: cursorCondition,
-    orderBy: asc(liveLessons.scheduledAt),
+    orderBy: desc(liveLessons.scheduledAt),
     with: {
       registrations: {
         columns: { id: true },
@@ -128,9 +127,12 @@ const getMany = async (cursor: string | null, perPage: number = 6) => {
   return transformToAdminLiveLessonRecordListDTO(result);
 };
 
+import { format } from 'date-fns'; // Make sure you have this
+
 async function getLiveLessonsWithUserStatus(
   user: User
 ): Promise<LiveLessonCardDTO[]> {
+  // 1. Fetch Lessons (Existing logic)
   const lessons = await db.query.liveLessons.findMany({
     with: {
       registrations: user
@@ -139,32 +141,88 @@ async function getLiveLessonsWithUserStatus(
           }
         : undefined,
     },
-    where: eq(liveLessons.isListed, false),
+    where: eq(liveLessons.isListed, false), // Or whatever your filter logic is
     orderBy: liveLessons.scheduledAt,
   });
 
-  const { isEligible, lessonsUsed } =
-    await LiveLessonsRegistrationsService.checkEntitlementEligibility(user);
+  if (!user) {
+    // Return basic DTO for guests
+    return lessons.map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      scheduledAt: lesson.scheduledAt,
+      duration: lesson.duration,
+      isListed: lesson.isListed,
+      isRegistered: false,
+      isPaymentPending: false,
+      isEligibleForFree: false,
+      freeEligibilitiesUsed: 0,
+    }));
+  }
 
-  log.debug({
-    method: 'getLiveLessonsWithUserStatus',
-    message: isEligible
-      ? `Is eligible for ${lessonsUsed ? 2 - lessonsUsed : 2} free live lessons`
-      : 'Is not eligible for free live lessons.',
-  });
+  // 2. Check Subscription Status (Global)
+  // We need to know if the user is a subscriber at all.
+  // Assuming you have a helper for this or can check existing service
+  // const { hasActiveSubscription } = await LiveLessonsRegistrationsService.checkEntitlementEligibility(user);
+  // OR if you just want to check DB directly:
+  const hasActiveSubscription = user.subscriptionStatus === 'active';
 
-  const eligibility = isEligible
-    ? { isEligibleForFree: isEligible, freeEligibilitiesUsed: lessonsUsed }
-    : { isEligibleForFree: isEligible, freeEligibilitiesUsed: lessonsUsed };
+  // 3. Build a "Usage Map" per Month
+  // We need to find out how many free credits the user consumed in EACH month relevant to the lessons.
 
+  // Fetch all registrations where user utilized the "Subscription Entitlement"
+  const entitlementRegistrations =
+    await db.query.liveLessonsRegistrations.findMany({
+      where: and(
+        eq(liveLessonsRegistrations.userId, user.id),
+        // Check for your specific flag, e.g., 'subscription_entitlement' or usedFreeCredit: true
+        eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement')
+      ),
+      with: {
+        lesson: {
+          columns: { scheduledAt: true }, // We need the date of the consumed lesson
+        },
+      },
+    });
+
+  // Group counts by "YYYY-MM"
+  const usageByMonth = new Map<string, number>();
+
+  for (const reg of entitlementRegistrations) {
+    if (!reg.lesson) continue;
+    const monthKey = format(new Date(reg.lesson.scheduledAt), 'yyyy-MM');
+    usageByMonth.set(monthKey, (usageByMonth.get(monthKey) || 0) + 1);
+  }
+
+  // 4. Map the lessons with context-aware eligibility
   return lessons.map((lesson) => {
-    const myRegistrations =
-      lesson.registrations?.filter((r) => r.userId === user?.id) || [];
-    const isAlreadyPaid = myRegistrations.some(
-      (r) => r.paymentStatus === 'paid'
+    const lessonDate = new Date(lesson.scheduledAt);
+    const monthKey = format(lessonDate, 'yyyy-MM');
+
+    // How many credits were used in THIS lesson's month?
+    const usedInThisMonth = usageByMonth.get(monthKey) || 0;
+    const LIMIT_PER_MONTH = 2;
+
+    // Eligibility Logic:
+    // 1. Must have active sub
+    // 2. Must not have exceeded limit for THAT specific month
+    const isEligibleForFree =
+      hasActiveSubscription && usedInThisMonth < LIMIT_PER_MONTH;
+
+    // Registration / Payment Logic (Existing)
+    const myRegistrations = lesson.registrations || [];
+    const isRegistered = myRegistrations.length > 0;
+
+    // Check if we have a valid entry (Paid OR Entitlement)
+    const hasValidEntry = myRegistrations.some(
+      (r) =>
+        r.paymentStatus === 'paid' ||
+        r.accessMethod === 'subscription_entitlement'
     );
+
+    // Pending is strictly when we have a registration but no valid payment/entitlement yet
     const isPaymentPending =
-      !isAlreadyPaid &&
+      !hasValidEntry &&
       myRegistrations.some((r) => r.paymentStatus === 'unpaid');
 
     return {
@@ -173,9 +231,12 @@ async function getLiveLessonsWithUserStatus(
       scheduledAt: lesson.scheduledAt,
       duration: lesson.duration,
       isListed: lesson.isListed,
-      isRegistered: myRegistrations.length > 0,
-      ...eligibility,
+      isRegistered,
       isPaymentPending,
+
+      // Context-Aware Data
+      isEligibleForFree,
+      freeEligibilitiesUsed: usedInThisMonth,
     };
   });
 }

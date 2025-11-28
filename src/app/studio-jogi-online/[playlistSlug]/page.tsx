@@ -3,6 +3,7 @@ import HeaderOne from '@/components/Headers/HeaderOne';
 import LessonCard from '@/components/LessonCard/LessonCard';
 import { buttonVariants } from '@/components/ui/button';
 import VideoPlayer from '@/features/shared/VideoPlayer';
+import { AddToCalendarButton } from '@/features/user/Calendar/AddToCalendarButton';
 import { cn } from '@/lib/utils';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { Params } from '@/types/types';
@@ -10,6 +11,7 @@ import { Film } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { SchedulePlaylistButton } from '@/features/user/Calendar/SchedulePlaylistButton';
 
 export async function generateMetadata({
   params,
@@ -66,6 +68,7 @@ export default async function Playlist({
                 <Film />
                 <span>{playlist.lessons.length} filmów</span>
               </div>
+              <SchedulePlaylistButton playlist={playlist} />
             </div>
           </hgroup>
         </div>

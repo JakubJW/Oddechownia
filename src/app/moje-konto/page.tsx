@@ -1,13 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { signOut } from '@/server/actions/auth';
+import CaledarGrid from '@/features/user/Calendar/CalendarGrid';
+import { getRequiredUser } from '@/lib/data';
 
 export default async function MyAccount() {
-  return (
-    <>
-      Witaj
-      <form action={signOut}>
-        <Button type="submit">Wyloguj</Button>
-      </form>
-    </>
-  );
+  const user = await getRequiredUser();
+
+  return <CaledarGrid user={user} />;
 }

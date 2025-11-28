@@ -19,6 +19,7 @@ import { LessonsService } from '@/server/services/lessons.service';
 import { getUser } from '@/server/actions/user';
 import { redirect } from 'next/navigation';
 import FavoritesButton from '@/features/PlayLessonView/Actions/FavoritesButton';
+import { AddToCalendarButton } from '@/features/user/Calendar/AddToCalendarButton';
 
 export async function generateMetadata({
   params,
@@ -84,10 +85,17 @@ export default async function PlaylistLessonPlayback({
               <div className="flex gap-4 items-start justify-between">
                 <h1 className="font-bold text-2xl">{currentLesson.name}</h1>
                 {user && (
-                  <FavoritesButton
-                    lessonId={currentLesson.id}
-                    initialIsFavorite={currentLesson.isFavorite}
-                  />
+                  <div className="flex gap-2">
+                    <AddToCalendarButton
+                      lessonId={currentLesson.id}
+                      playlistId={playlist.id}
+                      lessonTitle={currentLesson.name}
+                    />
+                    <FavoritesButton
+                      lessonId={currentLesson.id}
+                      initialIsFavorite={currentLesson.isFavorite}
+                    />
+                  </div>
                 )}
               </div>
               <p className="text-gray-500">{currentLesson.description}</p>

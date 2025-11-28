@@ -1,8 +1,7 @@
-import { and, desc, eq, gte, or } from 'drizzle-orm';
-import { liveLessonsRegistrations } from '@/server/db/schema';
+import { and, count, desc, eq, gte, lte, or } from 'drizzle-orm';
+import { liveLessonsRegistrations, liveLessons } from '@/server/db/schema';
 import { db } from '@/server/db';
 import { LiveLessonSignUpValues } from '@/features/LiveLesson/Form/schema';
-import { BillingService } from './billing.service';
 import { logger } from '../lib/logger.service';
 import { stripeService } from './stripe.service';
 import { env } from '@/env';
@@ -15,6 +14,7 @@ import {
 } from '../lib/errors';
 import { LiveLessonRegistrationCardDTO } from '../models/liveLessonRegistration.models';
 import { EmailService } from './emails.service';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 export type PurchaseConfirmationDTO = {
   registrationId: string;
@@ -25,89 +25,66 @@ export type PurchaseConfirmationDTO = {
 const log = logger.child({ module: 'live-lessons-registrations' });
 
 const create = async (
-  id: string,
+  lessonId: string,
   values: LiveLessonSignUpValues,
   user: User
 ) => {
-  let isEligible = false;
-  let billingPeriodStart = undefined;
-
-  if (user) {
-    const eligibility = await checkEntitlementEligibility(user);
-    const cycle = await BillingService.getCurrentBillingCycle(user);
-
-    billingPeriodStart = cycle.start;
-    isEligible = eligibility.isEligible;
-  }
-
-  const prices = await stripeService.listPrices({
-    active: true,
-    limit: 100,
-    type: 'one_time',
+  const lesson = await db.query.liveLessons.findFirst({
+    where: eq(liveLessons.id, lessonId),
   });
 
-  if (!isEligible) {
-    return await handlePaidRegistration(id, values, prices.data[0].id, user);
+  if (!lesson) throw new Error('Lesson not found');
+
+  const { isEligible } = await checkEntitlementEligibility(user, lesson);
+
+  if (isEligible) {
+    return await handleFreeRegistration(lessonId, values, user);
   }
 
-  await handleFreeRegistration(
-    id,
-    values,
-    prices.data[0].id,
-    user,
-    billingPeriodStart
-  );
+  const priceId = 'price_1SS2YaFWpOu2Y0ISqYckJncc';
+
+  if (!priceId) throw new Error('Price not configured');
+
+  return await handlePaidRegistration(lessonId, values, priceId, user);
 };
-
-const getEntitlementUsage = async (user: User, cycleStart: string) => {
-  if (!user) return 2;
-
-  const result = await db.query.liveLessonsRegistrations.findMany({
-    columns: { id: true },
-    where: and(
-      eq(liveLessonsRegistrations.userId, user.id),
-      gte(liveLessonsRegistrations.billingPeriodStart, cycleStart)
-    ),
-  });
-
-  return result.length;
-};
-
-type Eligibility =
-  | {
-      isEligible: false;
-      lessonsUsed: number | null;
-    }
-  | {
-      isEligible: true;
-      lessonsUsed: number;
-    };
 
 const checkEntitlementEligibility = async (
-  user: User
-): Promise<Eligibility> => {
-  const cycle = await BillingService.getCurrentBillingCycle(user);
+  user: User,
+  lesson: typeof liveLessons.$inferSelect
+) => {
+  if (!user || !user.hasActiveSubscription)
+    return { isEligible: false, lessonsUsed: 0 };
+  if (user.role === 'admin') return { isEligible: true, lessonsUsed: 0 };
 
-  if (!user || !cycle.start)
-    return {
-      isEligible: false,
-      lessonsUsed: null,
-    };
+  const targetMonthStart = startOfMonth(new Date(lesson.scheduledAt));
+  const targetMonthEnd = endOfMonth(new Date(lesson.scheduledAt));
 
-  const usageCount = await getEntitlementUsage(user, cycle.start);
+  const [result] = await db
+    .select({ count: count() })
+    .from(liveLessonsRegistrations)
+    .innerJoin(
+      liveLessons,
+      eq(liveLessonsRegistrations.lessonId, liveLessons.id)
+    )
+    .where(
+      and(
+        eq(liveLessonsRegistrations.userId, user.id),
+        eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement'),
+        gte(liveLessons.scheduledAt, targetMonthStart.toISOString()),
+        lte(liveLessons.scheduledAt, targetMonthEnd.toISOString())
+      )
+    );
+
+  const usedCount = result.count;
 
   return {
-    isEligible: usageCount < 2,
-    lessonsUsed: usageCount,
+    isEligible: usedCount < 2,
+    lessonsUsed: usedCount,
   };
 };
 
 const buildCustomerData = (user: User, values: LiveLessonSignUpValues) => {
-  if (!user) {
-    return { customer_email: values.email };
-  }
-
-  if (!user.stripeCustomerId) {
+  if (!user || !user.stripeCustomerId) {
     return { customer_email: values.email };
   }
 
@@ -180,9 +157,7 @@ const handlePaidRegistration = async (
 const handleFreeRegistration = async (
   id: string,
   values: LiveLessonSignUpValues,
-  stripePriceId: string,
-  user: User,
-  billingPeriodStart?: string
+  user: User
 ) => {
   if (!user) {
     throw new AuthenticationError(
@@ -219,11 +194,9 @@ const handleFreeRegistration = async (
     lessonId: id,
     userId: user.id,
     accessMethod: 'subscription_entitlement',
-    stripePriceId,
-    billingPeriodStart,
   });
 
-  return;
+  return { sessionUrl: null };
 };
 
 const fullfillLiveLessonPurchase = async (
@@ -306,6 +279,5 @@ export const LiveLessonsRegistrationsService = {
   getLessonRegistrations,
   create,
   checkEntitlementEligibility,
-  getEntitlementUsage,
   fullfillLiveLessonPurchase,
 };

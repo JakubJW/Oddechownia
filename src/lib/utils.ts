@@ -26,6 +26,13 @@ export function formatDuration(duration?: number) {
   return hours + ':' + minutes + ':' + seconds;
 }
 
+export const formatTime = (date: string) => {
+  return new Intl.DateTimeFormat('pl-PL', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date));
+};
+
 export function formatDateTime(date: Date) {
   const currentDate = new Date();
 }
@@ -45,7 +52,11 @@ export function encodeCursor(rawCursor: string | number | null) {
 }
 
 export function decodeCursor(encodedCursor: string | null) {
-  if (encodedCursor === 'null' || encodedCursor === null || encodedCursor === undefined) {
+  if (
+    encodedCursor === 'null' ||
+    encodedCursor === null ||
+    encodedCursor === undefined
+  ) {
     return null;
   }
   try {

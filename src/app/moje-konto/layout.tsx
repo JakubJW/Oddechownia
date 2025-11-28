@@ -28,9 +28,10 @@ export default async function UserLayout({
           </p>
         </div>
       )}
-      <Container>
+      <Container className="py-4">
         <div className="grid grid-cols-12">
           <div className="flex flex-col gap-4 col-span-2">
+            <Link href="/moje-konto">Dashboard</Link>
             <Link href="/moje-konto/ulubione-lekcje">Ulubione lekcje</Link>
             <Link href="/moje-konto/zajecia-na-zywo">Zajęcia na żywo</Link>
             <Link href="/moje-konto/moje-dane">Moje dane</Link>
