@@ -26,7 +26,7 @@ export default async function OnlineYogaStudio() {
 
   return (
     <section>
-      <Container className="py-10">
+      <Container className="py-12">
         <div className="space-y-12">
           {playlists.map((playlist) => (
             <PlaylistCard

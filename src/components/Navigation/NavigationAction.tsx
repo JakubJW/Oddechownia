@@ -6,14 +6,20 @@ import { buttonVariants } from '../ui/button';
 import { cn } from '@/lib/utils';
 
 interface NavigaitonActionProps extends NavigationProps {
-    className?: string;
+  className?: string;
 }
 
-export default function NavigationAction({ user, className }: NavigaitonActionProps) {
+export default function NavigationAction({
+  user,
+  className,
+}: NavigaitonActionProps) {
   if (!user) {
     return (
       <Link
-        className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), className)}
+        className={cn(
+          buttonVariants({ variant: 'secondary', size: 'lg' }),
+          className
+        )}
         href="/logowanie"
       >
         Zaloguj się
@@ -23,7 +29,10 @@ export default function NavigationAction({ user, className }: NavigaitonActionPr
 
   return (
     <Link
-      className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), className)}
+      className={cn(
+        buttonVariants({ variant: 'secondary', size: 'lg' }),
+        className
+      )}
       href="/moje-konto"
     >
       Moje konto

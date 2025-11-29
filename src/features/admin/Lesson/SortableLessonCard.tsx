@@ -32,7 +32,7 @@ export default function SortableLessonCard({
 
   return (
     <div
-      className="py-2 flex items-center gap-4 cursor-grab active:cursor-grabbing bg-whiteBg"
+      className="py-2 flex items-center gap-4 cursor-grab active:cursor-grabbing bg-white-background"
       ref={setNodeRef}
       style={style}
       {...attributes}

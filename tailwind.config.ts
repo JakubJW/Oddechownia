@@ -29,13 +29,10 @@ export default {
         foreground: 'var(--foreground)',
         primaryFg: 'hsl(var(--matcha))',
         primaryBg: 'hsl(var(--almond))',
-        redFg: 'var(--red-foreground)',
-        redBg: 'var(--red-background)',
-        greenFg: 'var(--green-foreground)',
-        greenBg: 'var(--green-background)',
-        yellowFg: 'var(--yellow-foreground)',
-        yellowBg: 'var(--yellow-background)',
-        whiteBg: 'var(--background-white)',
+        white: {
+          DEFAULT: 'var(--white)',
+          background: 'hsl(var(--background-white))',
+        },
         background: 'hsl(var(--background))',
         card: {
           DEFAULT: 'hsl(var(--card))',
@@ -46,8 +43,8 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: 'var(--primary-foreground)',
-          foreground: 'var(--primary-background)',
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',

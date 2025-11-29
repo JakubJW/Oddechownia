@@ -21,39 +21,37 @@ body {
 
 @layer base {
   :root {
-    --primary-foreground: #35A6EC;
-    --primary-background: #E8F5FD;
-    --red-foreground: #EC3538;
-    --red-background: #FDE8E8;
-    --green-foreground: #35EC4A;
-    --green-background: #E8FDEA;
-    --yellow-foreground: #ECD135;
-    --yellow-background: #FDFAE8;
-    --background-white: #FAFAFA;
     --navigation-height: 74px;
+    
+    --almond: 30 37% 87%;
+    --almond-foreground: #f5efe9;
+    --steel-blue: 209 20% 68%;
+    --steel-blue-foreground: 206 21% 94%;
+    --matcha: 75 27% 68%;
+    --matcha-foreground: #dce2cc;
+    --rich-black: #00171F;
+    --rich-black-foreground: #808b8f;
+    --background-white: 0 0% 98%;
+    --white: #FFFFFF;
 
+    --primary: var(--matcha);
+    --primary-foreground: 75 25% 94%;
+    --secondary: var(--steel-blue-foreground);
+    --secondary-foreground: var(--steel-blue);
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    /* --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%; */
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
     --accent: 0 0% 96.1%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --almond: 30 37% 87%;
-    --almond-foreground: #f5efe9;
-    --steel-blue: 209 20% 68%;
-    --steel-blue-foreground: #cfd7df;
-    --matcha: 75 27% 68%;
-    --matcha-foreground: #dce2cc;
-    --rich-black: #00171F;
-    --rich-black-foreground: #808b8f;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
@@ -81,6 +79,7 @@ body {
 
 .slick-track {
   display: flex !important;
+  padding-bottom: 8px;
 }
 
 /* the slides */
@@ -105,7 +104,7 @@ body {
 
   li {
     button::before {
-      @apply bg-whiteBg border border-primaryFg rounded-full;
+      @apply bg-white-background border border-primaryFg rounded-full;
       content: "" !important;
     }
   }
@@ -135,6 +134,17 @@ body {
     }
   }
 
+  .lesson-playlist-card:hover {
+
+    .lesson-playlist-card-thumbnail {
+      transform: scale(1.05);
+    }
+
+    .lesson-playlist-card-play-overlay {
+      opacity: 1;
+    }
+  }
+
   .slider-arrow-button {
       @apply  absolute top-1/2 -translate-y-1/2 p-3 bg-transparent transition-colors duration-300 hover:bg-primaryBg rounded-full;
 
@@ -144,10 +154,39 @@ body {
   }
 
   .slider-arrow-button__left {
-    @apply left-0;
+    @apply -left-16;
   }
 
   .slider-arrow-button__right {
-    @apply right-0;
+    @apply -right-16;
+  }
+
+  mux-player {
+    @apply w-full aspect-video;
+    --seek-backward-button: none;
+    --seek-forward-button: none;
+  }
+}
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    @apply hidden md:visible;
+    width: 8px;
+    height: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--primary) / 0.6);
   }
 }

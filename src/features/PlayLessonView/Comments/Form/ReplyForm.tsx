@@ -128,7 +128,7 @@ export const ReplyForm = ({
   };
 
   return (
-    <div>
+    <div className="mt-4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

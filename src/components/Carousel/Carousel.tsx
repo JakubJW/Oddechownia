@@ -5,7 +5,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef } from 'react';
-import { Info } from 'lucide-react';
 
 const settings = {
   infinite: false,
@@ -47,8 +46,8 @@ export default function Carousel({
         <ChevronLeft className="slider-arrow-icon" />
       </button>
       <Slider
-        className="lg:mx-12"
         ref={slider}
+        className="-mx-4"
         {...settings}
       >
         {children}

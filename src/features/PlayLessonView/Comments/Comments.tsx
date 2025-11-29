@@ -9,7 +9,7 @@ import { User } from '@/server/actions/user';
 
 interface CommentsProps {
   lessonId: number;
-  user: User
+  user: User;
 }
 
 export const Comments = ({ lessonId, user }: CommentsProps) => {
@@ -64,7 +64,7 @@ export const Comments = ({ lessonId, user }: CommentsProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col">
       {data?.pages.map((page, i) => (
         <React.Fragment key={i}>
           {page.data.map(
@@ -78,23 +78,19 @@ export const Comments = ({ lessonId, user }: CommentsProps) => {
               isAdmin,
               updatedAt,
             }) => (
-              <div
+              <Comment
                 key={id}
-                className="bg-white p-4 rounded-md border "
-              >
-                <Comment
                 user={user}
-                  isAdmin={isAdmin}
-                  id={id}
-                  author={author}
-                  content={content}
-                  createdAt={createdAt}
-                  updatedAt={updatedAt}
-                  isAuthor={isAuthor}
-                  lessonId={lessonId}
-                  replyCount={replyCount}
-                />
-              </div>
+                isAdmin={isAdmin}
+                id={id}
+                author={author}
+                content={content}
+                createdAt={createdAt}
+                updatedAt={updatedAt}
+                isAuthor={isAuthor}
+                lessonId={lessonId}
+                replyCount={replyCount}
+              />
             )
           )}
         </React.Fragment>

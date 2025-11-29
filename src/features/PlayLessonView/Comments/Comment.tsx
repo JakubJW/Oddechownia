@@ -98,7 +98,7 @@ export const Comment = ({
   });
 
   return (
-    <div className={cn(isAdmin && 'bg-red-500')}>
+    <div className={cn(isAdmin && 'bg-red-500', 'mt-4')}>
       <div className="flex">
         <div className="rounded-full flex items-center justify-center w-8 h-8 bg-muted mr-4">
           <span className="text-sm font-light">
@@ -161,7 +161,7 @@ export const Comment = ({
           </DropdownMenu>
         )}
       </div>
-      <div className="ml-10 mt-4">
+      <div className="flex flex-col ml-10">
         {replyMode && (
           <ReplyForm
             lessonId={lessonId}

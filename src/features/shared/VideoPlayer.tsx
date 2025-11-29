@@ -17,17 +17,17 @@ const DynamicVideoPlayer = ({
   thumbnail,
 }: VideoPlayerProps) => {
   return (
-    <div className="mb-8 w-full aspect-video rounded-xl overflow-hidden">
+    <div className=" mb-4 md:mb-8 md:rounded-xl overflow-hidden aspect-video">
       <MuxPlayer
         poster={thumbnail}
-        className="w-full aspect-video"
+        title={videoTitle}
         streamType="on-demand"
         playbackId={playbackId}
         metadata={{
           video_series: videoSeries,
           video_title: videoTitle,
         }}
-        style={{ aspectRatio: 16 / 9 }}
+        accentColor="hsl(var(--matcha))"
       />
     </div>
   );
@@ -36,7 +36,7 @@ const DynamicVideoPlayer = ({
 const VideoPlayer = dynamic(() => Promise.resolve(DynamicVideoPlayer), {
   ssr: false,
   loading: () => (
-    <div className="mb-8 w-full aspect-video rounded-xl animate-pulse bg-white"></div>
+    <div className="-mx-4 md:mx-0 mb-8 w-full aspect-video rounded-xl animate-pulse bg-muted" />
   ),
 });
 

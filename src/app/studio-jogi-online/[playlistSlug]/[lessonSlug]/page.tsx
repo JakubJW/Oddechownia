@@ -1,12 +1,4 @@
 import Container from '@/components/Container/Container';
-import {
-  Playlist,
-  PlaylistContent,
-  PlaylistLesson,
-  PlaylistLessonImage,
-  PlaylistLessonName,
-  PlaylistName,
-} from '@/components/PlaylistLesson/PlaylistLesson';
 import Attachments from '@/features/PlayLessonView/Attachments/Attachments';
 import { CommentsSection } from '@/features/PlayLessonView/Comments/CommentsSection';
 import VideoPlayer from '@/features/shared/VideoPlayer';
@@ -20,6 +12,8 @@ import { getUser } from '@/server/actions/user';
 import { redirect } from 'next/navigation';
 import FavoritesButton from '@/features/PlayLessonView/Actions/FavoritesButton';
 import { AddToCalendarButton } from '@/features/user/Calendar/AddToCalendarButton';
+import Image from 'next/image';
+import { cn, formatDuration } from '@/lib/utils';
 
 export async function generateMetadata({
   params,
@@ -37,6 +31,7 @@ export async function generateMetadata({
 
   return {
     title: `${lessonMetadata?.name} | ${playlistMetadata?.name} | Studio Jogi Online | Oddechownia`,
+    description: lessonMetadata?.description,
   };
 }
 
@@ -72,20 +67,26 @@ export default async function PlaylistLessonPlayback({
   }
 
   return (
-    <Container>
-      <div className="grid grid-cols-12 gap-x-6 gap-y-16">
-        <div className="col-span-12 row-start-1 md:col-span-8">
+    <Container className="py-0 md:pt-4 lg:pt-16">
+      <div className="flex flex-col lg:flex-row gap-6 mb-8 -mx-4 md:-mx-0">
+        <div className="w-full lg:w-2/3">
           <VideoPlayer
             thumbnail={currentLesson.thumbnail}
             playbackId={currentLesson.video?.publicPlaybackId}
             videoTitle={currentLesson.name}
           />
           <div className="space-y-4">
-            <hgroup className="space-y-4">
-              <div className="flex gap-4 items-start justify-between">
-                <h1 className="font-bold text-2xl">{currentLesson.name}</h1>
+            <hgroup className="space-y-4 px-4 md:px-0">
+              <div className="flex flex-col gap-4 items-start justify-between">
+                <h1 className="text-md md:text-xl font-bold ">
+                  {currentLesson.name}
+                </h1>
+                <p className="text-sm md:text-md text-gray-500 line-clamp-2">
+                  {currentLesson.description}
+                </p>
+
                 {user && (
-                  <div className="flex gap-2">
+                  <div className="flex w-full md:w-min gap-2">
                     <AddToCalendarButton
                       lessonId={currentLesson.id}
                       playlistId={playlist.id}
@@ -98,39 +99,59 @@ export default async function PlaylistLessonPlayback({
                   </div>
                 )}
               </div>
-              <p className="text-gray-500">{currentLesson.description}</p>
             </hgroup>
-            <Attachments attachments={currentLesson.attachments} />
+            {/* <Attachments attachments={currentLesson.attachments} /> */}
           </div>
         </div>
-        <CommentsSection
-          user={user}
-          lessonId={currentLesson.id}
-          className="col-span-12 md:col-span-8"
-        />
-        <div className="col-span-12 row-start-2 md:row-start-1 row-end-auto md:col-span-4 flex">
-          <Playlist>
-            <PlaylistName>{playlist.name}</PlaylistName>
-            <PlaylistContent>
+        <div className="w-full lg:w-1/3">
+          <div className="flex flex-col flex-1 lg:h-0 lg:min-h-full md:border md:rounded-xl bg-white">
+            <p className="font-semibold text-lg  p-6 line-clamp-2">
+              {playlist.name}
+            </p>
+            <div className="flex-grow px-6 pb-6 overflow-y-scroll">
               {playlist.lessons.map(({ id, video, name, slug, thumbnail }) => (
                 <Link
                   key={id}
                   href={`/studio-jogi-online/${playlist.slug}/${slug}`}
                 >
-                  <PlaylistLesson isActive={slug === lessonSlug}>
-                    <PlaylistLessonImage
-                      duration={video?.duration}
-                      alt={name}
-                      src={thumbnail}
-                    />
-                    <PlaylistLessonName>{name}</PlaylistLessonName>
-                  </PlaylistLesson>
+                  <div
+                    className={cn(
+                      'lesson-playlist-card flex gap-4 -mx-6 px-6 py-2 relative transition-colors duration-300',
+                      slug === lessonSlug
+                        ? 'bg-matcha/50'
+                        : 'hover:bg-matcha/20'
+                    )}
+                  >
+                    <div className="relative overflow-hidden rounded-lg flex-shrink-0">
+                      <Image
+                        src={thumbnail}
+                        width={150}
+                        height={96}
+                        alt={name}
+                        className="aspect-video transition-transform duration-300"
+                      />
+                      <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs p-1 rounded-sm">
+                        {formatDuration(video?.duration)}
+                      </span>
+                    </div>
+                    <p
+                      title={name}
+                      className="text-sm md:text-md font-semibold line-clamp-2 mb-auto"
+                    >
+                      {name}
+                    </p>
+                  </div>
                 </Link>
               ))}
-            </PlaylistContent>
-          </Playlist>
+            </div>
+          </div>
         </div>
       </div>
+      <CommentsSection
+        user={user}
+        lessonId={currentLesson.id}
+        className="w-full lg:w-2/3"
+      />
     </Container>
   );
 }
