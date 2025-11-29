@@ -17,18 +17,15 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
   return (
     <div>
       <div className="flex gap-8">
-        {/* <div className="aspect-video h-[200px] bg-steelBlue rounded-lg">
-          tutaj miniatura
-        </div> */}
-        <div className="lg:mx-[68px] space-y-2 w-full gap-2 items-center">
+        <div className="space-y-2 w-full gap-2 items-center">
           <p className="text-xl font-bold">{playlist.name}</p>
           <div className="flex justify-between">
             <div className="space-x-2">
-              <Badge>
+              <Badge variant="secondary">
                 <CirclePlay className="h-4 w-4 mr-2" />
                 <span>{playlist.lessons.length} lekcji</span>
               </Badge>
-              <Badge>
+              <Badge variant="secondary">
                 <Clock className="h-4 w-4 mr-2" />
                 <span>
                   {Math.floor(playlist.totalDurationInSeconds / 3600)} h{' '}
@@ -51,7 +48,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
           {playlist.lessons.map((lesson) => (
             <Link
               key={lesson.id}
-              className="h-full md:m-1"
+              className="h-full"
               href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
             >
               <LessonCard

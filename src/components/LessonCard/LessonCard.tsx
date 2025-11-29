@@ -10,7 +10,7 @@ const LessonCard = ({
   thumbnail,
 }: Pick<LessonDTO, 'name' | 'description' | 'video' | 'thumbnail'>) => {
   return (
-    <div className="lesson-card transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] overflow-hidden">
+    <div className="lesson-card transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
           src={thumbnail}
@@ -29,8 +29,8 @@ const LessonCard = ({
       </div>
 
       <div className="flex flex-col px-4 py-6 md:px-6 gap-4">
-        <p className="text-lg text-black font-bold line-clamp-2">{name}</p>
-        <p className="text-gray-400 line-clamp-3">{description}</p>
+        <p className="text-black font-semibold line-clamp-2">{name}</p>
+        <p className="text-sm  text-gray-400 line-clamp-3">{description}</p>
       </div>
     </div>
   );

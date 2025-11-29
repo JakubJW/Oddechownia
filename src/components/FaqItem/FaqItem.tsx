@@ -58,7 +58,9 @@ export function FaqItem({ children }: { children: ReactNode }) {
     <FaqContext.Provider
       value={{ isCollapsed, setIsCollapsed, height, collapsibleContentRef }}
     >
-      <div className="bg-whiteBg rounded-lg overflow-hidden">{children}</div>
+      <div className="bg-white-background rounded-lg overflow-hidden">
+        {children}
+      </div>
     </FaqContext.Provider>
   );
 }
@@ -96,7 +98,7 @@ export function FaqAnswer({ children }: { children: ReactNode }) {
         transitionDuration: '0.3s',
       }}
     >
-      <div className="bg-whiteBg rounded-b-lg border-t border-primaryFg px-14 py-4">
+      <div className="bg-white-background rounded-b-lg border-t border-primaryFg px-14 py-4">
         {children}
       </div>
     </div>
