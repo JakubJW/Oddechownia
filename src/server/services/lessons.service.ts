@@ -13,13 +13,12 @@ import {
 import { filterService, LessonFilters } from './filters.service';
 import { supabaseService } from './supabase.service';
 import { transformVideoToDto } from './videos.service';
-import { lessons, userFavoriteLessons } from '../db/schema';
+import { lessons, userFavoriteLessons, userLessonProgress } from '../db/schema';
 import { AttachmentsService } from './attachments.service';
 import { PlaylistLessonSchema } from '../models/playlistLesson.models';
 import { VideoSchema } from '../models/video.models';
 import { FileSchema } from '../models/file.models';
 import { and, desc, eq, inArray, lt } from 'drizzle-orm';
-import { User } from '../actions/user';
 
 const transformLessonToDTO = (
   lessons: LessonBaseSchema[],
@@ -42,7 +41,7 @@ const transformLessonToDTO = (
 
 const transformLessonsToDetailDTO = (
   lessons: LessonDetailSchema[],
-  user: User,
+  userId: string,
   position: number
 ): LessonDetailDTO[] => {
   return lessons.map((lesson) => ({
@@ -54,7 +53,7 @@ const transformLessonsToDetailDTO = (
     isFavorite: lesson.userFavoriteLessons.some(
       (favoriteLesson) =>
         favoriteLesson.lessonId === lesson.id &&
-        favoriteLesson.userId === user?.id
+        favoriteLesson.userId === userId
     ),
     thumbnail: supabaseService.getFileUrl(
       lesson.thumbnail.name,
@@ -280,12 +279,48 @@ const getUserFavoriteLessons = async (
   return transformToFavoriteLessonsDTO(result);
 };
 
+export const getRecentlyWatchedLessons = async (userId: string) => {
+  const result = await db.query.userLessonProgress.findMany({
+    where: eq(userLessonProgress.userId, userId),
+    with: {
+      lesson: {
+        with: {
+          video: true,
+          thumbnail: true,
+        },
+      },
+      playlist: true,
+    },
+    orderBy: desc(userLessonProgress.updatedAt),
+    limit: 4,
+  });
+
+  return result.map((item) => ({
+    ...item.lesson,
+    thumbnail: supabaseService.getFileUrl(
+      item.lesson.thumbnail.name,
+      item.lesson.thumbnail.bucket,
+      item.lesson.thumbnail.path
+    ).data,
+    progress: {
+      isCompleted: item?.isCompleted || false,
+      lastPositionSeconds: item.lastPositionSeconds,
+      percent: Math.min(
+        (item.lastPositionSeconds / item.lesson.video!.duration!) * 100,
+        100
+      ),
+    },
+    playlist: item.playlist,
+  }));
+};
+
 export const LessonsService = {
   getLessonForAdminEdit,
   getLessonMetadata,
   transformLessonsToDetailDTO,
   transformLessonToDTO,
   getLessonsList,
+  getRecentlyWatchedLessons,
   transformPlaylistLessonsToAdminEditPlaylistDTO,
   getUserFavoriteLessons,
 };

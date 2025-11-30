@@ -12,7 +12,7 @@ export default function MobileNavigation({ user }: NavigationProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="ml-auto sm:hidden">
+    <div className="flex items-center sm:hidden">
       <button onClick={() => setOpen(true)}>
         <MenuIcon className="text-white" />
       </button>

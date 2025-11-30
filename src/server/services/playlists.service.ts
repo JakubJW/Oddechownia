@@ -5,8 +5,9 @@ import {
   lessons,
   videos,
   files,
+  userLessonProgress,
 } from '@/server/db/schema';
-import { asc, InferSelectModel } from 'drizzle-orm';
+import { and, asc, eq, inArray, InferSelectModel } from 'drizzle-orm';
 import { db } from '../db';
 import {
   PlaylistDetailDTO,
@@ -15,7 +16,6 @@ import {
 import { transformVideoToDto } from './videos.service';
 import { LessonsService } from './lessons.service';
 import { LessonDetailDTO, LessonDTO } from '../models/lesson.models';
-import { User } from '../actions/user';
 
 export type LessonWithVideoSelect = InferSelectModel<typeof lessons> & {
   video: InferSelectModel<typeof videos> | null;
@@ -85,7 +85,7 @@ const getPlaylistsListForUser = async (filters?: PlaylistFilters) => {
 
 const transformSelectPlaylistToDTO = (
   playlist: SelectPlaylistResult,
-  user: User
+  userId: string
 ): PlaylistDetailDTO<LessonDetailDTO[]> | undefined => {
   if (!playlist) return undefined;
 
@@ -96,7 +96,7 @@ const transformSelectPlaylistToDTO = (
     slug: playlist.slug,
     position: playlist.position,
     lessons: playlist.playlistLessons.flatMap(({ lesson, position }) =>
-      LessonsService.transformLessonsToDetailDTO([lesson], user, position)
+      LessonsService.transformLessonsToDetailDTO([lesson], userId, position)
     ),
     video: transformVideoToDto(playlist.video),
     isAccessibleForFree: playlist.isAccessibleForFree,
@@ -139,10 +139,51 @@ const selectPlaylist = async (filters?: PlaylistFilters) => {
   return result;
 };
 
-const getPlaylist = async (user: User, filters?: PlaylistFilters) => {
+const getPlaylist = async (userId: string, filters?: PlaylistFilters) => {
   const result = await selectPlaylist(filters);
 
-  return transformSelectPlaylistToDTO(result, user);
+  if (!result) return undefined;
+
+  const lessonIds = result.playlistLessons.map((pl) => pl.lessonId);
+
+  const progressRecords = await db.query.userLessonProgress.findMany({
+    where: and(
+      eq(userLessonProgress.userId, userId),
+      inArray(userLessonProgress.lessonId, lessonIds)
+    ),
+  });
+
+  const progressMap = new Map(progressRecords.map((p) => [p.lessonId, p]));
+
+  const transformed = transformSelectPlaylistToDTO(result, userId);
+
+  if (!transformed) return undefined;
+
+  return {
+    ...transformed,
+    lessons: transformed.lessons.map((lesson) => {
+      const prog = progressMap.get(lesson.id);
+
+      const durationSec = lesson.video?.duration || 0;
+      const lastPos = prog?.lastPositionSeconds || 0;
+
+      let percent = 0;
+      if (prog?.isCompleted) {
+        percent = 100;
+      } else if (durationSec > 0) {
+        percent = (lastPos / durationSec) * 100;
+      }
+
+      return {
+        ...lesson,
+        progress: {
+          isCompleted: prog?.isCompleted || false,
+          lastPositionSeconds: lastPos,
+          percent: Math.min(percent, 100),
+        },
+      };
+    }),
+  };
 };
 
 export type SelectPlaylistResult = Awaited<ReturnType<typeof selectPlaylist>>;

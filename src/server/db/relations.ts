@@ -13,6 +13,7 @@ import {
   liveLessonsRegistrations,
   liveLessons,
   userPracticeSchedules,
+  userLessonProgress,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -22,6 +23,7 @@ export const playlistRelations = relations(playlists, ({ many, one }) => ({
     references: [videos.id],
   }),
   scheduledPractices: many(userPracticeSchedules),
+  progressRecords: many(userLessonProgress),
 }));
 
 export const lessonsRelations = relations(lessons, ({ one, many }) => ({
@@ -38,6 +40,7 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
   }),
   userFavoriteLessons: many(userFavoriteLessons),
   scheduledPractices: many(userPracticeSchedules),
+  progressRecords: many(userLessonProgress),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
@@ -57,6 +60,7 @@ export const userRelations = relations(users, ({ many }) => ({
   favoriteLessons: many(userFavoriteLessons),
   liveLessonsRegistrations: many(liveLessonsRegistrations),
   practiceSchedules: many(userPracticeSchedules),
+  lessonProgress: many(userLessonProgress),
 }));
 
 export const userSubscriptionRelations = relations(
@@ -168,6 +172,24 @@ export const userPracticeSchedulesRelations = relations(
 
     playlist: one(playlists, {
       fields: [userPracticeSchedules.playlistId],
+      references: [playlists.id],
+    }),
+  })
+);
+
+export const userLessonProgressRelations = relations(
+  userLessonProgress,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userLessonProgress.userId],
+      references: [users.id],
+    }),
+    lesson: one(lessons, {
+      fields: [userLessonProgress.lessonId],
+      references: [lessons.id],
+    }),
+    playlist: one(playlists, {
+      fields: [userLessonProgress.playlistId],
       references: [playlists.id],
     }),
   })

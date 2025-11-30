@@ -45,7 +45,6 @@ export interface LiveLessonEvent extends BaseEvent {
 // 2. Practice Session (Editable)
 export interface PracticeSessionEvent extends BaseEvent {
   type: 'practice-session';
-  isCompleted: boolean;
   lessonUrl: string;
 }
 
@@ -154,7 +153,6 @@ export const getUserSchedule = async (
       date: item.scheduledAt,
       title: item.lesson.name,
       lessonUrl: `/studio-jogi-online/${item.playlist?.slug}/${item.lesson.slug}`,
-      isCompleted: item.isCompleted || false,
       duration: item.lesson.video!.duration!,
     });
   }

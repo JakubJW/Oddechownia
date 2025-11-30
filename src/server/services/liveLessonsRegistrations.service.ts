@@ -48,6 +48,31 @@ const create = async (
   return await handlePaidRegistration(lessonId, values, priceId, user);
 };
 
+const getUsedEntitlementsCount = async (userId: string) => {
+  const targetMonthStart = startOfMonth(new Date());
+  const targetMonthEnd = endOfMonth(new Date());
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(liveLessonsRegistrations)
+    .innerJoin(
+      liveLessons,
+      eq(liveLessonsRegistrations.lessonId, liveLessons.id)
+    )
+    .where(
+      and(
+        eq(liveLessonsRegistrations.userId, userId),
+        eq(liveLessonsRegistrations.accessMethod, 'subscription_entitlement'),
+        gte(liveLessons.scheduledAt, targetMonthStart.toISOString()),
+        lte(liveLessons.scheduledAt, targetMonthEnd.toISOString())
+      )
+    );
+
+  const usedCount = result.count;
+
+  return usedCount;
+};
+
 const checkEntitlementEligibility = async (
   user: User,
   lesson: typeof liveLessons.$inferSelect
@@ -280,4 +305,5 @@ export const LiveLessonsRegistrationsService = {
   create,
   checkEntitlementEligibility,
   fullfillLiveLessonPurchase,
+  getUsedEntitlementsCount,
 };
