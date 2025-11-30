@@ -16,7 +16,6 @@ import {
 import { transformVideoToDto } from './videos.service';
 import { LessonsService } from './lessons.service';
 import { LessonDetailDTO, LessonDTO } from '../models/lesson.models';
-import { User } from '../actions/user';
 
 export type LessonWithVideoSelect = InferSelectModel<typeof lessons> & {
   video: InferSelectModel<typeof videos> | null;
@@ -86,7 +85,7 @@ const getPlaylistsListForUser = async (filters?: PlaylistFilters) => {
 
 const transformSelectPlaylistToDTO = (
   playlist: SelectPlaylistResult,
-  user: User
+  userId: string
 ): PlaylistDetailDTO<LessonDetailDTO[]> | undefined => {
   if (!playlist) return undefined;
 
@@ -97,7 +96,7 @@ const transformSelectPlaylistToDTO = (
     slug: playlist.slug,
     position: playlist.position,
     lessons: playlist.playlistLessons.flatMap(({ lesson, position }) =>
-      LessonsService.transformLessonsToDetailDTO([lesson], user, position)
+      LessonsService.transformLessonsToDetailDTO([lesson], userId, position)
     ),
     video: transformVideoToDto(playlist.video),
     isAccessibleForFree: playlist.isAccessibleForFree,
@@ -140,25 +139,29 @@ const selectPlaylist = async (filters?: PlaylistFilters) => {
   return result;
 };
 
-const getPlaylist = async (user: User, filters?: PlaylistFilters) => {
+const getPlaylist = async (userId: string, filters?: PlaylistFilters) => {
   const result = await selectPlaylist(filters);
+
+  if (!result) return undefined;
 
   const lessonIds = result.playlistLessons.map((pl) => pl.lessonId);
 
   const progressRecords = await db.query.userLessonProgress.findMany({
     where: and(
-      eq(userLessonProgress.userId, user.id),
+      eq(userLessonProgress.userId, userId),
       inArray(userLessonProgress.lessonId, lessonIds)
     ),
   });
 
   const progressMap = new Map(progressRecords.map((p) => [p.lessonId, p]));
 
-  const transformed = transformSelectPlaylistToDTO(result, user);
+  const transformed = transformSelectPlaylistToDTO(result, userId);
+
+  if (!transformed) return undefined;
 
   return {
     ...transformed,
-    lessons: transformed?.lessons.map((lesson) => {
+    lessons: transformed.lessons.map((lesson) => {
       const prog = progressMap.get(lesson.id);
 
       const durationSec = lesson.video?.duration || 0;

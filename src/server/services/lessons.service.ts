@@ -13,18 +13,12 @@ import {
 import { filterService, LessonFilters } from './filters.service';
 import { supabaseService } from './supabase.service';
 import { transformVideoToDto } from './videos.service';
-import {
-  lessons,
-  playlistLesson,
-  userFavoriteLessons,
-  userLessonProgress,
-} from '../db/schema';
+import { lessons, userFavoriteLessons, userLessonProgress } from '../db/schema';
 import { AttachmentsService } from './attachments.service';
 import { PlaylistLessonSchema } from '../models/playlistLesson.models';
 import { VideoSchema } from '../models/video.models';
 import { FileSchema } from '../models/file.models';
 import { and, desc, eq, inArray, lt } from 'drizzle-orm';
-import { User } from '../actions/user';
 
 const transformLessonToDTO = (
   lessons: LessonBaseSchema[],
@@ -47,7 +41,7 @@ const transformLessonToDTO = (
 
 const transformLessonsToDetailDTO = (
   lessons: LessonDetailSchema[],
-  user: User,
+  userId: string,
   position: number
 ): LessonDetailDTO[] => {
   return lessons.map((lesson) => ({
@@ -59,7 +53,7 @@ const transformLessonsToDetailDTO = (
     isFavorite: lesson.userFavoriteLessons.some(
       (favoriteLesson) =>
         favoriteLesson.lessonId === lesson.id &&
-        favoriteLesson.userId === user?.id
+        favoriteLesson.userId === userId
     ),
     thumbnail: supabaseService.getFileUrl(
       lesson.thumbnail.name,
@@ -312,7 +306,7 @@ export const getRecentlyWatchedLessons = async (userId: string) => {
       isCompleted: item?.isCompleted || false,
       lastPositionSeconds: item.lastPositionSeconds,
       percent: Math.min(
-        (item.lastPositionSeconds / item.lesson.video?.duration) * 100,
+        (item.lastPositionSeconds / item.lesson.video!.duration!) * 100,
         100
       ),
     },

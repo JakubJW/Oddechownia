@@ -1,8 +1,7 @@
 import Container from '@/components/Container/Container';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { signOut } from '@/server/actions/auth';
 import { getRequiredUser } from '@/lib/data';
+import { Wind } from 'lucide-react';
 
 export default async function UserLayout({
   children,
@@ -32,7 +31,13 @@ export default async function UserLayout({
         <div className="pb-8 mb-8">
           <h1 className="text-xl font-light">
             Witaj ponownie, &nbsp;
-            <span className="text-primary font-light">{user.firstName}</span>
+            <span className="text-primary font-light">
+              {user.firstName}
+              <Wind
+                className="size-6 inline ml-1"
+                strokeWidth={1}
+              />
+            </span>
           </h1>
         </div>
         {children}

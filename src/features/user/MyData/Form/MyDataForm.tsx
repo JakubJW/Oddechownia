@@ -14,26 +14,23 @@ import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { formSchema } from './schema';
-import { users } from '@/server/db/schema';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateUser } from '@/server/actions/user';
+import { User } from '@/server/actions/user';
 
-type PublicUser = typeof users.$inferSelect;
-
-const MyDataForm = ({ user }: { user: PublicUser }) => {
-  // const [changeEmailAddress, setChangeEmailAddress] = useState(false);
+const MyDataForm = ({ user }: { user: User }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: user.firstName ?? '',
-      lastName: user.lastName ?? '',
-      email: user.email,
-      regulationsAgreement: user.regulationsAgreement ?? false,
-      privacyPolicyAgreement: user.privacyPolicyAgreement ?? false,
+      firstName: user?.firstName ?? '',
+      lastName: user?.lastName ?? '',
+      email: user?.email,
+      regulationsAgreement: user?.regulationsAgreement ?? false,
+      privacyPolicyAgreement: user?.privacyPolicyAgreement ?? false,
     },
   });
 

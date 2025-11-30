@@ -8,6 +8,7 @@ type Props = {
   subscriptionStatus?: string;
   stripeCustomerId?: string;
   liveLessonsUsageCount?: number;
+  className?: string;
 };
 
 const getStatusContent = (status?: string) => {
@@ -34,9 +35,10 @@ export const SubscriptionInfoCard = ({
   subscriptionStatus,
   stripeCustomerId,
   liveLessonsUsageCount,
+  className,
 }: Props) => {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border p-4">
+    <div className={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
       <div className="flex justify-between items-center">
         <p>Subskrypcja</p>
         <div
@@ -60,10 +62,12 @@ export const SubscriptionInfoCard = ({
         </div>
       </div>
       <div className="text-sm font-light text-muted-foreground space-y-2">
-        <p>
-          Pełny dostęp do Studia Jogi Online, dwóch darmowych zajęć na żywo w
-          miesiącu oraz historycznych nagrań.
-        </p>
+        <p>Dostęp do:</p>
+        <ul className="list-inside list-disc">
+          <li>Studia Jogi Online</li>
+          <li>Dwóch darmowych lekcji na żywo w ciągu miesiąca</li>
+          <li>Nagrań z poprzednich lekcji na żywo</li>
+        </ul>
         <p>
           Wykorzystane bezpłatne zajęcia na żywo:{' '}
           <span className="font-semibold text-primary">

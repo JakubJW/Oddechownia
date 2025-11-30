@@ -8,12 +8,13 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { LessonsService } from '@/server/services/lessons.service';
-import { getUser } from '@/server/actions/user';
 import { redirect } from 'next/navigation';
 import FavoritesButton from '@/features/PlayLessonView/Actions/FavoritesButton';
 import { AddToCalendarButton } from '@/features/user/Calendar/AddToCalendarButton';
 import Image from 'next/image';
 import { cn, formatDuration } from '@/lib/utils';
+import { getRequiredUser } from '@/lib/data';
+import { ProgressBar } from '@/features/shared/ProgressBar';
 
 export async function generateMetadata({
   params,
@@ -40,10 +41,10 @@ export default async function PlaylistLessonPlayback({
 }: {
   params: Params<{ playlistSlug: string; lessonSlug: string }>;
 }) {
-  const user = await getUser();
+  const user = await getRequiredUser();
 
   const { playlistSlug, lessonSlug } = await params;
-  const playlist = await PlaylistsService.getPlaylist(user, {
+  const playlist = await PlaylistsService.getPlaylist(user.id, {
     slug: playlistSlug,
   });
 
@@ -139,17 +140,7 @@ export default async function PlaylistLessonPlayback({
                         <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs p-1 rounded-sm">
                           {formatDuration(video?.duration)}
                         </span>
-
-                        <div
-                          className={cn(
-                            'absolute bottom-0 left-0 right-0 h-1 bg-gray-200/20 z-10'
-                          )}
-                        >
-                          <div
-                            className="h-full bg-red-600 transition-all duration-300 ease-out"
-                            style={{ width: `${progress?.percent}%` }}
-                          />
-                        </div>
+                        <ProgressBar percent={progress.percent} />
                       </div>
                       <p
                         title={name}
