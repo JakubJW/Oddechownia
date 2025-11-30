@@ -8,8 +8,9 @@ export default function Waitlist() {
       <div className="flex flex-col h-full justify-between md:flex-row md:items-center">
         <div className="p-12 rounded-lg space-y-6 sm:space-y-8 md:mx-auto md:max-w-2xl">
           <h1 className="font-bold text-3xl">
-            Oddechownia - Twoje miejsce, by złapać oddech.{' '}
+            Oddechownia - Twoje miejsce, by złapać oddech.
           </h1>
+          <p className="font-light">Premiera: 03 grudnia 2025r.</p>
           <p className="mt-4">
             Oddechownia to nie tylko studio jogi online. To miejsce dla każdego:
             dla zmęczonych, dla poszukujących, dla tych, którzy chcą wrócić do

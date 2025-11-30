@@ -12,7 +12,7 @@ export default function Home() {
       <CourseVideosPreview />
       <CustomerReviews />
       <AboutMe />
-      <AvailableSubscriptions />
+      {/* <AvailableSubscriptions /> */}
       <Faq />
     </>
   );

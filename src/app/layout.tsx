@@ -32,15 +32,16 @@ export default async function RootLayout({
       className={sourceSans.className}
     >
       <body className="antialiased">
-        {env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' ? (
-          <Waitlist />
-        ) : (
+        {/* {env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' ? ( */}
+        <Waitlist />
+        {/* )
+         : (
           <>
             <Navigation user={user} />
             <main className="mt-[64px] sm:mt-[74px]">{children}</main>
             <Footer />
           </>
-        )}
+        )} */}
       </body>
     </html>
   );

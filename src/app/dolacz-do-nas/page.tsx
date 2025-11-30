@@ -4,9 +4,8 @@ import HeaderTwo from '@/components/Headers/HeaderTwo';
 import { getSubscriptions } from '@/actions/product';
 import { getUser } from '@/actions/user';
 
-const subscriptions = await getSubscriptions();
-
 export default async function JoinUs() {
+  const subscriptions = await getSubscriptions();
   const user = await getUser();
 
   return (
