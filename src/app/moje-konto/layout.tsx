@@ -28,23 +28,14 @@ export default async function UserLayout({
           </p>
         </div>
       )}
-      <Container className="py-4">
-        <div className="grid grid-cols-12">
-          <div className="flex flex-col gap-4 col-span-2">
-            <Link href="/moje-konto">Dashboard</Link>
-            <Link href="/moje-konto/ulubione-lekcje">Ulubione lekcje</Link>
-            <Link href="/moje-konto/zajecia-na-zywo">Zajęcia na żywo</Link>
-            <Link href="/moje-konto/moje-dane">Moje dane</Link>
-            <Link href="/moje-konto/czlonkostwo">Członkostwo</Link>
-            <Link href="/moje-konto/bezpieczenstwo">Bezpieczeństwo</Link>
-            <form action={signOut}>
-              <button type="submit">Wyloguj</button>
-            </form>
-          </div>
-          <div className="col-span-10">
-            <div>{children}</div>
-          </div>
+      <Container className="py-24">
+        <div className="pb-8 mb-8">
+          <h1 className="text-xl font-light">
+            Witaj ponownie, &nbsp;
+            <span className="text-primary font-light">{user.firstName}</span>
+          </h1>
         </div>
+        {children}
       </Container>
     </>
   );

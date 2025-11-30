@@ -7,12 +7,32 @@ import { routes } from './Navigation';
 import NavigationLink from './NavigationLink';
 import { NavigationProps } from './Navigation';
 import NavigationAction from './NavigationAction';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '../ui/sheet';
 
 export default function MobileNavigation({ user }: NavigationProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="ml-auto sm:hidden">
+    // <Sheet>
+    //   <SheetTrigger>Open</SheetTrigger>
+    //   <SheetContent side="right">
+    //     <SheetHeader>
+    //       <SheetTitle>Are you absolutely sure?</SheetTitle>
+    //       <SheetDescription>
+    //         This action cannot be undone. This will permanently delete your
+    //         account and remove your data from our servers.
+    //       </SheetDescription>
+    //     </SheetHeader>
+    //   </SheetContent>
+    // </Sheet>
+    <div className="ml-auto flex items-center sm:hidden">
       <button onClick={() => setOpen(true)}>
         <MenuIcon className="text-white" />
       </button>

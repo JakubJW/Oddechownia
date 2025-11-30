@@ -40,6 +40,8 @@ export const getUser = cache(async () => {
 
     return {
       ...publicUser,
+      stripeCustomerId: publicUser.stripeCustomerId ?? undefined,
+      subscriptionStatus: publicUser.subscriptionStatus ?? undefined,
       hasActiveSubscription: publicUser.subscriptionStatus === 'active',
     };
   } catch (error) {

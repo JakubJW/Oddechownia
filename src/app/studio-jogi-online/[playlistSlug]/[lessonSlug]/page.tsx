@@ -1,7 +1,7 @@
 import Container from '@/components/Container/Container';
 import Attachments from '@/features/PlayLessonView/Attachments/Attachments';
 import { CommentsSection } from '@/features/PlayLessonView/Comments/CommentsSection';
-import VideoPlayer from '@/features/shared/VideoPlayer';
+import LessonPlayer from '@/features/PlayLessonView/LessonPlayer';
 import { Params } from '@/types/types';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -66,14 +66,19 @@ export default async function PlaylistLessonPlayback({
     notFound();
   }
 
+  console.log(currentLesson);
+
   return (
     <Container className="py-0 md:pt-4 lg:pt-16">
       <div className="flex flex-col lg:flex-row gap-6 mb-8 -mx-4 md:-mx-0">
         <div className="w-full lg:w-2/3">
-          <VideoPlayer
+          <LessonPlayer
             thumbnail={currentLesson.thumbnail}
             playbackId={currentLesson.video?.publicPlaybackId}
             videoTitle={currentLesson.name}
+            lessonId={currentLesson.id}
+            playlistId={playlist.id}
+            startTime={currentLesson.progress.lastPositionSeconds}
           />
           <div className="space-y-4">
             <hgroup className="space-y-4 px-4 md:px-0">
@@ -109,40 +114,53 @@ export default async function PlaylistLessonPlayback({
               {playlist.name}
             </p>
             <div className="flex-grow px-6 pb-6 overflow-y-scroll">
-              {playlist.lessons.map(({ id, video, name, slug, thumbnail }) => (
-                <Link
-                  key={id}
-                  href={`/studio-jogi-online/${playlist.slug}/${slug}`}
-                >
-                  <div
-                    className={cn(
-                      'lesson-playlist-card flex gap-4 -mx-6 px-6 py-2 relative transition-colors duration-300',
-                      slug === lessonSlug
-                        ? 'bg-matcha/50'
-                        : 'hover:bg-matcha/20'
-                    )}
+              {playlist.lessons.map(
+                ({ id, video, name, slug, thumbnail, progress }) => (
+                  <Link
+                    key={id}
+                    href={`/studio-jogi-online/${playlist.slug}/${slug}`}
                   >
-                    <div className="relative overflow-hidden rounded-lg flex-shrink-0">
-                      <Image
-                        src={thumbnail}
-                        width={150}
-                        height={96}
-                        alt={name}
-                        className="aspect-video transition-transform duration-300"
-                      />
-                      <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs p-1 rounded-sm">
-                        {formatDuration(video?.duration)}
-                      </span>
-                    </div>
-                    <p
-                      title={name}
-                      className="text-sm md:text-md font-semibold line-clamp-2 mb-auto"
+                    <div
+                      className={cn(
+                        'lesson-playlist-card flex gap-4 -mx-6 px-6 py-2 relative transition-colors duration-300',
+                        slug === lessonSlug
+                          ? 'bg-matcha/50'
+                          : 'hover:bg-matcha/20'
+                      )}
                     >
-                      {name}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+                      <div className="relative overflow-hidden rounded-lg flex-shrink-0">
+                        <Image
+                          src={thumbnail}
+                          width={150}
+                          height={96}
+                          alt={name}
+                          className="aspect-video transition-transform duration-300"
+                        />
+                        <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs p-1 rounded-sm">
+                          {formatDuration(video?.duration)}
+                        </span>
+
+                        <div
+                          className={cn(
+                            'absolute bottom-0 left-0 right-0 h-1 bg-gray-200/20 z-10'
+                          )}
+                        >
+                          <div
+                            className="h-full bg-red-600 transition-all duration-300 ease-out"
+                            style={{ width: `${progress?.percent}%` }}
+                          />
+                        </div>
+                      </div>
+                      <p
+                        title={name}
+                        className="text-sm md:text-md font-semibold line-clamp-2 mb-auto"
+                      >
+                        {name}
+                      </p>
+                    </div>
+                  </Link>
+                )
+              )}
             </div>
           </div>
         </div>

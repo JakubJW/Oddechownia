@@ -17,6 +17,7 @@ import { LiveLessonSignUpResponse } from '@/server/models/liveLesson.models';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import CalendarDayEvent from './CalendarDayEvent';
 
 const WEEKDAYS = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'];
 
@@ -52,8 +53,9 @@ const CaledarGrid = ({
     null
   );
   const {
-    weeks,
+    week,
     selectedDate,
+    selectedWeek,
     setSelectedDate,
     nextMonth,
     prevMonth,
@@ -95,20 +97,27 @@ const CaledarGrid = ({
   return (
     <CalendarProvider value={contextValue}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="font-semibold flex-grow">
+            {format(selectedWeek, 'LLLL yyyy', { locale: pl })}
+          </h3>
           <Button
-            variant="ghost"
-            size="icon"
+            size="sm"
+            variant="default"
+            onClick={() => goToToday()}
+          >
+            Skocz do dzisiaj
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
             onClick={() => prevMonth()}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <h3 className="text-lg font-semibold">
-            {format(selectedDate, 'LLLL yyyy', { locale: pl })}
-          </h3>
           <Button
-            variant="ghost"
-            size="icon"
+            variant="default"
+            size="sm"
             onClick={() => nextMonth()}
           >
             <ChevronRight className="h-4 w-4" />
@@ -126,7 +135,7 @@ const CaledarGrid = ({
             ))}
           </div>
           <div className="relative flex flex-col">
-            {weeks.map((week, weekIdx) => (
+            {week.map((week, weekIdx) => (
               <div
                 key={weekIdx}
                 className="grid grid-cols-7 border-b last:border-b-0"
@@ -135,7 +144,6 @@ const CaledarGrid = ({
                   <CalendarDayCell
                     key={day.toISOString()}
                     day={day}
-                    currentMonth={selectedDate}
                     isSelected={isSameDay(day, selectedDate)}
                     onSelect={setSelectedDate}
                     events={getEventsForDay(day)}
@@ -178,6 +186,21 @@ const CaledarGrid = ({
             mutation={mutation}
           />
         )}
+      </div>
+      <div className="flex flex-col flex-grow">
+        <div className="flex flex-col flex-grow  rounded-xl">
+          {!getEventsForDay(selectedDate).length && (
+            <div className="flex items-center justify-center flex-grow font-light text-sm ">
+              Brak nadchodzących wydarzeń.
+            </div>
+          )}
+          {getEventsForDay(selectedDate).map((event) => (
+            <CalendarDayEvent
+              key={event.id}
+              event={event}
+            />
+          ))}
+        </div>
       </div>
     </CalendarProvider>
   );

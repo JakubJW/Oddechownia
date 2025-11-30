@@ -1,11 +1,5 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { format, isSameDay, isSameMonth } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { pl } from 'date-fns/locale';
 import { CalendarEvent } from '@/server/services/calendar.service';
 import CalendarDayCellEvent from './CalendarDayCellEvent';
 import CalendarDayEvent from './CalendarDayEvent';
@@ -13,7 +7,6 @@ import { DayDetailsModal } from './DayDetailsModal';
 
 interface CalendarDayCellProps {
   day: Date;
-  currentMonth: Date;
   isSelected: boolean;
   onSelect: (date: Date) => void;
   events: CalendarEvent[];
@@ -21,13 +14,11 @@ interface CalendarDayCellProps {
 
 export const CalendarDayCell = ({
   day,
-  currentMonth,
   isSelected,
   onSelect,
   events,
 }: CalendarDayCellProps) => {
   const isToday = isSameDay(day, new Date());
-  const isCurrentMonth = isSameMonth(day, currentMonth);
   const MAX_INLINE = 2;
   const hiddenCount = Math.max(0, events.length - MAX_INLINE);
 
@@ -53,18 +44,15 @@ export const CalendarDayCell = ({
       <div
         onClick={() => onSelect(day)}
         className={cn(
-          'min-h-[120px] p-2 border-r last:border-r-0 cursor-pointer transition-colors flex flex-col gap-1',
-          'hover:bg-muted/50',
-          !isCurrentMonth && 'bg-muted/30 text-muted-foreground',
-          isSelected && 'bg-primary/5'
+          'min-h-[120px] p-2  cursor-pointer transition-colors flex flex-col gap-1',
+          isSelected ? 'bg-primary-foreground' : 'hover:bg-muted/50'
         )}
       >
         <div className="flex justify-between items-start">
           <span
             className={cn(
               'text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full',
-              isToday && 'bg-primary text-primary-foreground',
-              !isCurrentMonth && !isToday && 'text-muted-foreground/50'
+              isToday && 'bg-primary text-primary-foreground'
             )}
           >
             {format(day, 'd')}
