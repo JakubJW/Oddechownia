@@ -4,7 +4,6 @@ import {
   playlists,
   videos,
   users,
-  userSubscription,
   playlistLesson,
   attachments,
   comments,
@@ -14,6 +13,7 @@ import {
   liveLessons,
   userPracticeSchedules,
   userLessonProgress,
+  subscriptions,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -54,24 +54,17 @@ export const videosRelations = relations(videos, ({ one }) => ({
   }),
 }));
 
-export const userRelations = relations(users, ({ many }) => ({
-  subscriptions: many(userSubscription),
+export const userRelations = relations(users, ({ many, one }) => ({
   comments: many(comments),
   favoriteLessons: many(userFavoriteLessons),
   liveLessonsRegistrations: many(liveLessonsRegistrations),
   practiceSchedules: many(userPracticeSchedules),
   lessonProgress: many(userLessonProgress),
+  subscription: one(subscriptions, {
+    fields: [users.id],
+    references: [subscriptions.userId],
+  }),
 }));
-
-export const userSubscriptionRelations = relations(
-  userSubscription,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [userSubscription.userId],
-      references: [users.id],
-    }),
-  })
-);
 
 export const playlistLessonRelations = relations(playlistLesson, ({ one }) => ({
   lesson: one(lessons, {
@@ -194,3 +187,10 @@ export const userLessonProgressRelations = relations(
     }),
   })
 );
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
+  }),
+}));

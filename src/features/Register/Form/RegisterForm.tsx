@@ -1,6 +1,5 @@
 'use client';
 
-import { signup } from '@/server/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -14,53 +13,45 @@ import {
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { defaultValues, formSchema } from './schema';
-import { redirect } from 'next/navigation';
+import {
+  registerDefaultValues,
+  registerFormSchema,
+  RegisterFormValues,
+} from './schema';
+import { cn } from '@/lib/utils';
+import { useRegisterMutation } from '../hooks/useRegisterMutation';
+import { Loader2 } from 'lucide-react';
 
-export default function RegisterForm({ priceId }: { priceId?: string }) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues,
+export default function RegisterForm({
+  priceId,
+  className,
+}: {
+  priceId: string;
+  className?: string;
+}) {
+  const mutation = useRegisterMutation();
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerFormSchema),
+    defaultValues: registerDefaultValues,
     mode: 'all',
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData();
-
-    formData.append('email', values.email);
-    formData.append('password', values.password);
-    formData.append('passwordConfirmation', values.passwordConfirmation);
-    formData.append('firstName', values.firstName);
-    formData.append('lastName', values.lastName);
-    formData.append(
-      'regulationsAgreement',
-      String(values.regulationsAgreement)
-    );
-    formData.append(
-      'privacyPolicyAgreement',
-      String(values.privacyPolicyAgreement)
-    );
-
-    const { data } = await signup(formData, priceId);
-
-    if (data?.url) {
-      window.location.href = data.url;
-    } else {
-      redirect('/moje-konto');
-    }
+  const onSubmit = async (values: RegisterFormValues) => {
+    mutation.mutate({ values, priceId });
   };
 
   return (
-    <div className="col-span-6">
+    <div className={cn('', className)}>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          <div className="mt-6 space-y-6">
+          <div className="space-y-6">
             <div className="space-y-4">
-              <p className="font-bold text-xl mb-4">Twoje dane</p>
+              <p className="text-muted-foreground font-light text-lg mb-4">
+                Twoje dane
+              </p>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -163,7 +154,7 @@ export default function RegisterForm({ priceId }: { priceId?: string }) {
                         />
                         <label
                           htmlFor="regulations"
-                          className="text-sm font-medium leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className="text-xs text-muted-foreground font-light leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           Akceptuję regulamin serwisu oraz chcę natychmiastowego
                           świadczenia usług i rozumiem, że nie będę mógł od niej
@@ -192,7 +183,7 @@ export default function RegisterForm({ priceId }: { priceId?: string }) {
                         />
                         <label
                           htmlFor="privacy"
-                          className="text-sm font-medium leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className="text-xs text-muted-foreground font-light leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           Oświadczam, że zapoznałem się z Polityką Prywatności w
                           tym z informacją o dobrowolnym charakterze wyrażenia
@@ -209,8 +200,11 @@ export default function RegisterForm({ priceId }: { priceId?: string }) {
           </div>
           <Button
             size="lg"
-            disabled={!form.formState.isValid}
+            disabled={mutation.isPending}
           >
+            {mutation.isPending && (
+              <Loader2 className="size-4 animate-spin mr-1" />
+            )}
             Zatwierdź
           </Button>
         </form>

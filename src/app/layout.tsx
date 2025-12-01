@@ -8,6 +8,7 @@ import { env } from '@/env';
 import Waitlist from '@/features/Waitlist/Waitlist';
 import ToastProvider from '@/components/ToastProvider';
 import QueryClientProvider from '@/components/QueryClientProvider';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Twoje miejsce, by złapać oddech | Oddechownia',
@@ -41,14 +42,13 @@ export default async function RootLayout({
             ) : (
               <>
                 <Navigation user={user} />
-                <main className="mt-[64px]">
-                  {children}
-                </main>
+                <main className="mt-[64px]">{children}</main>
                 <Footer />
               </>
             )}
           </ToastProvider>
         </QueryClientProvider>
+        <Script src="//code.tidio.co/05hblgc0qsamnmve3czeijgqr8sj7yyt.js" />
       </body>
     </html>
   );

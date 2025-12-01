@@ -9,6 +9,7 @@ import {
   uuid,
   unique,
   foreignKey,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
 import { sql } from 'drizzle-orm';
@@ -63,17 +64,6 @@ export const users = pgTable('users', {
   regulationsAgreement: boolean('regulations_agreement').default(false),
   privacyPolicyAgreement: boolean('privacy_policy_agreement').default(false),
   stripeCustomerId: varchar('stripe_customer_id'),
-  subscriptionStatus: varchar('subscription_status'),
-});
-
-export const userSubscription = pgTable('user_subscription', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id')
-    .references(() => users.id)
-    .notNull(),
-  status: varchar('status'),
-  stripeSubscriptionId: text('stripe_subscription_id').unique().notNull(),
-  currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
 });
 
 export const playlists = pgTable('playlists', {
@@ -290,4 +280,31 @@ export const userLessonProgress = pgTable(
   (table) => [
     unique('unique_user_lesson_constratint').on(table.userId, table.lessonId),
   ]
+);
+
+export const subscriptions = pgTable(
+  'subscriptions',
+  {
+    id: serial('id').primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    stripeSubscriptionId: varchar('stripe_subscription_id').notNull().unique(),
+    status: varchar('status').notNull(),
+    currentPeriodStart: timestamp('current_period_start', {
+      mode: 'string',
+    }).notNull(),
+    currentPeriodEnd: timestamp('current_period_end', {
+      mode: 'string',
+    }).notNull(),
+    cancelAtPeriodEnd: boolean('cancel_at_period_end').default(false).notNull(),
+    createdAt: text('created_at')
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull(),
+    updatedAt: text('updated_at')
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull()
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => [uniqueIndex('subscription_user_idx').on(t.userId)]
 );

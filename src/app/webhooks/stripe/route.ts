@@ -1,12 +1,12 @@
 'use server';
 
 import { db } from '@/server/db';
-import { users } from '@/server/db/schema';
+import { subscriptions, users } from '@/server/db/schema';
 import { AuthService } from '@/server/services/auth.service';
 import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { stripeService } from '@/server/services/stripe.service';
 import { buffer } from '@/utils/requestBodyBufer';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -56,16 +56,24 @@ export async function POST(req: Request) {
       }
     }
 
-    case 'customer.subscription.created':
+    case 'customer.subscription.deleted':
     case 'customer.subscription.updated': {
-      const { status, customer } = event.data.object;
+      const { status, items, cancel_at_period_end, id } = event.data
+        .object as Stripe.Subscription;
 
       await db
-        .update(users)
+        .update(subscriptions)
         .set({
-          subscriptionStatus: status,
+          status: status,
+          currentPeriodStart: new Date(
+            items.data[0].current_period_start * 1000
+          ).toISOString(),
+          currentPeriodEnd: new Date(
+            items.data[0].current_period_end * 1000
+          ).toISOString(),
+          cancelAtPeriodEnd: cancel_at_period_end,
         })
-        .where(eq(users.stripeCustomerId, customer as string));
+        .where(eq(subscriptions.stripeSubscriptionId, id));
 
       return NextResponse.json({ message: 'Success' }, { status: 200 });
     }

@@ -1,14 +1,20 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { CircleCheck, CircleX } from 'lucide-react';
+import { CircleAlert, CircleCheck, CircleX } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { subscriptions } from '@/server/db/schema';
+import { InferSelectModel } from 'drizzle-orm';
+import { useRenewSubscriptionMutation } from './hooks/useRenewSubscriptionMutation';
+import { format } from 'date-fns';
+import { pl } from 'date-fns/locale';
 
 type Props = {
-  subscriptionStatus?: string;
+  subscription?: InferSelectModel<typeof subscriptions>;
   stripeCustomerId?: string;
   liveLessonsUsageCount?: number;
   className?: string;
+  userId: string;
 };
 
 const getStatusContent = (status?: string) => {
@@ -31,35 +37,67 @@ const getItemStyles = (status?: string) => {
   }
 };
 
+const StatusBagde = ({
+  subscription,
+}: {
+  subscription?: InferSelectModel<typeof subscriptions>;
+}) => {
+  if (subscription && subscription.cancelAtPeriodEnd) {
+    return (
+      <div className="space-y-2 text-sm font-light">
+        <div className="flex items-center gap-2 text-orange-500">
+          <span>W trakcie anulowania</span>
+          <div className="relative bg-orange-100 rounded-full flex items-center justify-center p-2">
+            <CircleAlert className="z-10 size-4" />
+          </div>
+        </div>
+        <span className="block text-muted-foreground">
+          Wygasa: &nbsp;
+          {format(new Date(subscription.currentPeriodEnd), 'dd LLLL YYY', {
+            locale: pl,
+          })}
+        </span>
+      </div>
+    );
+  } else {
+    return (
+      <div
+        className={cn(
+          'flex items-center gap-2 ',
+          getItemStyles(subscription?.status)
+        )}
+      >
+        <span className="text-sm font-light">
+          {getStatusContent(subscription?.status)}
+        </span>
+        {subscription?.status === 'active' ? (
+          <div className="relative bg-emerald-100 rounded-full flex items-center justify-center p-2">
+            <CircleCheck className="z-10 size-4" />
+          </div>
+        ) : (
+          <div className="relative bg-red-100 rounded-full flex items-center justify-center p-2">
+            <CircleX className="z-10 size-4" />
+          </div>
+        )}
+      </div>
+    );
+  }
+};
+
 export const SubscriptionInfoCard = ({
-  subscriptionStatus,
+  subscription,
   stripeCustomerId,
   liveLessonsUsageCount,
   className,
+  userId,
 }: Props) => {
+  const mutation = useRenewSubscriptionMutation();
+
   return (
     <div className={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
       <div className="flex justify-between items-center">
         <p>Subskrypcja</p>
-        <div
-          className={cn(
-            'flex items-center gap-2 ',
-            getItemStyles(subscriptionStatus)
-          )}
-        >
-          <span className="text-sm font-light">
-            {getStatusContent(subscriptionStatus)}
-          </span>
-          {subscriptionStatus === 'active' ? (
-            <div className="relative bg-emerald-100 rounded-full flex items-center justify-center p-2">
-              <CircleCheck className="z-10 size-4" />
-            </div>
-          ) : (
-            <div className="relative bg-red-100 rounded-full flex items-center justify-center p-2">
-              <CircleX className="z-10 size-4" />
-            </div>
-          )}
-        </div>
+        <StatusBagde subscription={subscription} />
       </div>
       <div className="text-sm font-light text-muted-foreground space-y-2">
         <p>Dostęp do:</p>
@@ -76,23 +114,53 @@ export const SubscriptionInfoCard = ({
         </p>
       </div>
 
-      <form
-        action="/api/stripe/create-checkout-portal"
-        method="POST"
-      >
-        <input
-          type="hidden"
-          name="customerId"
-          value={stripeCustomerId!}
-        />
-      </form>
-      <Button
-        type="submit"
-        className="self-end"
-        variant="secondary"
-      >
-        Zarządzaj członkostwem
-      </Button>
+      <div className="flex gap-4">
+        {!subscription ? (
+          <Button
+            onClick={() =>
+              mutation.mutate({
+                priceId: 'price_1S0pELFWpOu2Y0ISnvpNPOaU',
+                clientReferenceId: userId,
+                customerId: stripeCustomerId!,
+              })
+            }
+            className="self-end"
+          >
+            Dołącz do Oddechowni
+          </Button>
+        ) : subscription.status === 'canceled' ? (
+          <Button
+            onClick={() =>
+              mutation.mutate({
+                priceId: 'price_1S0pELFWpOu2Y0ISnvpNPOaU',
+                clientReferenceId: userId,
+                customerId: stripeCustomerId!,
+              })
+            }
+            className="self-end"
+          >
+            Odnów członkstwo
+          </Button>
+        ) : (
+          <form
+            action="/api/stripe/create-checkout-portal"
+            method="POST"
+          >
+            <input
+              type="hidden"
+              name="customerId"
+              value={stripeCustomerId!}
+            />
+            <Button
+              type="submit"
+              className="self-end"
+              variant="secondary"
+            >
+              Zarządzaj członkostwem
+            </Button>
+          </form>
+        )}
+      </div>
     </div>
   );
 };

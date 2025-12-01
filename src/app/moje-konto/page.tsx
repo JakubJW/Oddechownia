@@ -16,9 +16,10 @@ export default async function MyAccount() {
   return (
     <div className="grid grid-cols-12 md:gap-12">
       <SubscriptionInfoCard
-        subscriptionStatus={user.subscriptionStatus}
+        subscription={user.subscription}
         stripeCustomerId={user.stripeCustomerId}
         liveLessonsUsageCount={count}
+        userId={user.id}
         className="col-span-12 md:col-span-6"
       />
       <RecentLessons

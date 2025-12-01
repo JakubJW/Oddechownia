@@ -1,6 +1,6 @@
 import { stripeService } from '@/server/services/stripe.service';
 import { db } from '../db';
-import { users } from '../db/schema';
+import { subscriptions, users } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import { EmailService } from './emails.service';
 import { BadRequestError } from '../lib/errors';
@@ -18,34 +18,48 @@ const fulfillSubscriptionPurchase = async (sessionId: string) => {
     throw new BadRequestError('Session is not paid.');
   }
 
-  const existingUser = await db.query.users.findFirst({
+  const user = await db.query.users.findFirst({
     where: eq(users.id, userId),
-    columns: { subscriptionStatus: true, email: true, firstName: true },
+    columns: { email: true, firstName: true },
   });
 
-  if (!existingUser) throw new Error('User not found');
+  if (!user) throw new Error('User not found');
 
-  if (existingUser.subscriptionStatus === 'active') {
-    return;
-  }
-
-  const stripeCustomerId = session.customer as string;
   const stripeSubscriptionId = session.subscription as string;
 
-  const [updatedUser] = await db
-    .update(users)
-    .set({
-      subscriptionStatus: 'active',
-      stripeCustomerId: stripeCustomerId,
-      // stripeSubscriptionId: stripeSubscriptionId, // SAVE THIS!
-    })
-    .where(eq(users.id, userId))
-    .returning();
+  const { id, status, items, cancel_at_period_end } =
+    await stripeService.retrieveSubscription(stripeSubscriptionId);
 
-  await EmailService.sendRegistrationConfirmation(
-    updatedUser.email,
-    updatedUser.firstName
-  );
+  await db
+    .insert(subscriptions)
+    .values({
+      userId: userId,
+      stripeSubscriptionId: id,
+      status: status,
+      currentPeriodStart: new Date(
+        items.data[0].current_period_start * 1000
+      ).toISOString(),
+      currentPeriodEnd: new Date(
+        items.data[0].current_period_end * 1000
+      ).toISOString(),
+      cancelAtPeriodEnd: cancel_at_period_end,
+    })
+    .onConflictDoUpdate({
+      target: [subscriptions.userId],
+      set: {
+        stripeSubscriptionId: id,
+        status: status,
+        currentPeriodStart: new Date(
+          items.data[0].current_period_start * 1000
+        ).toISOString(),
+        currentPeriodEnd: new Date(
+          items.data[0].current_period_end * 1000
+        ).toISOString(),
+        cancelAtPeriodEnd: cancel_at_period_end,
+      },
+    });
+
+  EmailService.sendRegistrationConfirmation(user.email, user.firstName);
 };
 
 export const AuthService = { fulfillSubscriptionPurchase };

@@ -19,7 +19,7 @@ export type IncludeRelation<TableName extends keyof TSchema> = DBQueryConfig<
 
 export type InferResultType<
   TableName extends keyof TSchema,
-  With extends IncludeRelation<TableName> | undefined = undefined
+  With extends IncludeRelation<TableName> | undefined = undefined,
 > = BuildQueryResult<
   TSchema,
   TSchema[TableName],
@@ -32,10 +32,10 @@ type NullToUndefined<T> = {
   [K in keyof T]: T[K] extends null
     ? undefined
     : T[K] extends (infer U)[]
-    ? NullToUndefined<U>[]
-    : T[K] extends object
-    ? NullToUndefined<T[K]>
-    : T[K];
+      ? NullToUndefined<U>[]
+      : T[K] extends object
+        ? NullToUndefined<T[K]>
+        : T[K];
 };
 
 export type BasePost = typeof schema.posts.$inferSelect;
@@ -45,8 +45,6 @@ export type BaseVideo = typeof schema.videos.$inferSelect;
 export type BaseWaitlist = typeof schema.waitlist.$inferSelect;
 export type BaseAttachment = typeof schema.attachments.$inferSelect;
 export type BaseComment = typeof schema.comments.$inferSelect;
-export type BaseUser = typeof schema.users.$inferSelect;
-export type BaseUserSubscription = typeof schema.userSubscription.$inferSelect;
 export type BaseFile = typeof schema.files.$inferSelect;
 
 export type Lesson = BaseLesson & {
@@ -64,10 +62,6 @@ export type PlaylistLesson = Omit<Lesson, 'playlists'> & {
 export type Playlist = BasePlaylist & {
   video?: BaseVideo | null;
   lessons: PlaylistLesson[];
-};
-
-export type User = BaseUser & {
-  subscriptions: BaseUserSubscription[];
 };
 
 export type Attachment = BaseAttachment & { file: BaseFile };

@@ -79,7 +79,7 @@ const checkEntitlementEligibility = async (
 ) => {
   if (!user || !user.hasActiveSubscription)
     return { isEligible: false, lessonsUsed: 0 };
-  if (user.role === 'admin') return { isEligible: true, lessonsUsed: 0 };
+  if (user.isAdmin) return { isEligible: true, lessonsUsed: 0 };
 
   const targetMonthStart = startOfMonth(new Date(lesson.scheduledAt));
   const targetMonthEnd = endOfMonth(new Date(lesson.scheduledAt));

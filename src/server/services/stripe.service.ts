@@ -41,6 +41,19 @@ class StripeService {
     }
   }
 
+  public async deleteCustomer(
+    id: string,
+    params?: Stripe.CustomerDeleteParams
+  ): Promise<Stripe.DeletedCustomer> {
+    try {
+      const customer = await this.stripe.customers.del(id, params);
+      return customer;
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      throw error;
+    }
+  }
+
   public async createProduct(
     params: Stripe.ProductCreateParams
   ): Promise<Stripe.Product> {
@@ -55,7 +68,9 @@ class StripeService {
 
   public async getProduct(productId: string) {
     try {
-      const product = await this.stripe.products.retrieve(productId);
+      const product = await this.stripe.products.retrieve(productId, {
+        expand: ['default_price'],
+      });
       return product;
     } catch (error) {
       console.error('Error retrieving product:', error);
@@ -110,9 +125,8 @@ class StripeService {
     params: Stripe.BillingPortal.SessionCreateParams
   ) {
     try {
-      const portalSession = await this.stripe.billingPortal.sessions.create(
-        params
-      );
+      const portalSession =
+        await this.stripe.billingPortal.sessions.create(params);
 
       return portalSession.url;
     } catch (error) {

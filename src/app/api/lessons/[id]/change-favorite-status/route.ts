@@ -15,10 +15,7 @@ export async function POST(
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const canChangeFavoriteStatus =
-      user.role === 'admin' || user.hasActiveSubscription;
-
-    if (!canChangeFavoriteStatus) {
+    if (!user.hasActiveSubscription) {
       return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
     }
 

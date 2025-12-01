@@ -5,13 +5,15 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/server';
 import { UserRoles } from '@/server/db/consts';
 import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
-import { formSchema as registerFormSchema } from '@/features/Register/Form/schema';
+import { RegisterFormValues } from '@/features/Register/Form/schema';
 import { env } from '@/env';
 import { supabaseService } from '@/server/services/supabase.service';
 import { db } from '@/server/db';
 import { users } from '@/server/db/schema';
 import { stripeService } from '@/server/services/stripe.service';
 import { eq } from 'drizzle-orm';
+import { AppError, ConflictError } from '../lib/errors';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 
 export const changePasswordAuthenticated = async (password: string) => {
   const { error } = await supabaseService.changePasswordAuthenticated(password);
@@ -88,58 +90,50 @@ export async function adminSignIn(formData: FormData) {
   }
 }
 
-export async function signup(formData: FormData, priceId?: string) {
+export async function signUp(values: RegisterFormValues, priceId: string) {
   const supabase = await createClient();
-
-  const { regulationsAgreement, privacyPolicyAgreement, ...rest } =
-    Object.fromEntries(formData);
-
-  const parsed = registerFormSchema.safeParse({
-    regulationsAgreement: Boolean(regulationsAgreement),
-    privacyPolicyAgreement: Boolean(privacyPolicyAgreement),
-    ...rest,
-  });
-
-  if (!parsed.success) {
-    return { data: null, error: null };
-  }
 
   const {
     data: { user },
     error,
   } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
+    email: values.email,
+    password: values.password,
   });
 
   if (error && error.code === 'email_exists') {
-    return { data: null, error: 'Adres e-mail jest już w użyciu.' };
+    throw new ConflictError('Users', 'Podany adres e-mail jest zajęty.');
   }
 
   if (!user) {
-    return {
-      data: null,
-      error: 'Podczas rejestracji wystąpił błąd. Spróbuj ponownie później.',
-    };
+    throw new AppError(
+      'Unable to sign up user during registration process.',
+      500,
+      'Przepraszamy. Podczas rejestracji wystąpił błąd.'
+    );
   }
 
-  const customer = await stripeService.createCustomer({
-    name: `${parsed.data.firstName} ${parsed.data.lastName}`,
-    email: parsed.data.email,
-  });
+  let stripeCustomerId: string | null = null;
 
-  await db.insert(users).values({
-    id: user.id,
-    firstName: parsed.data.firstName,
-    lastName: parsed.data.lastName,
-    email: parsed.data.email,
-    regulationsAgreement: parsed.data.regulationsAgreement,
-    privacyPolicyAgreement: parsed.data.privacyPolicyAgreement,
-    role: UserRoles.USER,
-    stripeCustomerId: customer.id,
-  });
+  try {
+    const customer = await stripeService.createCustomer({
+      name: `${values.firstName} ${values.lastName}`,
+      email: values.email,
+    });
 
-  if (priceId) {
+    stripeCustomerId = customer.id;
+
+    await db.insert(users).values({
+      id: user.id,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      regulationsAgreement: values.regulationsAgreement,
+      privacyPolicyAgreement: values.privacyPolicyAgreement,
+      role: UserRoles.USER,
+      stripeCustomerId: customer.id,
+    });
+
     const session = await stripeService.createCheckoutSession({
       mode: 'subscription',
       line_items: [
@@ -157,17 +151,57 @@ export async function signup(formData: FormData, priceId?: string) {
       },
     });
 
-    return { data: { url: session.url }, error: null };
-  }
+    if (!session.url) {
+      throw new AppError(
+        'Unable to sign up user during registration process. No session url.',
+        undefined,
+        'Przepraszamy. Podczas rejestracji wystąpił błąd.'
+      );
+    }
 
-  if (error) {
-    return {
-      error: 'Podczas rejestracji wystąpił błąd. Spróbuj ponownie później.',
-      data: null,
-    };
-  }
+    return session.url;
+  } catch (error) {
+    console.error(
+      'Registration failed, starting rollback for user:',
+      user.id,
+      error
+    );
 
-  return { data: null, error: null };
+    try {
+      await db.delete(users).where(eq(users.id, user.id));
+    } catch (e) {
+      console.error('Failed to cleanup DB user:', e);
+    }
+
+    if (stripeCustomerId) {
+      try {
+        await stripeService.deleteCustomer(stripeCustomerId);
+      } catch (e) {
+        console.error('Failed to cleanup Stripe customer:', e);
+      }
+    }
+
+    try {
+      const supabaseAdmin = createAdminClient(
+        env.NEXT_PUBLIC_SUPABASE_URL,
+        env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+        {
+          auth: {
+            persistSession: false,
+          },
+        }
+      );
+      await supabaseAdmin.auth.admin.deleteUser(user.id);
+    } catch (e) {
+      console.error('CRITICAL: Failed to delete Supabase Auth user:', e);
+    }
+
+    throw new AppError(
+      'Registration process failed during setup.',
+      500,
+      'Wystąpił błąd podczas konfiguracji konta. Spróbuj ponownie.'
+    );
+  }
 }
 
 export async function signOut() {

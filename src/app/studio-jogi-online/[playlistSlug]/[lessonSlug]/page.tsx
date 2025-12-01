@@ -54,9 +54,9 @@ export default async function PlaylistLessonPlayback({
 
   if (
     (!user && !playlist.isAccessibleForFree) ||
-    (user && !user.hasActiveSubscription && user.role === 'user')
+    (user && !user.hasActiveSubscription)
   ) {
-    redirect('/dolacz-do-nas');
+    redirect('/logowanie');
   }
 
   const currentLesson = playlist.lessons.find(
