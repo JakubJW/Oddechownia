@@ -46,7 +46,7 @@ export default function LoginForm() {
 
   return (
     <div className="w-full lg:max-w-[512px] xl:max-w-[640px] 2xl:max-w-[768px] ml-auto py-32 px-4 lg:pr-16 xl:pr-24 2xl:pr-32 self-center">
-      <div className="p-8 rounded-xl">
+      <div>
         <h1 className="font-bold text-xl mb-4">Logowanie</h1>
         <Form {...form}>
           <form
@@ -92,7 +92,7 @@ export default function LoginForm() {
               Jesteś nowym użytkownikem? &nbsp;
               <Link
                 className="text-sm text-primaryFg underline self-end"
-                href="/dolacz-do-nas"
+                href="/rejestracja"
               >
                 Dołącz już teraz!
               </Link>

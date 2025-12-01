@@ -79,19 +79,10 @@ const getCurrentBillingCycle = async (user: User) => {
       end: undefined,
     };
   }
-  const subscriptions = await stripeService.listSubscriptions({
-    customer: user.stripeCustomerId ?? undefined,
-    status: 'active',
-    limit: 1,
-  });
 
   return {
-    start: new Date(
-      subscriptions.data[0].items.data[0].current_period_start
-    ).toISOString(),
-    end: new Date(
-      subscriptions.data[0].items.data[0].current_period_end
-    ).toISOString(),
+    start: new Date(user.subscription.currentPeriodStart).toISOString(),
+    end: new Date(user.subscription.currentPeriodEnd).toISOString(),
   };
 };
 

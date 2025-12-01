@@ -2,12 +2,12 @@
 
 import { users } from '@/server/db/schema';
 import { db } from '@/server/db';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { createClient } from '@/supabase/server';
 import { cache } from 'react';
 import { getRequiredUser } from '@/lib/data';
 import { supabaseService } from '@/server/services/supabase.service';
-import { userSubscription } from '@/server/db/schema';
+import { UserRoles } from '../db/consts';
 
 interface UpdateUserParams {
   firstName: string;
@@ -32,32 +32,32 @@ export const getUser = cache(async () => {
 
     const publicUser = await db.query.users.findFirst({
       where: eq(users.id, user.id),
+      with: {
+        subscription: true,
+      },
     });
 
     if (!publicUser) {
       return null;
     }
 
+    const subscription = publicUser?.subscription;
+    const isAdmin = publicUser.role === UserRoles.ADMIN;
+
+    const hasActiveSubscription = subscription?.status === 'active' || isAdmin;
+
     return {
       ...publicUser,
+      subscription: subscription,
       stripeCustomerId: publicUser.stripeCustomerId ?? undefined,
-      subscriptionStatus: publicUser.subscriptionStatus ?? undefined,
-      hasActiveSubscription: publicUser.subscriptionStatus === 'active',
+      subscriptionStatus: subscription?.status ?? null,
+      hasActiveSubscription,
+      isAdmin,
     };
   } catch (error) {
     console.log(error);
     return null;
   }
-});
-
-export const getUserWithSubscriptions = cache(async () => {
-  const user = await getRequiredUser();
-
-  const subscriptions = await db.query.userSubscription.findMany({
-    where: eq(userSubscription.userId, user.id),
-  });
-
-  return { ...user, subscriptions };
 });
 
 export const updateUser = async (params: UpdateUserParams) => {

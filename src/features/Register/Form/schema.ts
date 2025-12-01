@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ERROR_MESSAGES } from '@/shared/messages';
 import { nonEmptyString } from '@/shared/formUtils';
 
-export const defaultValues = {
+export const registerDefaultValues = {
   firstName: '',
   lastName: '',
   email: '',
@@ -12,7 +12,7 @@ export const defaultValues = {
   privacyPolicyAgreement: false,
 };
 
-export const formSchema = z
+export const registerFormSchema = z
   .object({
     firstName: z.string().pipe(nonEmptyString),
     lastName: z.string().pipe(nonEmptyString),
@@ -22,12 +22,15 @@ export const formSchema = z
       .pipe(nonEmptyString),
     password: z.string().pipe(nonEmptyString),
     passwordConfirmation: z.string().pipe(nonEmptyString),
-    regulationsAgreement: z
-      .boolean()
-      .refine((value) => value, ERROR_MESSAGES.REQUIRED),
-    privacyPolicyAgreement: z
-      .boolean()
-      .refine((value) => value, ERROR_MESSAGES.REQUIRED),
+    regulationsAgreement: z.preprocess(
+      (value) => value === 'on' || value === 'true' || value === true,
+      z.boolean().refine((val) => val, ERROR_MESSAGES.REQUIRED)
+    ),
+    privacyPolicyAgreement: z.preprocess(
+      (value) => value === 'on' || value === 'true' || value === true,
+
+      z.boolean().refine((value) => value, ERROR_MESSAGES.REQUIRED)
+    ),
   })
   .superRefine(
     (
@@ -64,3 +67,5 @@ export const formSchema = z
       }
     }
   );
+
+export type RegisterFormValues = z.infer<typeof registerFormSchema>;

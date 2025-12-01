@@ -160,13 +160,6 @@ async function getLiveLessonsWithUserStatus(
     }));
   }
 
-  // 2. Check Subscription Status (Global)
-  // We need to know if the user is a subscriber at all.
-  // Assuming you have a helper for this or can check existing service
-  // const { hasActiveSubscription } = await LiveLessonsRegistrationsService.checkEntitlementEligibility(user);
-  // OR if you just want to check DB directly:
-  const hasActiveSubscription = user.subscriptionStatus === 'active';
-
   // 3. Build a "Usage Map" per Month
   // We need to find out how many free credits the user consumed in EACH month relevant to the lessons.
 
@@ -207,7 +200,7 @@ async function getLiveLessonsWithUserStatus(
     // 1. Must have active sub
     // 2. Must not have exceeded limit for THAT specific month
     const isEligibleForFree =
-      hasActiveSubscription && usedInThisMonth < LIMIT_PER_MONTH;
+      user.hasActiveSubscription && usedInThisMonth < LIMIT_PER_MONTH;
 
     // Registration / Payment Logic (Existing)
     const myRegistrations = lesson.registrations || [];
