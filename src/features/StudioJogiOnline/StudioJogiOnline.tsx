@@ -22,8 +22,11 @@ export const StudioJogiOnline = ({ playlists }: Props) => {
           const descMatch =
             lesson.description?.toLowerCase().includes(normalizedQuery) ||
             false;
+          const labelMatch = lesson.labels.some((label) =>
+            label.text.toLowerCase().includes(query)
+          );
 
-          return nameMatch || descMatch;
+          return nameMatch || descMatch || labelMatch;
         });
 
         return {

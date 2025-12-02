@@ -1,28 +1,17 @@
 import { Input } from '@/components/ui/input';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from '@/components/ui/input-group';
 import { SearchIcon } from 'lucide-react';
 
 type Props = { query: string; onQueryChange: (query: string) => void };
 
-export const SearchBar = ({ query, onQueryChange }: Props) => {
+export const SearchBar = ({ onQueryChange }: Props) => {
   return (
-    <div className="max-w-lg px-4 mx-auto">
-      <InputGroup>
-        <InputGroupAddon>
-          <SearchIcon />
-        </InputGroupAddon>
-        <InputGroupInput placeholder="Wyszukaj..." />
-        <InputGroupAddon align="inline-end">
-          <InputGroupButton>
-            <SearchIcon />
-          </InputGroupButton>
-        </InputGroupAddon>
-      </InputGroup>
+    <div className="relative flex  max-w-lg px-4 mx-auto">
+      <Input
+        className="pr-12"
+        placeholder="Wyszukaj..."
+        onChange={(e) => onQueryChange(e.target.value)}
+      />
+      <SearchIcon className="size-4 absolute right-8 -translate-y-1/2 top-1/2" />
     </div>
   );
 };
