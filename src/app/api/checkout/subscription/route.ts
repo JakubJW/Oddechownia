@@ -21,6 +21,11 @@ export async function POST(req: NextRequest) {
       },
     ],
     customer: customerId,
+    discounts: [
+      {
+        coupon: 'promo_1Sa2fNFWpOu2Y0ISCtbCjVe0',
+      },
+    ],
     success_url: `${env.NEXT_PUBLIC_APP_URL}/rejestracja/{CHECKOUT_SESSION_ID}`,
     cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,
     client_reference_id: clientReferenceId,
