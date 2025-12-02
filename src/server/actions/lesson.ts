@@ -2,8 +2,8 @@
 
 import { createSlug } from '@/lib/utils';
 import { db } from '@/server/db';
-import { eq } from 'drizzle-orm';
-import { lessons } from '@/server/db/schema';
+import { and, eq, inArray } from 'drizzle-orm';
+import { lessonLabels, lessons } from '@/server/db/schema';
 import { ActionResult } from './types';
 import { BaseLesson, Lesson } from '@/server/db/types';
 import {
@@ -26,6 +26,7 @@ export const createLesson = async (
         formData.get('videoId') !== 'null'
           ? Number(formData.get('videoId'))
           : null,
+      labelIds: formData.getAll('labelIds[]').map((value) => Number(value)),
     };
 
     const parsed = lessonFormSchema.safeParse(rawData);
@@ -72,6 +73,12 @@ export const createLesson = async (
       })
       .returning();
 
+    await db
+      .insert(lessonLabels)
+      .values(
+        parsed.data.labelIds.map((id) => ({ lessonId: lesson.id, labelId: id }))
+      );
+
     const newAttachments = formData.getAll('newAttachments[]');
 
     if (newAttachments.length > 0) {
@@ -114,6 +121,7 @@ export const updateLesson = async (
         formData.get('videoId') && formData.get('videoId') !== 'null'
           ? Number(formData.get('videoId'))
           : null,
+      labelIds: formData.getAll('labelIds[]').map((value) => Number(value)),
     };
 
     const parsed = lessonFormSchema.safeParse({
@@ -165,10 +173,45 @@ export const updateLesson = async (
     const updatedLesson = await db.transaction(async (tx) => {
       const currentLesson = await tx.query.lessons.findFirst({
         where: eq(lessons.id, id),
-        columns: { thumbnailId: true },
+        columns: { thumbnailId: true, id: true },
+        with: {
+          labels: {
+            with: {
+              label: true,
+            },
+          },
+        },
       });
 
       if (!currentLesson) throw new Error('Lekcja nie istnieje');
+
+      const existingLabels = currentLesson.labels.map(({ labelId }) => labelId);
+      const labelsToInsert = parsed.data.labelIds.filter(
+        (id) => !existingLabels.includes(id)
+      );
+      const labelsToRemove = existingLabels.filter(
+        (id) => !parsed.data.labelIds.includes(id)
+      );
+
+      if (labelsToInsert.length) {
+        await db.insert(lessonLabels).values(
+          parsed.data.labelIds.map((id) => ({
+            lessonId: currentLesson.id,
+            labelId: id,
+          }))
+        );
+      }
+
+      if (labelsToRemove.length) {
+        await db
+          .delete(lessonLabels)
+          .where(
+            and(
+              eq(lessonLabels.lessonId, currentLesson.id),
+              inArray(lessonLabels.labelId, labelsToRemove)
+            )
+          );
+      }
 
       const [updated] = await tx
         .update(lessons)

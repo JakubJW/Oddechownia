@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { cn, formatDuration } from '@/lib/utils';
 import { getRequiredUser } from '@/lib/data';
 import { ProgressBar } from '@/features/shared/ProgressBar';
+import { LessonLabel } from '@/components/LessonLabel';
 
 export async function generateMetadata({
   params,
@@ -48,6 +49,8 @@ export default async function PlaylistLessonPlayback({
     slug: playlistSlug,
   });
 
+  console.log(playlist);
+
   if (!playlist) {
     notFound();
   }
@@ -66,8 +69,6 @@ export default async function PlaylistLessonPlayback({
   if (!currentLesson) {
     notFound();
   }
-
-  console.log(currentLesson);
 
   return (
     <Container className="py-0 md:pt-4 lg:pt-16">
@@ -116,7 +117,7 @@ export default async function PlaylistLessonPlayback({
             </p>
             <div className="flex-grow px-6 pb-6 overflow-y-scroll">
               {playlist.lessons.map(
-                ({ id, video, name, slug, thumbnail, progress }) => (
+                ({ id, video, name, slug, thumbnail, progress, labels }) => (
                   <Link
                     key={id}
                     href={`/studio-jogi-online/${playlist.slug}/${slug}`}
@@ -142,12 +143,22 @@ export default async function PlaylistLessonPlayback({
                         </span>
                         <ProgressBar percent={progress.percent} />
                       </div>
-                      <p
-                        title={name}
-                        className="text-sm md:text-md font-semibold line-clamp-2 mb-auto"
-                      >
-                        {name}
-                      </p>
+                      <div className="flex flex-col">
+                        <p
+                          title={name}
+                          className="text-sm md:text-md font-semibold line-clamp-2 mb-2"
+                        >
+                          {name}
+                        </p>
+                        <div className="flex gap-1">
+                          {labels.map((label) => (
+                            <LessonLabel
+                              key={label.id}
+                              label={{ text: label.text, color: label.color }}
+                            />
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </Link>
                 )

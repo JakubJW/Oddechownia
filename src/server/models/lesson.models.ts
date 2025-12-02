@@ -10,11 +10,14 @@ import { FileSchema } from './file.models';
 import { PlaylistDTO, PlaylistSchema } from './playlist.models';
 import { PlaylistLessonSchema } from './playlistLesson.models';
 import { UserFavoriteLessonsSchema } from './userFavoriteLessons.models';
+import { LessonLabelBaseSchema } from './lessonLabel.models';
+import { LabelDTO } from './lessonLabel.models';
 
 export type LessonSchema = InferSelectModel<typeof lessons>;
 export type LessonBaseSchema = LessonSchema & {
   video: VideoSchema | null;
   thumbnail: FileSchema;
+  labels: LessonLabelBaseSchema[];
 };
 
 export type LessonDetailSchema = LessonSchema & {
@@ -22,6 +25,7 @@ export type LessonDetailSchema = LessonSchema & {
   thumbnail: FileSchema;
   attachments: AttachmentSchema[];
   userFavoriteLessons: UserFavoriteLessonsSchema[];
+  labels: LessonLabelBaseSchema[];
 };
 
 export type LessonBaseDTO = Omit<
@@ -33,6 +37,7 @@ export type LessonDTO = LessonBaseDTO & {
   video?: VideoDTO;
   position?: number;
   thumbnail: string;
+  labels: LabelDTO[];
 };
 
 export type LessonDetailDTO = LessonBaseDTO & {
@@ -41,18 +46,21 @@ export type LessonDetailDTO = LessonBaseDTO & {
   thumbnail: string;
   attachments: AttachmentDTO[];
   isFavorite: boolean;
+  labels: LabelDTO[];
 };
 
 export type AdminLessonSchema = LessonSchema & {
   video: VideoSchema | null;
   thumbnail: FileSchema;
   playlistLessons: Array<PlaylistLessonSchema & { playlist: PlaylistSchema }>;
+  labels: LessonLabelBaseSchema[];
 };
 
 export type AdminLessonDTO = LessonBaseDTO & {
   video?: VideoDTO;
   thumbnail: string;
   playlists: Omit<PlaylistDTO, 'position'>[];
+  labels: LabelDTO[];
 };
 
 export type AdminLessonWithinPlaylistDTO = LessonBaseDTO & {
@@ -73,6 +81,7 @@ export type AdminEditLessonDTO = LessonBaseDTO & {
   video?: VideoDTO;
   thumbnail: string;
   attachments: AdminEditLessonAttachmentDTO[];
+  labels: LabelDTO[];
 };
 
 export type FetchFavoriteLessonsResponse = {

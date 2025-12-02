@@ -74,7 +74,7 @@ export default async function Playlist({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-8 mt-16">
           {playlist.lessons.map(
-            ({ id, name, description, slug, thumbnail, video }) => {
+            ({ id, name, description, slug, thumbnail, video, labels }) => {
               return (
                 <Link
                   key={id}
@@ -85,6 +85,7 @@ export default async function Playlist({
                     name={name}
                     description={description}
                     thumbnail={thumbnail}
+                    labels={labels}
                   />
                 </Link>
               );

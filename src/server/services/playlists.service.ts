@@ -16,10 +16,12 @@ import {
 import { transformVideoToDto } from './videos.service';
 import { LessonsService } from './lessons.service';
 import { LessonDetailDTO, LessonDTO } from '../models/lesson.models';
+import { LessonLabelBaseSchema } from '../models/lessonLabel.models';
 
 export type LessonWithVideoSelect = InferSelectModel<typeof lessons> & {
   video: InferSelectModel<typeof videos> | null;
   thumbnail: InferSelectModel<typeof files>;
+  labels: LessonLabelBaseSchema[];
 };
 
 export type PlaylistLessonWithLessonSelect = InferSelectModel<
@@ -72,6 +74,11 @@ const getPlaylistsListForUser = async (filters?: PlaylistFilters) => {
             with: {
               video: true,
               thumbnail: true,
+              labels: {
+                with: {
+                  label: true,
+                },
+              },
             },
           },
         },
@@ -127,6 +134,11 @@ const selectPlaylist = async (filters?: PlaylistFilters) => {
               attachments: {
                 with: {
                   file: true,
+                },
+              },
+              labels: {
+                with: {
+                  label: true,
                 },
               },
             },

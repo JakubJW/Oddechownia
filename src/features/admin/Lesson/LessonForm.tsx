@@ -44,6 +44,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { Labels } from './Form/Labels';
 
 interface LessonFormProps {
   lesson?: AdminEditLessonDTO;
@@ -64,6 +65,7 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
           name: lesson.name,
           description: lesson.description,
           videoId: lesson.video ? lesson.video?.id : null,
+          labelIds: lesson?.labels.map(({ id }) => id),
         }
       : { ...defaultValues },
     mode: 'all',
@@ -83,12 +85,18 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
     revalidatePath(`/admin/lekcje/${lesson.slug}`);
   };
 
+  const [labelIds] = form.watch(['labelIds']);
+
   const handleFormSubmissionAction = useCallback(
     async (values: z.infer<typeof formSchema>) => {
       const formData = new FormData();
       formData.append('name', values.name);
       formData.append('description', values.description);
       formData.append('videoId', String(values.videoId));
+
+      for (let i = 0; i < labelIds.length; i++) {
+        formData.append('labelIds[]', String(labelIds[i]));
+      }
 
       for (let i = 0; i < newAttachments.length; i++) {
         formData.append('newAttachments[]', newAttachments[i]);
@@ -116,7 +124,14 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
 
       return updateLesson(lesson.id, formData);
     },
-    [lesson, newAttachments, attachmentsToRemove, thumbnail, removeOldThumbnail]
+    [
+      lesson,
+      newAttachments,
+      attachmentsToRemove,
+      thumbnail,
+      removeOldThumbnail,
+      labelIds,
+    ]
   );
 
   const { execute: submitForm, isLoading } = useActionResult(
@@ -202,6 +217,29 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
               onAdd={(files) => handleAddAttachment(files)}
               newAttachments={newAttachments}
               attachmentsToRemove={attachmentsToRemove}
+            />
+            <FormField
+              control={form.control}
+              name="labelIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem>
+                    <FormLabel>Etykiety</FormLabel>
+                    <FormControl>
+                      <Labels
+                        currentLabels={labelIds}
+                        onRemove={(removedId) =>
+                          field.onChange(
+                            labelIds.filter((id) => id !== removedId)
+                          )
+                        }
+                        onAdd={(id) => field.onChange([...labelIds, id])}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormItem>
+              )}
             />
           </div>
           <div className="space-y-4">

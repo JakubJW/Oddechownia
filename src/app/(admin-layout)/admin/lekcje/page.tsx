@@ -43,12 +43,20 @@ export default async function AdminLessons({
     <div>
       <div className="flex justify-between">
         <p>Lekcje</p>
-        <Link
-          href="/admin/lekcje/dodaj"
-          className={cn(buttonVariants({ variant: 'default' }))}
-        >
-          Dodaj lekcję
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/admin/lekcje/dodaj"
+            className={cn(buttonVariants({ variant: 'default' }))}
+          >
+            Dodaj lekcję
+          </Link>
+          <Link
+            href="/admin/lekcje/etykiety"
+            className={cn(buttonVariants({ variant: 'default' }))}
+          >
+            Etykiety
+          </Link>
+        </div>
       </div>
       <Filters
         config={{
@@ -75,7 +83,7 @@ export default async function AdminLessons({
         }}
       />
       <LessonGrid>
-        {lessons.map(({ id, name, description, video, thumbnail }) => (
+        {lessons.map(({ id, name, description, video, thumbnail, labels }) => (
           <Link
             href={`/admin/lekcje/${id}`}
             key={id}
@@ -86,6 +94,7 @@ export default async function AdminLessons({
               name={name}
               video={video}
               description={description}
+              labels={labels}
             />
           </Link>
         ))}
