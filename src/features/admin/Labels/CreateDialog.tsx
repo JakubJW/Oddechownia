@@ -25,17 +25,8 @@ import {
   CreateLabelValues,
 } from './createLabelFormSchema';
 import { useLabels } from './hooks/useLabels';
-import { Badge } from '@/components/ui/badge';
 import { memo, useCallback, useEffect } from 'react';
-import { hexToTailwindHSL } from '@/lib/utils';
-
-export const getLabelStyles = (hex: string) => {
-  return {
-    color: `hsl(${hexToTailwindHSL(hex)})`,
-    borderColor: `hsl(${hexToTailwindHSL(hex)})`,
-    backgroundColor: `hsla(${hexToTailwindHSL(hex)}, 0.2)`,
-  };
-};
+import { LessonLabel } from '@/components/LessonLabel';
 
 const CreateLabelDialog = ({
   label,
@@ -96,12 +87,7 @@ const CreateLabelDialog = ({
               <DialogTitle>Utwórz nową etykietę</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <Badge
-                className="font-semibold rounded-full"
-                style={getLabelStyles(color)}
-              >
-                {text}
-              </Badge>
+              <LessonLabel label={{ text, color }} />
               <FormField
                 control={form.control}
                 name="text"

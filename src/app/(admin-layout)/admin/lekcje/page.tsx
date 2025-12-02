@@ -83,7 +83,7 @@ export default async function AdminLessons({
         }}
       />
       <LessonGrid>
-        {lessons.map(({ id, name, description, video, thumbnail }) => (
+        {lessons.map(({ id, name, description, video, thumbnail, labels }) => (
           <Link
             href={`/admin/lekcje/${id}`}
             key={id}
@@ -94,6 +94,7 @@ export default async function AdminLessons({
               name={name}
               video={video}
               description={description}
+              labels={labels}
             />
           </Link>
         ))}

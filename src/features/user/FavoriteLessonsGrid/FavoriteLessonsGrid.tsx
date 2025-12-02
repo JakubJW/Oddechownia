@@ -77,6 +77,7 @@ const FavoriteLessonsGrid = () => {
                 slug,
                 thumbnail,
                 playlists,
+                labels,
               }) => (
                 <a
                   href={`/studio-jogi-online/${playlists[0].slug}/${slug}`}
@@ -88,6 +89,7 @@ const FavoriteLessonsGrid = () => {
                     name={name}
                     video={video}
                     description={description}
+                    labels={labels}
                   />
                 </a>
               )

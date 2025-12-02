@@ -56,6 +56,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
                 name={lesson.name}
                 description={lesson.description}
                 video={lesson.video}
+                labels={lesson.labels}
               />
             </Link>
           ))}

@@ -1,7 +1,6 @@
 import Container from '@/components/Container/Container';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { Metadata } from 'next';
-import PlaylistCard from '@/components/PlaylistCard';
 import { StudioJogiOnline } from '@/features/StudioJogiOnline/StudioJogiOnline';
 
 export const metadata: Metadata = {

@@ -3,15 +3,20 @@ import { LessonDTO } from '@/server/models/lesson.models';
 import Image from 'next/image';
 import { Play } from 'lucide-react';
 import { ProgressBar } from '@/features/shared/ProgressBar';
+import { LessonLabel } from '../LessonLabel';
 
 const LessonCard = ({
   name,
   description,
   video,
   thumbnail,
-}: Pick<LessonDTO, 'name' | 'description' | 'video' | 'thumbnail'>) => {
+  labels,
+}: Pick<
+  LessonDTO,
+  'name' | 'description' | 'video' | 'thumbnail' | 'labels'
+>) => {
   return (
-    <div className="lesson-card transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
+    <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
           src={thumbnail}
@@ -30,9 +35,17 @@ const LessonCard = ({
         </div>
       </div>
 
-      <div className="flex flex-col px-4 py-6 md:px-6 gap-4">
+      <div className="flex flex-col flex-grow px-4 py-6 md:px-6 gap-4">
         <p className="text-black font-semibold line-clamp-2">{name}</p>
-        <p className="text-sm  text-gray-400 line-clamp-3">{description}</p>
+        <p className="text-sm  text-gray-400 line-clamp-2">{description}</p>
+        <div className="flex gap-1 mt-auto">
+          {labels.map(({ id, text, color }) => (
+            <LessonLabel
+              key={id}
+              label={{ text, color }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

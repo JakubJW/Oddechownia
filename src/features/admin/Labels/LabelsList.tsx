@@ -6,7 +6,7 @@ import { Pencil, Trash } from 'lucide-react';
 import { useState } from 'react';
 import CreateLabelDialog from './CreateDialog';
 import { useLabels } from './hooks/useLabels';
-import { getLabelStyles } from './CreateDialog';
+import { LessonLabel } from '@/components/LessonLabel';
 
 export const LabelsList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -35,7 +35,7 @@ export const LabelsList = () => {
           key={label.id}
           className="flex justify-between items-center border-b pb-4 last:border-b-0 mb-4"
         >
-          <Badge style={getLabelStyles(label.color)}>{label.text}</Badge>
+          <LessonLabel label={{ text: label.text, color: label.color }} />
           <div className="space-x-2">
             <Button
               variant="secondary"

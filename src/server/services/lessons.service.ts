@@ -36,6 +36,11 @@ const transformLessonToDTO = (
       lesson.thumbnail.path
     ).data,
     video: transformVideoToDto(lesson.video),
+    labels: lesson?.labels.map(({ label }) => ({
+      id: label.id,
+      text: label.text,
+      color: label.color,
+    })),
   }));
 };
 
@@ -64,6 +69,11 @@ const transformLessonsToDetailDTO = (
     attachments: AttachmentsService.transformAttachmentsToDTO(
       lesson.attachments
     ),
+    labels: lesson.labels.map(({ label }) => ({
+      id: label.id,
+      text: label.text,
+      color: label.color,
+    })),
   }));
 };
 
@@ -87,6 +97,11 @@ const transformAdminLessonListToDTO = (
       description: playlist.description,
       slug: playlist.slug,
       isAccessibleForFree: playlist.isAccessibleForFree,
+    })),
+    labels: lesson?.labels.map(({ label }) => ({
+      id: label.id,
+      text: label.text,
+      color: label.color,
     })),
   }));
 };
@@ -115,6 +130,11 @@ const getLessonsList = async (filters?: LessonFilters) => {
       playlistLessons: {
         with: {
           playlist: true,
+        },
+      },
+      labels: {
+        with: {
+          label: true,
         },
       },
     },
@@ -169,6 +189,11 @@ const transformToAdminEditLessonDTO = (
     attachments: AttachmentsService.transformToAdminEditLessonAttachmentDTO(
       lesson.attachments
     ),
+    labels: lesson.labels.map(({ label }) => ({
+      id: label.id,
+      text: label.text,
+      color: label.color,
+    })),
   };
 };
 
@@ -181,6 +206,11 @@ const selectLessonForAdminEdit = async (filters?: LessonFilters) => {
     with: {
       video: true,
       thumbnail: true,
+      labels: {
+        with: {
+          label: true,
+        },
+      },
       attachments: {
         with: {
           file: true,
@@ -229,6 +259,11 @@ const selectUserFavoriteLessons = async (
       video: true,
       thumbnail: true,
       userFavoriteLessons: true,
+      labels: {
+        with: {
+          label: true,
+        },
+      },
       playlistLessons: {
         with: {
           playlist: true,
@@ -259,6 +294,11 @@ const transformToFavoriteLessonsDTO = (lessons: SelectUserFavoriteLessons) => {
     addedAt: lesson.userFavoriteLessons.map((lesson) => lesson.createdAt)[0],
     playlists: lesson.playlistLessons.map((lessonPlaylist) => ({
       ...lessonPlaylist.playlist,
+    })),
+    labels: lesson.labels.map(({ label }) => ({
+      id: label.id,
+      text: label.text,
+      color: label.color,
     })),
   }));
 };
