@@ -2,6 +2,7 @@ import { formatDuration } from '@/lib/utils';
 import { LessonDTO } from '@/server/models/lesson.models';
 import Image from 'next/image';
 import { Play } from 'lucide-react';
+import { ProgressBar } from '@/features/shared/ProgressBar';
 
 const LessonCard = ({
   name,
@@ -21,6 +22,7 @@ const LessonCard = ({
         <span className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/75 text-white text-xs font-medium">
           {formatDuration(video?.duration)}
         </span>
+        {/* <ProgressBar percent={}/> */}
         <div className="lesson-card-play-overlay transition-all duration-200 ease-in-out absolute top-0 left-0 h-full w-full opacity-0 bg-muted/60 flex items-center justify-center">
           <div className="rounded-full bg-matcha p-4">
             <Play className="h-12 w-12 text-white" />

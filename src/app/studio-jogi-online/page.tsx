@@ -1,8 +1,8 @@
 import Container from '@/components/Container/Container';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { Metadata } from 'next';
-
 import PlaylistCard from '@/components/PlaylistCard';
+import { StudioJogiOnline } from '@/features/StudioJogiOnline/StudioJogiOnline';
 
 export const metadata: Metadata = {
   title: 'Studio Jogi Online | Oddechownia',
@@ -27,14 +27,7 @@ export default async function OnlineYogaStudio() {
   return (
     <section>
       <Container className="py-12">
-        <div className="space-y-12">
-          {playlists.map((playlist) => (
-            <PlaylistCard
-              key={playlist.id}
-              playlist={playlist}
-            />
-          ))}
-        </div>
+        <StudioJogiOnline playlists={playlists} />
       </Container>
     </section>
   );
