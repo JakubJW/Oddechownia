@@ -28,14 +28,27 @@ export default function NavigationAction({
   }
 
   return (
-    <Link
-      className={cn(
-        buttonVariants({ variant: 'secondary', size: 'lg' }),
-        className
+    <div className="flex gap-4">
+      <Link
+        className={cn(
+          buttonVariants({ variant: 'secondary', size: 'lg' }),
+          className
+        )}
+        href="/moje-konto"
+      >
+        Moje konto
+      </Link>
+      {user?.isAdmin && (
+        <Link
+          className={cn(
+            buttonVariants({ variant: 'secondary', size: 'lg' }),
+            className
+          )}
+          href="/admin"
+        >
+          Admin
+        </Link>
       )}
-      href="/moje-konto"
-    >
-      Moje konto
-    </Link>
+    </div>
   );
 }

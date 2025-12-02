@@ -43,12 +43,20 @@ export default async function AdminLessons({
     <div>
       <div className="flex justify-between">
         <p>Lekcje</p>
-        <Link
-          href="/admin/lekcje/dodaj"
-          className={cn(buttonVariants({ variant: 'default' }))}
-        >
-          Dodaj lekcję
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/admin/lekcje/dodaj"
+            className={cn(buttonVariants({ variant: 'default' }))}
+          >
+            Dodaj lekcję
+          </Link>
+          <Link
+            href="/admin/lekcje/etykiety"
+            className={cn(buttonVariants({ variant: 'default' }))}
+          >
+            Etykiety
+          </Link>
+        </div>
       </div>
       <Filters
         config={{

@@ -3,12 +3,12 @@ import type { Metadata } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
 import Navigation from '@/components/Navigation/Navigation';
 import Footer from '@/components/Footer/Footer';
-import { createClient } from '@/supabase/server';
 import { env } from '@/env';
 import Waitlist from '@/features/Waitlist/Waitlist';
 import ToastProvider from '@/components/ToastProvider';
 import QueryClientProvider from '@/components/QueryClientProvider';
 import Script from 'next/script';
+import { getUser } from '@/server/actions/user';
 
 export const metadata: Metadata = {
   title: 'Twoje miejsce, by złapać oddech | Oddechownia',
@@ -24,10 +24,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   return (
     <html

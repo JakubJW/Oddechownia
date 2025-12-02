@@ -14,6 +14,8 @@ import {
   userPracticeSchedules,
   userLessonProgress,
   subscriptions,
+  labels,
+  lessonLabels,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -41,6 +43,7 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
   userFavoriteLessons: many(userFavoriteLessons),
   scheduledPractices: many(userPracticeSchedules),
   progressRecords: many(userLessonProgress),
+  labels: many(lessonLabels),
 }));
 
 export const videosRelations = relations(videos, ({ one }) => ({
@@ -192,5 +195,20 @@ export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
   user: one(users, {
     fields: [subscriptions.userId],
     references: [users.id],
+  }),
+}));
+
+export const labelsRelations = relations(labels, ({ many }) => ({
+  lessons: many(lessonLabels),
+}));
+
+export const lessonLabelsRelations = relations(lessonLabels, ({ one }) => ({
+  lesson: one(lessons, {
+    fields: [lessonLabels.lessonId],
+    references: [lessons.id],
+  }),
+  label: one(labels, {
+    fields: [lessonLabels.labelId],
+    references: [labels.id],
   }),
 }));

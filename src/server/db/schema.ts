@@ -308,3 +308,23 @@ export const subscriptions = pgTable(
   },
   (t) => [uniqueIndex('subscription_user_idx').on(t.userId)]
 );
+
+export const labels = pgTable('labels', {
+  id: serial('id').primaryKey(),
+  text: varchar('text', { length: 50 }).notNull().unique(),
+  color: varchar('color', { length: 20 }).notNull(),
+});
+
+export const lessonLabels = pgTable(
+  'lesson_labels',
+  {
+    id: serial('id').primaryKey(),
+    lessonId: integer('lesson_id')
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+    labelId: integer('label_id')
+      .notNull()
+      .references(() => labels.id, { onDelete: 'cascade' }),
+  },
+  (t) => [unique('unique_label_lesson_constraint').on(t.labelId, t.lessonId)]
+);

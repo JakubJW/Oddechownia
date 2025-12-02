@@ -3,14 +3,14 @@ import Link from 'next/link';
 import Logo from '../../../public/oddechownia.svg';
 import MobileNavigation from './MobileNavigation';
 import NavigationLink from './NavigationLink';
-import type { User } from '@supabase/supabase-js';
 import NavigationAction from './NavigationAction';
+import { User } from '@/server/actions/user';
 
 export const routes = [
   { content: 'Studio Jogi Online', href: '/studio-jogi-online' },
   // { content: 'O nas', href: '/o-nas' },
   { content: 'Zajęcia na żywo', href: '/zajecia-na-zywo' },
-  { content: 'Blog', href: '/blog' },
+  // { content: 'Blog', href: '/blog' },
 ];
 
 export interface NavigationProps {
