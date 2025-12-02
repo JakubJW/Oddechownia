@@ -8,7 +8,7 @@ type Props = {
 export const LessonLabel = ({ label }: Props) => {
   return (
     <Badge
-      className="w-min font-semibold rounded-full"
+      className="font-semibold rounded-full"
       style={{
         color: `hsl(${hexToTailwindHSL(label.color)})`,
         borderColor: `hsl(${hexToTailwindHSL(label.color)})`,

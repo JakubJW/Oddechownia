@@ -35,7 +35,7 @@ export const createLesson = async (
       return {
         data: null,
         success: false,
-        error: `Podczas tworzenia lekcji wystąpił błąd.}`,
+        error: `Błąd walidacji danych ${parsed.error.flatten()}`,
       };
     }
 
@@ -73,11 +73,16 @@ export const createLesson = async (
       })
       .returning();
 
-    await db
-      .insert(lessonLabels)
-      .values(
-        parsed.data.labelIds.map((id) => ({ lessonId: lesson.id, labelId: id }))
-      );
+    if (parsed.data.labelIds.length) {
+      await db
+        .insert(lessonLabels)
+        .values(
+          parsed.data.labelIds.map((id) => ({
+            lessonId: lesson.id,
+            labelId: id,
+          }))
+        );
+    }
 
     const newAttachments = formData.getAll('newAttachments[]');
 

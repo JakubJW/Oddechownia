@@ -49,8 +49,6 @@ export default async function PlaylistLessonPlayback({
     slug: playlistSlug,
   });
 
-  console.log(playlist);
-
   if (!playlist) {
     notFound();
   }
