@@ -7,28 +7,20 @@ import { useState } from 'react';
 import { Button } from '../ui/button';
 
 type User = Awaited<ReturnType<typeof getUser>>;
+
 export interface SubscriptionCardProps {
   name: string;
-  priceId: string;
+  priceId?: string;
   price: number;
   features: (string | undefined)[];
-  user: User | null;
-  intervalCount?: number;
+  user?: User | null;
   interval?: string;
 }
 
-const calculateMonthly = (price: number, intervalCount?: number) => {
-  if (!intervalCount) {
-    return '--.--';
-  }
-
-  return (price / 100 / intervalCount).toFixed(2);
-};
-
 export function SubscriptionCard({
+  name,
   price,
   priceId,
-  intervalCount,
   features,
   interval,
   user,
@@ -67,30 +59,14 @@ export function SubscriptionCard({
     }
   };
 
-  const formatIntervalCount = (intervalCount?: number, interval?: string) => {
-    if (!interval || !intervalCount) return null;
-
-    if (interval === 'month') {
-      if (intervalCount === 1) return `${intervalCount} miesiąc`;
-      else if (intervalCount > 1 && intervalCount <= 4)
-        return `${intervalCount} miesiące`;
-      else if (intervalCount > 4 && intervalCount <= 12)
-        return `${intervalCount} miesięcy`;
-    }
-  };
-
   return (
-    <div>
-      <span className="font-normal text-lg">
-        Odnowa co {formatIntervalCount(intervalCount, interval)}
-      </span>
-      <div className="mt-4">
+    <div className="flex flex-col">
+      <span className="font-light text-base">{name}</span>
+      <div className="mt-2">
         <span className="font-bold text-3xl">
           {(price / 100).toFixed(2)} zł
         </span>
-        <span className="text-gray-400 text-sm">
-          {calculateMonthly(price, intervalCount)} zł/mies.
-        </span>
+        <span className="text-gray-400 text-sm ml-2">{interval}</span>
       </div>
       <ul className="space-y-2 my-4">
         {features.map((feature, index) => {
@@ -110,10 +86,12 @@ export function SubscriptionCard({
         })}
       </ul>
       <Button
+        size="lg"
+        className="mt-auto"
         onClick={handleChoose}
         disabled={isLoading}
       >
-        {isLoading ? 'Ładowanie...' : 'Wybierz'}
+        {isLoading ? 'Ładowanie...' : 'Dołącz do Oddechowni'}
       </Button>{' '}
     </div>
   );

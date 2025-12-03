@@ -10,7 +10,7 @@ export default function HeaderTwo({ children, className }: HeaderTwoProps) {
   return (
     <h2
       className={cn(
-        'font-bold text-2xl leading-normal xl:text-4xl xl:leading-relaxed',
+        'text-2xl leading-normal xl:text-4xl xl:leading-relaxed',
         className ?? '',
         montserrat.className
       )}
