@@ -67,7 +67,7 @@ export default {
           foreground: 'var(--matcha-foreground)',
         },
         almond: {
-          DEFAULT: 'var(--almond)',
+          DEFAULT: 'hsl(var(--almond))',
           foreground: 'var(--almond-foreground)',
         },
         steelBlue: {

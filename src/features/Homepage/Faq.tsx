@@ -7,7 +7,7 @@ export default function Faq() {
     <section className="bg-matcha">
       <Container>
         <HeaderTwo className="text-center mb-16">
-          W czym możemy ci <span className="text-white">pomóc?</span>
+          W czym mogę ci <span className="text-white">pomóc?</span>
         </HeaderTwo>
         <div className="space-y-6 max-w-[1000px] mx-auto">
           <FaqItem>

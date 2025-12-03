@@ -2,11 +2,11 @@
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Slider from 'react-slick';
+import Slider, { Settings } from 'react-slick';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef } from 'react';
 
-const settings = {
+const defaultSettings: Settings = {
   infinite: false,
   speed: 500,
   slidesToShow: 4,
@@ -34,8 +34,13 @@ const settings = {
 
 export default function Carousel({
   children,
-}: React.PropsWithChildren<object>) {
+  settings,
+}: {
+  children: React.ReactNode;
+  settings?: Settings;
+}) {
   const slider = useRef<Slider>(null);
+  const sliderSettings = { ...defaultSettings, ...settings };
 
   return (
     <div className="slider-container relative">
@@ -48,7 +53,7 @@ export default function Carousel({
       <Slider
         ref={slider}
         className="-mx-4"
-        {...settings}
+        {...sliderSettings}
       >
         {children}
       </Slider>

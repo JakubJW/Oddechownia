@@ -1,8 +1,4 @@
-
-
-import { Clock } from 'lucide-react';
-// import Video from 'next-video';
-// import getStarted from '@/../videos/get-started.mp4';
+import MuxPlayer from '@mux/mux-player-react';
 
 export interface VideoCardProps {
   id: number;
@@ -12,33 +8,29 @@ export interface VideoCardProps {
   videoUrl: string;
 }
 
-const formatDutaion = (duration: number) => {
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  const seconds = duration % 60;
-
-  return `${hours < 10 ? '0' + hours : hours}:${
-    minutes < 10 ? '0' + minutes : minutes
-  }:${seconds < 10 ? '0' + seconds : seconds}`;
-};
-
 export default function VideoCard({
   title,
   description,
-  duration,
+  videoUrl,
 }: VideoCardProps) {
   return (
-    <div className="relative rounded-xl overflow-hidden">
-      {/* <Video src={getStarted} /> */}
-      <div className="absolute top-2 left-2 inline-flex items-center gap-2 p-2 rounded-md bg-primaryBg">
-        <Clock className="text-primaryFg" />
-        <span className="text-black leading-none">
-          {formatDutaion(duration)}
-        </span>
-      </div>
+    <div className="rounded-xl overflow-hidden bg-white">
+      <MuxPlayer
+        // poster={thumbnail}
+        title={title}
+        streamType="on-demand"
+        playbackId={videoUrl}
+        metadata={{
+          video_series: title,
+          video_title: title,
+        }}
+        accentColor="hsl(var(--matcha))"
+      />
       <div className="p-4 bg-white">
-        <p className="text-lg font-bold leading-normal mb-4 line-clamp-2">{title}</p>
-        <p className='line-clamp-2 leading-normal'>{description}</p>
+        <p className="text-lg font-bold leading-normal mb-4 line-clamp-2">
+          {title}
+        </p>
+        <p className="line-clamp-2 leading-normal">{description}</p>
       </div>
     </div>
   );

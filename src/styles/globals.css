@@ -21,7 +21,7 @@ body {
 
 @layer base {
   :root {
-    --navigation-height: 74px;
+    --navigation-height: 64px;
     
     --almond: 30 37% 87%;
     --almond-foreground: #f5efe9;
@@ -120,6 +120,14 @@ body {
 }
 
 @layer components {
+  .homepage-hero-container {
+    background-position: bottom;
+    background-size: cover;
+    background-image: url('/hero2.jpg');
+    background-repeat: no-repeat;
+    height: calc(100vh - var(--navigation-height));
+  }
+
   .homepage-hero-image {
     height: calc(100vh - var(--navigation-height));
   }
