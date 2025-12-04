@@ -10,7 +10,7 @@ export const routes = [
   { content: 'Studio Jogi Online', href: '/studio-jogi-online' },
   // { content: 'O nas', href: '/o-nas' },
   { content: 'Zajęcia na żywo', href: '/zajecia-na-zywo' },
-  // { content: 'Blog', href: '/blog' },
+  { content: 'Społeczność', href: '/spolecznosc' },
 ];
 
 export interface NavigationProps {

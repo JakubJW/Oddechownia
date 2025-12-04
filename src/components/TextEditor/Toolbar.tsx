@@ -1,7 +1,7 @@
 'use client';
 
 import { Editor } from '@tiptap/react';
-import { Heading2 } from 'lucide-react';
+import { Heading2, Bold, Italic, Underline } from 'lucide-react';
 import { Toggle } from '../ui/toggle';
 
 interface ToolbarProps {
@@ -23,6 +23,27 @@ export default function Toolbar({ editor }: ToolbarProps) {
         }
       >
         <Heading2 />
+      </Toggle>
+      <Toggle
+        size="sm"
+        pressed={editor.isActive('heading')}
+        onPressedChange={() => editor.chain().focus().toggleBold().run()}
+      >
+        <Bold />
+      </Toggle>
+      <Toggle
+        size="sm"
+        pressed={editor.isActive('heading')}
+        onPressedChange={() => editor.chain().focus().toggleItalic().run()}
+      >
+        <Italic />
+      </Toggle>
+      <Toggle
+        size="sm"
+        pressed={editor.isActive('heading')}
+        onPressedChange={() => editor.chain().focus().toggle().run()}
+      >
+        <Underline />
       </Toggle>
     </div>
   );

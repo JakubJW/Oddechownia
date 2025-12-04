@@ -16,6 +16,7 @@ import {
   subscriptions,
   labels,
   lessonLabels,
+  posts,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -111,13 +112,14 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     fields: [comments.lessonId],
     references: [lessons.id],
   }),
+  post: one(posts, { fields: [comments.postId], references: [posts.id] }),
   parent: one(comments, {
     fields: [comments.parentId],
     references: [comments.id],
-    relationName: 'commentReplies',
+    relationName: 'child_comments',
   }),
   replies: many(comments, {
-    relationName: 'commentReplies',
+    relationName: 'child_comments',
   }),
 }));
 
@@ -211,4 +213,9 @@ export const lessonLabelsRelations = relations(lessonLabels, ({ one }) => ({
     fields: [lessonLabels.labelId],
     references: [labels.id],
   }),
+}));
+
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, { fields: [posts.authorId], references: [users.id] }),
+  comments: many(comments),
 }));

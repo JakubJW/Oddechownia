@@ -10,11 +10,12 @@ import {
   unique,
   foreignKey,
   uniqueIndex,
+  check,
 } from 'drizzle-orm/pg-core';
 import { UserRoles } from './consts';
 import { sql } from 'drizzle-orm';
 
-export const posts = pgTable('posts', {
+export const blogPosts = pgTable('blog_posts', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 256 }).notNull(),
   slug: varchar('slug', { length: 256 }).notNull(),
@@ -147,11 +148,12 @@ export const comments = pgTable(
   'comments',
   {
     id: serial('id').primaryKey(),
-    lessonId: integer('lesson_id')
-      .notNull()
-      .references(() => lessons.id, {
-        onDelete: 'cascade',
-      }),
+    lessonId: integer('lesson_id').references(() => lessons.id, {
+      onDelete: 'cascade',
+    }),
+    postId: integer('post_id').references(() => posts.id, {
+      onDelete: 'cascade',
+    }),
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id),
@@ -171,6 +173,13 @@ export const comments = pgTable(
       foreignColumns: [table.id],
       name: 'comments_underlying_id_fk',
     }).onDelete('cascade'),
+    check(
+      'comment_parent_check',
+      sql`
+        (${table.lessonId} IS NOT NULL AND ${table.postId} IS NULL) OR 
+        (${table.lessonId} IS NULL AND ${table.postId} IS NOT NULL)
+      `
+    ),
   ]
 );
 
@@ -328,3 +337,20 @@ export const lessonLabels = pgTable(
   },
   (t) => [unique('unique_label_lesson_constraint').on(t.labelId, t.lessonId)]
 );
+
+export const posts = pgTable('posts', {
+  id: serial('id').primaryKey(),
+  authorId: uuid('author_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  slug: text('slug').notNull().unique(),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+});
