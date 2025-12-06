@@ -41,11 +41,7 @@ const create = async (
     return await handleFreeRegistration(lessonId, values, user);
   }
 
-  const priceId = 'price_1SS2YaFWpOu2Y0ISqYckJncc';
-
-  if (!priceId) throw new Error('Price not configured');
-
-  return await handlePaidRegistration(lessonId, values, priceId, user);
+  return await handlePaidRegistration(lessonId, values, user);
 };
 
 const getUsedEntitlementsCount = async (userId: string) => {
@@ -119,9 +115,10 @@ const buildCustomerData = (user: User, values: LiveLessonSignUpValues) => {
 const handlePaidRegistration = async (
   id: string,
   values: LiveLessonSignUpValues,
-  stripePriceId: string,
   user: User
 ) => {
+  const priceId = env.NEXT_STRIPE_LIVE_LESSON__PRICE_ID;
+
   const existingRegistration =
     await db.query.liveLessonsRegistrations.findFirst({
       where: and(
@@ -155,7 +152,7 @@ const handlePaidRegistration = async (
     mode: 'payment',
     line_items: [
       {
-        price: stripePriceId,
+        price: priceId,
         quantity: 1,
       },
     ],
@@ -172,7 +169,7 @@ const handlePaidRegistration = async (
     .set({
       paymentStatus: 'unpaid',
       checkoutSessionId: session.id,
-      stripePriceId: stripePriceId,
+      stripePriceId: priceId,
     })
     .where(eq(liveLessonsRegistrations.id, registration.id));
 

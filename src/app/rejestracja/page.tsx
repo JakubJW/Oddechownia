@@ -3,19 +3,22 @@ import Order from '@/features/Register/Order/Order';
 import { stripeService } from '@/server/services/stripe.service';
 import Stripe from 'stripe';
 import Image from 'next/image';
+import { env } from '@/env';
 
 export default async function SignIn() {
-  const product = await stripeService.getProduct('prod_Swifo6V6uVtRlK');
-
-  const price = product.default_price as Stripe.Price;
-
+  const subscriptionPrice = await stripeService.getPrice(
+    env.NEXT_STRIPE_SUBSCRIPTION_PRICE_ID
+  );
+  const subscriptionProduct = subscriptionPrice.product as Stripe.Product;
   const subscriptionProductDto = {
-    marketingFeatures: product.marketing_features.map(({ name }) => name),
+    name: subscriptionProduct.name,
+    marketingFeatures: subscriptionProduct.marketing_features.map(
+      ({ name }) => name
+    ),
     price: {
-      id: price.id,
-      unitAmount: price.unit_amount || 0,
-      interval: price.recurring?.interval,
-      intervalCount: price.recurring?.interval_count,
+      unitAmount: subscriptionPrice.unit_amount || 0,
+      interval: subscriptionPrice.recurring?.interval,
+      intervalCount: subscriptionPrice.recurring?.interval_count,
     },
   };
 
@@ -30,10 +33,7 @@ export default async function SignIn() {
             intervalCount={subscriptionProductDto.price.intervalCount}
             className="col-start-1 col-span-2"
           />
-          <RegisterForm
-            priceId={subscriptionProductDto.price.id}
-            className="col-start-1 col-span-2"
-          />
+          <RegisterForm className="col-start-1 col-span-2" />
         </div>
         <Image
           className="homepage-hero-image object-cover object-bottom w-full hidden md:block"

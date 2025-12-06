@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const rawData = Object.fromEntries(formData);
-    const priceId = formData.get('priceId') as string;
 
     const parsed = registerFormSchema.safeParse(rawData);
 
@@ -18,7 +17,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const url = await signUp(parsed.data, priceId);
+    const url = await signUp(parsed.data);
 
     return NextResponse.json({ url }, { status: 201 });
   } catch (error) {

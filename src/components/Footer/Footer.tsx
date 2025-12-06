@@ -5,27 +5,12 @@ import Image from 'next/image';
 import Facebook from '../../../public/facebook.svg';
 import Instagram from '../../../public/instagram.svg';
 import FooterLink from './FooterLink';
-import { routes } from '../Navigation/Navigation';
+import { filteredRoutes, footerLinks } from '@/utils/navigation';
+import { getUser } from '@/server/actions/user';
 
-const footerLinks = [
-  [...routes],
-  [
-    {
-      content: 'Kontakt',
-      href: '/kontakt',
-    },
-    {
-      content: 'Regulamin',
-      href: '/regulamin',
-    },
-    {
-      content: 'Polityka prywatności',
-      href: '/polityka-prywatnosci',
-    },
-  ],
-];
+export default async function Footer() {
+  const user = await getUser();
 
-export default function Footer() {
   return (
     <footer className="bg-matcha">
       <Container>
@@ -41,16 +26,16 @@ export default function Footer() {
               className="w-[200px]"
             />
           </Link>
-          {footerLinks.map((column, index) => (
+          {[filteredRoutes(user), footerLinks].map((column, index) => (
             <ul
               key={index}
               className="space-y-4"
             >
-              {column.map(({ href, content }, index) => (
+              {column.map((link, index) => (
                 <FooterLink
                   key={index}
-                  href={href}
-                  content={content}
+                  href={link.href}
+                  content={link.content}
                 />
               ))}
             </ul>

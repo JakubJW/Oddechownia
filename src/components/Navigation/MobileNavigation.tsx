@@ -3,10 +3,10 @@
 import { cn } from '@/lib/utils';
 import { MenuIcon, X } from 'lucide-react';
 import { useState } from 'react';
-import { routes } from './Navigation';
 import NavigationLink from './NavigationLink';
 import { NavigationProps } from './Navigation';
 import NavigationAction from './NavigationAction';
+import { filteredRoutes } from '@/utils/navigation';
 
 export default function MobileNavigation({ user }: NavigationProps) {
   const [open, setOpen] = useState(false);
@@ -29,7 +29,7 @@ export default function MobileNavigation({ user }: NavigationProps) {
           <X className="text-richBlack" />
         </button>
         <ul className="-mx-4 flex flex-col gap-4">
-          {routes.map(({ content, href }, index) => (
+          {filteredRoutes(user).map(({ content, href }, index) => (
             <li key={index}>
               <NavigationLink
                 isMobile={true}

@@ -22,13 +22,7 @@ import { cn } from '@/lib/utils';
 import { useRegisterMutation } from '../hooks/useRegisterMutation';
 import { Loader2 } from 'lucide-react';
 
-export default function RegisterForm({
-  priceId,
-  className,
-}: {
-  priceId: string;
-  className?: string;
-}) {
+export default function RegisterForm({ className }: { className?: string }) {
   const mutation = useRegisterMutation();
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
@@ -37,7 +31,7 @@ export default function RegisterForm({
   });
 
   const onSubmit = async (values: RegisterFormValues) => {
-    mutation.mutate({ values, priceId });
+    mutation.mutate(values);
   };
 
   return (

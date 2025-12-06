@@ -1,46 +1,51 @@
 'use client';
 
-import { Check } from 'lucide-react';
-import { getUser } from '@/server/actions/user';
+import { Check, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Button } from '../ui/button';
+import { Button, buttonVariants } from '../ui/button';
+import { User } from '@/server/actions/user';
+import { cn } from '@/lib/utils';
+import { env } from '@/env';
 
-type User = Awaited<ReturnType<typeof getUser>>;
+type ProductType = 'subscription' | 'live-lesson';
 
-export interface SubscriptionCardProps {
+type Props = {
+  type: ProductType;
   name: string;
   priceId?: string;
   price: number;
   features: (string | undefined)[];
-  user?: User | null;
+  user: User;
   interval?: string;
-}
+};
 
-export function SubscriptionCard({
-  name,
-  price,
-  priceId,
-  features,
-  interval,
+const ActionButton = ({
+  productType,
   user,
-}: SubscriptionCardProps) {
+}: {
+  productType: ProductType;
+  user: User;
+}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChoose = async () => {
     if (!user) {
-      return router.push(`/rejestracja?priceId=${priceId}`);
+      return router.push('/rejestracja');
+    }
+
+    if (user.hasActiveSubscription) {
+      return router.push('/moje-konto');
     }
 
     try {
       setIsLoading(true);
 
-      const res = await fetch(`/api/checkout/subscription`, {
+      const res = await fetch(`/api/subscription/renew`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          priceId,
           customerId: user.stripeCustomerId,
           clientReferenceId: user.id,
         }),
@@ -59,6 +64,41 @@ export function SubscriptionCard({
     }
   };
 
+  if (productType === 'subscription') {
+    return (
+      <Button
+        size="lg"
+        className="mt-auto"
+        onClick={handleChoose}
+        disabled={isLoading}
+      >
+        Dołącz do Oddechowni
+        {isLoading && <Loader2 className="size-4 animate-spin mr-2" />}
+      </Button>
+    );
+  }
+
+  return (
+    <a
+      href={`${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo`}
+      className={cn(
+        buttonVariants({ size: 'lg', variant: 'secondary' }),
+        'mt-auto'
+      )}
+    >
+      Dostępne lekcje
+    </a>
+  );
+};
+
+export function ProductCard({
+  type,
+  name,
+  price,
+  features,
+  interval,
+  user,
+}: Props) {
   return (
     <div className="flex flex-col">
       <span className="font-light text-base">{name}</span>
@@ -85,14 +125,10 @@ export function SubscriptionCard({
           );
         })}
       </ul>
-      <Button
-        size="lg"
-        className="mt-auto"
-        onClick={handleChoose}
-        disabled={isLoading}
-      >
-        {isLoading ? 'Ładowanie...' : 'Dołącz do Oddechowni'}
-      </Button>{' '}
+      <ActionButton
+        user={user}
+        productType={type}
+      />
     </div>
   );
 }
