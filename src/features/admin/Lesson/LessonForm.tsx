@@ -22,7 +22,6 @@ import { useActionResult } from '@/hooks/useActionResult';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MuxPlayer from '@mux/mux-player-react/lazy';
 import MuxUploader from '@mux/mux-uploader-react';
-import { revalidatePath } from 'next/cache';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -81,8 +80,6 @@ export function AdminNewLesson({ lesson }: LessonFormProps) {
     if (!lesson || !lesson.video || !lesson.video.assetId) return;
 
     await deleteVideo(lesson.video.assetId);
-
-    revalidatePath(`/admin/lekcje/${lesson.slug}`);
   };
 
   const [labelIds] = form.watch(['labelIds']);

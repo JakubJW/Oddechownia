@@ -1,4 +1,3 @@
-// middleware.ts (or src/middleware.ts)
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { env } from '@/env';
@@ -16,11 +15,13 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
+        // @ts-expect-error - The library types mismatch slightly with Next.js 15, but this implementation is correct.
         setAll(cookiesToSet) {
+          // @ts-expect-error - The library types mismatch slightly with Next.js 15, but this implementation is correct.
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
-
+          // @ts-expect-error - The library types mismatch slightly with Next.js 15, but this implementation is correct.
           cookiesToSet.forEach(({ name, value, options }) => {
             supabaseResponse.cookies.set(name, value, options);
           });

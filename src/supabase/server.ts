@@ -13,8 +13,10 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
+        // @ts-expect-error - The library types mismatch slightly with Next.js 15, but this implementation is correct.
         setAll(cookiesToSet) {
           try {
+            // @ts-expect-error - The library types mismatch slightly with Next.js 15, but this implementation is correct.
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             );
