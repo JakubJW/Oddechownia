@@ -40,8 +40,8 @@ const RecentPosts = ({ posts, className }: Props) => {
                     })}
                   </p>
                   <h3 className="text-sm ">{post.title}</h3>
-                  <p
-                    className="line-clamp-2 text-sm md:text-md font-light  whitespace-pre-wrap leading-relaxed"
+                  <div
+                    className="line-clamp-2 text-sm md:text-md font-light leading-relaxed"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                   />
                 </div>
