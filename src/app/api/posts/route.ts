@@ -2,15 +2,20 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getUser } from '@/server/actions/user';
 import { createPostFormSchema } from '@/features/Spolecznosc/createPostFormSchema';
 import { db } from '@/server/db';
-import { posts } from '@/server/db/schema';
-import { asc, desc, lt } from 'drizzle-orm';
+import { comments, posts } from '@/server/db/schema';
+import { asc, desc, lt, sql } from 'drizzle-orm';
 import { createSlug, decodeCursor, encodeCursor } from '@/lib/utils';
+import { FetchPostsResponse } from '@/server/models/post.models';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);
 };
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest
+): Promise<
+  NextResponse<FetchPostsResponse> | NextResponse<{ message: string }>
+> {
   try {
     const user = await getUser();
 
@@ -27,25 +32,47 @@ export async function GET(req: NextRequest) {
 
     const result = await db.query.posts.findMany({
       with: {
-        comments: { columns: { id: true, createdAt: true } },
-        author: { columns: { firstName: true, lastName: true } },
+        comments: {
+          columns: { id: true, createdAt: true, content: true },
+          with: { user: { columns: { firstName: true, lastName: true } } },
+          limit: 3,
+          orderBy: desc(comments.createdAt),
+        },
+        author: { columns: { firstName: true, lastName: true, role: true } },
       },
       where: cursor ? lt(posts.createdAt, cursor) : undefined,
       orderBy: desc(posts.createdAt),
       limit: 8,
+      extras: {
+        isAuthor: sql<boolean>`${posts.authorId} = ${user.id}`.as('is_author'),
+      },
     });
+
+    const transformedResult = result.map((post) => ({
+      id: post.id,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      title: post.title,
+      content: post.content,
+      slug: post.slug,
+      isAuthor: post.isAuthor,
+      isAdmin: post.author.role === 'admin',
+      author: `${post.author.firstName} ${post.author.lastName}`,
+      comments: post.comments.map((comment) => ({
+        id: comment.id,
+        author: `${comment.user.firstName} ${comment.user.lastName}`,
+        createdAt: comment.createdAt,
+        content: comment.content,
+      })),
+    }));
 
     return NextResponse.json(
       {
-        data: {
-          data: result,
-          nextCursor:
-            result.length === 3
-              ? encodeCursor(result[result.length - 1].createdAt)
-              : null,
-        },
-        success: true,
-        error: null,
+        data: transformedResult,
+        nextCursor:
+          result.length === 3
+            ? encodeCursor(result[result.length - 1].createdAt)
+            : null,
       },
       { status: 200 }
     );

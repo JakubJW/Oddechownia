@@ -1,11 +1,10 @@
-import { createLabelFormSchema } from '@/features/admin/Labels/createLabelFormSchema';
 import { getUser } from '@/server/actions/user';
 import { db } from '@/server/db';
-import { labels } from '@/server/db/schema';
+import { posts } from '@/server/db/schema';
 import { Params } from '@/types/types';
 import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
+import { createPostFormSchema } from '@/features/Spolecznosc/createPostFormSchema';
 
 export async function PATCH(
   req: NextRequest,
@@ -24,7 +23,7 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await req.json();
-    const parsed = createLabelFormSchema.safeParse(body);
+    const parsed = createPostFormSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -34,12 +33,12 @@ export async function PATCH(
     }
 
     await db
-      .update(labels)
+      .update(posts)
       .set({ ...parsed.data })
-      .where(eq(labels.id, Number(id)));
+      .where(eq(posts.id, Number(id)));
 
     return NextResponse.json(
-      { message: 'Pomyślnie edytowano etykietę' },
+      { message: 'Pomyślnie edytowano post' },
       { status: 200 }
     );
   } catch (error) {
@@ -59,15 +58,11 @@ export async function DELETE(
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!user.isAdmin) {
-      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
-    }
-
     const { id } = await params;
 
-    await db.delete(labels).where(eq(labels.id, Number(id)));
+    await db.delete(posts).where(eq(posts.id, Number(id)));
 
-    return NextResponse.json({ message: 'Usunięto etykietę' }, { status: 200 });
+    return NextResponse.json({ message: 'Usunięto post' }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ message: 'Błąd' }, { status: 500 });

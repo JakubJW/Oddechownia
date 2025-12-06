@@ -15,7 +15,7 @@ export const CommentsSection = async ({
   user,
 }: CommensSectionProps) => {
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
+    <div className={cn('flex flex-col gap-2 pr-5', className)}>
       {user && <CommentForm lessonId={lessonId} />}
       <Comments
         lessonId={lessonId}

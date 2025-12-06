@@ -11,32 +11,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { FetchCommentsResponse } from '@/server/models/comment.models';
-import {
-  InfiniteData,
-  useInfiniteQuery,
-  useMutation,
-} from '@tanstack/react-query';
+import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 import { EllipsisVertical } from 'lucide-react';
 import { ReplyForm } from './Form/ReplyForm';
-import { cn } from '@/lib/utils';
 import { CommentDetailDTO } from '@/server/models/comment.models';
 import { User } from '@/server/actions/user';
-
-const removeComment = async (commentId: number) => {
-  const res = await fetch(`/api/comments/remove/${commentId}`, {
-    method: 'DELETE',
-  });
-
-  const json = await res.json();
-  return json.data;
-};
+import { Avatar } from '@/components/Avatar';
+import { formatDistanceToNow } from 'date-fns';
+import { pl } from 'date-fns/locale';
+import { useCommentMutations } from './hooks/useCommentMutations';
 
 export const Comment = ({
   id,
   parentId,
   author,
   createdAt,
-  updatedAt,
   user,
   content,
   isAuthor,
@@ -47,9 +36,10 @@ export const Comment = ({
   const [editMode, setEditMode] = useState<boolean>(false);
   const [showReplies, setShowReplies] = useState<boolean>(false);
   const [replyMode, setReplyMode] = useState<boolean>(false);
+  const { deleteMutation } = useCommentMutations();
 
   const fetchReplies = async ({ pageParam }: { pageParam: string | null }) => {
-    const res = await fetch(`/api/comments/replies/${id}?cursor=${pageParam}`, {
+    const res = await fetch(`/api/comments/${id}/replies?cursor=${pageParam}`, {
       method: 'GET',
     });
 
@@ -57,39 +47,43 @@ export const Comment = ({
     return json.data as FetchCommentsResponse;
   };
 
-  const mutation = useMutation({
-    mutationFn: ({ id }: { id: number }) => {
-      return removeComment(id);
-    },
-    onSuccess: () => {
-      const queryKey = parentId
-        ? ['replies', parentId]
-        : ['comments', lessonId];
+  const handleRemove = (id: number) => {
+    return deleteMutation.mutate(id, {
+      onSuccess: () => {
+        const queryKey = parentId
+          ? ['replies', parentId]
+          : ['comments', lessonId];
 
-      queryClient.setQueryData<InfiniteData<FetchCommentsResponse>>(
-        queryKey,
-        (oldData) => {
-          if (!oldData) {
-            return oldData;
+        queryClient.setQueryData<InfiniteData<FetchCommentsResponse>>(
+          queryKey,
+          (oldData) => {
+            if (!oldData) {
+              return oldData;
+            }
+
+            const newPages = oldData.pages.map(({ data, ...rest }) => {
+              const updatedItems = data.filter((item) => item.id !== id);
+              return { ...rest, data: updatedItems };
+            });
+
+            return { ...oldData, pages: newPages };
           }
+        );
 
-          const newPages = oldData.pages.map(({ data, ...rest }) => {
-            const updatedItems = data.filter((item) => item.id !== id);
-            return { ...rest, data: updatedItems };
-          });
+        queryClient.invalidateQueries({
+          queryKey,
+          refetchType: 'none',
+        });
+      },
+    });
+  };
 
-          return { ...oldData, pages: newPages };
-        }
-      );
-
-      queryClient.invalidateQueries({
-        queryKey,
-        refetchType: 'none',
-      });
-    },
-  });
-
-  const { isFetching, data: repliesData } = useInfiniteQuery({
+  const {
+    isFetching,
+    data: repliesData,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
     initialPageParam: null,
     getNextPageParam: ({ nextCursor }) => nextCursor,
     queryKey: ['replies', id],
@@ -98,37 +92,43 @@ export const Comment = ({
   });
 
   return (
-    <div className={cn(isAdmin && 'bg-red-500', 'mt-4')}>
+    <div className="mt-4">
       <div className="flex">
-        <div className="rounded-full flex items-center justify-center w-8 h-8 bg-muted mr-4">
-          <span className="text-sm font-light">
-            {author.split(' ')[0].charAt(0)}
-            {author.split(' ')[1].charAt(0)}
-          </span>
-        </div>
-        <div className="flex-grow">
+        <Avatar
+          author={author}
+          isAdmin={isAdmin}
+        />
+        <div className="flex-grow bg-muted rounded-lg p-2">
           <span className="text-sm">
             <div className="flex justify-between">
-              <span>
-                {author}, {new Date(createdAt).toLocaleDateString()}, &nbsp;
-                {new Date(createdAt).toLocaleTimeString()}
-              </span>
+              <p className="text-sm font-normal">
+                {author} &nbsp;
+                <span className="text-muted-foreground font-light text-xs">
+                  {formatDistanceToNow(new Date(createdAt), {
+                    addSuffix: true,
+                    locale: pl,
+                  })}
+                </span>
+              </p>
             </div>
           </span>
-          <p>{content}</p>
+          <p className="text-sm">{content}</p>
           <div className="space-x-2">
             {user && (
               <button
-                className="text-sm inline-flex gap-1 items-center"
-                onClick={() => setReplyMode(true)}
+                className="text-xs text-muted-foreground inline-flex gap-1 items-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setReplyMode(true);
+                }}
               >
                 Odpowiedz
               </button>
             )}
-            {replyCount > 0 && !repliesData && (
+            {replyCount > 0 && (
               <button
                 disabled={isFetching}
-                className="text-sm inline-flex gap-1 items-center"
+                className="text-xs text-muted-foreground inline-flex gap-1 items-center"
                 onClick={() => setShowReplies(true)}
               >
                 Pokaż odpowiedzi ({replyCount})
@@ -152,7 +152,7 @@ export const Comment = ({
                 Edytuj
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => mutation.mutate({ id })}
+                onClick={() => handleRemove(id)}
                 className="bg-destructive-foreground text-destructive"
               >
                 Usuń
@@ -206,6 +206,15 @@ export const Comment = ({
               )}
             </React.Fragment>
           ))}
+        {hasNextPage && (
+          <button
+            className="self-start text-xs font-light mt-4 ml-10"
+            disabled={isFetching}
+            onClick={() => fetchNextPage()}
+          >
+            Pokaż więcej odpowiedzi
+          </button>
+        )}
       </div>
     </div>
   );

@@ -2,8 +2,13 @@
 
 import { usePosts } from './hooks/usePosts';
 import { Post } from './Post';
+import { User } from '@/server/actions/user';
 
-export const Feed = ({}: Props) => {
+type Props = {
+  user: User;
+};
+
+export const Feed = ({ user }: Props) => {
   const { queryPosts } = usePosts();
 
   if (queryPosts.isPending) {
@@ -16,14 +21,22 @@ export const Feed = ({}: Props) => {
 
   return (
     <div className="max-w-3xl mx-auto mt-4 space-y-4">
-      {queryPosts.data.pages.map((page, index) =>
+      {queryPosts.data.pages.map((page) =>
         page.data.map((post) => (
           <Post
             key={post.id}
+            id={post.id}
             title={post.title}
+            slug={post.slug}
             content={post.content}
-            author={`${post.author.firstName} ${post.author.lastName}`}
+            isAuthor={post.isAuthor}
+            isAdmin={post.isAdmin}
+            author={post.author}
+            comments={post.comments}
             createdAt={post.createdAt}
+            updatedAt={post.updatedAt}
+            user={user}
+            replyCount={0}
           />
         ))
       )}

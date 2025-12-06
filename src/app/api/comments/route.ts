@@ -1,40 +1,45 @@
-import { Params } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { CommentsService } from '@/server/services/comments.service';
 import { encodeCursor, decodeCursor } from '@/lib/utils';
-import { formSchema } from '@/features/PlayLessonView/Comments/Form/schema';
+import { craeteCommentFormSchema } from '@/features/PlayLessonView/Comments/Form/schema';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);
 };
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Params<{ lessonId: string }> }
-) {
+export async function GET(req: NextRequest) {
   try {
-    const { lessonId } = await params;
     const searchParams = getQueryParams(req.url);
 
+    const lessonId = searchParams.lessonId;
+    const postId = searchParams.postId;
     const cursor = decodeCursor(searchParams.cursor);
-    const perPage = 3;
 
+    const targets = [lessonId, postId].filter(Boolean);
+
+    if (!targets.length) {
+      return NextResponse.json(
+        { message: 'Podczas pobierania komentarzy wystąpił błąd.' },
+        { status: 400 }
+      );
+    }
+
+    const perPage = 3;
     const result = await CommentsService.getComments(
-      Number(lessonId),
+      {
+        postId: postId ? Number(postId) : undefined,
+        lessonId: lessonId ? Number(lessonId) : undefined,
+      },
       String(cursor),
       perPage
     );
 
     return NextResponse.json({
-      data: {
-        data: result,
-        nextCursor:
-          result.length === perPage
-            ? encodeCursor(result[result.length - 1].createdAt)
-            : null,
-      },
-      success: true,
-      error: null,
+      data: result,
+      nextCursor:
+        result.length === perPage
+          ? encodeCursor(result[result.length - 1].createdAt)
+          : null,
     });
   } catch (error) {
     console.error(
@@ -54,15 +59,11 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Params<{ lessonId: string }> }
-) {
+export async function POST(req: NextRequest) {
   try {
-    const { lessonId } = await params;
     const body = await req.json();
 
-    const parsed = formSchema.safeParse(body);
+    const parsed = craeteCommentFormSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -75,10 +76,7 @@ export async function POST(
       );
     }
 
-    const [result] = await CommentsService.createComment(
-      Number(lessonId),
-      parsed.data
-    );
+    const [result] = await CommentsService.createComment(parsed.data);
 
     return NextResponse.json({
       data: result,

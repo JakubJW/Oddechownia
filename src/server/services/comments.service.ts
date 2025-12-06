@@ -3,8 +3,7 @@ import { eq, desc, isNull, and, InferSelectModel, lt } from 'drizzle-orm';
 import { db } from '../db';
 import { comments, users } from '../db/schema';
 import { getUser } from '../actions/user';
-import { formSchema } from '@/features/PlayLessonView/Comments/Form/schema';
-import z from 'zod';
+import { CreateCommentValues } from '@/features/PlayLessonView/Comments/Form/schema';
 
 type CommentWithRepliesAndUser = InferSelectModel<typeof comments> & {
   user: Pick<
@@ -18,27 +17,28 @@ const transformToCommentDetailDto = (
   comments: CommentWithRepliesAndUser[],
   userId?: string
 ): CommentDetailDTO[] => {
-  return comments.map(({ user, replies, ...rest }) => ({
-    ...rest,
-    parentId: rest.parentId ?? undefined,
-    author: `${user.firstName} ${user.lastName}`,
-    replyCount: replies.length,
-    isAdmin: user.role === 'admin',
-    isAuthor: user.id === userId,
-  }));
+  return comments.map(
+    ({ user, replies, postId, lessonId, parentId, ...rest }) => ({
+      ...rest,
+      lessonId: lessonId ?? undefined,
+      postId: postId ?? undefined,
+      parentId: parentId ?? undefined,
+      author: `${user.firstName} ${user.lastName}`,
+      replyCount: replies.length,
+      isAdmin: user.role === 'admin',
+      isAuthor: user.id === userId,
+    })
+  );
 };
 
-const createComment = async (
-  lessonId: number,
-  values: z.infer<typeof formSchema>
-) => {
+const createComment = async (values: CreateCommentValues) => {
   const user = await getUser();
 
   if (!user) throw new Error('Authentication error');
 
   const [inserted] = await db
     .insert(comments)
-    .values({ ...values, lessonId, userId: user.id })
+    .values({ ...values, userId: user.id })
     .returning();
 
   const result = await db.query.comments.findMany({
@@ -59,10 +59,25 @@ const removeComment = async (id: number) => {
 };
 
 const getComments = async (
-  lessonId: number,
+  { postId, lessonId }: { postId?: number; lessonId?: number },
   cursor: string | null,
   perPage: number = 3
 ) => {
+  let condition = undefined;
+  let cursorCondition = undefined;
+
+  if (postId) {
+    condition = eq(comments.postId, postId);
+  }
+
+  if (lessonId) {
+    condition = eq(comments.lessonId, lessonId);
+  }
+
+  if (cursor) {
+    cursorCondition = lt(comments.createdAt, cursor);
+  }
+
   const result = await db.query.comments.findMany({
     with: {
       replies: { columns: { id: true } },
@@ -70,11 +85,7 @@ const getComments = async (
         columns: { firstName: true, lastName: true, role: true, id: true },
       },
     },
-    where: and(
-      eq(comments.lessonId, lessonId),
-      isNull(comments.parentId),
-      cursor ? lt(comments.createdAt, cursor) : undefined
-    ),
+    where: and(condition, cursorCondition, isNull(comments.parentId)),
     orderBy: desc(comments.createdAt),
     limit: perPage,
   });

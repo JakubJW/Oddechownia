@@ -12,7 +12,7 @@ export const RecentLessons = ({ lessons, className }: Props) => {
   return (
     <div className={cn('pt-[20px]', className)}>
       <p className="pl-4 mb-4">Kontynuuj praktykę</p>
-      <div className="grid md:grid-cols-2">
+      <div className="">
         {lessons.map((lesson) => (
           <Link
             key={lesson.id}
