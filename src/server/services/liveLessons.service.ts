@@ -133,6 +133,10 @@ async function getLiveLessonsWithUserStatus(
   user: User
 ): Promise<LiveLessonCardDTO[]> {
   // 1. Fetch Lessons (Existing logic)
+  log.info('test');
+  log.warn('test');
+  log.error('test');
+
   const lessons = await db.query.liveLessons.findMany({
     with: {
       registrations: user
