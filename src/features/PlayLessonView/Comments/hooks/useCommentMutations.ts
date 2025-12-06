@@ -14,6 +14,22 @@ export const useCommentMutations = () => {
     return json.data;
   };
 
+  const updateCommentAPI = async ({
+    id,
+    values,
+  }: {
+    id: number;
+    values: CreateCommentValues;
+  }) => {
+    const res = await fetch(`/api/comments/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(values),
+    });
+
+    const json = await res.json();
+    return json.data;
+  };
+
   const removeCommentAPI = async (id: number) => {
     const res = await fetch(`/api/comments/${id}`, {
       method: 'DELETE',
@@ -34,6 +50,15 @@ export const useCommentMutations = () => {
     },
   });
 
+  const updateMutation = useMutation<
+    CommentDetailDTO,
+    Error,
+    { id: number; values: CreateCommentValues }
+  >({
+    mutationFn: updateCommentAPI,
+    onSuccess: () => {},
+  });
+
   const deleteMutation = useMutation({
     mutationFn: removeCommentAPI,
   });
@@ -41,5 +66,6 @@ export const useCommentMutations = () => {
   return {
     createMutation,
     deleteMutation,
+    updateMutation,
   };
 };

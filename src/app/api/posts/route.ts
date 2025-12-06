@@ -3,7 +3,7 @@ import { getUser } from '@/server/actions/user';
 import { createPostFormSchema } from '@/features/Spolecznosc/createPostFormSchema';
 import { db } from '@/server/db';
 import { comments, posts } from '@/server/db/schema';
-import { asc, desc, lt, sql } from 'drizzle-orm';
+import { desc, lt, sql } from 'drizzle-orm';
 import { createSlug, decodeCursor, encodeCursor } from '@/lib/utils';
 import { FetchPostsResponse } from '@/server/models/post.models';
 
@@ -33,12 +33,28 @@ export async function GET(
     const result = await db.query.posts.findMany({
       with: {
         comments: {
-          columns: { id: true, createdAt: true, content: true },
-          with: { user: { columns: { firstName: true, lastName: true } } },
+          columns: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            content: true,
+          },
+          with: {
+            user: {
+              columns: {
+                firstName: true,
+                lastName: true,
+                role: true,
+                id: true,
+              },
+            },
+          },
           limit: 3,
           orderBy: desc(comments.createdAt),
         },
-        author: { columns: { firstName: true, lastName: true, role: true } },
+        author: {
+          columns: { firstName: true, lastName: true, role: true, id: true },
+        },
       },
       where: cursor ? lt(posts.createdAt, cursor) : undefined,
       orderBy: desc(posts.createdAt),
@@ -61,7 +77,10 @@ export async function GET(
       comments: post.comments.map((comment) => ({
         id: comment.id,
         author: `${comment.user.firstName} ${comment.user.lastName}`,
+        isAdmin: comment.user.role === 'admin',
+        isAuthor: comment.user.id === user.id,
         createdAt: comment.createdAt,
+        updatedAt: comment.updatedAt,
         content: comment.content,
       })),
     }));

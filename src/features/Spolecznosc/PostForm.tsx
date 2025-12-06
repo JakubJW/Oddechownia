@@ -2,7 +2,6 @@
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { usePosts } from './hooks/usePosts';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -21,12 +20,13 @@ import {
 import TextEditor from '@/components/TextEditor/TextEditor';
 import { useCallback } from 'react';
 import { usePostMutations } from './hooks/usePostMutations';
+import { PostDetailDTO } from '@/server/models/post.models';
 
 export const PostForm = ({
   post,
   onEditCancel,
 }: {
-  post?: any;
+  post?: PostDetailDTO;
   onEditCancel?: () => void;
 }) => {
   const { createMutation, updateMutation } = usePostMutations();

@@ -9,7 +9,7 @@ export const Avatar = ({ author, isAdmin }: Props) => {
   return (
     <div
       className={cn(
-        'rounded-full flex items-center justify-center w-8 h-8 bg-muted mr-2',
+        'rounded-full flex items-center shrink-0 justify-center w-8 h-8 bg-muted mr-2',
         isAdmin && 'bg-matcha-foreground'
       )}
     >

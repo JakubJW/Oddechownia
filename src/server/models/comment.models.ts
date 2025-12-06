@@ -15,7 +15,7 @@ export type CommentDetailDTO = CommentDTO & {
   author: string;
   isAdmin: boolean;
   isAuthor: boolean;
-  replyCount: number;
+  replyCount?: number;
 };
 
 export type FetchCommentsResponse = {

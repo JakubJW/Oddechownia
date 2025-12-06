@@ -125,7 +125,7 @@ export const Comment = ({
                 Odpowiedz
               </button>
             )}
-            {replyCount > 0 && (
+            {replyCount && replyCount > 0 && (
               <button
                 disabled={isFetching}
                 className="text-xs text-muted-foreground inline-flex gap-1 items-center"
@@ -164,7 +164,7 @@ export const Comment = ({
       <div className="flex flex-col ml-10">
         {replyMode && (
           <ReplyForm
-            lessonId={lessonId}
+            lessonId={lessonId!}
             parentId={id}
             onCancel={() => setReplyMode(false)}
             onSuccess={() => {

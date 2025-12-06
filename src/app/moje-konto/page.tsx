@@ -5,6 +5,8 @@ import { LessonsService } from '@/server/services/lessons.service';
 import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { NavigationButtons } from '@/features/user/NavigationButtons';
 import { RecentLessons } from '@/features/user/RecentLessons';
+import { PostsService } from '@/server/services/posts.service';
+import RecentPosts from '@/features/user/RecentPosts';
 
 export default async function MyAccount() {
   const user = await getRequiredUser();
@@ -12,6 +14,7 @@ export default async function MyAccount() {
   const count = await LiveLessonsRegistrationsService.getUsedEntitlementsCount(
     user.id
   );
+  const recentPosts = await PostsService.getRecentPosts();
 
   return (
     <div className="grid grid-cols-12 md:gap-12">
@@ -24,6 +27,10 @@ export default async function MyAccount() {
       />
       <RecentLessons
         lessons={recentLessons}
+        className="col-span-12 md:col-span-4"
+      />
+      <RecentPosts
+        posts={recentPosts}
         className="col-span-12 md:col-span-4"
       />
       <CaledarGrid

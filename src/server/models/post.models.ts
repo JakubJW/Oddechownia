@@ -9,8 +9,11 @@ export type PostDetailDTO = PostDTO & {
   author: string;
   isAdmin: boolean;
   isAuthor: boolean;
-  replyCount: number;
   comments: CommentDetailDTO[];
+};
+
+export type RecentPostDTO = PostDTO & {
+  author: string;
 };
 
 export type FetchPostsResponse = {

@@ -54,6 +54,30 @@ const createComment = async (values: CreateCommentValues) => {
   return transformToCommentDetailDto(result, user.id);
 };
 
+const updateComment = async (id: number, values: CreateCommentValues) => {
+  const user = await getUser();
+
+  if (!user) throw new Error('Authentication error');
+
+  const [updated] = await db
+    .update(comments)
+    .set({ ...values })
+    .where(eq(comments.id, id))
+    .returning();
+
+  const result = await db.query.comments.findMany({
+    with: {
+      replies: { columns: { id: true } },
+      user: {
+        columns: { firstName: true, lastName: true, role: true, id: true },
+      },
+    },
+    where: eq(comments.id, updated.id),
+  });
+
+  return transformToCommentDetailDto(result, user.id);
+};
+
 const removeComment = async (id: number) => {
   await db.delete(comments).where(eq(comments.id, id));
 };
@@ -124,5 +148,6 @@ export const CommentsService = {
   getComments,
   getReplies,
   createComment,
+  updateComment,
   removeComment,
 };

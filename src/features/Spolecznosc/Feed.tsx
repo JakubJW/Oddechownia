@@ -25,18 +25,8 @@ export const Feed = ({ user }: Props) => {
         page.data.map((post) => (
           <Post
             key={post.id}
-            id={post.id}
-            title={post.title}
-            slug={post.slug}
-            content={post.content}
-            isAuthor={post.isAuthor}
-            isAdmin={post.isAdmin}
-            author={post.author}
-            comments={post.comments}
-            createdAt={post.createdAt}
-            updatedAt={post.updatedAt}
+            post={post}
             user={user}
-            replyCount={0}
           />
         ))
       )}
