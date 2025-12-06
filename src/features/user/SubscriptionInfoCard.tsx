@@ -94,7 +94,12 @@ export const SubscriptionInfoCard = ({
   const mutation = useRenewSubscriptionMutation();
 
   return (
-    <div className={cn('flex flex-col gap-4 rounded-xl border p-4', className)}>
+    <div
+      className={cn(
+        'flex flex-col h-min gap-4 rounded-xl border p-4',
+        className
+      )}
+    >
       <div className="flex justify-between items-center">
         <p>Subskrypcja</p>
         <StatusBagde subscription={subscription} />

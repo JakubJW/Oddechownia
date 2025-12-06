@@ -6,7 +6,6 @@ import { env } from '@/env';
 
 const connectionString = env.NEXT_DATABASE_URL;
 
-// Disable prefetch as it is not supported for "Transaction" pool mode
 export const client = postgres(connectionString, { prepare: false });
 export const drizzleClient = drizzle(client, {
   schema: { ...schema, ...relations },

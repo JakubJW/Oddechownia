@@ -69,7 +69,7 @@ export default async function PlaylistLessonPlayback({
   }
 
   return (
-    <Container className="py-0 md:pt-4 lg:pt-16">
+    <Container className="py-4 md:py-4 lg:py-16">
       <div className="flex flex-col lg:flex-row gap-6 mb-8 -mx-4 md:-mx-0">
         <div className="w-full lg:w-2/3">
           <LessonPlayer

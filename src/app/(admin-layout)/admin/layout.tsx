@@ -27,7 +27,6 @@ export default async function AdminLayout({
         <div className="grid grid-cols-12">
           <div className="flex flex-col gap-4 col-span-2">
             <Link href="/admin">Dashboard</Link>
-            <Link href="/admin/blog">Blog</Link>
             <Link href="/admin/playlisty">Playlisty</Link>
             <Link href="/admin/lekcje">Lekcje</Link>
             <Link href="/admin/zajecia-na-zywo">Zajęcia na żywo</Link>
