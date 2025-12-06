@@ -1,34 +1,41 @@
-import { SubscriptionCard } from '@/components/SubscriptionCard/SubscriptionCard';
+import { ProductCard } from '@/components/SubscriptionCard/product-card';
 import Container from '@/components/Container/Container';
 import HeaderTwo from '@/components/Headers/HeaderTwo';
 import { getUser } from '@/server/actions/user';
 import { stripeService } from '@/server/services/stripe.service';
 import Stripe from 'stripe';
+import { env } from '@/env';
 
 export default async function AvailableSubscriptions() {
   const user = await getUser();
-  const subscription = await stripeService.getProduct('prod_Swifo6V6uVtRlK');
-  const liveLesson = await stripeService.getProduct('prod_TOqFXIgRXJ84RK');
+  const subscriptionPrice = await stripeService.getPrice(
+    env.NEXT_STRIPE_SUBSCRIPTION_PRICE_ID
+  );
+  const liveLessonPrice = await stripeService.getPrice(
+    env.NEXT_STRIPE_LIVE_LESSON__PRICE_ID
+  );
 
-  const price = subscription.default_price as Stripe.Price;
-  const liveLessonPrice = liveLesson.default_price as Stripe.Price;
+  const subscriptionProduct = subscriptionPrice.product as Stripe.Product;
+  const liveLessonProduct = liveLessonPrice.product as Stripe.Product;
 
   const subscriptionProductDto = {
-    name: subscription.name,
-    marketingFeatures: subscription.marketing_features.map(({ name }) => name),
+    name: subscriptionProduct.name,
+    marketingFeatures: subscriptionProduct.marketing_features.map(
+      ({ name }) => name
+    ),
     price: {
-      id: price.id,
-      unitAmount: price.unit_amount || 0,
-      interval: price.recurring?.interval,
-      intervalCount: price.recurring?.interval_count,
+      unitAmount: subscriptionPrice.unit_amount || 0,
+      interval: subscriptionPrice.recurring?.interval,
+      intervalCount: subscriptionPrice.recurring?.interval_count,
     },
   };
 
   const liveLessonProductDto = {
-    name: liveLesson.name,
-    marketingFeatures: liveLesson.marketing_features.map(({ name }) => name),
+    name: liveLessonProduct.name,
+    marketingFeatures: liveLessonProduct.marketing_features.map(
+      ({ name }) => name
+    ),
     price: {
-      id: liveLessonPrice.id,
       unitAmount: liveLessonPrice.unit_amount || 0,
     },
   };
@@ -40,21 +47,19 @@ export default async function AvailableSubscriptions() {
           <HeaderTwo>
             Co oferuje <span className="text-primaryFg">Oddechownia?</span>
           </HeaderTwo>
-          {/* <p className="text-xl">
-            Każdy z pakietów możesz dowolnie przedłużać, aby cieszyć się
-            dostępem do platformy tak, jakby to był jogowy Netflix.
-          </p> */}
         </hgroup>
-        <div className="grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto gap-16 lg:gap-10">
-          <SubscriptionCard
+        <div className="grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto gap-16">
+          <ProductCard
+            type="subscription"
             name={subscriptionProductDto.name}
-            priceId={subscriptionProductDto.price.id}
             price={subscriptionProductDto.price.unitAmount}
             interval={'miesięcznie'}
             features={subscriptionProductDto.marketingFeatures}
             user={user}
           />
-          <SubscriptionCard
+          <ProductCard
+            type="live-lesson"
+            user={user}
             name={liveLessonProductDto.name}
             price={liveLessonProductDto.price.unitAmount}
             interval={'jednorazowo'}

@@ -5,13 +5,7 @@ import MobileNavigation from './MobileNavigation';
 import NavigationLink from './NavigationLink';
 import NavigationAction from './NavigationAction';
 import { User } from '@/server/actions/user';
-
-export const routes = [
-  { content: 'Studio Jogi Online', href: '/studio-jogi-online' },
-  // { content: 'O nas', href: '/o-nas' },
-  { content: 'Zajęcia na żywo', href: '/zajecia-na-zywo' },
-  { content: 'Społeczność', href: '/spolecznosc' },
-];
+import { filteredRoutes } from '@/utils/navigation';
 
 export interface NavigationProps {
   user: User | null;
@@ -37,7 +31,7 @@ export default function Navigation({ user }: NavigationProps) {
                   />
                 </Link>
               </li>
-              {routes.map(({ content, href }, index) => (
+              {filteredRoutes(user).map(({ content, href }, index) => (
                 <li
                   className="hidden sm:block h-full"
                   key={index}

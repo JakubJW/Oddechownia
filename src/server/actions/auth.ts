@@ -90,7 +90,7 @@ export async function adminSignIn(formData: FormData) {
   }
 }
 
-export async function signUp(values: RegisterFormValues, priceId: string) {
+export async function signUp(values: RegisterFormValues) {
   const supabase = await createClient();
 
   const {
@@ -138,10 +138,11 @@ export async function signUp(values: RegisterFormValues, priceId: string) {
       mode: 'subscription',
       line_items: [
         {
-          price: priceId,
+          price: env.NEXT_STRIPE_SUBSCRIPTION_PRICE_ID,
           quantity: 1,
         },
       ],
+      allow_promotion_codes: true,
       customer: customer.id,
       success_url: `${env.NEXT_PUBLIC_APP_URL}/rejestracja/{CHECKOUT_SESSION_ID}`,
       cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,

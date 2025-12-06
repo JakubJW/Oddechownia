@@ -78,6 +78,18 @@ class StripeService {
     }
   }
 
+  public async getPrice(priceId: string) {
+    try {
+      const product = await this.stripe.prices.retrieve(priceId, {
+        expand: ['product'],
+      });
+      return product;
+    } catch (error) {
+      console.error('Error retrieving product:', error);
+      throw error;
+    }
+  }
+
   public async listProducts() {
     const products = await this.stripe.products.list({
       active: true,

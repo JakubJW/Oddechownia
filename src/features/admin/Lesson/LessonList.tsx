@@ -18,22 +18,23 @@ interface LessonListProps {
 export default function LessonList({ lessons, courseSlug }: LessonListProps) {
   const [lessonsClone, setLessons] = useState(lessons);
 
-  const calculatePosition = (
-    newIndex: number,
-    lessons: AdminEditPlaylistLessonDTO[]
+  const calculateNewPosition = (
+    index: number,
+    list: AdminEditPlaylistLessonDTO[]
   ) => {
-    let position;
-
-    if (newIndex === 0 && lessons.length > 1) {
-      position = lessons[1].position / 2;
-    } else if (newIndex > 0 && newIndex < lessons?.length - 1) {
-      position =
-        lessons[newIndex + 1].position + lessons[newIndex + 1].position / 2;
-    } else {
-      position = lessons[lessons.length - 1].position + 1000;
+    if (index === 0) {
+      if (list.length === 1) return 1024;
+      return list[1].position / 2;
     }
 
-    return position;
+    if (index === list.length - 1) {
+      return list[index - 1].position + 1024;
+    }
+
+    const prevPosition = list[index - 1].position;
+    const nextPosition = list[index + 1].position;
+
+    return (prevPosition + nextPosition) / 2;
   };
 
   const handleDragEnd = async (event: any) => {
@@ -47,26 +48,30 @@ export default function LessonList({ lessons, courseSlug }: LessonListProps) {
 
     if (oldIndex === -1 || newIndex === -1) return;
 
-    const movedLesson = { ...lessonsClone[oldIndex] };
+    const reorderedList = arrayMove(lessonsClone, oldIndex, newIndex);
 
-    movedLesson.position = calculatePosition(newIndex, lessonsClone);
+    const newPosition = calculateNewPosition(newIndex, reorderedList);
 
-    const updatedLessons = arrayMove(lessonsClone, oldIndex, newIndex).map(
-      (lesson) => (lesson.id === movedLesson.id ? movedLesson : lesson)
-    );
+    const updatedLessons = reorderedList.map((lesson, index) => {
+      if (index === newIndex) {
+        return { ...lesson, position: newPosition };
+      }
+      return lesson;
+    });
 
     setLessons(updatedLessons);
 
-    await fetch(`/api/lessons/reorder/${movedLesson.playlistLessonId}`, {
+    const movedItemId = reorderedList[newIndex].playlistLessonId;
+
+    await fetch(`/api/lessons/reorder/${movedItemId}`, {
       method: 'POST',
-      body: JSON.stringify({ position: movedLesson.position }),
+      body: JSON.stringify({ position: newPosition }),
     })
       .then(async (res) => {
         if (!res.ok) {
           const error = await res.json();
           throw new Error(error.message);
         }
-
         return res.json();
       })
       .catch((error) => {
