@@ -45,7 +45,8 @@ export default async function AvailableSubscriptions() {
       <Container className="overflow-hidden">
         <hgroup className="text-center max-w-[800px] mx-auto space-y-6 mb-24">
           <HeaderTwo>
-            Co oferuje <span className="text-primaryFg">Oddechownia?</span>
+            Jak możesz <br /> praktykować
+            <span className="text-primaryFg">&nbsp;w Oddechowni?</span>
           </HeaderTwo>
         </hgroup>
         <div className="grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto gap-16">
