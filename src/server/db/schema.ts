@@ -100,6 +100,9 @@ export const playlistLesson = pgTable(
       .notNull()
       .references(() => playlists.id, { onDelete: 'cascade' }),
     position: integer('position').notNull(),
+    // isFeaturedOnHomepage: boolean('is_featured_on_homepage')
+    //   .notNull()
+    //   .default(false),
   },
   (table) => [
     unique('unique_playlist_lesson_constraint').on(
