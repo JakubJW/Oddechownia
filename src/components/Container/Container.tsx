@@ -6,8 +6,6 @@ export interface ContainerProps extends React.PropsWithChildren<object> {
 
 export default function Container({ children, className }: ContainerProps) {
   return (
-    <div className={cn('container py-32', className ?? '')}>
-      {children}
-    </div>
+    <div className={cn('container py-16', className ?? '')}>{children}</div>
   );
 }

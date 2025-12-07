@@ -1,4 +1,4 @@
-type Props = { percent: number };
+type Props = { percent?: number };
 
 export const ProgressBar = ({ percent }: Props) => {
   if (!percent) return null;

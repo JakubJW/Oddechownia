@@ -7,7 +7,6 @@ import { env } from '@/env';
 import Waitlist from '@/features/Waitlist/Waitlist';
 import ToastProvider from '@/components/ToastProvider';
 import QueryClientProvider from '@/components/QueryClientProvider';
-import Script from 'next/script';
 import { getUser } from '@/server/actions/user';
 
 export const metadata: Metadata = {
@@ -45,7 +44,6 @@ export default async function RootLayout({
             )}
           </ToastProvider>
         </QueryClientProvider>
-        <Script src="//code.tidio.co/05hblgc0qsamnmve3czeijgqr8sj7yyt.js" />
       </body>
     </html>
   );

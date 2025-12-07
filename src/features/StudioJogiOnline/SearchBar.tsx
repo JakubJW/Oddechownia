@@ -5,7 +5,7 @@ type Props = { query: string; onQueryChange: (query: string) => void };
 
 export const SearchBar = ({ onQueryChange }: Props) => {
   return (
-    <div className="relative flex  max-w-lg px-4 mx-auto">
+    <div className="relative flex  max-w-lg mx-auto">
       <Input
         className="pr-12"
         placeholder="Wyszukaj..."

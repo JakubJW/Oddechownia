@@ -191,7 +191,7 @@ const CaledarGrid = ({
             />
           )}
         </div>
-        <div className="flex flex-col flex-grow">
+        <div className="hidden md:flex flex-col flex-grow mt-4">
           <div className="flex flex-col flex-grow  rounded-xl">
             {!getEventsForDay(selectedDate).length && (
               <div className="flex items-center justify-center flex-grow font-light text-sm ">

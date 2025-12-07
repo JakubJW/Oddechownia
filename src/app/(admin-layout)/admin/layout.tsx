@@ -2,7 +2,6 @@ import Container from '@/components/Container/Container';
 import Link from 'next/link';
 import { getUser } from '@/server/actions/user';
 import { UserRoles } from '@/server/db/consts';
-// import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export default async function AdminLayout({
@@ -11,7 +10,6 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const user = await getUser();
-  // const h  = await headers();
 
   if (!user) {
     redirect('/admin/logowanie');

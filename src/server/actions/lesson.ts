@@ -74,14 +74,12 @@ export const createLesson = async (
       .returning();
 
     if (parsed.data.labelIds.length) {
-      await db
-        .insert(lessonLabels)
-        .values(
-          parsed.data.labelIds.map((id) => ({
-            lessonId: lesson.id,
-            labelId: id,
-          }))
-        );
+      await db.insert(lessonLabels).values(
+        parsed.data.labelIds.map((id) => ({
+          lessonId: lesson.id,
+          labelId: id,
+        }))
+      );
     }
 
     const newAttachments = formData.getAll('newAttachments[]');
@@ -198,9 +196,12 @@ export const updateLesson = async (
         (id) => !parsed.data.labelIds.includes(id)
       );
 
+      console.log(labelsToInsert);
+      console.log(labelsToRemove);
+
       if (labelsToInsert.length) {
         await db.insert(lessonLabels).values(
-          parsed.data.labelIds.map((id) => ({
+          labelsToInsert.map((id) => ({
             lessonId: currentLesson.id,
             labelId: id,
           }))

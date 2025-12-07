@@ -2,7 +2,6 @@ import Container from '../Container/Container';
 import Link from 'next/link';
 import Logo from '../../../public/oddechownia.svg';
 import Image from 'next/image';
-import Facebook from '../../../public/facebook.svg';
 import Instagram from '../../../public/instagram.svg';
 import FooterLink from './FooterLink';
 import { filteredRoutes, footerLinks } from '@/utils/navigation';
@@ -36,31 +35,21 @@ export default async function Footer() {
                   key={index}
                   href={link.href}
                   content={link.content}
+                  target={link.target}
                 />
               ))}
             </ul>
           ))}
-          <div className="space-x-4">
-            <Link
-              className="bg-primaryFg inline-block p-4 rounded-full"
-              href="#"
-            >
-              <Image
-                src={Facebook}
-                alt="Facebook logo"
-              />
-            </Link>
-            <Link
-              className="bg-primaryFg inline-block p-4 rounded-full"
-              href="https://www.instagram.com/weronikasyoga/"
-              target="_blank"
-            >
-              <Image
-                src={Instagram}
-                alt="Instagram logo"
-              />
-            </Link>
-          </div>
+          <Link
+            className="bg-primaryFg inline-block p-4 rounded-full"
+            href="https://www.instagram.com/weronikasyoga/"
+            target="_blank"
+          >
+            <Image
+              src={Instagram}
+              alt="Instagram logo"
+            />
+          </Link>
         </div>
       </Container>
     </footer>

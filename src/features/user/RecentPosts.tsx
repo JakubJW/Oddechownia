@@ -13,9 +13,11 @@ type Props = {
 
 const RecentPosts = ({ posts, className }: Props) => {
   return (
-    <div className={cn('pt-[20px]', className)}>
-      <div className="flex items-end justify-between pl-4  mb-4">
-        <p>Ostatnie wpisy</p>
+    <div
+      className={cn('pt-[20px] border shadow-md rounded-lg h-full', className)}
+    >
+      <div className="flex items-end justify-between px-4 mb-4">
+        <p>Ostatnie posty</p>
         <Link
           href="/spolecznosc"
           className="inline-flex items-center hover:underline text-sm text-muted-foreground"
@@ -24,10 +26,13 @@ const RecentPosts = ({ posts, className }: Props) => {
         </Link>
       </div>
       {posts.map((post) => (
-        <div key={post.id}>
-          <div className="border border-matcha rounded-lg p-4 mb-4">
+        <div
+          key={post.id}
+          className="border-b last:border-b-0 mx-4"
+        >
+          <div className="py-4">
             <div className="flex items-start justify-between">
-              <div className="flex gap-4">
+              <div className="flex gap-2">
                 <Avatar
                   author={post.author}
                   isAdmin={true}

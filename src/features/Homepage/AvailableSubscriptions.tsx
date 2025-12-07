@@ -42,7 +42,7 @@ export default async function AvailableSubscriptions() {
 
   return (
     <section>
-      <Container className="overflow-hidden">
+      <Container className="overflow-hidden px-8">
         <hgroup className="text-center max-w-[800px] mx-auto space-y-6 mb-24">
           <HeaderTwo>
             Jak możesz <br /> praktykować

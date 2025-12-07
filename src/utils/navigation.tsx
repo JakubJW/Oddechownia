@@ -5,24 +5,34 @@ const navbarLinks = [
     content: 'Studio Jogi Online',
     href: '/studio-jogi-online',
     allowGuest: true,
+    target: '_self',
   },
-  // { content: 'O nas', href: '/o-nas' },
-  { content: 'Zajęcia na żywo', href: '/zajecia-na-zywo', allowGuest: true },
-  { content: 'Społeczność', href: '/spolecznosc', allowGuest: false },
+  {
+    content: 'Zajęcia na żywo',
+    href: '/zajecia-na-zywo',
+    allowGuest: true,
+    target: '_self',
+  },
+  {
+    content: 'Społeczność',
+    href: '/spolecznosc',
+    allowGuest: false,
+    target: '_self',
+  },
 ];
 
 export const footerLinks = [
   {
-    content: 'Kontakt',
-    href: '/kontakt',
-  },
-  {
     content: 'Regulamin',
-    href: '/regulamin',
+    href: '/regulamin.pdf',
+    target: '_blank',
+    allowGuest: true,
   },
   {
     content: 'Polityka prywatności',
-    href: '/polityka-prywatnosci',
+    href: '/polityka_prywatnosci.pdf',
+    target: '_blank',
+    allowGuest: true,
   },
 ];
 

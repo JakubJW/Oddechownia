@@ -96,7 +96,7 @@ export const SubscriptionInfoCard = ({
   return (
     <div
       className={cn(
-        'flex flex-col h-min gap-4 rounded-xl border p-4',
+        'flex flex-col h-min gap-4 rounded-xl shadow-md border p-4',
         className
       )}
     >

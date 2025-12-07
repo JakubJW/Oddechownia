@@ -1,6 +1,6 @@
 import Carousel from '@/components/Carousel/Carousel';
 import LessonCard from '@/components/LessonCard/LessonCard';
-import { HeaderTwo } from '@/components/Headers/headers';
+import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
 import { LessonsService } from '@/server/services/lessons.service';
 import Link from 'next/link';
@@ -13,8 +13,11 @@ export default async function CourseVideosPreview() {
   return (
     <section className="bg-primary-foreground">
       <Container>
-        <div className="max-w-[600px] space-y-6 mb-24">
+        <div className="max-w-[600px] mx-auto text-center space-y-6 mb-20">
           <HeaderTwo>Wyrusz w duchową podróż</HeaderTwo>
+          <HeadingParagraph>
+            Różnorodna biblioteka filmów i praktyk
+          </HeadingParagraph>
         </div>
         <Carousel>
           {lessons.map((lesson) => (

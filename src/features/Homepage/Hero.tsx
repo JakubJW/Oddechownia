@@ -9,8 +9,8 @@ export default function Hero() {
   return (
     <section className="homepage-hero relative overflow-hidden w-full ">
       <Container className="h-full">
-        <div className="relative z-20 h-full w-full flex flex-col justify-center px-4 sm:pr-24 gap-6 md:gap-y-16 sm:w-2/3 lg:w-1/2">
-          <hgroup className="mt-20 md:mt-0 text-white text-left">
+        <div className="relative z-20 h-full w-full flex flex-col items-center sm:items-start justify-center sm:text-start px-4 sm:pr-24 gap-6 md:gap-y-16 sm:w-2/3 lg:w-1/2">
+          <hgroup className="mt-10 sm:mt-0 text-white text-left">
             <span className="block mb-2">Oddechownia Studio Jogi</span>
             <div className="mb-10 w-min whitespace-nowrap">
               <HeaderOne>
@@ -21,7 +21,7 @@ export default function Hero() {
                 gdziekolwiek jesteś
               </span>
             </div>
-            <p className="leading-relaxed text-justify text-xl">
+            <p className=" leading-relaxed text-justify text-xl">
               Pragniesz, aby joga rozgościła się w Twojej codzienności? W
               Oddechowni poznasz tę wspaniałą praktykę w pełni - od pracy z
               ciałem, przez oddech i medytację, po filozofię i duchowe korzenie.
@@ -41,8 +41,8 @@ export default function Hero() {
       </Container>
       <div className="absolute top-0 z-10 homepage-hero-image">
         <Image
-          className="object-cover object-bottom blur-[2px]"
-          src="/hero3.jpg"
+          className="object-cover object-center blur-[2px]"
+          src="/hero.jpeg"
           alt="Hero image"
           fill
           priority={true}
