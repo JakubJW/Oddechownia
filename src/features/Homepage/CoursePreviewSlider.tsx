@@ -4,12 +4,10 @@ import LessonCard from '@/components/LessonCard/LessonCard';
 import Container from '@/components/Container/Container';
 import { LessonsService } from '@/server/services/lessons.service';
 import Link from 'next/link';
-import { env } from '@/env';
 
 export default async function CourseVideosPreview() {
-  console.log(env.NODE_ENV);
   const lessons = await LessonsService.getLessonsList({
-    id: [47, 12],
+    id: [64, 54, 96, 78, 23, 90, 16, 25, 66],
   });
 
   return (
