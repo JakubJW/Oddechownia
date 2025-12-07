@@ -80,7 +80,7 @@ const ActionButton = ({
   return (
     <a
       href={`${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo`}
-      className={cn(buttonVariants({ size: 'lg', variant: 'secondary' }))}
+      className={cn(buttonVariants({ size: 'lg' }))}
     >
       Dostępne lekcje
     </a>

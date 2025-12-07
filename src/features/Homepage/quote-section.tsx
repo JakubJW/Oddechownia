@@ -3,7 +3,7 @@ import Container from '@/components/Container/Container';
 const QuoteSection = () => {
   return (
     <section className="bg-gradient-to-b from-white via-white  to-primary-foreground">
-      <Container className="pt-64">
+      <Container className="pt-32">
         <div className="flex flex-col items-center">
           <h2 className="text-2xl font-light  text-center  max-w-[600px] leading-relaxed mb-12">
             Oddech to pomost pomiędzy ciałem, sercem i umysłem, dlatego w
@@ -12,7 +12,7 @@ const QuoteSection = () => {
             codziennością.
           </h2>
           <p className="text-2xl font-light text-center max-w-[600px] leading-relaxed mb-12">
-            To miejsce dla każdego.
+            To miejsce <span className="italic">dla każdego.</span>
             <br />
             Dla zmęczonych.
             <br />

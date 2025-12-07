@@ -1,44 +1,49 @@
 import Link from 'next/link';
-import { cn, formatDuration } from '@/lib/utils';
-import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import { LessonsService } from '@/server/services/lessons.service';
-import { ProgressBar } from '../shared/ProgressBar';
+import LessonCard from '@/components/LessonCard/LessonCard';
+import { buttonVariants } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 type Props = {
   lessons: Awaited<ReturnType<typeof LessonsService.getRecentlyWatchedLessons>>;
   className?: string;
 };
 export const RecentLessons = ({ lessons, className }: Props) => {
+  if (!lessons.length) {
+    return (
+      <div className={cn('pt-[20px] min-h-[350px] flex flex-col', className)}>
+        <p className="mb-4">Kontynuuj praktykę</p>
+        <div className="flex flex-col flex-grow gap-4 rounded-lg items-center justify-center w-full bg-muted text-muted-foreground">
+          <p>Tutaj pojawią się ostatnio oglądane praktyki.</p>
+          <Link
+            href={'/studio-jogi-online'}
+            className={cn(buttonVariants({}))}
+          >
+            Przeglądaj playlisty <ArrowRight className="size-4" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={cn('pt-[20px]', className)}>
-      <p className="pl-4 mb-4">Kontynuuj praktykę</p>
-      <div className="">
+      <p className="mb-4">Kontynuuj praktykę</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {lessons.map((lesson) => (
           <Link
             key={lesson.id}
             href={`/studio-jogi-online/${lesson.playlist!.slug}/${lesson.slug}`}
           >
-            <div className="lesson-playlist-card flex gap-4 p-4 rounded-lg relative transition-colors duration-300 hover:bg-primary-foreground">
-              <div className="relative overflow-hidden rounded-lg flex-shrink-0">
-                <Image
-                  src={lesson.thumbnail}
-                  width={150}
-                  height={96}
-                  alt={lesson.name}
-                  className="aspect-video transition-transform duration-300"
-                />
-                <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs p-1 rounded-sm">
-                  {formatDuration(lesson.video!.duration!)}
-                </span>
-                <ProgressBar percent={lesson.progress.percent} />
-              </div>
-              <p
-                title={lesson.name}
-                className="text-sm md:text-md font-light line-clamp-2 mb-auto"
-              >
-                {lesson.name}
-              </p>
-            </div>
+            <LessonCard
+              thumbnail={lesson.thumbnail}
+              name={lesson.name}
+              description={lesson.description}
+              video={lesson.video}
+              labels={lesson.labels}
+              percent={lesson.progress.percent}
+            />
           </Link>
         ))}
       </div>

@@ -11,17 +11,13 @@ export default function AboutMe() {
             className="homepage-hero-image object-cover object-bottom -scale-x-100"
             src="/homepage_2.jpg"
             alt="Hero image"
-            height={3088}
-            width={2048}
+            fill
             priority={true}
           />
         </div>
-        <div className="pt-32 px-4 flex flex-col gap-6 md:gap-y-8 mx-auto md:max-w-[600px]">
-          <hgroup className="mb-6">
-            <HeaderTwo>O mnie</HeaderTwo>
-          </hgroup>
+        <div className="py-12 sm:py-24 px-4 mx-auto md:max-w-[600px]">
           <div>
-            <p className="z-10 order-2 md:order-1">
+            <p className="text-lg z-10 order-2 md:order-1">
               Cześć!
               <br />
               <br />

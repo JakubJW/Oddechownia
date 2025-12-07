@@ -5,14 +5,13 @@ import { MenuIcon, X } from 'lucide-react';
 import { useState } from 'react';
 import NavigationLink from './NavigationLink';
 import { NavigationProps } from './Navigation';
-import NavigationAction from './NavigationAction';
 import { filteredRoutes } from '@/utils/navigation';
 
 export default function MobileNavigation({ user }: NavigationProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex items-center sm:hidden">
+    <div className="flex items-center md:hidden">
       <button onClick={() => setOpen(true)}>
         <MenuIcon className="text-white" />
       </button>
@@ -39,7 +38,6 @@ export default function MobileNavigation({ user }: NavigationProps) {
               />
             </li>
           ))}
-          <NavigationAction user={user} />
         </ul>
       </div>
     </div>

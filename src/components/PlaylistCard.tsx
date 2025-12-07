@@ -30,14 +30,6 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({
                   <CirclePlay className="h-4 w-4 mr-2" />
                   <span>{playlist.lessons.length} lekcji</span>
                 </Badge>
-                <Badge variant="secondary">
-                  <Clock className="h-4 w-4 mr-2" />
-                  <span>
-                    {Math.floor(playlist.totalDurationInSeconds / 3600)} h{' '}
-                    {Math.floor((playlist.totalDurationInSeconds % 3600) / 60)}{' '}
-                    min
-                  </span>
-                </Badge>
               </div>
               <Link
                 className="flex items-center text-muted-foreground text-sm hover:underline"

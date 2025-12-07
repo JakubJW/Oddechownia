@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Logo from '../../../public/oddechownia.svg';
 import MobileNavigation from './MobileNavigation';
 import NavigationLink from './NavigationLink';
-import NavigationAction from './NavigationAction';
+import AccountDropdown from './account-dropdown';
 import { User } from '@/server/actions/user';
 import { filteredRoutes } from '@/utils/navigation';
 
@@ -33,7 +33,7 @@ export default function Navigation({ user }: NavigationProps) {
               </li>
               {filteredRoutes(user).map(({ content, href }, index) => (
                 <li
-                  className="hidden sm:block h-full"
+                  className="hidden md:block h-full"
                   key={index}
                 >
                   <NavigationLink
@@ -45,8 +45,8 @@ export default function Navigation({ user }: NavigationProps) {
               ))}
             </ul>
           </nav>
-          <NavigationAction
-            className="hidden sm:inline-flex"
+          <AccountDropdown
+            className="hidden md:inline-flex"
             user={user}
           />
           <MobileNavigation user={user} />

@@ -63,23 +63,6 @@ export default function Carousel({
       >
         <ChevronRight className="slider-arrow-icon" />
       </button>
-      <div className="lg:hidden flex gap-2 items-center">
-        <button
-          className="slider-arrow-button translate-y-0 static slider-arrow-button__left"
-          onClick={() => slider.current?.slickPrev()}
-        >
-          <ChevronLeft className="slider-arrow-icon" />
-        </button>
-        <button
-          className="slider-arrow-button static translate-y-0 slider-arrow-button__right"
-          onClick={() => slider.current?.slickNext()}
-        >
-          <ChevronRight className="slider-arrow-icon" />
-        </button>
-        <div className="flex items-center text-muted-foreground text-sm">
-          Użyj strzałek lub przesuń w bok, aby przewinąć
-        </div>
-      </div>
     </div>
   );
 }

@@ -325,6 +325,11 @@ export const getRecentlyWatchedLessons = async (userId: string) => {
     with: {
       lesson: {
         with: {
+          labels: {
+            with: {
+              label: true,
+            },
+          },
           video: true,
           thumbnail: true,
         },
@@ -337,6 +342,7 @@ export const getRecentlyWatchedLessons = async (userId: string) => {
 
   return result.map((item) => ({
     ...item.lesson,
+    video: transformVideoToDto(item.lesson.video),
     thumbnail: supabaseService.getFileUrl(
       item.lesson.thumbnail.name,
       item.lesson.thumbnail.bucket,
@@ -350,6 +356,11 @@ export const getRecentlyWatchedLessons = async (userId: string) => {
         100
       ),
     },
+    labels: item.lesson.labels.map(({ label }) => ({
+      id: label.id,
+      text: label.text,
+      color: label.color,
+    })),
     playlist: item.playlist,
   }));
 };
