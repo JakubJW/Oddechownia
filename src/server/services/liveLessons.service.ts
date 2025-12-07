@@ -133,9 +133,6 @@ async function getLiveLessonsWithUserStatus(
   user: User
 ): Promise<LiveLessonCardDTO[]> {
   // 1. Fetch Lessons (Existing logic)
-  log.info('test');
-  log.warn('test');
-  log.error('test');
 
   const lessons = await db.query.liveLessons.findMany({
     with: {
@@ -154,6 +151,7 @@ async function getLiveLessonsWithUserStatus(
     return lessons.map((lesson) => ({
       id: lesson.id,
       title: lesson.title,
+      description: lesson.description ?? undefined,
       scheduledAt: lesson.scheduledAt,
       duration: lesson.duration,
       isListed: lesson.isListed,
@@ -225,6 +223,7 @@ async function getLiveLessonsWithUserStatus(
     return {
       id: lesson.id,
       title: lesson.title,
+      description: lesson.description ?? undefined,
       scheduledAt: lesson.scheduledAt,
       duration: lesson.duration,
       isListed: lesson.isListed,

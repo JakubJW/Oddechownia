@@ -1,4 +1,4 @@
-import HeaderOne from '@/components/Headers/HeaderOne';
+import { HeaderOne } from '@/components/Headers/headers';
 import { buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -7,21 +7,21 @@ import Container from '@/components/Container/Container';
 
 export default function Hero() {
   return (
-    <section className="homepage-hero relative">
+    <section className="homepage-hero relative overflow-hidden w-full ">
       <Container className="h-full">
-        <div className="h-full w-full flex flex-col justify-center pl-4 pr-24 gap-6 md:gap-y-16 lg:w-1/2">
-          <hgroup className="mt-20 md:mt-0 text-center md:text-left">
-            <span className="block text-muted-foreground text-base font-light text mb-2">
-              Oddechownia Studio Jogi
-            </span>
-            <HeaderOne className="mb-10 w-min whitespace-nowrap">
-              <span className="text-matcha">Twoje miejsce,</span> <br />
-              by złapać oddech
-              <span className="block text-right text-muted-foreground font-light text-base mt-2">
+        <div className="relative z-20 h-full w-full flex flex-col justify-center px-4 sm:pr-24 gap-6 md:gap-y-16 sm:w-2/3 lg:w-1/2">
+          <hgroup className="mt-20 md:mt-0 text-white text-left">
+            <span className="block mb-2">Oddechownia Studio Jogi</span>
+            <div className="mb-10 w-min whitespace-nowrap">
+              <HeaderOne>
+                <span className="">Twoje miejsce,</span> <br />
+                by złapać oddech
+              </HeaderOne>
+              <span className="block text-right text-base mt-2">
                 gdziekolwiek jesteś
               </span>
-            </HeaderOne>
-            <p className="leading-relaxed text-justify text-xl font-light">
+            </div>
+            <p className="leading-relaxed text-justify text-xl">
               Pragniesz, aby joga rozgościła się w Twojej codzienności? W
               Oddechowni poznasz tę wspaniałą praktykę w pełni - od pracy z
               ciałem, przez oddech i medytację, po filozofię i duchowe korzenie.
@@ -38,16 +38,17 @@ export default function Hero() {
             Dołącz do studia
           </Link>
         </div>
-        <div className="hidden lg:block absolute top-0 right-0 w-1/2 h-full">
-          <Image
-            className="object-cover object-bottom w-full h-full hidden md:block"
-            src="/hero2.jpg"
-            alt="Hero image"
-            fill
-            priority={true}
-          />
-        </div>
       </Container>
+      <div className="absolute top-0 z-10 homepage-hero-image">
+        <Image
+          className="object-cover object-bottom blur-[2px]"
+          src="/hero3.jpg"
+          alt="Hero image"
+          fill
+          priority={true}
+        />
+        <div className="absolute top-0 w-full h-full bg-black sm:bg-transparent sm:bg-gradient-to-r from-black to-transparent opacity-50" />
+      </div>
     </section>
   );
 }
