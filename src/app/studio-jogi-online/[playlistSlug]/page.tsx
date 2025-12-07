@@ -1,9 +1,8 @@
 import Container from '@/components/Container/Container';
-import HeaderOne from '@/components/Headers/HeaderOne';
+import { HeaderTwo } from '@/components/Headers/headers';
 import LessonCard from '@/components/LessonCard/LessonCard';
 import { buttonVariants } from '@/components/ui/button';
 import VideoPlayer from '@/features/shared/VideoPlayer';
-import { AddToCalendarButton } from '@/features/user/Calendar/AddToCalendarButton';
 import { cn } from '@/lib/utils';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { Params } from '@/types/types';
@@ -56,7 +55,7 @@ export default async function Playlist({
             />
           )}
           <hgroup className="space-y-6">
-            <HeaderOne className="font-semibold">{playlist.name}</HeaderOne>
+            <HeaderTwo>{playlist.name}</HeaderTwo>
             <p className="whitespace-pre">{playlist.description}</p>
             <div className="flex gap-4">
               <div

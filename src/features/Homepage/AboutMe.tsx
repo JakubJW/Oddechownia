@@ -1,5 +1,4 @@
-import Container from '@/components/Container/Container';
-import HeaderTwo from '@/components/Headers/HeaderTwo';
+import { HeaderTwo } from '@/components/Headers/headers';
 import Image from 'next/image';
 
 export default function AboutMe() {
@@ -45,9 +44,10 @@ export default function AboutMe() {
               <br />
               Nie jestem i nie planuję być związana z żadną konkretną ścieżką. W
               swoim nauczaniu podchodzę do tematu holistycznie, korzystając z
-              całego dobra, jakie joga nam oferuje. Jestem certyfikowaną przez
-              Yoga Alliance nauczycielką jogi (RYT200, Joga Nidra YACEP,
-              Restorative Yoga YACEP, Art of Chanting YACEP).
+              całego dobra, jakie oferuje nam tradycyjna joga. Jestem
+              certyfikowaną przez Yoga Alliance nauczycielką jogi (RYT200, Joga
+              Nidra YACEP Art of Chanting YACEP) i wciąż pozostaję również
+              wierną i oddaną uczennicą na tej magicznej ścieżce.
               <br />
               <br />
               Do zobaczenia na macie!

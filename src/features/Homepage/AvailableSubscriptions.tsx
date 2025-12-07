@@ -1,6 +1,6 @@
 import { ProductCard } from '@/components/SubscriptionCard/product-card';
 import Container from '@/components/Container/Container';
-import HeaderTwo from '@/components/Headers/HeaderTwo';
+import { HeaderTwo } from '@/components/Headers/headers';
 import { getUser } from '@/server/actions/user';
 import { stripeService } from '@/server/services/stripe.service';
 import Stripe from 'stripe';

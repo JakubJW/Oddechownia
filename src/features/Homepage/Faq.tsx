@@ -1,6 +1,6 @@
 import { FaqAnswer, FaqQuestion, FaqItem } from '@/components/FaqItem/FaqItem';
 import Container from '@/components/Container/Container';
-import HeaderTwo from '@/components/Headers/HeaderTwo';
+import { HeaderTwo } from '@/components/Headers/headers';
 
 export default function Faq() {
   return (
