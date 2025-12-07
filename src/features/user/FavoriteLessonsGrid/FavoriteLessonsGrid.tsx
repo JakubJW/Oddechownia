@@ -6,8 +6,11 @@ import { Button } from '@/components/ui/button';
 import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
 import React from 'react';
 import { FetchFavoriteLessonsResponse } from '@/server/models/lesson.models';
+import { useRouter } from 'next/navigation';
+import { ArrowRight, Loader2 } from 'lucide-react';
 
 const FavoriteLessonsGrid = () => {
+  const router = useRouter();
   const fetchFavoriteLessons = async ({
     pageParam,
   }: {
@@ -42,7 +45,13 @@ const FavoriteLessonsGrid = () => {
     });
 
   if (isPending) {
-    return <p>Ładowanie...</p>;
+    return (
+      <div className="flex flex-col justify-center items-center  h-full space-y-4 text-center">
+        <span className="flex gap-2 text-gray-500">
+          Ładowanie <Loader2 className="animate-spin" />
+        </span>
+      </div>
+    );
   }
 
   if (isError) {
@@ -55,10 +64,13 @@ const FavoriteLessonsGrid = () => {
 
   if (data.pages.every((page) => !page.data.length)) {
     return (
-      <div className="p-4 text-center">
+      <div className="flex flex-col justify-center items-center  space-y-4 text-center">
         <p className="text-gray-500">
-          Nie masz jeszcze żadnych ulubionych lekcji
+          Nie masz jeszcze żadnych ulubionych lekcji.
         </p>
+        <Button onClick={() => router.push('/studio-jogi-online')}>
+          Zobacz lekcje <ArrowRight className="size-4" />
+        </Button>
       </div>
     );
   }

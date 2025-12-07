@@ -38,7 +38,7 @@ export default async function RootLayout({
             ) : (
               <>
                 <Navigation user={user} />
-                <main className="mt-[64px]">{children}</main>
+                <main className="mt-[64px] min-h-full">{children}</main>
                 <Footer />
               </>
             )}

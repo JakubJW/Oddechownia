@@ -12,7 +12,7 @@ html body[data-scroll-locked] {
 }
 
 body {
-  height: 100%;
+  height: calc(100% - var(--navigation-height));
   color: var(--rich-black);
   background: var(--background-white);
   font-optical-sizing: auto;

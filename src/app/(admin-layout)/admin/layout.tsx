@@ -20,7 +20,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <section>
+    <section className="h-full">
       <Container>
         <div className="grid grid-cols-12">
           <div className="flex flex-col gap-4 col-span-2">

@@ -2,8 +2,8 @@ import FavoriteLessonsGrid from '@/features/user/FavoriteLessonsGrid/FavoriteLes
 
 export default async function FavoriteLessons() {
   return (
-    <section>
-      <p className="font-bold text-xl mb-4">Ulubione lekcje</p>
+    <section className="h-full">
+      <p className="font-bold text-xl mb-4">Twoje ulubione lekcje</p>
       <FavoriteLessonsGrid />
     </section>
   );
