@@ -12,7 +12,12 @@ interface NavigationLinkProps {
   isMobile: boolean;
 }
 
-function NavigationLink({ content, href, onClick, isMobile }: NavigationLinkProps) {
+function NavigationLink({
+  content,
+  href,
+  onClick,
+  isMobile,
+}: NavigationLinkProps) {
   const currentPath = usePathname();
 
   return (
@@ -23,9 +28,10 @@ function NavigationLink({ content, href, onClick, isMobile }: NavigationLinkProp
         'flex border-b-2 h-full items-center px-4 hover:border-richBlack hover:text-richBlack trasition-colors duration-300',
         isMobile ? 'text-richBlack' : 'text-white',
         href.split('/').includes(currentPath.split('/')[1]) &&
-          currentPath !== '/'
+          currentPath !== '/' &&
+          !isMobile
           ? 'text-richBlack border-richBlack'
-          : 'border-transparent',
+          : 'border-transparent'
       )}
     >
       {content}

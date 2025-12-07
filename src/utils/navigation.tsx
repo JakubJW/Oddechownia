@@ -13,12 +13,6 @@ const navbarLinks = [
     allowGuest: true,
     target: '_self',
   },
-  {
-    content: 'Społeczność',
-    href: '/spolecznosc',
-    allowGuest: false,
-    target: '_self',
-  },
 ];
 
 export const footerLinks = [

@@ -36,7 +36,7 @@ export default async function SignIn() {
           <RegisterForm className="col-start-1 col-span-2" />
         </div>
         <Image
-          className="homepage-hero-image object-cover object-bottom w-full hidden md:block"
+          className="auth-hero-image object-cover object-bottom w-full hidden md:block"
           src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/website-assets/images/hero.png"
           alt="Hero image"
           height={3088}

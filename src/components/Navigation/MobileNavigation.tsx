@@ -6,6 +6,7 @@ import { useState } from 'react';
 import NavigationLink from './NavigationLink';
 import { NavigationProps } from './Navigation';
 import { filteredRoutes } from '@/utils/navigation';
+import { signOut } from '@/server/actions/auth';
 
 export default function MobileNavigation({ user }: NavigationProps) {
   const [open, setOpen] = useState(false);
@@ -38,6 +39,83 @@ export default function MobileNavigation({ user }: NavigationProps) {
               />
             </li>
           ))}
+          {user?.isAdmin && (
+            <li>
+              <NavigationLink
+                isMobile={true}
+                content="Admin"
+                href="/admin"
+                onClick={() => setOpen(false)}
+              />
+            </li>
+          )}
+          {user && (
+            <>
+              <li>
+                <NavigationLink
+                  isMobile={true}
+                  content="Moja praktyka"
+                  href="/moje-konto"
+                  onClick={() => setOpen(false)}
+                />
+              </li>
+              <li>
+                <NavigationLink
+                  isMobile={true}
+                  content="Społeczność"
+                  href="/spolecznosc"
+                  onClick={() => setOpen(false)}
+                />
+              </li>
+              <li>
+                <NavigationLink
+                  isMobile={true}
+                  content="Moje zajęcia na żywo"
+                  href="/moje-konto/zajecia-na-zywo"
+                  onClick={() => setOpen(false)}
+                />
+              </li>
+              <li>
+                <NavigationLink
+                  isMobile={true}
+                  content="Ulubione lekcje"
+                  href="/moje-konto/ulubione-lekcje"
+                  onClick={() => setOpen(false)}
+                />
+              </li>
+              <li>
+                <NavigationLink
+                  isMobile={true}
+                  content="Ustawienia"
+                  href="/moje-konto/ustawienia"
+                  onClick={() => setOpen(false)}
+                />
+              </li>
+              <li>
+                <NavigationLink
+                  isMobile={true}
+                  content="Wyloguj"
+                  href="#"
+                  onClick={async () => {
+                    setOpen(false);
+                    await signOut();
+                  }}
+                />
+              </li>
+            </>
+          )}
+          {!user && (
+            <li>
+              <NavigationLink
+                isMobile={true}
+                content="Logowanie"
+                href="/logowanie"
+                onClick={async () => {
+                  setOpen(false);
+                }}
+              />
+            </li>
+          )}
         </ul>
       </div>
     </div>
