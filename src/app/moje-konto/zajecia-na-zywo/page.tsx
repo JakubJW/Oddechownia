@@ -1,24 +1,9 @@
-// import Filters from '@/components/Filters/Filters';
 import { Grid } from '@/features/user/LiveLessons/Grid';
 
 export default async function UserLiveLessons() {
   return (
-    <div>
-      {/* <Filters
-        config={{
-          search: false,
-          filtersOptions: [
-            {
-              placeholder: 'Filtry',
-              name: 'status',
-              options: [
-                { label: 'Nadchodzące', value: 'upcoming' },
-                { label: 'Zakończone', value: 'completed' },
-              ],
-            },
-          ],
-        }}
-      /> */}
+    <div className="h-full">
+      <p className="font-bold text-xl mb-4">Twoje zajęcia na żywo</p>
       <Grid />
     </div>
   );

@@ -12,12 +12,13 @@ export default async function UserLayout({
   const user = await getRequiredUser();
 
   return (
-    <Container className="py-8 lg:py-24">
+    <Container className="py-8 lg:py-24 h-full">
       <div className="mb-8">
         <div className="flex justify-between">
           <h1 className="text-xl font-light">
             Witaj ponownie, &nbsp;
             <span className="text-primary font-light">
+              {user.firstName}
               <Wind
                 className="size-6 inline ml-1"
                 strokeWidth={1}

@@ -125,7 +125,7 @@ export const Comment = ({
                 Odpowiedz
               </button>
             )}
-            {replyCount && replyCount > 0 && (
+            {replyCount && replyCount > 0 ? (
               <button
                 disabled={isFetching}
                 className="text-xs text-muted-foreground inline-flex gap-1 items-center"
@@ -134,7 +134,7 @@ export const Comment = ({
                 Pokaż odpowiedzi ({replyCount})
                 {isFetching && <Loader2 className="h-4 w-4 animate-spin" />}
               </button>
-            )}
+            ) : null}
           </div>
         </div>
         {isAuthor && (
@@ -148,9 +148,9 @@ export const Comment = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setEditMode(true)}>
+              {/* <DropdownMenuItem onClick={() => setEditMode(true)}>
                 Edytuj
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem
                 onClick={() => handleRemove(id)}
                 className="bg-destructive-foreground text-destructive"

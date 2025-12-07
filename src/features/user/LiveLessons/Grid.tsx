@@ -5,6 +5,9 @@ import { toast } from 'sonner';
 import { FetchUserLiveLessonsResponse } from '@/server/models/liveLesson.models';
 import { LiveLessonCard } from './LiveLessonCard';
 import React from 'react';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const fetchLiveLessons = async ({
   pageParam,
@@ -26,6 +29,7 @@ const fetchLiveLessons = async ({
 };
 
 export const Grid = () => {
+  const router = useRouter();
   const { data, isError, isPending, error } = useInfiniteQuery({
     queryKey: ['live-lessons'],
     initialPageParam: null,
@@ -35,15 +39,30 @@ export const Grid = () => {
   });
 
   if (isPending) {
-    return <div>Ładowanie</div>;
+    return (
+      <div className="flex flex-col justify-center items-center  h-full space-y-4 text-center">
+        <span className="flex gap-2 text-gray-500">
+          Ładowanie <Loader2 className="animate-spin" />
+        </span>
+      </div>
+    );
   }
 
   if (isError) {
     return <div>{error.message}</div>;
   }
 
-  if (data.pages.every((page) => page.data.length === 0)) {
-    return <div></div>;
+  if (data.pages.every((page) => !page.data.length)) {
+    return (
+      <div className="flex flex-col justify-center items-center  space-y-4 text-center">
+        <p className="text-gray-500">
+          Nie jesteś zapisany na żadne zajęcia na żywo.
+        </p>
+        <Button onClick={() => router.push('/zajecia-na-zywo')}>
+          Zobacz nadchodzące zajęcia <ArrowRight className="size-4" />
+        </Button>
+      </div>
+    );
   }
 
   return (
