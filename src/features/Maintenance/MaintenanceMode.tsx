@@ -1,4 +1,4 @@
-import HeaderOne from '@/components/Headers/HeaderOne';
+import { HeaderOne } from '@/components/Headers/headers';
 import Image from 'next/image';
 
 export default function MaintenanceMode() {

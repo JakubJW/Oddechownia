@@ -32,7 +32,12 @@ export interface BaseFilters extends BaseSortOptions {
 
 export interface PlaylistFilters extends BaseFilters {
   isPublished?: boolean;
+  name?: string;
   lessonProps?: Omit<LessonFilters, 'playlistProps'>;
+}
+
+export interface PlaylistLessonFilters extends BaseFilters {
+  isFeaturedOnHomepage?: boolean;
 }
 
 export interface LessonFilters extends BaseFilters {
@@ -40,6 +45,7 @@ export interface LessonFilters extends BaseFilters {
   slug?: string;
   uploaded?: string;
   playlistProps?: Omit<PlaylistFilters, 'lessonProps'>;
+  playlistLessonProps?: PlaylistLessonFilters;
 }
 
 export interface VideoFilters extends BaseFilters {
@@ -79,6 +85,26 @@ class FilterService {
 
       if (typeof filters.isPublished === 'boolean') {
         conditions.push(eq(playlists.isPublished, filters.isPublished));
+      }
+
+      return conditions.length ? and(...conditions) : undefined;
+    });
+
+    this.filterMappers.set(playlistLesson, (filters: PlaylistLessonFilters) => {
+      const conditions: SQL<unknown>[] = [];
+
+      // if (filters.isFeaturedOnHomepage) {
+      //   conditions.push(
+      //     eq(playlistLesson.isFeaturedOnHomepage, filters.isFeaturedOnHomepage)
+      //   );
+      // }
+
+      if (filters.id) {
+        if (Array.isArray(filters.id)) {
+          conditions.push(inArray(playlistLesson.id, filters.id));
+        } else {
+          conditions.push(eq(playlistLesson.id, filters.id));
+        }
       }
 
       return conditions.length ? and(...conditions) : undefined;
