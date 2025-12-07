@@ -117,7 +117,7 @@ const handlePaidRegistration = async (
   values: LiveLessonSignUpValues,
   user: User
 ) => {
-  const priceId = env.NEXT_STRIPE_LIVE_LESSON__PRICE_ID;
+  const priceId = env.NEXT_STRIPE_LIVE_LESSON_PRICE_ID;
 
   const existingRegistration =
     await db.query.liveLessonsRegistrations.findFirst({

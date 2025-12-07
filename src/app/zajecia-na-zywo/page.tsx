@@ -1,4 +1,4 @@
-import HeaderTwo from '@/components/Headers/HeaderTwo';
+import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
 import { LiveLessonsService } from '@/server/services/liveLessons.service';
 import { getUser } from '@/server/actions/user';
@@ -11,12 +11,14 @@ export default async function LiveLessons() {
   return (
     <section>
       <Container className="overflow-hidden">
-        <hgroup className="text-center max-w-[800px] mx-auto space-y-6 mb-24">
+        <hgroup className="text-center max-w-3xl mx-auto space-y-6 mb-24">
           <HeaderTwo>Zajęcia na żywo online</HeaderTwo>
-          <p className="text-xl">
-            Dołącz do mnie na zajęciach z jogi na żywo! Praktykuj w czasie
-            rzeczywistym z wygody swojego domu.
-          </p>
+          <HeadingParagraph className="text-lg">
+            Dołącz do mnie na spotkaniach na żywo (Zoom), podczas których
+            praktykujemy razem w czasie rzeczywistym. To przestrzeń wspólnej
+            obecności, uważności i łagodnej pracy z ciałem, oddechem i umysłem -
+            bez wychodzenia z domu.
+          </HeadingParagraph>
         </hgroup>
         <Grid
           lessons={lessons}

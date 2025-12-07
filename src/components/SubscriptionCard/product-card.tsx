@@ -68,7 +68,6 @@ const ActionButton = ({
     return (
       <Button
         size="lg"
-        className="mt-auto"
         onClick={handleChoose}
         disabled={isLoading}
       >
@@ -81,10 +80,7 @@ const ActionButton = ({
   return (
     <a
       href={`${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo`}
-      className={cn(
-        buttonVariants({ size: 'lg', variant: 'secondary' }),
-        'mt-auto'
-      )}
+      className={cn(buttonVariants({ size: 'lg', variant: 'secondary' }))}
     >
       Dostępne lekcje
     </a>
@@ -106,8 +102,14 @@ export function ProductCard({
         <span className="font-bold text-3xl">
           {(price / 100).toFixed(2)} zł
         </span>
-        <span className="text-gray-400 text-sm ml-2">{interval}</span>
+        <span className="text-muted-foreground text-sm ml-2">{interval}</span>
       </div>
+      {type === 'subscription' && (
+        <p className="mt-4 text-muted-foreground">
+          Miesięczny dostęp do pełnej przestrzeni Oddechowni. Praktykujesz
+          wtedy, kiedy chcesz.
+        </p>
+      )}
       <ul className="space-y-2 my-4">
         {features.map((feature, index) => {
           if (!feature) {
@@ -119,16 +121,23 @@ export function ProductCard({
               key={index}
               className="flex gap-2"
             >
-              <Check className="text-primaryFg flex-shrink-0" />
-              <p>{feature}</p>
+              <Check className="size-4 mt-1 text-matcha flex-shrink-0" />
+              <span>{feature}</span>
             </li>
           );
         })}
       </ul>
-      <ActionButton
-        user={user}
-        productType={type}
-      />
+      <div className="mt-auto flex flex-col gap-4">
+        <p className="text-base  font-light text-muted-foreground">
+          {type === 'subscription'
+            ? 'Dla tych, którzy chcą, by joga stała się częścią codzienności.'
+            : 'Idealne rozwiązanie, jeśli chcesz najpierw poczuć klimat Oddechowni.'}
+        </p>
+        <ActionButton
+          user={user}
+          productType={type}
+        />
+      </div>
     </div>
   );
 }

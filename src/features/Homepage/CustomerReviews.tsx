@@ -1,5 +1,5 @@
 import Container from '@/components/Container/Container';
-import HeaderTwo from '@/components/Headers/HeaderTwo';
+import { HeaderTwo } from '@/components/Headers/headers';
 import Carousel from '@/components/Carousel/Carousel';
 import ReviewCard from '@/components/ReviewCard';
 

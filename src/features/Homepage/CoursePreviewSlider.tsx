@@ -1,6 +1,6 @@
-import HeaderTwo from '@/components/Headers/HeaderTwo';
 import Carousel from '@/components/Carousel/Carousel';
 import LessonCard from '@/components/LessonCard/LessonCard';
+import { HeaderTwo } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
 import { LessonsService } from '@/server/services/lessons.service';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ export default async function CourseVideosPreview() {
   });
 
   return (
-    <section className="bg-gradient-to-b from-white to-primary-foreground">
+    <section className="bg-primary-foreground">
       <Container>
         <div className="max-w-[600px] space-y-6 mb-24">
           <HeaderTwo>Wyrusz w duchową podróż</HeaderTwo>

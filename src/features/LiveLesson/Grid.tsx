@@ -2,7 +2,13 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { formatTimeForInput } from '@/lib/utils';
 import { LiveLessonCardDTO } from '@/server/models/liveLesson.models';
 import { useMutation } from '@tanstack/react-query';
@@ -85,6 +91,7 @@ export const Grid = ({ lessons, user }: GridProps) => {
                 <Badge variant="outline">Płatność oczekująca</Badge>
               )}
             </div>
+            <CardDescription>{lesson.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
