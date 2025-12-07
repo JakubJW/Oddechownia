@@ -7,7 +7,7 @@ export default function Login() {
       <div className="grid lg:grid-cols-2">
         <LoginForm />
         <Image
-          className="homepage-hero-image object-cover object-bottom w-full hidden lg:block"
+          className="auth-hero-image object-cover object-bottom w-full hidden lg:block"
           src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/website-assets/images/hero.png"
           alt="Hero image"
           height={3088}

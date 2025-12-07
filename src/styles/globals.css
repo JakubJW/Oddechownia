@@ -131,6 +131,10 @@ body {
     margin: -5px;
   }
 
+  .auth-hero-image {
+    height: calc(100vh - var(--navigation-height));
+  }
+
   .lesson-card:hover {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
     

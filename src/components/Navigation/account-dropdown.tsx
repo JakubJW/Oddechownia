@@ -23,6 +23,7 @@ import {
   DropdownMenuSeparator,
 } from '../ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
+import { signOut } from '@/server/actions/auth';
 
 interface NavigaitonActionProps extends NavigationProps {
   className?: string;
@@ -93,7 +94,7 @@ export default function AccountDropdown({
           <Settings className="size-4 mr-1" />
           Ustawienia
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push('/moje-konto')}>
+        <DropdownMenuItem onClick={async () => await signOut()}>
           <LogOut className="size-4 mr-1" /> Wyloguj
         </DropdownMenuItem>
       </DropdownMenuContent>
