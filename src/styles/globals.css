@@ -120,15 +120,7 @@ body {
 }
 
 @layer components {
-  .homepage-hero-container {
-    background-position: bottom;
-    background-size: cover;
-    background-image: url('/hero2.jpg');
-    background-repeat: no-repeat;
-    height: calc(100vh - var(--navigation-height));
-  }
-
-  .homepage-hero-image {
+  .homepage-hero {
     height: calc(100vh - var(--navigation-height));
   }
 
