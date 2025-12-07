@@ -1,57 +1,37 @@
 import Carousel from '@/components/Carousel/Carousel';
-import VideoCard from '@/components/VideoCard/VideoCard';
+import LessonCard from '@/components/LessonCard/LessonCard';
 import { HeaderTwo } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
+import { LessonsService } from '@/server/services/lessons.service';
+import Link from 'next/link';
 
-const mockVideos = [
-  {
-    id: 1,
-    title: 'Yoga Antystresowa: Uwolnij Napięcie i Znajdź Spokój',
-    description: 'Yoga Antystresowa: Uwolnij Napięcie i Znajdź Spokój',
-    duration: 3600,
-    videoUrl: 'vTDmDBASFO4vUFGNwEXxvD7tQAuQdh018a01100dYaUoWY',
-  },
-  {
-    id: 3,
-    title: 'Yoga Antystresowa: Uwolnij Napięcie i Znajdź Spokój',
-    description: 'Yoga Antystresowa: Uwolnij Napięcie i Znajdź Spokój',
-    duration: 3600,
-    videoUrl: 'vTDmDBASFO4vUFGNwEXxvD7tQAuQdh018a01100dYaUoWY',
-  },
-  {
-    id: 3,
-    title: 'Yoga Antystresowa: Uwolnij Napięcie i Znajdź Spokój',
-    description: 'Yoga Antystresowa: Uwolnij Napięcie i Znajdź Spokój',
-    duration: 3600,
-    videoUrl: 'vTDmDBASFO4vUFGNwEXxvD7tQAuQdh018a01100dYaUoWY',
-  },
-];
+export default async function CourseVideosPreview() {
+  const lessons = await LessonsService.getLessonsList({
+    id: [64, 54, 96, 78, 23, 90, 16, 25, 66],
+  });
 
-export default function CourseVideosPreview() {
   return (
     <section className="bg-primary-foreground">
       <Container>
         <div className="max-w-[600px] space-y-6 mb-24">
-          <HeaderTwo>
-            Zobacz, jak wyglądają <br />{' '}
-            <span className="text-primaryFg">praktyki ze mną</span>
-          </HeaderTwo>
-          <p className="leading-normal">
-            Obejrzyj fragmenty naszych kursów jogi online i zobacz, co oferują
-            nasi doświadczeni instruktorzy. Znajdź kurs idealny dla siebie,
-            niezależnie od poziomu.
-          </p>
+          <HeaderTwo>Wyrusz w duchową podróż</HeaderTwo>
         </div>
-        <Carousel settings={{ slidesToShow: 3 }}>
-          {mockVideos.map(({ title, description, duration, videoUrl, id }) => (
-            <VideoCard
-              id={id}
-              key={id}
-              title={title}
-              description={description}
-              duration={duration}
-              videoUrl={videoUrl}
-            />
+        <Carousel>
+          {lessons.map((lesson) => (
+            <Link
+              key={lesson.id}
+              className="h-full"
+              href={`/studio-jogi-online/${lesson.playlists[0].slug}/${lesson.slug}`}
+            >
+              <LessonCard
+                key={lesson.id}
+                thumbnail={lesson.thumbnail}
+                name={lesson.name}
+                description={lesson.description}
+                video={lesson.video}
+                labels={lesson.labels}
+              />
+            </Link>
           ))}
         </Carousel>
       </Container>
