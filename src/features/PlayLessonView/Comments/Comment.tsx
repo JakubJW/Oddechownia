@@ -148,9 +148,9 @@ export const Comment = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setEditMode(true)}>
+              {/* <DropdownMenuItem onClick={() => setEditMode(true)}>
                 Edytuj
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem
                 onClick={() => handleRemove(id)}
                 className="bg-destructive-foreground text-destructive"
