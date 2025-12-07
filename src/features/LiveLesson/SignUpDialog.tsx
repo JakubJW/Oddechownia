@@ -154,7 +154,7 @@ const SignUpDialog = ({
                 )}
                 {liveLesson.isEligibleForFree
                   ? 'Zapisz się za darmo'
-                  : 'Przejdź do płatności (30 PLN)'}
+                  : 'Przejdź do płatności (29 PLN)'}
               </Button>
               {!liveLesson.isEligibleForFree && (
                 <p className="text-xs text-muted-foreground text-center">
