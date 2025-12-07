@@ -16,6 +16,7 @@ import { cn, formatDuration } from '@/lib/utils';
 import { getRequiredUser } from '@/lib/data';
 import { ProgressBar } from '@/features/shared/ProgressBar';
 import { LessonLabel } from '@/components/LessonLabel';
+import { ExpandableText } from '@/features/shared/expandable-text';
 
 export async function generateMetadata({
   params,
@@ -86,10 +87,7 @@ export default async function PlaylistLessonPlayback({
                 <h1 className="text-md md:text-xl font-bold ">
                   {currentLesson.name}
                 </h1>
-                <p className="text-sm md:text-md text-gray-500 line-clamp-2">
-                  {currentLesson.description}
-                </p>
-
+                <ExpandableText text={currentLesson.description} />
                 {user && (
                   <div className="flex w-full md:w-min gap-2">
                     <AddToCalendarButton

@@ -1,16 +1,15 @@
 import Container from '@/components/Container/Container';
 import { HeaderTwo } from '@/components/Headers/headers';
 import LessonCard from '@/components/LessonCard/LessonCard';
-import { buttonVariants } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import VideoPlayer from '@/features/shared/VideoPlayer';
-import { cn } from '@/lib/utils';
+import { SchedulePlaylistButton } from '@/features/user/Calendar/SchedulePlaylistButton';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { Params } from '@/types/types';
-import { Film } from 'lucide-react';
+import { CirclePlay } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { SchedulePlaylistButton } from '@/features/user/Calendar/SchedulePlaylistButton';
 
 export async function generateMetadata({
   params,
@@ -46,7 +45,7 @@ export default async function Playlist({
   return (
     <section>
       <Container className="pt-16">
-        <div className="grid grid-cols-2 gap-8">
+        <div className="">
           {playlist.video && (
             <VideoPlayer
               playbackId={playlist.video.publicPlaybackId}
@@ -56,17 +55,12 @@ export default async function Playlist({
           )}
           <hgroup className="space-y-6">
             <HeaderTwo>{playlist.name}</HeaderTwo>
-            <p className="whitespace-pre">{playlist.description}</p>
+            <p className="max-w-5xl">{playlist.description}</p>
             <div className="flex gap-4">
-              <div
-                className={cn(
-                  buttonVariants({ variant: 'outline', size: 'lg' }),
-                  'border-primaryBg'
-                )}
-              >
-                <Film />
-                <span>{playlist.lessons.length} filmów</span>
-              </div>
+              <Badge variant="secondary">
+                <CirclePlay className="h-4 w-4 mr-2" />
+                <span>{playlist.lessons.length} lekcji</span>
+              </Badge>
               <SchedulePlaylistButton playlist={playlist} />
             </div>
           </hgroup>
