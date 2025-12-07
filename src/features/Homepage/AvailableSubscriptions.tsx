@@ -12,7 +12,7 @@ export default async function AvailableSubscriptions() {
     env.NEXT_STRIPE_SUBSCRIPTION_PRICE_ID
   );
   const liveLessonPrice = await stripeService.getPrice(
-    env.NEXT_STRIPE_LIVE_LESSON__PRICE_ID
+    env.NEXT_STRIPE_LIVE_LESSON_PRICE_ID
   );
 
   const subscriptionProduct = subscriptionPrice.product as Stripe.Product;
