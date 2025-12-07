@@ -38,30 +38,6 @@ export default function Faq() {
           </FaqItem>
           <FaqItem>
             <FaqQuestion>
-              <p>Czy muszę być rozciągnięty/a, aby zacząć jogę?</p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                Zdecydowanie tak! Aby praktykować w Oddechowni, nie potrzebujesz
-                konkretnego poziomu zaawansowania, elastyczności, doświadczenia
-                czy wiedzy, a jedynie otwartości i kilku wolnych chwil. <br />
-                <br />
-                Nie - to jeden z największych mitów, które powstrzymują wiele
-                osób przed wejściem na matę. Elastyczność ciała nie jest
-                niezbędna do rozpoczęcia praktyki - to raczej jej naturalny
-                efekt. <br />
-                <br />
-                Joga to nie wyścig. To przestrzeń, w której uczysz się słuchać
-                swojego ciała, poruszać się z szacunkiem i łagodnością. Nie ma
-                jednej „właściwej” formy pozycji, dlatego Oddechowni zawsze
-                zachęcam do szukania wygody, swobody i świadomej uważności, a
-                nie perfekcyjnych kształtów. Ciało każdego z nas ma inną
-                historię - joga ją szanuje, nie ocenia.
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
               <p>Czego potrzebuję, by zacząć praktykę?</p>
             </FaqQuestion>
             <FaqAnswer>
@@ -114,43 +90,10 @@ export default function Faq() {
                 zranić lub rozpraszać.
               </p>
               <br />
-              <br />
               <p>
                 Mata, świeczka, koc lub poduszka mogą dodać nastroju i wesprzeć
                 Cię w relaksacji, ale najważniejsze jest to, byś czuł/a się
                 bezpiecznie i swobodnie.
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
-              <p>
-                Czy mogę ćwiczyć jogę, jeśli mam ograniczenia fizyczne lub
-                przewlekłe choroby?
-              </p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                Wiele osób praktykujących jogę to osoby z różnymi ograniczeniami
-                - fizycznymi, emocjonalnymi, życiowymi. Joga nie jest formą
-                rywalizacji ani testem sprawności. W naszej przestrzeni uczymy
-                się słuchać ciała, nie przekraczać jego granic. Jeśli masz
-                szczególne potrzeby - pisz do nas, chętnie podpowiemy, które
-                zajęcia będą dla Ciebie odpowiednie.
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
-              <p>Jaki jest koszt subskrypcji?</p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                Aktualny koszt subskrypcji znajdziesz na stronie Oddechowni, w
-                zakładce TBC. Stawiamy na prostotę i przejrzystość - jedna
-                opłata miesięczna, bez żadnych ukrytych kosztów. To dostęp do
-                całej biblioteki praktyk, zajęć na żywo, nagrań, medytacji czy
-                materiałów edukacyjnych w ramach jednej płatności.
               </p>
             </FaqAnswer>
           </FaqItem>
@@ -176,83 +119,49 @@ export default function Faq() {
               <p>
                 To bardzo proste. Po wykupieniu subskrypcji otrzymasz dostęp do
                 platformy, gdzie znajdziesz linki do zajęć na żywo oraz
-                bibliotekę nagrań. Możesz praktykować na żywo lub odtwarzać
-                zajęcia wtedy, gdy masz na to przestrzeń.
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
-              <p>Jak wygląda harmonogram zajęć?</p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                Zajęcia na żywo odbywają się zwykle 3-4 razy w miesiącu, o
-                różnych porach - tak, by każdy mógł znaleźć coś dla siebie.
-                Dokładny harmonogram znajdziesz w panelu użytkownika oraz w
-                mailach z przypomnieniami. Pamiętaj, że jeśli nie możesz być na
-                zajęciach na żywo - wszystkie nagrania znajdziesz w TBC.
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
-              <p>Jak długo mam dostęp do nagrań po zajęciach?</p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                Masz dostęp do pełnej biblioteki nagrań przez cały okres trwania
-                Twojej subskrypcji. Możesz wracać do praktyk tak często, jak
-                chcesz - we własnym rytmie.
+                możliwość zapisania się na dwa wybrane zajęcia w miesiącu. Link
+                do zajęć otrzymasz drogą mailową lub możesz dołączyć do nich
+                bezpośrednio ze studia.
               </p>
             </FaqAnswer>
           </FaqItem>
           <FaqItem>
             <FaqQuestion>
               <p>
-                Czy joga to religia? Czy muszę wyznawać jakieś przekonania, żeby
-                praktykować?
+                Czy mogę dołączyć, jeśli nie chcę wykonywać praktyki fizycznej?
               </p>
             </FaqQuestion>
             <FaqAnswer>
               <p>
-                Nie, joga nie jest religią. To metoda pracy z ciałem, oddechem i
-                świadomością - dostępna dla każdego, niezależnie od przekonań,
-                doktryn i religijnych praktyk. Może mieć duchowy wymiar, ale
-                sama w sobie nie ma charakteru kultu czy religii.
-                <br />
-                <br />W Oddechowni traktujemy jogę jako narzędzie powrotu do
-                siebie. Możesz czerpać z niej tyle, ile potrzebujesz - z
-                otwartym sercem.
+                Tak! W Oddechowni praktyki asan to tylko jedna z dostępnych
+                sekcji. Oprócz tego zanurzamy się również wspólnie w świat
+                filozofii jogi, medytujemy, praktykujemy jogę nidrę & rozmawiamy
+                o wielu ciekawych i inspirujących jogicznych konceptach.
               </p>
             </FaqAnswer>
           </FaqItem>
           <FaqItem>
             <FaqQuestion>
-              <p>Czy joga może pomóc w radzeniu sobie ze stresem i lękiem?</p>
+              <p>Czy muszę brać udział w zajęciach na żywo?</p>
             </FaqQuestion>
             <FaqAnswer>
               <p>
-                Tak. Joga ma potencjał, by łagodzić napięcia, regulować oddech i
-                uspokajać gonitwę myśli. Regularna praktyka może wpływać kojąco
-                na układ nerwowy i może być realnym wsparciem w codziennych
-                trudnościach.
+                Nie! Zajęcia live są nagrywane, dlatego możesz korzystać z
+                praktyk tak, jak chcesz & wtedy, kiedy chcesz. 🙂
               </p>
             </FaqAnswer>
           </FaqItem>
           <FaqItem>
             <FaqQuestion>
               <p>
-                Czy są materiały edukacyjne, które mogę przeczytać lub odsłuchać
-                poza zajęciami?
+                Czy mogę dołączyć do zajęć na żywo, jeśli nie jestem
+                subskrybentem?
               </p>
             </FaqQuestion>
             <FaqAnswer>
               <p>
-                Tak! W Oddechowni znajdziesz także aspekty filozoficzne jogi,
-                medytacje, nagrania z refleksjami, mantrami czy podcasty.
-                Wszystko po to, by wspierać Cię nie tylko na macie, ale też poza
-                nią.
+                Tak, w zakładce Zajęcia na żywo znajdziesz aktualny harmonogram
+                spotkań na żywo, na które możesz wykupić jednorazowe wejście.
               </p>
             </FaqAnswer>
           </FaqItem>
