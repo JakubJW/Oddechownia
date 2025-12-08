@@ -68,8 +68,8 @@
     "clsx": "^2.1.1",
     "commander": "^13.1.0",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.39.3",
     "drizzle-kit": "^0.30.4",
+    "drizzle-orm": "^0.39.3",
     "lucide-react": "^0.554.0",
     "motion": "^12.23.25",
     "next": "^15.1.6",
@@ -109,7 +109,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5"
   },
- "overrides": {
+  "overrides": {
     "esbuild": "^0.27.1"
   }
 }
