@@ -5,7 +5,14 @@ import { eq } from 'drizzle-orm';
 import { EmailService } from './emails.service';
 import { BadRequestError } from '../lib/errors';
 
-const fulfillSubscriptionPurchase = async (sessionId: string) => {
+interface FulfillOptions {
+  sendEmail?: boolean;
+}
+
+const fulfillSubscriptionPurchase = async (
+  sessionId: string,
+  options: FulfillOptions = { sendEmail: false }
+) => {
   const session = await stripeService.retrieveSession(sessionId);
 
   const userId = session.client_reference_id;
@@ -29,6 +36,10 @@ const fulfillSubscriptionPurchase = async (sessionId: string) => {
 
   const { id, status, items, cancel_at_period_end } =
     await stripeService.retrieveSubscription(stripeSubscriptionId);
+
+  const existingSubscription = await db.query.subscriptions.findFirst({
+    where: eq(subscriptions.userId, userId),
+  });
 
   await db
     .insert(subscriptions)
@@ -59,7 +70,19 @@ const fulfillSubscriptionPurchase = async (sessionId: string) => {
       },
     });
 
-  EmailService.sendRegistrationConfirmation(user.email, user.firstName);
+  if (options.sendEmail && !existingSubscription) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      columns: { email: true, firstName: true },
+    });
+
+    if (user) {
+      await EmailService.sendRegistrationConfirmation(
+        user.email,
+        user.firstName
+      );
+    }
+  }
 };
 
 export const AuthService = { fulfillSubscriptionPurchase };

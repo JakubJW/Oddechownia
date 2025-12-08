@@ -1,12 +1,12 @@
 'use server';
 
 import { db } from '@/server/db';
-import { subscriptions, users } from '@/server/db/schema';
+import { subscriptions } from '@/server/db/schema';
 import { AuthService } from '@/server/services/auth.service';
 import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { stripeService } from '@/server/services/stripe.service';
 import { buffer } from '@/utils/requestBodyBufer';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -42,15 +42,19 @@ export async function POST(req: Request) {
             { status: 200 }
           );
         } catch (error) {
+          console.error(error);
           return NextResponse.json({ message: 'Bad request' }, { status: 400 });
         }
       }
 
       if (mode === 'subscription') {
         try {
-          await AuthService.fulfillSubscriptionPurchase(id);
+          await AuthService.fulfillSubscriptionPurchase(id, {
+            sendEmail: true,
+          });
           return NextResponse.json({ message: 'Success' }, { status: 200 });
         } catch (error) {
+          console.error(error);
           return NextResponse.json({ message: 'Bad request' }, { status: 400 });
         }
       }

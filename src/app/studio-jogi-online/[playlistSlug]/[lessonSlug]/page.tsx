@@ -58,7 +58,7 @@ export default async function PlaylistLessonPlayback({
     (!user && !playlist.isAccessibleForFree) ||
     (user && !user.hasActiveSubscription)
   ) {
-    redirect('/logowanie');
+    redirect('/wymagana-subskrypcja');
   }
 
   const currentLesson = playlist.lessons.find(
