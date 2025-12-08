@@ -42,13 +42,12 @@ jobs:
       - name: Deploy to Vercel (preview)
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           if [ -z "$VERCEL_TOKEN" ]; then
             echo "ERROR: VERCEL_TOKEN secret is not set in repo secrets."
             exit 1
           fi
           echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)..."
-          DEPLOYMENT_URL=$(vercel --token=$VERCEL_TOKEN --yes --target=preview)
-
-          echo "Assigning domain oddechownia-jakubjw-jakubjws-projects.vercel.app"
-          vercel alias set "$DEPLOYMENT_URL" oddechownia-jakubjw-jakubjws-projects.vercel.app --token=$VERCEL_TOKEN
+          vercel --prod --token=$VERCEL_TOKEN --yes
