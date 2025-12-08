@@ -1,42 +1,38 @@
-import Carousel from '@/components/Carousel/Carousel';
-import LessonCard from '@/components/LessonCard/LessonCard';
 import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
-import { LessonsService } from '@/server/services/lessons.service';
 import Link from 'next/link';
+import VideoPlayer from '../shared/VideoPlayer';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 export default async function CourseVideosPreview() {
-  const lessons = await LessonsService.getLessonsList({
-    id: [64, 54, 96, 78, 23, 90, 16, 25, 66],
-  });
-
   return (
     <section className="bg-primary-foreground">
       <Container>
-        <div className="max-w-[600px] mx-auto text-center space-y-6 mb-20">
-          <HeaderTwo>Wyrusz w duchową podróż</HeaderTwo>
-          <HeadingParagraph>
-            Różnorodna biblioteka filmów i praktyk
-          </HeadingParagraph>
-        </div>
-        <Carousel>
-          {lessons.map((lesson) => (
+        <div className="grid grid-cols-1 items-center lg:grid-cols-2">
+          <div className="max-w-[600px] mx-auto text-center mb-20">
+            <HeaderTwo className="mb-4">Wyrusz w duchową podróż</HeaderTwo>
+            <HeadingParagraph className="mb-12">
+              Różnorodna biblioteka filmów i praktyk
+            </HeadingParagraph>
             <Link
-              key={lesson.id}
-              className="h-full"
-              href={`/studio-jogi-online/${lesson.playlists[0].slug}/${lesson.slug}`}
+              href="/studio-jogi-online"
+              className={cn(
+                buttonVariants({ size: 'lg' }),
+                'text-xl h-16 rounded-full'
+              )}
             >
-              <LessonCard
-                key={lesson.id}
-                thumbnail={lesson.thumbnail}
-                name={lesson.name}
-                description={lesson.description}
-                video={lesson.video}
-                labels={lesson.labels}
-              />
+              Przeglądaj filmy <ArrowRight className="size-6" />
             </Link>
-          ))}
-        </Carousel>
+          </div>
+          <VideoPlayer
+            playbackId={'ky2un2dak00KBtDM8r4PXoU012RDN2aGMsqmcPu31Q35g'}
+            videoSeries={'Wyrusz w duchową podróż'}
+            videoTitle={'Wyrusz w duchową podróż'}
+            thumbnail="/video_thumbnail.png"
+          />
+        </div>
       </Container>
     </section>
   );
