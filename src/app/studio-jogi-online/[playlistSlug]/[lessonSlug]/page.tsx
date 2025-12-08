@@ -58,7 +58,7 @@ export default async function PlaylistLessonPlayback({
     (!user && !playlist.isAccessibleForFree) ||
     (user && !user.hasActiveSubscription)
   ) {
-    redirect('/logowanie');
+    redirect('/wymagana-subskrypcja');
   }
 
   const currentLesson = playlist.lessons.find(
@@ -70,7 +70,7 @@ export default async function PlaylistLessonPlayback({
   }
 
   return (
-    <Container className="py-4 md:py-4 lg:py-16">
+    <Container className="pt-0 lg:py-16">
       <div className="flex flex-col lg:flex-row gap-6 mb-8 -mx-4 md:-mx-0">
         <div className="w-full lg:w-2/3">
           <LessonPlayer

@@ -56,12 +56,17 @@ export const createSchedule = async (
   playlistId: number | undefined,
   scheduledAt: string
 ) => {
-  await db.insert(userPracticeSchedules).values({
-    userId,
-    lessonId,
-    playlistId,
-    scheduledAt,
-  });
+  const [result] = await db
+    .insert(userPracticeSchedules)
+    .values({
+      userId,
+      lessonId,
+      playlistId,
+      scheduledAt,
+    })
+    .returning();
+
+  return result;
 };
 
 export const updateSchedule = async (

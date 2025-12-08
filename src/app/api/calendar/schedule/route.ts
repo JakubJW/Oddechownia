@@ -29,14 +29,17 @@ export async function POST(req: NextRequest) {
 
     const { lessonId, playlistId, scheduledAt } = parsed.data;
 
-    await CalendarService.createSchedule(
+    const result = await CalendarService.createSchedule(
       user.id,
       lessonId,
       playlistId,
       scheduledAt
     );
 
-    return NextResponse.json({ success: true }, { status: 201 });
+    return NextResponse.json(
+      { message: 'Success', data: result },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Schedule API Error:', error);
     return NextResponse.json(
