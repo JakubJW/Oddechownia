@@ -8,7 +8,7 @@ export default function Login() {
         <LoginForm />
         <Image
           className="auth-hero-image object-cover object-bottom w-full hidden lg:block"
-          src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/website-assets/images/hero.png"
+          src="/auth-hero.png"
           alt="Hero image"
           height={3088}
           width={2048}
