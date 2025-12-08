@@ -32,11 +32,6 @@ export default function TidioWidget() {
       <Script
         src="//code.tidio.co/05hblgc0qsamnmve3czeijgqr8sj7yyt.js"
         strategy="lazyOnload"
-        onLoad={() => {
-          if (window.tidioChatApi) {
-            window.tidioChatApi.open();
-          }
-        }}
       />
 
       {/* <Button

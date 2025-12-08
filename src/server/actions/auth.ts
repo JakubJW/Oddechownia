@@ -43,6 +43,46 @@ export async function login(formData: FormData) {
   return { data: null, error: null };
 }
 
+export async function resetPassword(formData: FormData) {
+  const supabase = await createClient();
+
+  const email = formData.get('email') as string;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/ustaw-nowe-haslo`,
+  });
+
+  if (error) {
+    console.error(error.message);
+    return redirect('/zapomnialem-hasla?error=Could not authenticate user');
+  }
+
+  return redirect('/zapomnialem-hasla?message=Check your email for a link');
+}
+
+export async function updatePassword(formData: FormData) {
+  const password = formData.get('password') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
+
+  if (password !== confirmPassword) {
+    redirect('/ustaw-nowe-haslo?error=Passwords do not match');
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.updateUser({
+    password: password,
+  });
+
+  if (error) {
+    redirect(
+      '/ustaw-nowe-haslo?error=There was an error updating your password'
+    );
+  }
+
+  redirect('/moje-konto');
+}
+
 export async function adminSignIn(formData: FormData) {
   const supabase = await createClient();
 
