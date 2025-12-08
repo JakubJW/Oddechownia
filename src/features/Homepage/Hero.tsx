@@ -41,7 +41,7 @@ export default function Hero() {
       </Container>
       <div className="absolute top-0 z-10 homepage-hero-image">
         <Image
-          className="object-cover object-center blur-[2px]"
+          className="object-cover object-center"
           src="/hero.jpeg"
           alt="Hero image"
           fill
