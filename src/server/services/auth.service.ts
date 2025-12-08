@@ -37,9 +37,9 @@ const fulfillSubscriptionPurchase = async (
   const { id, status, items, cancel_at_period_end } =
     await stripeService.retrieveSubscription(stripeSubscriptionId);
 
-  const existingSubscription = await db.query.subscriptions.findFirst({
-    where: eq(subscriptions.userId, userId),
-  });
+  // const existingSubscription = await db.query.subscriptions.findFirst({
+  //   where: eq(subscriptions.userId, userId),
+  // });
 
   await db
     .insert(subscriptions)
