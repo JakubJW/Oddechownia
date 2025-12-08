@@ -2,12 +2,12 @@ import Image from 'next/image';
 
 export default function AboutMe() {
   return (
-    <section>
-      <div className="flex">
-        <div className="relative w-1/3 hidden md:block">
-          <div className="absolute z-10 h-full w-full bg-gradient-to-r from-transparent via-transparent to-white" />
+    <section className="bg-gradient-to-b from-primary-foreground to-white lg:from-white">
+      <div className="flex flex-col-reverse lg:flex-row">
+        <div className="relative w-full aspect-[3/4] lg:aspect-auto lg:h-auto lg:w-1/3 block">
+          <div className="absolute z-10 h-full w-full " />
           <Image
-            className="homepage-hero-image object-cover object-bottom -scale-x-100"
+            className="object-cover object-bottom -scale-x-100"
             src="/homepage_2.jpg"
             alt="Hero image"
             fill

@@ -45,7 +45,7 @@ export default function Hero() {
           src="/hero.jpeg"
           alt="Hero image"
           fill
-          priority={true}
+          priority
         />
         <div className="absolute top-0 w-full h-full bg-black sm:bg-transparent sm:bg-gradient-to-r from-black to-transparent opacity-50" />
       </div>
