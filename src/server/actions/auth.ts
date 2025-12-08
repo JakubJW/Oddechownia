@@ -185,7 +185,7 @@ export async function signUp(values: RegisterFormValues) {
       allow_promotion_codes: true,
       customer: customer.id,
       success_url: `${env.NEXT_PUBLIC_APP_URL}/rejestracja/{CHECKOUT_SESSION_ID}`,
-      cancel_url: `${env.NEXT_PUBLIC_APP_URL}/dolacz-do-nas`,
+      cancel_url: `${env.NEXT_PUBLIC_APP_URL}/moje-konto`,
       client_reference_id: user.id,
       subscription_data: {
         metadata: { userId: user.id },

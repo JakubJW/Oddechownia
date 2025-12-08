@@ -1,10 +1,15 @@
 import { PostForm } from '@/features/Spolecznosc/PostForm';
 import Container from '@/components/Container/Container';
 import { Feed } from '@/features/Spolecznosc/Feed';
-import { getUser } from '@/server/actions/user';
+import { redirect } from 'next/navigation';
+import { getRequiredUser } from '@/lib/data';
 
 const Community = async () => {
-  const user = await getUser();
+  const user = await getRequiredUser();
+
+  if (!user?.hasActiveSubscription) {
+    redirect('/wymagana-subskrypcja');
+  }
 
   return (
     <section>

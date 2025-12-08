@@ -28,14 +28,15 @@ const SubscriptionCheckoutSuccess = async ({
   const { sessionId } = await params;
 
   if (!sessionId) {
-    console.log(sessionId);
     notFound();
   }
 
   let isSuccess = false;
 
   try {
-    await AuthService.fulfillSubscriptionPurchase(sessionId);
+    await AuthService.fulfillSubscriptionPurchase(sessionId, {
+      sendEmail: false,
+    });
     isSuccess = true;
   } catch (error) {
     console.error('Fulfillment failed:', error);

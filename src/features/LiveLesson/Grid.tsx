@@ -75,6 +75,11 @@ export const Grid = ({ lessons, user }: GridProps) => {
       if (data.url) {
         window.location.href = data.url;
       }
+
+      if (!data.url) {
+        toast.success('Zapisano na zajęcia');
+        window.location.href = '/moje-konto/zajecia-na-zywo';
+      }
     },
     onError: (error) => toast.error(error.message),
   });
