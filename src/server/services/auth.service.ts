@@ -70,7 +70,7 @@ const fulfillSubscriptionPurchase = async (
       },
     });
 
-  if (options.sendEmail && !existingSubscription) {
+  if (options.sendEmail) {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId),
       columns: { email: true, firstName: true },
