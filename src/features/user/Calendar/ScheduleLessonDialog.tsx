@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { addDays, endOfMonth, format, startOfMonth, subDays } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 
@@ -33,6 +33,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { queryClient } from '@/components/QueryClientProvider';
+import { InferInsertModel } from 'drizzle-orm';
+import { userPracticeSchedules } from '@/server/db/schema';
 
 const FormSchema = z.object({
   date: z.date({
@@ -93,11 +96,20 @@ export function ScheduleLessonDialog({
         throw new Error('Failed to schedule lesson');
       }
 
-      return response.json();
+      const json = await response.json();
+
+      return json as {
+        data: InferInsertModel<typeof userPracticeSchedules>;
+        message: string;
+      };
     },
-    onSuccess: () => {
-      // Invalidate TanStack Query Cache
-      // queryClient.invalidateQueries({ queryKey: ['calendar'] });
+    onSuccess: ({ data }) => {
+      const start = subDays(startOfMonth(new Date(data.scheduledAt)), 7);
+      const end = addDays(endOfMonth(new Date(data.scheduledAt)), 7);
+
+      queryClient.invalidateQueries({
+        queryKey: ['calendar-events', start.toISOString(), end.toISOString()],
+      });
 
       toast.success('Zajęcia zaplanowane', {
         description: `Dodano "${defaultTitle}" do Twojego kalendarza.`,
