@@ -50,5 +50,5 @@ jobs:
           echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)..."
           DEPLOYMENT_URL=$(vercel --token=$VERCEL_TOKEN --yes --target=preview)
 
-          echo "Assigning domain oddechownia-jakubjw-jakubjws-projects.vercel.app"
-          vercel alias set "$DEPLOYMENT_URL" oddechownia-jakubjw-jakubjws-projects.vercel.app --token=$VERCEL_TOKEN
+          echo "Assigning domain dev.oddechownia.pl"
+          vercel alias set "$DEPLOYMENT_URL" dev.oddechownia.pl --token=$VERCEL_TOKEN
