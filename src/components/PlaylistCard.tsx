@@ -28,7 +28,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({
               <div className="space-x-2">
                 <Badge variant="secondary">
                   <CirclePlay className="h-4 w-4 mr-2" />
-                  <span>{playlist.lessons.length} lekcji</span>
+                  <span>{playlist.lessons.length} filmów</span>
                 </Badge>
               </div>
               <Link
