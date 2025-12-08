@@ -8,6 +8,7 @@ import Waitlist from '@/features/Waitlist/Waitlist';
 import ToastProvider from '@/components/ToastProvider';
 import QueryClientProvider from '@/components/QueryClientProvider';
 import { getUser } from '@/server/actions/user';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'Twoje miejsce, by złapać oddech | Oddechownia',
@@ -44,6 +45,7 @@ export default async function RootLayout({
             )}
           </ToastProvider>
         </QueryClientProvider>
+        <Analytics />
       </body>
     </html>
   );

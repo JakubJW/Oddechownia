@@ -64,6 +64,8 @@
     "@tiptap/pm": "^3.12.1",
     "@tiptap/react": "^3.12.1",
     "@tiptap/starter-kit": "^3.12.1",
+    "@types/react-slick": "^0.23.13",
+    "@vercel/analytics": "^1.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "commander": "^13.1.0",
@@ -90,8 +92,7 @@
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "^3.25.0-canary.20250211T214501",
-    "@types/react-slick": "^0.23.13"
+    "zod": "^3.25.0-canary.20250211T214501"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
