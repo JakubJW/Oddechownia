@@ -42,6 +42,8 @@ jobs:
       - name: Deploy to Vercel (production)
         env:
           VERCEL_PROD_TOKEN: ${{ secrets.VERCEL_PROD_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           if [ -z "$VERCEL_PROD_TOKEN" ]; then
             echo "ERROR: VERCEL_PROD_TOKEN secret is not set in repo secrets."
