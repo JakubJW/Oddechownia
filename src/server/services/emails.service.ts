@@ -74,7 +74,7 @@ const scheduleLiveLessonRemind = async (
 ) => {
   const lessonDate = new Date(lessonScheduledAt);
   const scheduledSendDateObject = new Date(
-    lessonDate.getTime() - 2 * 60 * 1000
+    lessonDate.getTime() - 15 * 60 * 1000
   );
   const scheduledSendDateISO = scheduledSendDateObject.toISOString();
 
