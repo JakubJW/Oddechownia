@@ -48,4 +48,4 @@ jobs:
             exit 1
           fi
           echo "Deploying branch: $(git rev-parse --abbrev-ref HEAD)..."
-          vercel --prod --token "$VERCEL_PROD_TOKEN" --yes
+          vercel --prod --token --force "$VERCEL_PROD_TOKEN" --yes
