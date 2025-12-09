@@ -1,4 +1,4 @@
-import RegisterForm from '@/features/Register/Form/RegisterForm';
+import { RegisterForm } from '@/features/Register/Form/register-form';
 import Order from '@/features/Register/Order/Order';
 import { stripeService } from '@/server/services/stripe.service';
 import Stripe from 'stripe';

@@ -1,10 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
-import { RegisterFormValues } from '../Form/schema';
+import { RegisterFormValues } from '../Form/registerFormSchema';
 import { toast } from 'sonner';
 
-const registerAPI = async (
-  values: RegisterFormValues
-): Promise<{ url: string }> => {
+export class ApiFieldError extends Error {
+  field: string;
+
+  constructor(field: string, message: string) {
+    super(message);
+    this.name = 'ApiFieldError';
+    this.field = field;
+  }
+}
+
+const registerAPI = async (values: RegisterFormValues) => {
   const formData = new FormData();
 
   formData.append('email', values.email);
@@ -23,13 +31,20 @@ const registerAPI = async (
     body: formData,
   });
 
-  const data = await res.json();
+  const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || 'Wystąpił błąd rejestracji');
+    if (res.status === 409) {
+      throw new ApiFieldError(
+        'email',
+        json.message || 'Ten e-mail jest już zajęty.'
+      );
+    }
+
+    throw new Error(json.message || 'Wystąpił błąd rejestracji');
   }
 
-  return data;
+  return json as { url: string };
 };
 
 export const useRegisterMutation = () => {
@@ -46,7 +61,9 @@ export const useRegisterMutation = () => {
       }
     },
     onError: (error) => {
-      toast.error(error.message);
+      if (!(error instanceof ApiFieldError)) {
+        toast.error(error.message);
+      }
     },
   });
 };
