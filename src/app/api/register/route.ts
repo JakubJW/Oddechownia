@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { signUp } from '@/server/actions/auth';
-import { registerFormSchema } from '@/features/Register/Form/schema';
+import { registerFormSchema } from '@/features/Register/Form/registerFormSchema';
 import { AppError, ConflictError } from '@/server/lib/errors';
 
 export async function POST(req: NextRequest) {
@@ -21,7 +21,15 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url }, { status: 201 });
   } catch (error) {
-    if (error instanceof ConflictError || error instanceof AppError) {
+    if (error instanceof ConflictError) {
+      return NextResponse.json(
+        {
+          message: error.userMessage,
+          fields: [{ email: 'Podany adres e-mail jest już zajęty' }],
+        },
+        { status: error.status }
+      );
+    } else if (error instanceof AppError) {
       return NextResponse.json(
         { message: error.userMessage },
         { status: error.status }
