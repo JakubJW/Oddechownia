@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/server';
 import { UserRoles } from '@/server/db/consts';
 import { formSchema as loginFormSchema } from '@/features/Login/Form/schema';
-import { RegisterFormValues } from '@/features/Register/Form/schema';
+import { RegisterFormValues } from '@/features/Register/Form/registerFormSchema';
 import { env } from '@/env';
 import { supabaseService } from '@/server/services/supabase.service';
 import { db } from '@/server/db';
@@ -141,8 +141,8 @@ export async function signUp(values: RegisterFormValues) {
     password: values.password,
   });
 
-  if (error && error.code === 'email_exists') {
-    throw new ConflictError('Users', 'Podany adres e-mail jest zajęty.');
+  if (error && error.code === 'user_already_exists') {
+    throw new ConflictError('Users', 'Podany adres e-mail jest już zajęty.');
   }
 
   if (!user) {

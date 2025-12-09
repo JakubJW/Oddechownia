@@ -17,12 +17,13 @@ import {
   registerDefaultValues,
   registerFormSchema,
   RegisterFormValues,
-} from './schema';
+} from './registerFormSchema';
 import { cn } from '@/lib/utils';
 import { useRegisterMutation } from '../hooks/useRegisterMutation';
 import { Loader2 } from 'lucide-react';
+import { ApiFieldError } from '../hooks/useRegisterMutation';
 
-export default function RegisterForm({ className }: { className?: string }) {
+export const RegisterForm = ({ className }: { className?: string }) => {
   const mutation = useRegisterMutation();
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
@@ -31,7 +32,16 @@ export default function RegisterForm({ className }: { className?: string }) {
   });
 
   const onSubmit = async (values: RegisterFormValues) => {
-    mutation.mutate(values);
+    mutation.mutate(values, {
+      onError: (error) => {
+        if (error instanceof ApiFieldError) {
+          form.setError(error.field as keyof RegisterFormValues, {
+            type: 'manual',
+            message: error.message,
+          });
+        }
+      },
+    });
   };
 
   return (
@@ -205,4 +215,4 @@ export default function RegisterForm({ className }: { className?: string }) {
       </Form>
     </div>
   );
-}
+};
