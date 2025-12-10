@@ -1,11 +1,11 @@
-import { ForgotPasswordForm } from '@/features/zapomnialem-hasla/form';
+import { RequestPasswordResetForm } from '@/features/zapomnialem-hasla/request-reset-password-form';
 import Image from 'next/image';
 
 const ForgotPassword = () => {
   return (
     <section>
       <div className="grid lg:grid-cols-2">
-        <ForgotPasswordForm />
+        <RequestPasswordResetForm />
         <Image
           className="auth-hero-image object-cover object-bottom w-full hidden lg:block"
           src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/website-assets/images/hero.png"
