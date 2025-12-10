@@ -14,6 +14,7 @@ import { stripeService } from '@/server/services/stripe.service';
 import { eq } from 'drizzle-orm';
 import { AppError, ConflictError } from '../lib/errors';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { requestPasswordResetFormSchema } from '@/features/zapomnialem-hasla/requestResetPasswordFormSchema';
 
 export const changePasswordAuthenticated = async (password: string) => {
   const { error } = await supabaseService.changePasswordAuthenticated(password);
@@ -43,44 +44,24 @@ export async function login(formData: FormData) {
   return { data: null, error: null };
 }
 
-export async function resetPassword(formData: FormData) {
+export async function requestPasswordReset(email: string) {
   const supabase = await createClient();
 
-  const email = formData.get('email') as string;
-
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/ustaw-nowe-haslo`,
+    redirectTo: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback?next=/ustaw-nowe-haslo`,
   });
 
-  if (error) {
-    console.error(error.message);
-    return redirect('/zapomnialem-hasla?error=Could not authenticate user');
-  }
-
-  return redirect('/zapomnialem-hasla?message=Check your email for a link');
+  if (error) throw new Error(error);
 }
 
-export async function updatePassword(formData: FormData) {
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
-
-  if (password !== confirmPassword) {
-    redirect('/ustaw-nowe-haslo?error=Passwords do not match');
-  }
-
+export async function updatePassword(password: string) {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.updateUser({
     password: password,
   });
 
-  if (error) {
-    redirect(
-      '/ustaw-nowe-haslo?error=There was an error updating your password'
-    );
-  }
-
-  redirect('/moje-konto');
+  if (error) throw new Error(error);
 }
 
 export async function adminSignIn(formData: FormData) {
