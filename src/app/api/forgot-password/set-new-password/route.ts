@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
     const user = await getUser();
 
     if (!user) {
-      return NextResponse.json('Unauthenticated', { status: 401 });
+      return NextResponse.json('Aby wykonać tę akcję musisz być zalogowany.', {
+        status: 401,
+      });
     }
 
     const raw = await req.formData();
