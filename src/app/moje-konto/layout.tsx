@@ -2,7 +2,12 @@ import Container from '@/components/Container/Container';
 import TidioWidget from '@/features/user/chat';
 import { getRequiredUser } from '@/lib/data';
 import { Wind } from 'lucide-react';
+import { Metadata } from 'next';
 import Script from 'next/script';
+
+export const metadata: Metadata = {
+  robots: 'noindex,nofollow',
+};
 
 export default async function UserLayout({
   children,

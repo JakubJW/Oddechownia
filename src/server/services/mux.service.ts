@@ -25,10 +25,22 @@ class MuxService {
     return MuxService._instance;
   }
 
+  public async listAssets() {
+    try {
+      const assets = await this.mux.video.assets.list();
+
+      return assets;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   public async deleteAsset(assetId: string) {
     try {
       await this.mux.video.assets.delete(assetId);
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   public async createUpload(
