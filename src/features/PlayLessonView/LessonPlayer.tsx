@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import { useProgressMutation } from './hooks/useProgressMutation';
 
 interface LessonPlayerProps {
+  signedPlaybackToken: string;
   playbackId?: string;
   lessonId: number;
   playlistId?: number;
@@ -16,6 +17,7 @@ interface LessonPlayerProps {
 }
 
 const DynamicLessonPlayer = ({
+  signedPlaybackToken,
   playbackId,
   lessonId,
   playlistId,
@@ -53,6 +55,9 @@ const DynamicLessonPlayer = ({
         poster={thumbnail}
         title={videoTitle}
         streamType="on-demand"
+        tokens={{
+          playback: signedPlaybackToken,
+        }}
         playbackId={playbackId}
         startTime={startTime}
         metadata={{ video_series: videoSeries, video_title: videoTitle }}
