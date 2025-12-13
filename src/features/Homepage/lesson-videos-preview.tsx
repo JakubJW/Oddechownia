@@ -9,6 +9,7 @@ import { db } from '@/server/db';
 import { inArray } from 'drizzle-orm';
 import { lessons } from '@/server/db/schema';
 import VideoPlayer from '../shared/VideoPlayer';
+import { supabaseService } from '@/server/services/supabase.service';
 
 export default async function CourseVideosPreview() {
   const featuredLessonIds = await ContentBlocksService.getFeaeturedLessonIds();
@@ -39,6 +40,13 @@ export default async function CourseVideosPreview() {
           {featuredLessons.map((lesson) => (
             <VideoPlayer
               key={lesson.id}
+              thumbnail={
+                supabaseService.getFileUrl(
+                  lesson.thumbnail.name,
+                  lesson.thumbnail.bucket,
+                  lesson.thumbnail.path
+                ).data
+              }
               playbackId={lesson.video!.publicPlaybackId!}
             />
           ))}
