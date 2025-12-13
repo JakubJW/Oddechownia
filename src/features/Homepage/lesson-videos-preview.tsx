@@ -1,12 +1,25 @@
 import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
 import Link from 'next/link';
-import VideoPlayer from '../shared/VideoPlayer';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import Carousel from '@/components/Carousel/Carousel';
+import { ContentBlocksService } from '@/server/services/content-blocks.service';
+import { db } from '@/server/db';
+import { inArray } from 'drizzle-orm';
+import { lessons } from '@/server/db/schema';
+import VideoPlayer from '../shared/VideoPlayer';
 
 export default async function CourseVideosPreview() {
+  const featuredLessonIds = await ContentBlocksService.getFeaeturedLessonIds();
+  const featuredLessons = await db.query.lessons.findMany({
+    where: inArray(lessons.id, featuredLessonIds),
+    with: {
+      video: true,
+      thumbnail: true,
+    },
+  });
+
   return (
     <section className="bg-primary-foreground">
       <Container className="flex flex-col">
@@ -23,30 +36,12 @@ export default async function CourseVideosPreview() {
           </HeadingParagraph>
         </div>
         <Carousel>
-          <VideoPlayer
-            playbackId={'ky2un2dak00KBtDM8r4PXoU012RDN2aGMsqmcPu31Q35g'}
-            videoSeries={'Wyrusz w duchową podróż'}
-            videoTitle={'Wyrusz w duchową podróż'}
-            thumbnail="/video_thumbnail.png"
-          />
-          <VideoPlayer
-            playbackId={'ky2un2dak00KBtDM8r4PXoU012RDN2aGMsqmcPu31Q35g'}
-            videoSeries={'Wyrusz w duchową podróż'}
-            videoTitle={'Wyrusz w duchową podróż'}
-            thumbnail="/video_thumbnail.png"
-          />
-          <VideoPlayer
-            playbackId={'ky2un2dak00KBtDM8r4PXoU012RDN2aGMsqmcPu31Q35g'}
-            videoSeries={'Wyrusz w duchową podróż'}
-            videoTitle={'Wyrusz w duchową podróż'}
-            thumbnail="/video_thumbnail.png"
-          />
-          <VideoPlayer
-            playbackId={'ky2un2dak00KBtDM8r4PXoU012RDN2aGMsqmcPu31Q35g'}
-            videoSeries={'Wyrusz w duchową podróż'}
-            videoTitle={'Wyrusz w duchową podróż'}
-            thumbnail="/video_thumbnail.png"
-          />
+          {featuredLessons.map((lesson) => (
+            <VideoPlayer
+              key={lesson.id}
+              playbackId={lesson.video!.publicPlaybackId!}
+            />
+          ))}
         </Carousel>
         <Link
           href="/studio-jogi-online"
