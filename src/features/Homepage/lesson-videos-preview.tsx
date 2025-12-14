@@ -23,12 +23,10 @@ export default async function CourseVideosPreview() {
 
   return (
     <section className="bg-primary-foreground">
-      <Container className="flex flex-col">
-        <div className="max-w-[700px] mx-auto mb-20">
-          <HeaderTwo className="mb-4 text-center">
-            Wyrusz w duchową podróż
-          </HeaderTwo>
-          <HeadingParagraph className="mb-12">
+      <Container className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-16 justify-center">
+        <div className="flex flex-col justify-center max-w-[700px] mx-auto mb-20">
+          <HeaderTwo className="mb-4">Wyrusz w duchową podróż</HeaderTwo>
+          <HeadingParagraph>
             Oddechownia narodziła się z tęsknoty za tym, co proste. Czekają tu
             na Ciebie łagodne treści na różne, wewnętrzne sezony: sekwencje
             wzmacniające ciało, wieczorne relaksacje, spotkania z oddechem oraz
@@ -36,26 +34,59 @@ export default async function CourseVideosPreview() {
             Wszystko po to, by krok po kroku wracać do domu. Do siebie.
           </HeadingParagraph>
         </div>
-        <Carousel>
+        <Carousel
+          hideArrows
+          settings={{
+            infinite: false,
+            rows: 2,
+            slidesPerRow: 2,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            responsive: [
+              {
+                breakpoint: 640,
+                settings: {
+                  rows: 1,
+                  slidesPerRow: 1,
+                  slidesToShow: 1,
+                  slidesToScroll: 1,
+                  infinite: false,
+                },
+              },
+              {
+                breakpoint: 1280,
+                settings: {
+                  rows: 2,
+                  slidesPerRow: 2,
+                  slidesToShow: 1,
+                  slidesToScroll: 1,
+                  infinite: false,
+                },
+              },
+            ],
+          }}
+        >
           {featuredLessons.map((lesson) => (
-            <VideoPlayer
-              key={lesson.id}
-              thumbnail={
-                supabaseService.getFileUrl(
-                  lesson.thumbnail.name,
-                  lesson.thumbnail.bucket,
-                  lesson.thumbnail.path
-                ).data
-              }
-              playbackId={lesson.video!.publicPlaybackId!}
-            />
+            <div key={lesson.id}>
+              <VideoPlayer
+                thumbnail={
+                  supabaseService.getFileUrl(
+                    lesson.thumbnail.name,
+                    lesson.thumbnail.bucket,
+                    lesson.thumbnail.path
+                  ).data
+                }
+                playbackId={lesson.video!.publicPlaybackId!}
+              />
+            </div>
           ))}
         </Carousel>
         <Link
           href="/studio-jogi-online"
           className={cn(
             buttonVariants({ size: 'lg' }),
-            'text-xl h-16 rounded-full self-end'
+            'text-xl h-16 rounded-full col-start-2 place-self-end'
           )}
         >
           Przeglądaj filmy

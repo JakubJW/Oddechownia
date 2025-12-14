@@ -17,7 +17,7 @@ const DynamicVideoPlayer = ({
   thumbnail,
 }: VideoPlayerProps) => {
   return (
-    <div className=" mb-4 md:mb-8 md:rounded-xl overflow-hidden aspect-video">
+    <div className=" mb-4 md:mb-8 rounded-xl overflow-hidden aspect-video">
       <MuxPlayer
         poster={thumbnail}
         title={videoTitle}
