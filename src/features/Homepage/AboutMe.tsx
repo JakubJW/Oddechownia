@@ -35,7 +35,7 @@ export default function AboutMe() {
               żywą i dostępną dla każdego. Z tej potrzeby i z tęsknoty za tym,
               co proste, narodziła się Oddechownia: miejsce, w którym obok
               wspierających praktyk dla ciała, znajdziesz również odżywcze
-              treści z pogranicza filozofii jogi, mitologii indyjska, ajurwedy
+              treści z pogranicza filozofii jogi, mitologii indyjskiej, ajurwedy
               czy cykliczności.
               <br />
               <br />
