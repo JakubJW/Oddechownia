@@ -1,8 +1,13 @@
+import type { Metadata } from 'next';
 import Container from '@/components/Container/Container';
 import Link from 'next/link';
 import { getUser } from '@/server/actions/user';
 import { UserRoles } from '@/server/db/consts';
 import { redirect } from 'next/navigation';
+
+export const metadata: Metadata = {
+  robots: 'noindex,nofollow',
+};
 
 export default async function AdminLayout({
   children,
@@ -28,6 +33,8 @@ export default async function AdminLayout({
             <Link href="/admin/playlisty">Playlisty</Link>
             <Link href="/admin/lekcje">Lekcje</Link>
             <Link href="/admin/zajecia-na-zywo">Zajęcia na żywo</Link>
+            <Link href="/admin/landing-page">Landing page</Link>
+            <Link href="/admin/filmy">Filmy</Link>
           </div>
           <div className="col-span-10">{children}</div>
         </div>

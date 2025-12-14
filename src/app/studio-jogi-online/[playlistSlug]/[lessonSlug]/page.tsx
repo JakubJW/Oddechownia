@@ -17,6 +17,7 @@ import { getRequiredUser } from '@/lib/data';
 import { ProgressBar } from '@/features/shared/ProgressBar';
 import { LessonLabel } from '@/components/LessonLabel';
 import { ExpandableText } from '@/features/shared/expandable-text';
+import { signMuxPlaybackId } from '@/server/lib/mux';
 
 export async function generateMetadata({
   params,
@@ -69,13 +70,18 @@ export default async function PlaylistLessonPlayback({
     notFound();
   }
 
+  const playbackToken = await signMuxPlaybackId(
+    currentLesson.video!.privatePlaybackId!
+  );
+
   return (
     <Container className="pt-0 lg:py-16">
       <div className="flex flex-col lg:flex-row gap-6 mb-8 -mx-4 md:-mx-0">
         <div className="w-full lg:w-2/3">
           <LessonPlayer
+            signedPlaybackToken={playbackToken}
             thumbnail={currentLesson.thumbnail}
-            playbackId={currentLesson.video?.publicPlaybackId}
+            playbackId={currentLesson.video?.privatePlaybackId}
             videoTitle={currentLesson.name}
             lessonId={currentLesson.id}
             playlistId={playlist.id}
