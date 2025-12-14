@@ -23,8 +23,8 @@ export default async function CourseVideosPreview() {
 
   return (
     <section className="bg-primary-foreground">
-      <Container className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-16 justify-center">
-        <div className="flex flex-col justify-center max-w-[700px] mx-auto mb-20">
+      <Container className="pt-32 flex flex-col lg:grid lg:grid-cols-2  justify-center">
+        <div className="flex flex-col justify-center mx-auto mb-20 px-4 sm:pr-24">
           <HeaderTwo className="mb-4">Wyrusz w duchową podróż</HeaderTwo>
           <HeadingParagraph>
             Oddechownia narodziła się z tęsknoty za tym, co proste. Czekają tu
