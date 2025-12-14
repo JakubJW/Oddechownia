@@ -21,7 +21,7 @@ export default function Hero() {
                 gdziekolwiek jesteś
               </span>
             </div>
-            <p className=" leading-relaxed text-justify text-xl">
+            <p className="leading-relaxed text-justify text-xl">
               Pragniesz, aby joga rozgościła się w Twojej codzienności? W
               Oddechowni poznasz tę wspaniałą praktykę w pełni - od pracy z
               ciałem, przez oddech i medytację, po filozofię i duchowe korzenie.

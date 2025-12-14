@@ -47,7 +47,7 @@ export default function AboutMe() {
               nieustannie swoją praktykę oraz nauczanie.
               <br />
               <br />
-              Namaste, Weronika
+              Namaste
               <br />
               Weronika
             </p>

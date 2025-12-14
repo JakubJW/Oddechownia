@@ -26,13 +26,25 @@ export default async function CourseVideosPreview() {
       <Container className="pt-32 flex flex-col lg:grid lg:grid-cols-2  justify-center">
         <div className="flex flex-col justify-center mx-auto mb-20 px-4 sm:pr-24">
           <HeaderTwo className="mb-4">Wyrusz w duchową podróż</HeaderTwo>
-          <HeadingParagraph>
-            Oddechownia narodziła się z tęsknoty za tym, co proste. Czekają tu
-            na Ciebie łagodne treści na różne, wewnętrzne sezony: sekwencje
-            wzmacniające ciało, wieczorne relaksacje, spotkania z oddechem oraz
-            wykłady i opowieści z pogranicza filozofii, mitologii i anatomii.
-            Wszystko po to, by krok po kroku wracać do domu. Do siebie.
-          </HeadingParagraph>
+          <p className="mb-8 text-lg leasing-relaxed font-light">
+            Oddechownia to czuła przestrzeń, w której łączymy ruch z bezruchem,
+            wiedzę z doświadczaniem, a duchowość z codziennością. To pierwsze w
+            Polsce studio jogi online, w którym tak głęboko zanurzamy się
+            również w jogę poza matą: anatomię subtelną, filozofię jogi,
+            mitologię indyjską, ajurwedę czy cykliczność. W ramach subskrypcji
+            otrzymujesz dostęp do wszystkich treści: praktyk asan, medytacji,
+            jogi nidry, spotkań z oddechem oraz inspirujących wykładów i
+            opowieści. Sprawdź próbkę i wybierz swoją pierwszą praktykę.
+          </p>
+          <Link
+            href="/studio-jogi-online"
+            className={cn(
+              buttonVariants({ size: 'lg' }),
+              'text-xl h-16 rounded-full self-start'
+            )}
+          >
+            Przeglądaj filmy
+          </Link>
         </div>
         <Carousel
           hideArrows
@@ -82,15 +94,6 @@ export default async function CourseVideosPreview() {
             </div>
           ))}
         </Carousel>
-        <Link
-          href="/studio-jogi-online"
-          className={cn(
-            buttonVariants({ size: 'lg' }),
-            'text-xl h-16 rounded-full col-start-2 place-self-end'
-          )}
-        >
-          Przeglądaj filmy
-        </Link>
       </Container>
     </section>
   );
