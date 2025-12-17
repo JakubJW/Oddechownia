@@ -1,5 +1,10 @@
 import LoginForm from '@/features/Login/Form/LoginForm';
+import { Metadata } from 'next';
 import Image from 'next/image';
+
+export const metadata: Metadata = {
+  robots: 'noindex,nofollow',
+};
 
 export default function Login() {
   return (
