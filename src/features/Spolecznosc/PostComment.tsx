@@ -78,7 +78,9 @@ export const PostComment = ({ comment, user }: Props) => {
       />
       <div className="flex-grow">
         <div className="bg-muted space-y-0.5 p-2 rounded-md">
-          <p className="text-sm font-semibold">{comment.author}</p>
+          <p className="text-sm font-semibold">
+            {comment.author.split(' ')[0]}
+          </p>
           <p className="text-sm text-muted-foreground">{comment.content}</p>
         </div>
         <span className="text-muted-foreground font-light text-xs">
