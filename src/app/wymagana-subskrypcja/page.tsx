@@ -2,6 +2,11 @@ import { SubscriptionRequiredCard } from '@/features/subscription-required-card'
 import Image from 'next/image';
 import { env } from '@/env';
 import { getRequiredUser } from '@/lib/data';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  robots: 'noindex,nofollow',
+};
 
 const SubscriptionRequired = async () => {
   const user = await getRequiredUser();
@@ -15,7 +20,7 @@ const SubscriptionRequired = async () => {
         />
         <Image
           className="auth-hero-image object-cover object-bottom w-full hidden lg:block"
-          src="/auth-hero.png"
+          src="/hero2.jpg"
           alt="Hero image"
           height={3088}
           width={2048}

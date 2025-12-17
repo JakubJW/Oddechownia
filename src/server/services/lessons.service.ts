@@ -18,7 +18,7 @@ import { AttachmentsService } from './attachments.service';
 import { PlaylistLessonSchema } from '../models/playlistLesson.models';
 import { VideoSchema } from '../models/video.models';
 import { FileSchema } from '../models/file.models';
-import { and, desc, eq, inArray, lt } from 'drizzle-orm';
+import { and, desc, eq, lt } from 'drizzle-orm';
 
 const transformLessonToDTO = (
   lessons: LessonBaseSchema[],
@@ -236,37 +236,33 @@ const getLessonForAdminEdit = async (filters?: LessonFilters) => {
 const selectUserFavoriteLessons = async (
   userId: string,
   cursor: string | null,
-  perPage: number = 3,
-  filters?: LessonFilters
+  perPage: number
 ) => {
-  const favoritedLessonIds = db
-    .select({ id: userFavoriteLessons.lessonId })
-    .from(userFavoriteLessons)
-    .where(
-      and(
-        eq(userFavoriteLessons.userId, userId),
-        cursor ? lt(userFavoriteLessons.createdAt, cursor) : undefined
-      )
-    )
-    .orderBy(desc(userFavoriteLessons.createdAt))
-    .limit(perPage);
+  const cursorCondition = undefined;
 
-  const where = filterService.buildWhereCondition(lessons, filters);
+  if (cursor) {
+    lt(userFavoriteLessons.createdAt, cursor);
+  }
 
-  const result = await db.query.lessons.findMany({
-    where: and(inArray(lessons.id, favoritedLessonIds), where),
+  const result = await db.query.userFavoriteLessons.findMany({
+    where: and(eq(userFavoriteLessons.userId, userId), cursorCondition),
+    limit: perPage,
+    orderBy: desc(userFavoriteLessons.createdAt),
     with: {
-      video: true,
-      thumbnail: true,
-      userFavoriteLessons: true,
-      labels: {
+      lesson: {
         with: {
-          label: true,
-        },
-      },
-      playlistLessons: {
-        with: {
-          playlist: true,
+          video: true,
+          thumbnail: true,
+          labels: {
+            with: {
+              label: true,
+            },
+          },
+          playlistLessons: {
+            with: {
+              playlist: true,
+            },
+          },
         },
       },
     },
@@ -280,7 +276,7 @@ type SelectUserFavoriteLessons = Awaited<
 >;
 
 const transformToFavoriteLessonsDTO = (lessons: SelectUserFavoriteLessons) => {
-  return lessons.map((lesson) => ({
+  return lessons.map(({ createdAt, lesson }) => ({
     id: lesson.id,
     name: lesson.name,
     description: lesson.description,
@@ -291,7 +287,7 @@ const transformToFavoriteLessonsDTO = (lessons: SelectUserFavoriteLessons) => {
       lesson.thumbnail.bucket,
       lesson.thumbnail.path
     ).data,
-    addedAt: lesson.userFavoriteLessons.map((lesson) => lesson.createdAt)[0],
+    createdAt,
     playlists: lesson.playlistLessons.map((lessonPlaylist) => ({
       ...lessonPlaylist.playlist,
     })),
@@ -306,15 +302,9 @@ const transformToFavoriteLessonsDTO = (lessons: SelectUserFavoriteLessons) => {
 const getUserFavoriteLessons = async (
   userId: string,
   cursor: string | null,
-  perPage: number = 6,
-  filters?: LessonFilters
+  perPage: number
 ) => {
-  const result = await selectUserFavoriteLessons(
-    userId,
-    cursor,
-    perPage,
-    filters
-  );
+  const result = await selectUserFavoriteLessons(userId, cursor, perPage);
 
   return transformToFavoriteLessonsDTO(result);
 };

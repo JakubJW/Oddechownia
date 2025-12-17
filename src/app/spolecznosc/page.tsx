@@ -7,7 +7,7 @@ import { getRequiredUser } from '@/lib/data';
 const Community = async () => {
   const user = await getRequiredUser();
 
-  if (!user?.hasActiveSubscription) {
+  if (!user.hasActiveSubscription) {
     redirect('/wymagana-subskrypcja');
   }
 
