@@ -17,21 +17,25 @@ export async function GET(req: NextRequest) {
 
     const searchParams = getQueryParams(req.url);
     const cursor = decodeCursor(searchParams.cursor);
-    const perPage = 3;
+    const perPage = 8;
 
-    const result = await LessonsService.getUserFavoriteLessons(user.id, String(cursor), perPage);
+    const result = await LessonsService.getUserFavoriteLessons(
+      user.id,
+      String(cursor),
+      perPage
+    );
 
-   return NextResponse.json({
-         data: {
-           data: result,
-           nextCursor:
-             result.length === perPage
-               ? encodeCursor(result[result.length - 1].addedAt)
-               : null,
-         },
-         success: true,
-         error: null,
-       });
+    return NextResponse.json({
+      data: {
+        data: result,
+        nextCursor:
+          result.length === perPage
+            ? encodeCursor(result[result.length - 1].createdAt)
+            : null,
+      },
+      success: true,
+      error: null,
+    });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

@@ -4,6 +4,11 @@ import { stripeService } from '@/server/services/stripe.service';
 import Stripe from 'stripe';
 import Image from 'next/image';
 import { env } from '@/env';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  robots: 'noindex,nofollow',
+};
 
 export default async function SignIn() {
   const subscriptionPrice = await stripeService.getPrice(

@@ -6,7 +6,7 @@ export default async function MyData({}) {
   const user = await getRequiredUser();
 
   return (
-    <section className="pt-10">
+    <section>
       <div className="mx-auto max-w-3xl space-y-24">
         <div className="space-y-4">
           <p className="font-bold text-xl mb-4">Moje dane</p>
