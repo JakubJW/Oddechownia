@@ -10,7 +10,7 @@ const getRecentPosts = async (): Promise<RecentPostDTO[]> => {
         author: { columns: { firstName: true, lastName: true, role: true } },
       },
       orderBy: desc(posts.createdAt),
-      limit: 8,
+      limit: 3,
     });
 
     const transformedResult = result.map((post) => ({
