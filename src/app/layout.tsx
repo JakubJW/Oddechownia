@@ -9,7 +9,8 @@ import ToastProvider from '@/components/ToastProvider';
 import QueryClientProvider from '@/components/QueryClientProvider';
 import { getUser } from '@/server/actions/user';
 import { Analytics } from '@vercel/analytics/next';
-import TidioWidget from '@/features/user/chat';
+import Chat from '@/features/scripts/chat';
+import MailerLiteForms from '@/features/scripts/mailer-lite-forms';
 
 export const metadata: Metadata = {
   title: 'Twoje miejsce, by złapać oddech | Oddechownia',
@@ -47,7 +48,8 @@ export default async function RootLayout({
           </ToastProvider>
         </QueryClientProvider>
         <Analytics />
-        <TidioWidget />
+        <Chat />
+        <MailerLiteForms />
       </body>
     </html>
   );
