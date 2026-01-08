@@ -13,8 +13,31 @@ export interface NavigationProps {
 
 export default function Navigation({ user }: NavigationProps) {
   return (
-    <header className="fixed top-0 z-40 h-[64px] w-full bg-matcha flex items-center justify-between">
-      <div className="container h-full mx-auto px-4">
+    <header className="fixed top-0 z-40 w-full bg-matcha">
+      {user && user.subscriptionStatus === 'past_due' && (
+        <div className="bg-yellow-300 text-sm text-center py-1">
+          Podczas odnowy subskrypcji wystąpił problem z płatnością. Sprawdź, czy
+          masz środki na koncie lub{' '}
+          <form
+            action="/api/stripe/create-checkout-portal"
+            method="POST"
+            className="inline"
+          >
+            <input
+              type="hidden"
+              name="customerId"
+              value={user.stripeCustomerId!}
+            />
+            <button
+              className="underline"
+              type="submit"
+            >
+              zaktualizuj metodę płatności tutaj.
+            </button>
+          </form>
+        </div>
+      )}
+      <div className="container h-[64px] mx-auto px-4">
         <div className="flex h-full justify-between items-center">
           <nav className="h-full">
             <ul className="h-full flex justify-center sm:justify-start items-center">
