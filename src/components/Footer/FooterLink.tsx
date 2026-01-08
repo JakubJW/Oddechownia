@@ -7,6 +7,20 @@ export interface FooterLinkProps {
 }
 
 export default function FooterLink({ href, content, target }: FooterLinkProps) {
+  if (target === '_blank') {
+    return (
+      <li>
+        <a
+          className="block text-white text-lg"
+          href={href}
+          target={target}
+        >
+          {content}
+        </a>
+      </li>
+    );
+  }
+
   return (
     <li>
       <Link
