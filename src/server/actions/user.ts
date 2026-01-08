@@ -44,7 +44,10 @@ export const getUser = cache(async () => {
     const subscription = publicUser?.subscription;
     const isAdmin = publicUser.role === UserRoles.ADMIN;
 
-    const hasActiveSubscription = subscription?.status === 'active' || isAdmin;
+    const hasActiveSubscription =
+      subscription?.status === 'active' ||
+      subscription?.status === 'past_due' ||
+      isAdmin;
 
     return {
       ...publicUser,
