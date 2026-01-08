@@ -3,6 +3,7 @@ import { nonEmptyString } from '@/shared/formUtils';
 import { ERROR_MESSAGES } from '@/shared/messages';
 
 export const createformSchema = z.object({
+  thumbnail: z.any(),
   title: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   date: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   time: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
@@ -43,3 +44,6 @@ export const defaultValues: z.infer<typeof createformSchema> = {
   description: undefined,
   meetingLink: undefined,
 };
+
+export type CreateLiveLessonValues = z.infer<typeof createformSchema>;
+export type UpdateLiveLessonValues = z.infer<typeof updateFormSchema>;

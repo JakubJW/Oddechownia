@@ -20,32 +20,23 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { formatDateForInput, formatTimeForInput } from '@/lib/utils';
-import {
-  AdminLiveLessonRecordDTO,
-  UpdateLiveLessonResponse,
-} from '@/server/models/liveLesson.models';
+import { AdminLiveLessonRecordDTO } from '@/server/models/liveLesson.models';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { memo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { updateFormSchema } from './Form/schema';
-import { UseMutationResult } from '@tanstack/react-query';
+import { updateFormSchema, UpdateLiveLessonValues } from './Form/schema';
+import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
 
 const UpdateDialog = ({
   liveLesson,
   open,
   setOpen,
-  mutation,
 }: {
   liveLesson: AdminLiveLessonRecordDTO;
   open: boolean;
   setOpen: (state: boolean) => void;
-  mutation: UseMutationResult<
-    UpdateLiveLessonResponse,
-    Error,
-    { id: string; values: z.infer<typeof updateFormSchema> }
-  >;
 }) => {
+  const { updateMutation } = useLiveLessonMutations();
   const form = useForm({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
@@ -70,9 +61,9 @@ const UpdateDialog = ({
     form.setValue('scheduledAt', new Date(`${date}T${time}`).toISOString());
   }, [date, time, form]);
 
-  const onSubmit = async (values: z.infer<typeof updateFormSchema>) => {
+  const onSubmit = async (values: UpdateLiveLessonValues) => {
     if (!liveLesson) return;
-    mutation.mutate({ id: liveLesson.id, values });
+    updateMutation.mutate({ id: liveLesson.id, values });
   };
 
   return (
@@ -87,17 +78,17 @@ const UpdateDialog = ({
         >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Utwórz nowe zajęcia na żywo</DialogTitle>
+              <DialogTitle>Edytuj zajęcia na żywo</DialogTitle>
               <DialogDescription>
-                Dodaj informacje o nadchodzących zajęciach na żywo.
+                Edytuj informacje o nadchodzących zajęciach na żywo.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="flex flex-col gap-4 py-4">
               <FormField
                 control={form.control}
                 name="scheduledAt"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="hidden">
                     <FormControl>
                       <Input
                         type="string"

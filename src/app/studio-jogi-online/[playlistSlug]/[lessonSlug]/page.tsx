@@ -34,7 +34,7 @@ export async function generateMetadata({
   });
 
   return {
-    title: `${lessonMetadata?.name} | ${playlistMetadata?.name} | Studio Jogi Online | Oddechownia`,
+    title: `${lessonMetadata?.name} | ${playlistMetadata?.name} | Studio Jogi Online`,
     description: lessonMetadata?.description,
   };
 }

@@ -18,13 +18,13 @@ const navbarLinks = [
 export const footerLinks = [
   {
     content: 'Regulamin',
-    href: '/regulamin.pdf',
+    href: '/documents/regulamin.pdf',
     target: '_blank',
     allowGuest: true,
   },
   {
     content: 'Polityka prywatności',
-    href: '/polityka_prywatnosci.pdf',
+    href: '/documents/polityka-prywatnosci.pdf',
     target: '_blank',
     allowGuest: true,
   },

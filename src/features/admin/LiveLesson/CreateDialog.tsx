@@ -9,78 +9,85 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Plus, Loader2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
-  FormMessage,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createformSchema, defaultValues } from './Form/schema';
-import { z } from 'zod';
+import { Loader2, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { queryClient } from '@/components/QueryClientProvider';
-import { CreateLiveLessonResponse } from '@/server/models/liveLesson.models';
-import { toast } from 'sonner';
-
-const createLiveLesson = async (values: z.infer<typeof createformSchema>) => {
-  const res = await fetch(`/api/live-lessons/create`, {
-    method: 'POST',
-    body: JSON.stringify(values),
-  });
-
-  if (!res.ok) {
-    const errorBody = await res
-      .json()
-      .catch(() => ({ message: res.statusText }));
-
-    throw new Error(
-      `Failed to fetch comments (Status ${res.status}): ${
-        errorBody.message || 'Unknown error'
-      }`
-    );
-  }
-
-  const json = await res.json();
-  return json.data as CreateLiveLessonResponse;
-};
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import FileUpload from '@/components/file-upload';
+import { createformSchema, defaultValues } from './Form/schema';
+import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
+import { useImageCompression } from '@/hooks/useImageCompression';
+import { createClient } from '@/supabase/client';
 
 const CreateUpdateDialog = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { createMutation } = useLiveLessonMutations();
+  const { compress } = useImageCompression();
   const form = useForm({
     resolver: zodResolver(createformSchema),
     defaultValues,
     mode: 'all',
   });
 
-  const mutation = useMutation({
-    mutationFn: (values: z.infer<typeof createformSchema>) =>
-      createLiveLesson(values),
-    onSuccess: () => {
-      setDialogOpen(false);
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ['live-lessons'] });
-    },
-    onError: (error) => toast.error(error.message),
-  });
-
   const [date, time] = form.watch(['date', 'time']);
 
   useEffect(() => {
     if (!date || !time) return;
-    
+
     form.setValue('scheduledAt', new Date(`${date}T${time}`).toISOString());
   }, [date, time, form]);
 
   const onSubmit = async (values: z.infer<typeof createformSchema>) => {
-    mutation.mutate({ ...values });
+    createMutation.mutate(values);
+  };
+
+  const handleFilesDrop = async (files: File[]) => {
+    //1. compress files
+    const compressed = await Promise.all(
+      files.map(async (file) => await compress(file))
+    );
+
+    //2. create initial rows in files table and return signed upload urls
+    const payload = compressed.map((blob, index) => {
+      const originalFile = files[index];
+      const name = originalFile.name.replace(/\.[^/.]+$/, '') + '.webp';
+      return { name, type: blob.type };
+    });
+
+    const res = await fetch('/api/files/upload/prepare', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+
+    const json = await res.json();
+
+    //3. upload files directly to supabase
+    const supabase = createClient();
+    const uploadPromises = json.data.map(async (item, index) => {
+      const fileToUpload = compressed[index];
+      const result = await supabase.storage
+        .from('public-assets')
+        .uploadToSignedUrl(item.path, item.token, fileToUpload);
+
+      return result;
+    });
+
+    const response = await Promise.all(uploadPromises);
+
+    //4. update initial rows with final data after success
+
+    //5. return created file ids to include them in form submission
   };
 
   return (
@@ -106,12 +113,12 @@ const CreateUpdateDialog = () => {
                 Dodaj informacje o nadchodzących zajęciach na żywo.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="flex flex-col gap-4 py-4">
               <FormField
                 control={form.control}
                 name="scheduledAt"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="hidden">
                     <FormControl>
                       <Input
                         type="string"
@@ -133,6 +140,22 @@ const CreateUpdateDialog = () => {
                         {...field}
                         type="text"
                         placeholder="np. Poranny Vinyasa Flow"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="thumbnailId"
+                render={({ field }) => (
+                  <FormItem className="w-1/2">
+                    <FormLabel>Miniaturka</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        onChange={async (files) => await handleFilesDrop(files)}
+                        maxFiles={2}
                       />
                     </FormControl>
                     <FormMessage />
@@ -238,7 +261,7 @@ const CreateUpdateDialog = () => {
                 type="submit"
                 form="live-lesson-form"
               >
-                {mutation.isPending ? (
+                {createMutation.isPending ? (
                   <Loader2 className="animate-spin" />
                 ) : (
                   'Utwórz zajęcia'

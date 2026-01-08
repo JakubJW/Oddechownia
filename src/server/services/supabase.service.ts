@@ -10,6 +10,7 @@ export enum BUCKETS {
   ATTACHMENTS = 'attachments',
   THUMBNAILS = 'thumbnails',
   WEBSITE_ASSETS = 'website_assets',
+  PUBLIC_ASSETS = 'public-assets',
 }
 
 const updateUserInAuthSchema = async (params: UserAttributes) => {
