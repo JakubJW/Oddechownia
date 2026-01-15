@@ -72,6 +72,24 @@ const getFileUrl = (name: string, bucket: string, folder: string) => {
   return { data: publicUrl, success: true, error: null };
 };
 
+const getThumbnailUrl = (bucket: string, path: string) => {
+  const supabase = createAdminClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        persistSession: false,
+      },
+    }
+  );
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(bucket).getPublicUrl(path);
+
+  return { data: publicUrl, success: true, error: null };
+};
+
 const downloadFile = async (
   fileName: string,
   bucket: string,
@@ -161,6 +179,7 @@ const deleteFile = async (bucket: string, paths: string[]) => {
 export const supabaseService = {
   downloadFile,
   getFileUrl,
+  getThumbnailUrl,
   deleteFile,
   uploadFile,
   updateUserInAuthSchema,

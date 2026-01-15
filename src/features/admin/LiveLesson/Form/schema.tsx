@@ -3,7 +3,13 @@ import { nonEmptyString } from '@/shared/formUtils';
 import { ERROR_MESSAGES } from '@/shared/messages';
 
 export const createformSchema = z.object({
-  thumbnail: z.any(),
+  thumbnailId: z.coerce
+    .number({
+      invalid_type_error: 'Nieprawidłowe ID miniatury.',
+    })
+    .int('ID miniatury musi być liczbą całkowitą.')
+    .refine((value) => value !== undefined, 'Brak ID miniatury.')
+    .optional(),
   title: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   date: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   time: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
@@ -36,6 +42,7 @@ export const updateFormSchema = createformSchema.extend({
 });
 
 export const defaultValues: z.infer<typeof createformSchema> = {
+  thumbnailId: undefined,
   title: '',
   date: '',
   time: '',

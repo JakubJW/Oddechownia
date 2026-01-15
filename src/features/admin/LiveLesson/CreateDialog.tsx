@@ -27,13 +27,22 @@ import { z } from 'zod';
 import FileUpload from '@/components/file-upload';
 import { createformSchema, defaultValues } from './Form/schema';
 import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
-import { useImageCompression } from '@/hooks/useImageCompression';
-import { createClient } from '@/supabase/client';
+import { useFileUpload } from '@/hooks/use-file-upload';
 
 const CreateUpdateDialog = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined
+  );
   const { createMutation } = useLiveLessonMutations();
-  const { compress } = useImageCompression();
+  const { isUploading, uploadFiles } = useFileUpload({
+    bucket: 'public-assets',
+    folder: 'thumbnails/live-lessons',
+    onSuccess: (ids, previewUrl) => {
+      setImagePreview(previewUrl);
+      form.setValue('thumbnailId', ids[0]);
+    },
+  });
   const form = useForm({
     resolver: zodResolver(createformSchema),
     defaultValues,
@@ -53,41 +62,7 @@ const CreateUpdateDialog = () => {
   };
 
   const handleFilesDrop = async (files: File[]) => {
-    //1. compress files
-    const compressed = await Promise.all(
-      files.map(async (file) => await compress(file))
-    );
-
-    //2. create initial rows in files table and return signed upload urls
-    const payload = compressed.map((blob, index) => {
-      const originalFile = files[index];
-      const name = originalFile.name.replace(/\.[^/.]+$/, '') + '.webp';
-      return { name, type: blob.type };
-    });
-
-    const res = await fetch('/api/files/upload/prepare', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-
-    const json = await res.json();
-
-    //3. upload files directly to supabase
-    const supabase = createClient();
-    const uploadPromises = json.data.map(async (item, index) => {
-      const fileToUpload = compressed[index];
-      const result = await supabase.storage
-        .from('public-assets')
-        .uploadToSignedUrl(item.path, item.token, fileToUpload);
-
-      return result;
-    });
-
-    const response = await Promise.all(uploadPromises);
-
-    //4. update initial rows with final data after success
-
-    //5. return created file ids to include them in form submission
+    await uploadFiles(files);
   };
 
   return (
@@ -149,14 +124,24 @@ const CreateUpdateDialog = () => {
               <FormField
                 control={form.control}
                 name="thumbnailId"
-                render={({ field }) => (
-                  <FormItem className="w-1/2">
+                render={() => (
+                  <FormItem>
                     <FormLabel>Miniaturka</FormLabel>
                     <FormControl>
-                      <FileUpload
-                        onChange={async (files) => await handleFilesDrop(files)}
-                        maxFiles={2}
-                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        <FileUpload
+                          isUploading={isUploading}
+                          maxFiles={1}
+                          accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+                          onChange={async (files) =>
+                            await handleFilesDrop(files)
+                          }
+                        />
+                        <img
+                          className="aspect-video object-cover rounded-xl"
+                          src={imagePreview}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -22,10 +22,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { formatDateForInput, formatTimeForInput } from '@/lib/utils';
 import { AdminLiveLessonRecordDTO } from '@/server/models/liveLesson.models';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { updateFormSchema, UpdateLiveLessonValues } from './Form/schema';
 import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
+import FileUpload from '@/components/file-upload';
+import { useFileUpload } from '@/hooks/use-file-upload';
 
 const UpdateDialog = ({
   liveLesson,
@@ -36,7 +38,11 @@ const UpdateDialog = ({
   open: boolean;
   setOpen: (state: boolean) => void;
 }) => {
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined
+  );
   const { updateMutation } = useLiveLessonMutations();
+
   const form = useForm({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
@@ -45,6 +51,18 @@ const UpdateDialog = ({
       time: formatTimeForInput(liveLesson.scheduledAt),
     },
     mode: 'all',
+  });
+
+  const { uploadFiles, isUploading } = useFileUpload({
+    bucket: 'public-assets',
+    folder: 'thumbnails/live-lessons',
+    onSuccess: (ids, previewUrl) => {
+      form.setValue('thumbnailId', ids[0]);
+      setImagePreview(previewUrl);
+    },
+    onError: (err) => {
+      alert('Upload failed: ' + err.message);
+    },
   });
 
   useEffect(() => {
@@ -63,7 +81,19 @@ const UpdateDialog = ({
 
   const onSubmit = async (values: UpdateLiveLessonValues) => {
     if (!liveLesson) return;
-    updateMutation.mutate({ id: liveLesson.id, values });
+    updateMutation.mutate(
+      { id: liveLesson.id, values },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          setImagePreview(undefined);
+        },
+      }
+    );
+  };
+
+  const handleFilesDrop = async (files: File[]) => {
+    await uploadFiles(files);
   };
 
   return (
@@ -111,6 +141,34 @@ const UpdateDialog = ({
                         type="text"
                         placeholder="np. Poranny Vinyasa Flow"
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="thumbnailId"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Miniaturka</FormLabel>
+                    <FormControl>
+                      <div className="grid grid-cols-2 gap-4">
+                        <FileUpload
+                          isUploading={isUploading}
+                          maxFiles={1}
+                          accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+                          onChange={async (files) =>
+                            await handleFilesDrop(files)
+                          }
+                        />
+                        <img
+                          className="aspect-video object-cover rounded-xl"
+                          src={
+                            imagePreview ? imagePreview : liveLesson.thumbnail
+                          }
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

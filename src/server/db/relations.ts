@@ -101,6 +101,10 @@ export const filesRelations = relations(files, ({ one }) => ({
     fields: [files.id],
     references: [lessons.thumbnailId],
   }),
+  liveLesson: one(liveLessons, {
+    fields: [files.id],
+    references: [liveLessons.thumbnailId],
+  }),
 }));
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
@@ -137,8 +141,12 @@ export const userFavoriteLessonsRelations = relations(
   })
 );
 
-export const liveLessonsRelations = relations(liveLessons, ({ many }) => ({
+export const liveLessonsRelations = relations(liveLessons, ({ many, one }) => ({
   registrations: many(liveLessonsRegistrations),
+  thumbnail: one(files, {
+    fields: [liveLessons.thumbnailId],
+    references: [files.id],
+  }),
 }));
 
 export const liveLessonsRegistrationsRelations = relations(

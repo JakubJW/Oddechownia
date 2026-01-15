@@ -37,7 +37,7 @@ export const LiveLessonCard = ({
             )}
             </div> */}
         <Image
-          src={'/hero.jpg'}
+          src={lesson.thumbnail ? lesson.thumbnail : '/hero.jpg'}
           alt="Obraz"
           fill
           className="lesson-card-thumbnail transition-all duration-200 ease-in-out object-cover"

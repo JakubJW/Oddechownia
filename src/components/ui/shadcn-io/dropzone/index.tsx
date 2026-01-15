@@ -1,6 +1,6 @@
 'use client';
 
-import { UploadIcon } from 'lucide-react';
+import { Loader2, UploadIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { createContext, useContext } from 'react';
 import type { DropEvent, DropzoneOptions, FileRejection } from 'react-dropzone';
@@ -92,7 +92,10 @@ export const Dropzone = ({
         variant="outline"
         {...getRootProps()}
       >
-        <input {...getInputProps()} disabled={disabled} />
+        <input
+          {...getInputProps()}
+          disabled={disabled}
+        />
         {children}
       </Button>
     </DropzoneContext.Provider>
@@ -112,6 +115,7 @@ const useDropzoneContext = () => {
 export type DropzoneContentProps = {
   children?: ReactNode;
   className?: string;
+  isUploading?: boolean;
 };
 
 const maxLabelItems = 3;
@@ -119,6 +123,7 @@ const maxLabelItems = 3;
 export const DropzoneContent = ({
   children,
   className,
+  isUploading,
 }: DropzoneContentProps) => {
   const { src } = useDropzoneContext();
 
@@ -133,7 +138,14 @@ export const DropzoneContent = ({
   return (
     <div className={cn('flex flex-col items-center justify-center', className)}>
       <div className="flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
-        <UploadIcon size={16} />
+        {isUploading ? (
+          <Loader2
+            size={16}
+            className="animate-spin"
+          />
+        ) : (
+          <UploadIcon size={16} />
+        )}
       </div>
       <p className="my-2 w-full truncate font-medium text-sm">
         {src.length > maxLabelItems

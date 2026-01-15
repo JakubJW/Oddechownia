@@ -139,6 +139,7 @@ export const files = pgTable('files', {
   mimeType: varchar('mime_type').notNull(),
   bucket: varchar().notNull(),
   path: varchar().notNull(),
+  uploadStatus: varchar('upload_status'),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
@@ -214,6 +215,9 @@ export const liveLessons = pgTable('live_lessons', {
   description: text('description'),
   meetingLink: text('meeting_link'),
   recordingUrl: text('recording_url'),
+  thumbnailId: integer('thumbnail_id').references(() => files.id, {
+    onDelete: 'set null',
+  }),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),

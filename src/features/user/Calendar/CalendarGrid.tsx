@@ -12,37 +12,11 @@ import { CalendarProvider } from './context/CalendarContext';
 import { useCallback, useMemo, useState } from 'react';
 import { LiveLessonEvent } from '@/server/services/calendar.service';
 import { getRequiredUser } from '@/lib/data';
-import { LiveLessonSignUpValues } from '@/features/LiveLesson/Form/schema';
-import { LiveLessonSignUpResponse } from '@/server/models/liveLesson.models';
-import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import Image from 'next/image';
 import CalendarDayEvent from './CalendarDayEvent';
 import { cn } from '@/lib/utils';
 
 const WEEKDAYS = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'];
-
-const signUp = async ({
-  id,
-  values,
-}: {
-  id: string;
-  values: LiveLessonSignUpValues;
-}) => {
-  const res = await fetch(`/api/live-lessons/${id}/sign-up`, {
-    method: 'POST',
-    body: JSON.stringify(values),
-  });
-
-  if (!res.ok) {
-    const errorBody = (await res.json()) as { message: string };
-
-    throw new Error(errorBody.message || 'Unknown error');
-  }
-
-  const json = await res.json();
-  return json.data as LiveLessonSignUpResponse;
-};
 
 const CaledarGrid = ({
   user,
@@ -81,21 +55,6 @@ const CaledarGrid = ({
     }),
     [handleSignUp]
   );
-
-  const mutation = useMutation<
-    LiveLessonSignUpResponse,
-    Error,
-    { id: string; values: LiveLessonSignUpValues }
-  >({
-    mutationFn: signUp,
-    onSuccess: (data) => {
-      setIsSignUpOpen(false);
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    },
-    onError: (error) => toast.error(error.message),
-  });
 
   return (
     <CalendarProvider value={contextValue}>
@@ -187,7 +146,6 @@ const CaledarGrid = ({
               open={isSignUpOpen}
               setOpen={setIsSignUpOpen}
               user={user}
-              mutation={mutation}
             />
           )}
         </div>

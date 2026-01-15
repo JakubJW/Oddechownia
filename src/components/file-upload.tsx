@@ -10,9 +10,16 @@ import { useState } from 'react';
 
 type FileUploadProps = {
   onChange: (files: File[]) => void;
+  isUploading?: boolean;
+  preview?: string;
 } & DropzoneProps;
 
-const FileUpload = ({ onChange, accept, maxFiles }: FileUploadProps) => {
+const FileUpload = ({
+  onChange,
+  accept,
+  maxFiles,
+  isUploading,
+}: FileUploadProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const handleDrop = async (files: File[]) => {
     if (files.length > 0) {
@@ -31,7 +38,7 @@ const FileUpload = ({ onChange, accept, maxFiles }: FileUploadProps) => {
       onError={(e) => console.log(e)}
     >
       <DropzoneEmptyState />
-      <DropzoneContent />
+      <DropzoneContent isUploading={isUploading} />
     </Dropzone>
   );
 };

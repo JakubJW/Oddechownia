@@ -24,7 +24,7 @@ export const AdminLiveLessonCard = ({
     <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
-          src={'/hero.jpg'}
+          src={lesson.thumbnail ? lesson.thumbnail : '/hero.jpg'}
           alt={`Miniatura lekcji ${lesson.title}`}
           fill
           className="lesson-card-thumbnail transition-all duration-200 ease-in-out object-cover"
