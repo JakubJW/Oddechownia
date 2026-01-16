@@ -16,6 +16,7 @@ export type AdminLiveLessonRecordDTO = {
   meetingLink?: string;
   recordingUrl?: string;
   currentParticipants: number;
+  thumbnail?: string;
 };
 
 export type FetchAdminLiveLessonsListResponse = {
@@ -59,6 +60,7 @@ export type LiveLessonCardDTO = {
   description?: string;
   isRegistered: boolean;
   isPaymentPending: boolean;
+  thumbnail?: string;
 } & Eligibility;
 
 export type Eligibility =

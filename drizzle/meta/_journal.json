@@ -113,6 +113,20 @@
       "when": 1765644648270,
       "tag": "0015_nice_jocasta",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1768348669603,
+      "tag": "0016_flashy_strong_guy",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1768350367441,
+      "tag": "0017_outgoing_snowbird",
+      "breakpoints": true
     }
   ]
 }

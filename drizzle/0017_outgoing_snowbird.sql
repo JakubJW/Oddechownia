@@ -1,0 +1,2 @@
+ALTER TABLE "live_lessons" ADD COLUMN "thumbnail_id" integer;--> statement-breakpoint
+ALTER TABLE "live_lessons" ADD CONSTRAINT "live_lessons_thumbnail_id_files_id_fk" FOREIGN KEY ("thumbnail_id") REFERENCES "public"."files"("id") ON DELETE set null ON UPDATE no action;

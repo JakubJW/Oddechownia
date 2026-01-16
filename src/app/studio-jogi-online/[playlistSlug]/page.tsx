@@ -23,8 +23,8 @@ export async function generateMetadata({
 
   return {
     title: metadata
-      ? `${metadata.name} | Studio Jogi Online | Oddechownia`
-      : 'Studio Jogi Online | Oddechownia',
+      ? `${metadata.name} | Studio Jogi Online`
+      : 'Studio Jogi Online',
   };
 }
 

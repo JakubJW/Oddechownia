@@ -135,6 +135,14 @@ body {
     margin: -5px;
   }
 
+  .homepage-hero-heading {
+    @apply font-medium text-4xl leading-normal xl:text-5xl xl:leading-snug;
+  }
+
+  .hero-heading {
+    @apply text-2xl leading-normal xl:text-4xl xl:leading-relaxed;
+  }
+
   .auth-hero-image {
     height: calc(100vh - var(--navigation-height));
   }

@@ -20,7 +20,6 @@ import { Input } from '@/components/ui/input';
 import { formatTimeForInput } from '@/lib/utils';
 import { LiveLessonCardDTO } from '@/server/models/liveLesson.models';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UseMutationResult } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { memo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -29,8 +28,8 @@ import {
   liveLessonSignUpFormDefaultValues,
   liveLessonSignUpFormSchema,
 } from './Form/schema';
-import { LiveLessonSignUpResponse } from '@/server/models/liveLesson.models';
 import { User } from '@/server/actions/user';
+import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
 
 type SignUpDialogProps = {
   user: User;
@@ -45,11 +44,6 @@ type SignUpDialogProps = {
   >;
   open: boolean;
   setOpen: (state: boolean) => void;
-  mutation: UseMutationResult<
-    LiveLessonSignUpResponse,
-    Error,
-    { id: string; values: LiveLessonSignUpValues }
-  >;
 };
 
 const SignUpDialog = ({
@@ -57,8 +51,8 @@ const SignUpDialog = ({
   open,
   setOpen,
   user,
-  mutation,
 }: SignUpDialogProps) => {
+  const { signUpMutation } = useLiveLessonMutations();
   const form = useForm({
     resolver: zodResolver(liveLessonSignUpFormSchema),
     defaultValues: user
@@ -68,7 +62,10 @@ const SignUpDialog = ({
 
   const onSubmit = async (values: LiveLessonSignUpValues) => {
     if (!liveLesson) return;
-    mutation.mutate({ id: liveLesson.id, values });
+    signUpMutation.mutate(
+      { id: liveLesson.id, values },
+      { onSuccess: () => setOpen(false) }
+    );
   };
 
   return (
@@ -147,9 +144,9 @@ const SignUpDialog = ({
                 className="w-full"
                 form="live-lesson-sign-up-form"
                 type="submit"
-                disabled={mutation.isPending}
+                disabled={signUpMutation.isPending}
               >
-                {mutation.isPending && (
+                {signUpMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 {liveLesson.isEligibleForFree

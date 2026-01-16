@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const searchParams = getQueryParams(req.url);
 
     const cursor = decodeCursor(searchParams.cursor);
-    const perPage = 2;
+    const perPage = 8;
 
     const result = await LiveLessonsService.getMany(cursor, perPage);
 

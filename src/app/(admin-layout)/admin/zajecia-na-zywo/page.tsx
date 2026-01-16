@@ -1,5 +1,5 @@
 import CreateDialog from '@/features/admin/LiveLesson/CreateDialog';
-import LiveLessonsGrid from '@/features/admin/LiveLesson/LiveLessonsGrid';
+import { AdminLiveLessonsGrid } from '@/features/admin/LiveLesson/admin-live-lessons-grid';
 
 export default function AdminLiveLessons() {
   return (
@@ -8,7 +8,7 @@ export default function AdminLiveLessons() {
         <h2 className="text-2xl font-semibold">Zajęcia na żywo</h2>
         <CreateDialog />
       </div>
-      <LiveLessonsGrid />
+      <AdminLiveLessonsGrid />
     </section>
   );
 }
