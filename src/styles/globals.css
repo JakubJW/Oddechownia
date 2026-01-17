@@ -124,12 +124,17 @@ body {
 }
 
 @layer components {
-  .homepage-hero {
+  .hero-image-full-container {
     height: calc(100vh - var(--navigation-height));
     width: 100%;
   }
 
-  .homepage-hero-image {
+  .hero-image-half-container {
+    height: calc(33vh - var(--navigation-height));
+    width: 100%;
+  }
+
+  .hero-image-full {
     height: 105%;
     width: 105%;
     margin: -5px;

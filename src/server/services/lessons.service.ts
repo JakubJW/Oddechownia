@@ -86,6 +86,7 @@ const transformAdminLessonListToDTO = (
     description: lesson.description,
     slug: lesson.slug,
     video: transformVideoToDto(lesson.video),
+    createdAt: lesson.createdAt,
     thumbnail: supabaseService.getFileUrl(
       lesson.thumbnail.name,
       lesson.thumbnail.bucket,
@@ -186,9 +187,9 @@ const transformToAdminEditLessonDTO = (
       lesson.thumbnail.bucket,
       lesson.thumbnail.path
     ).data,
-    attachments: AttachmentsService.transformToAdminEditLessonAttachmentDTO(
-      lesson.attachments
-    ),
+    // attachments: AttachmentsService.transformToAdminEditLessonAttachmentDTO(
+    //   lesson.attachments
+    // ),
     labels: lesson.labels.map(({ label }) => ({
       id: label.id,
       text: label.text,

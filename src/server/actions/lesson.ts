@@ -5,279 +5,100 @@ import { db } from '@/server/db';
 import { and, eq, inArray } from 'drizzle-orm';
 import { lessonLabels, lessons } from '@/server/db/schema';
 import { ActionResult } from './types';
-import { BaseLesson, Lesson } from '@/server/db/types';
+import { Lesson } from '@/server/db/types';
 import {
   filterService,
   LessonFilters,
 } from '@/server/services/filters.service';
-import { formSchema as lessonFormSchema } from '@/features/admin/Lesson/schema';
-import { createAttachment, deleteAttachment } from './attachments';
-import { createFile, deleteFile } from './files';
-import { BUCKETS } from '@/server/services/supabase.service';
+import {
+  CreateLessonValues,
+  UpdateLessonValues,
+} from '../models/lesson.models';
 
-export const createLesson = async (
-  formData: FormData
-): Promise<ActionResult<BaseLesson>> => {
-  try {
-    const rawData = {
-      name: formData.get('name'),
-      description: formData.get('description'),
-      videoId:
-        formData.get('videoId') !== 'null'
-          ? Number(formData.get('videoId'))
-          : null,
-      labelIds: formData.getAll('labelIds[]').map((value) => Number(value)),
-    };
+export const createLesson = async (values: CreateLessonValues) => {
+  const [lesson] = await db
+    .insert(lessons)
+    .values({
+      name: values.name,
+      description: values.description,
+      slug: createSlug(values.name),
+      videoId: values.videoId,
+      thumbnailId: values.thumbnailId!,
+    })
+    .returning();
 
-    const parsed = lessonFormSchema.safeParse(rawData);
+  if (values.labelIds.length) {
+    await db.insert(lessonLabels).values(
+      values.labelIds.map((id) => ({
+        lessonId: lesson.id,
+        labelId: id,
+      }))
+    );
+  }
 
-    if (!parsed.success) {
-      return {
-        data: null,
-        success: false,
-        error: `Błąd walidacji danych ${parsed.error.flatten()}`,
-      };
-    }
+  return lesson;
+};
 
-    const thumbnail = formData.getAll('thumbnail[]');
+export const updateLesson = async (id: number, values: UpdateLessonValues) => {
+  const updatedLesson = await db.transaction(async (tx) => {
+    const currentLesson = await tx.query.lessons.findFirst({
+      where: eq(lessons.id, id),
+      columns: { thumbnailId: true, id: true },
+      with: {
+        labels: {
+          with: {
+            label: true,
+          },
+        },
+      },
+    });
 
-    if (!thumbnail.length)
-      return {
-        data: null,
-        success: false,
-        error: 'Dodanie miniatury jest obowiązkowe.',
-      };
+    if (!currentLesson) throw new Error('Lekcja nie istnieje');
 
-    const {
-      data: thumbnailData,
-      success: fileUploadSuccess,
-      error: fileUplaodError,
-    } = await createFile(thumbnail[0] as File, BUCKETS.ATTACHMENTS, 'lesson');
+    const existingLabels = currentLesson.labels.map(({ labelId }) => labelId);
+    const labelsToInsert = values.labelIds.filter(
+      (id) => !existingLabels.includes(id)
+    );
+    const labelsToRemove = existingLabels.filter(
+      (id) => !values.labelIds.includes(id)
+    );
 
-    if (!fileUploadSuccess) {
-      return {
-        data: null,
-        success: false,
-        error: fileUplaodError,
-      };
-    }
-
-    const [lesson] = await db
-      .insert(lessons)
-      .values({
-        name: parsed.data.name,
-        description: parsed.data.description,
-        slug: createSlug(parsed.data.name),
-        videoId: parsed.data.videoId,
-        thumbnailId: thumbnailData.id,
-      })
-      .returning();
-
-    if (parsed.data.labelIds.length) {
+    if (labelsToInsert.length) {
       await db.insert(lessonLabels).values(
-        parsed.data.labelIds.map((id) => ({
-          lessonId: lesson.id,
+        labelsToInsert.map((id) => ({
+          lessonId: currentLesson.id,
           labelId: id,
         }))
       );
     }
 
-    const newAttachments = formData.getAll('newAttachments[]');
-
-    if (newAttachments.length > 0) {
-      await Promise.all(
-        newAttachments.map(async (file) => {
-          const { error } = await createAttachment(lesson.id, file as File);
-
-          if (error)
-            throw new Error(
-              `Błąd dodawania załącznika: ${(file as File).name}`
-            );
-        })
-      );
-    }
-
-    return { data: lesson, success: true, error: null };
-  } catch (e) {
-    console.error(
-      'Podczas tworzenia lekcji wystąpił błąd. Spróbuj ponownie później.',
-      e
-    );
-    return {
-      data: null,
-      success: false,
-      error:
-        'Podczas tworzenia lekcji wystąpił błąd. Spróbuj ponownie później.',
-    };
-  }
-};
-
-export const updateLesson = async (
-  id: number,
-  formData: FormData
-): Promise<ActionResult<BaseLesson>> => {
-  try {
-    const rawData = {
-      name: formData.get('name'),
-      description: formData.get('description'),
-      videoId:
-        formData.get('videoId') && formData.get('videoId') !== 'null'
-          ? Number(formData.get('videoId'))
-          : null,
-      labelIds: formData.getAll('labelIds[]').map((value) => Number(value)),
-    };
-
-    const parsed = lessonFormSchema.safeParse({
-      ...rawData,
-      thumbnail: [],
-      hasExistingThumbnail: true,
-    });
-
-    if (!parsed.success) {
-      return { data: null, success: false, error: 'Błąd walidacji danych.' };
-    }
-
-    const thumbnailFiles = formData.getAll('thumbnail[]') as File[];
-    const hasNewThumbnail =
-      thumbnailFiles.length > 0 && thumbnailFiles[0].size > 0;
-
-    const shouldRemoveOldThumbnail =
-      formData.get('removeOldThumbnail') === 'true';
-
-    if (shouldRemoveOldThumbnail && !hasNewThumbnail) {
-      return {
-        data: null,
-        success: false,
-        error: 'Nie można usunąć miniaturki bez dodania nowej.',
-      };
-    }
-
-    let newThumbnailId: number | undefined = undefined;
-
-    if (hasNewThumbnail) {
-      const { data: fileData, error: uploadError } = await createFile(
-        thumbnailFiles[0],
-        BUCKETS.ATTACHMENTS,
-        'lesson'
-      );
-
-      if (uploadError || !fileData) {
-        return {
-          data: null,
-          success: false,
-          error: 'Błąd przesyłania nowej miniaturki.',
-        };
-      }
-      newThumbnailId = fileData.id;
-    }
-
-    let oldThumbnailIdToDelete: number | null = null;
-
-    const updatedLesson = await db.transaction(async (tx) => {
-      const currentLesson = await tx.query.lessons.findFirst({
-        where: eq(lessons.id, id),
-        columns: { thumbnailId: true, id: true },
-        with: {
-          labels: {
-            with: {
-              label: true,
-            },
-          },
-        },
-      });
-
-      if (!currentLesson) throw new Error('Lekcja nie istnieje');
-
-      const existingLabels = currentLesson.labels.map(({ labelId }) => labelId);
-      const labelsToInsert = parsed.data.labelIds.filter(
-        (id) => !existingLabels.includes(id)
-      );
-      const labelsToRemove = existingLabels.filter(
-        (id) => !parsed.data.labelIds.includes(id)
-      );
-
-      console.log(labelsToInsert);
-      console.log(labelsToRemove);
-
-      if (labelsToInsert.length) {
-        await db.insert(lessonLabels).values(
-          labelsToInsert.map((id) => ({
-            lessonId: currentLesson.id,
-            labelId: id,
-          }))
+    if (labelsToRemove.length) {
+      await db
+        .delete(lessonLabels)
+        .where(
+          and(
+            eq(lessonLabels.lessonId, currentLesson.id),
+            inArray(lessonLabels.labelId, labelsToRemove)
+          )
         );
-      }
-
-      if (labelsToRemove.length) {
-        await db
-          .delete(lessonLabels)
-          .where(
-            and(
-              eq(lessonLabels.lessonId, currentLesson.id),
-              inArray(lessonLabels.labelId, labelsToRemove)
-            )
-          );
-      }
-
-      const [updated] = await tx
-        .update(lessons)
-        .set({
-          name: parsed.data.name,
-          description: parsed.data.description,
-          slug: createSlug(parsed.data.name),
-          videoId: parsed.data.videoId,
-          ...(newThumbnailId !== undefined && { thumbnailId: newThumbnailId }),
-        })
-        .where(eq(lessons.id, id))
-        .returning();
-
-      if (
-        newThumbnailId &&
-        currentLesson.thumbnailId &&
-        newThumbnailId !== currentLesson.thumbnailId
-      ) {
-        oldThumbnailIdToDelete = currentLesson.thumbnailId;
-      }
-
-      const newAttachments = formData.getAll('newAttachments[]') as File[];
-      if (newAttachments.length > 0) {
-        await Promise.all(
-          newAttachments.map(async (file) => {
-            const { error } = await createAttachment(id, file);
-            if (error)
-              throw new Error(`Błąd dodawania załącznika: ${file.name}`);
-          })
-        );
-      }
-
-      const attachmentIdsToRemove = formData
-        .getAll('attachmentsToRemove[]')
-        .map(Number);
-      if (attachmentIdsToRemove.length > 0) {
-        const { error } = await deleteAttachment(attachmentIdsToRemove);
-        if (error) throw new Error('Błąd usuwania załączników');
-      }
-
-      return updated;
-    });
-
-    if (oldThumbnailIdToDelete) {
-      try {
-        await deleteFile([oldThumbnailIdToDelete]);
-      } catch (cleanupError) {
-        console.error('Warning: Failed to cleanup old thumbnail', cleanupError);
-      }
     }
 
-    return { data: updatedLesson, success: true, error: null };
-  } catch (e) {
-    console.error('Update Lesson Error:', e);
-    return {
-      data: null,
-      success: false,
-      error: e instanceof Error ? e.message : 'Wystąpił nieoczekiwany błąd.',
-    };
-  }
+    const [updated] = await tx
+      .update(lessons)
+      .set({
+        name: values.name,
+        description: values.description,
+        slug: createSlug(values.name),
+        videoId: values.videoId,
+        thumbnailId: values.thumbnailId,
+      })
+      .where(eq(lessons.id, id))
+      .returning();
+
+    return updated;
+  });
+
+  return updatedLesson;
 };
 
 export const getLessons = async (

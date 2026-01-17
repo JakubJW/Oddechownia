@@ -78,6 +78,7 @@ export type LiveLessonCardUserDashboardDTO = {
   title: string;
   description?: string;
   scheduledAt: string;
+  thumbnail?: string;
   duration: number;
   status: 'upcoming' | 'live' | 'completed';
   meetingUrl?: string;

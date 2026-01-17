@@ -1,17 +1,15 @@
 import { InferSelectModel } from 'drizzle-orm';
 import { lessons } from '../db/schema';
 import { VideoDTO, VideoSchema } from './video.models';
-import {
-  AdminEditLessonAttachmentDTO,
-  AttachmentDTO,
-  AttachmentSchema,
-} from './attachment.models';
+import { AttachmentDTO, AttachmentSchema } from './attachment.models';
 import { FileSchema } from './file.models';
 import { PlaylistDTO, PlaylistSchema } from './playlist.models';
 import { PlaylistLessonSchema } from './playlistLesson.models';
 import { UserFavoriteLessonsSchema } from './userFavoriteLessons.models';
 import { LessonLabelBaseSchema } from './lessonLabel.models';
 import { LabelDTO } from './lessonLabel.models';
+import z from 'zod';
+import { nonEmptyString } from '@/shared/formUtils';
 
 export type LessonSchema = InferSelectModel<typeof lessons>;
 export type LessonBaseSchema = LessonSchema & {
@@ -57,6 +55,7 @@ export type AdminLessonSchema = LessonSchema & {
 };
 
 export type AdminLessonDTO = LessonBaseDTO & {
+  createdAt: string;
   video?: VideoDTO;
   thumbnail: string;
   playlists: Omit<PlaylistDTO, 'position'>[];
@@ -80,7 +79,7 @@ export type AdminEditPlaylistLessonDTO = LessonBaseDTO & {
 export type AdminEditLessonDTO = LessonBaseDTO & {
   video?: VideoDTO;
   thumbnail: string;
-  attachments: AdminEditLessonAttachmentDTO[];
+  // attachments: AdminEditLessonAttachmentDTO[];
   labels: LabelDTO[];
 };
 
@@ -90,3 +89,32 @@ export type FetchFavoriteLessonsResponse = {
   success: boolean;
   error: string | null;
 };
+
+export type FetchAdminLessonListResponse = {
+  data: AdminLessonDTO[];
+  nextCursor: string | null;
+  success: boolean;
+  error: string | null;
+};
+
+export const craeteLessonSchema = z.object({
+  thumbnailId: z.coerce
+    .number({
+      invalid_type_error: 'Nieprawidłowe ID miniatury.',
+    })
+    .int('ID miniatury musi być liczbą całkowitą.')
+    .refine((value) => value !== undefined, 'Brak ID miniatury.')
+    .optional(),
+  name: z.string({ message: 'Pole wymagane' }).pipe(nonEmptyString),
+  description: z.string(),
+  videoId: z.coerce
+    .number({
+      invalid_type_error: 'Nieprawidłowe ID filmu.',
+    })
+    .int('ID filmu musi być liczbą całkowitą.')
+    .optional(),
+  labelIds: z.array(z.number()),
+});
+
+export type CreateLessonValues = z.infer<typeof craeteLessonSchema>;
+export type UpdateLessonValues = z.infer<typeof craeteLessonSchema>;

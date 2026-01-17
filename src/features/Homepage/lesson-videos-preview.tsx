@@ -1,4 +1,4 @@
-import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
+import { HeaderTwo } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';

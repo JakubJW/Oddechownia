@@ -38,7 +38,7 @@ export const createVideo = async ({
 export const deleteVideo = async (assetId: string) => {
   try {
     await muxService.deleteAsset(assetId);
-    await db.delete(videos).where(eq(videos.assetId, assetId));
+    await db.delete(videos).where(eq(videos.assetId, assetId)).returning();
   } catch (e) {
     console.error('Unable to delete video', e);
   }

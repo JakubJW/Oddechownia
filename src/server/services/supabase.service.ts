@@ -65,9 +65,16 @@ const getFileUrl = (name: string, bucket: string, folder: string) => {
     }
   );
 
+  let fullPath = folder;
+
+  if (!folder.endsWith(name)) {
+    const separator = folder.endsWith('/') ? '' : '/';
+    fullPath = `${folder}${separator}${name}`;
+  }
+
   const {
     data: { publicUrl },
-  } = supabase.storage.from(bucket).getPublicUrl(`${folder}/${name}`);
+  } = supabase.storage.from(bucket).getPublicUrl(fullPath);
 
   return { data: publicUrl, success: true, error: null };
 };

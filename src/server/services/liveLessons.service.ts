@@ -5,7 +5,7 @@ import {
 import { and, asc, desc, eq, lt, or } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
-import { liveLessons, liveLessonsRegistrations } from '../db/schema';
+import { files, liveLessons, liveLessonsRegistrations } from '../db/schema';
 import { logger } from '../lib/logger.service';
 import {
   AdminLiveLessonRecordDTO,
@@ -267,6 +267,7 @@ const getUserLessons = async (
   const rawData = await db
     .select({
       lesson: liveLessons,
+      thumbnail: files,
     })
     .from(liveLessons)
     .innerJoin(
@@ -285,12 +286,16 @@ const getUserLessons = async (
         )
       )
     )
+    .leftJoin(files, eq(liveLessons.thumbnailId, files.id))
     .orderBy(asc(liveLessons.scheduledAt));
 
-  return rawData.map(({ lesson }) => ({
+  return rawData.map(({ lesson, thumbnail }) => ({
     id: lesson.id,
     title: lesson.title,
     scheduledAt: lesson.scheduledAt,
+    thumbnail: thumbnail
+      ? supabaseService.getThumbnailUrl(thumbnail.bucket, thumbnail.path).data
+      : undefined,
     duration: lesson.duration,
     isListed: lesson.isListed,
     description: lesson.description ?? undefined,
