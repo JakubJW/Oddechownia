@@ -1,9 +1,8 @@
 'use client';
 
 import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { FetchUserLiveLessonsResponse } from '@/server/models/liveLesson.models';
-import { LiveLessonCard } from './LiveLessonCard';
+import { UserLiveLessonCard } from './user-live-lesson-card';
 import React from 'react';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,14 +65,15 @@ export const Grid = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-8">
       {data.pages.map((page, index) => (
         <React.Fragment key={index}>
           {page.data.map((lesson) => (
-            <LiveLessonCard
+            <UserLiveLessonCard
               id={lesson.id}
               description={lesson.description}
               status={lesson.status}
+              thumbnail={lesson.thumbnail}
               key={lesson.id}
               title={lesson.title}
               meetingUrl={lesson.meetingUrl}

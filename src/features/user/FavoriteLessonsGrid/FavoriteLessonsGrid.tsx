@@ -1,7 +1,6 @@
 'use client';
 
 import LessonCard from '@/components/LessonCard/LessonCard';
-import LessonGrid from '@/features/admin/Lesson/LessonGrid';
 import { Button } from '@/components/ui/button';
 import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
 import React from 'react';
@@ -77,7 +76,7 @@ const FavoriteLessonsGrid = () => {
 
   return (
     <div>
-      <LessonGrid>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-8">
         {data?.pages.map((page, i) => (
           <React.Fragment key={i}>
             {page.data.map(
@@ -108,7 +107,7 @@ const FavoriteLessonsGrid = () => {
             )}
           </React.Fragment>
         ))}
-      </LessonGrid>
+      </div>
 
       {hasNextPage && (
         <Button

@@ -12,7 +12,7 @@ export default function MaintenanceMode() {
         </div>
         <Image
           className="h-1/2 md:h-full object-cover object-bottom md:w-1/2"
-          src="https://wknpvvtasrhwkqmkvoml.supabase.co/storage/v1/object/public/website-assets/images/hero.png"
+          src="/auth-hero.png"
           alt="Hero image"
           height={3088}
           width={2048}
