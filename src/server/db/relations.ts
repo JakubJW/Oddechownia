@@ -58,16 +58,13 @@ export const videosRelations = relations(videos, ({ one }) => ({
   }),
 }));
 
-export const userRelations = relations(users, ({ many, one }) => ({
+export const userRelations = relations(users, ({ many }) => ({
   comments: many(comments),
   favoriteLessons: many(userFavoriteLessons),
   liveLessonsRegistrations: many(liveLessonsRegistrations),
   practiceSchedules: many(userPracticeSchedules),
   lessonProgress: many(userLessonProgress),
-  subscription: one(subscriptions, {
-    fields: [users.id],
-    references: [subscriptions.userId],
-  }),
+  subscriptions: many(subscriptions),
 }));
 
 export const playlistLessonRelations = relations(playlistLesson, ({ one }) => ({
