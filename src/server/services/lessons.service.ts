@@ -327,7 +327,7 @@ export const getRecentlyWatchedLessons = async (userId: string) => {
       playlist: true,
     },
     orderBy: desc(userLessonProgress.updatedAt),
-    limit: 3,
+    limit: 4,
   });
 
   return result.map((item) => ({

@@ -59,14 +59,14 @@ export default function MobileNavigation({ user }: NavigationProps) {
                   onClick={() => setOpen(false)}
                 />
               </li>
-              <li>
+              {/* <li>
                 <NavigationLink
                   isMobile={true}
                   content="Społeczność"
                   href="/spolecznosc"
                   onClick={() => setOpen(false)}
                 />
-              </li>
+              </li> */}
               <li>
                 <NavigationLink
                   isMobile={true}
