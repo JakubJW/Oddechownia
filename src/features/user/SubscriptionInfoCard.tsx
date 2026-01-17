@@ -1,7 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { CircleAlert, CircleCheck, CircleX, Info } from 'lucide-react';
+import {
+  CircleAlert,
+  CircleCheck,
+  CircleX,
+  DollarSign,
+  Info,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { subscriptions } from '@/server/db/schema';
 import { InferSelectModel } from 'drizzle-orm';
@@ -23,6 +29,8 @@ const getStatusContent = (status?: string) => {
       return 'Aktywna';
     case 'past_due':
       return 'Nieopłacona';
+    case 'trialing':
+      return 'Okres próbny';
     default:
       return 'Nieaktywna';
   }
@@ -35,6 +43,9 @@ const getItemStyles = (status?: string) => {
 
     case 'past_due':
       return 'text-yellow-500';
+
+    case 'trialing':
+      return 'text-blue-500';
 
     default:
       return 'text-red-500';
@@ -79,9 +90,14 @@ const StatusBagde = ({
             <CircleCheck className="z-10 size-4" />
           </div>
         )}
+        {subscription?.status === 'trialing' && (
+          <div className="relative bg-blue-100 rounded-full flex items-center justify-center p-2">
+            <Info className="z-10 size-4" />
+          </div>
+        )}
         {subscription?.status === 'past_due' && (
           <div className="relative bg-yellow-100 rounded-full flex items-center justify-center p-2">
-            <Info className="z-10 size-4" />
+            <DollarSign className="z-10 size-4" />
           </div>
         )}
         {subscription?.status === 'cancelled' && (

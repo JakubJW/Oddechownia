@@ -1,8 +1,8 @@
 'use server';
 
-import { users } from '@/server/db/schema';
+import { users, subscriptions } from '@/server/db/schema';
 import { db } from '@/server/db';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { createClient } from '@/supabase/server';
 import { cache } from 'react';
 import { getRequiredUser } from '@/lib/data';
@@ -19,6 +19,8 @@ interface UpdateUserParams {
 
 export type User = Awaited<ReturnType<typeof getUser>>;
 
+const accessGrantedStatuses = ['active', 'past_due', 'trialing'];
+
 export const getUser = cache(async () => {
   try {
     const supabase = await createClient();
@@ -33,7 +35,7 @@ export const getUser = cache(async () => {
     const publicUser = await db.query.users.findFirst({
       where: eq(users.id, user.id),
       with: {
-        subscription: true,
+        subscriptions: { orderBy: desc(subscriptions.createdAt), limit: 1 },
       },
     });
 
@@ -41,17 +43,15 @@ export const getUser = cache(async () => {
       return null;
     }
 
-    const subscription = publicUser?.subscription;
+    const subscription = publicUser?.subscriptions[0];
     const isAdmin = publicUser.role === UserRoles.ADMIN;
 
     const hasActiveSubscription =
-      subscription?.status === 'active' ||
-      subscription?.status === 'past_due' ||
-      isAdmin;
+      accessGrantedStatuses.includes(subscription?.status) || isAdmin;
 
     return {
       ...publicUser,
-      subscription: subscription,
+      subscription,
       stripeCustomerId: publicUser.stripeCustomerId ?? undefined,
       subscriptionStatus: subscription?.status ?? null,
       hasActiveSubscription,

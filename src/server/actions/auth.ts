@@ -14,7 +14,6 @@ import { stripeService } from '@/server/services/stripe.service';
 import { eq } from 'drizzle-orm';
 import { AppError, ConflictError } from '../lib/errors';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
-import { requestPasswordResetFormSchema } from '@/features/zapomnialem-hasla/requestResetPasswordFormSchema';
 
 export const changePasswordAuthenticated = async (password: string) => {
   const { error } = await supabaseService.changePasswordAuthenticated(password);
@@ -170,6 +169,7 @@ export async function signUp(values: RegisterFormValues) {
       client_reference_id: user.id,
       subscription_data: {
         metadata: { userId: user.id },
+        trial_period_days: 1,
       },
     });
 
