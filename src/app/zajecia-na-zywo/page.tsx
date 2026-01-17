@@ -18,7 +18,7 @@ export default async function LiveLessons() {
 
   return (
     <>
-      <Hero />
+      {/* <Hero /> */}
       <section>
         <Container>
           <hgroup className="text-center max-w-3xl mx-auto space-y-6 mb-24">
