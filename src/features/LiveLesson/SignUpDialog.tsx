@@ -80,13 +80,15 @@ const SignUpDialog = ({
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Zapisz się na zajęcia</DialogTitle>
-              <DialogDescription>
-                {liveLesson.title} - &nbsp;
-                {new Date(liveLesson.scheduledAt).toLocaleDateString('pl-PL')} o
+              <DialogTitle>
+                <span className="block text-sm font-normal text-muted-foreground mb-2">
+                  {new Date(liveLesson.scheduledAt).toLocaleDateString('pl-PL')}
+                  , {formatTimeForInput(liveLesson.scheduledAt)}
+                </span>
+                {liveLesson.title}
                 &nbsp;
-                {formatTimeForInput(liveLesson.scheduledAt)}
-              </DialogDescription>
+              </DialogTitle>
+              <DialogDescription>{liveLesson.description}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <FormField
