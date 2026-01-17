@@ -81,7 +81,7 @@ const SignUpDialog = ({
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                <span className="block text-sm font-normal text-muted-foreground mb-2">
+                <span className="block text-sm font-normal text-muted-foreground mb-4">
                   {new Date(liveLesson.scheduledAt).toLocaleDateString('pl-PL')}
                   , {formatTimeForInput(liveLesson.scheduledAt)}
                 </span>
