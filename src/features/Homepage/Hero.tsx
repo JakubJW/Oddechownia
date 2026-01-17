@@ -7,7 +7,7 @@ import Container from '@/components/Container/Container';
 
 export default function Hero() {
   return (
-    <section className="homepage-hero relative overflow-hidden w-full ">
+    <section className="hero-image-full-container relative overflow-hidden w-full ">
       <Container className="h-full">
         <div className="relative z-20 h-full w-full flex flex-col items-center sm:items-start justify-center sm:text-start px-4 sm:pr-24 gap-6 md:gap-y-16 sm:w-2/3 lg:w-1/2">
           <hgroup className="mt-10 sm:mt-0 text-white text-left">
@@ -39,7 +39,7 @@ export default function Hero() {
           </Link>
         </div>
       </Container>
-      <div className="absolute top-0 z-10 homepage-hero-image">
+      <div className="absolute top-0 z-10 hero-image-full">
         <Image
           className="object-cover object-center"
           src="/hero.jpeg"

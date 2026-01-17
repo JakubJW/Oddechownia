@@ -58,16 +58,13 @@ export const videosRelations = relations(videos, ({ one }) => ({
   }),
 }));
 
-export const userRelations = relations(users, ({ many, one }) => ({
+export const userRelations = relations(users, ({ many }) => ({
   comments: many(comments),
   favoriteLessons: many(userFavoriteLessons),
   liveLessonsRegistrations: many(liveLessonsRegistrations),
   practiceSchedules: many(userPracticeSchedules),
   lessonProgress: many(userLessonProgress),
-  subscription: one(subscriptions, {
-    fields: [users.id],
-    references: [subscriptions.userId],
-  }),
+  subscriptions: many(subscriptions),
 }));
 
 export const playlistLessonRelations = relations(playlistLesson, ({ one }) => ({
@@ -100,6 +97,10 @@ export const filesRelations = relations(files, ({ one }) => ({
   lesson: one(lessons, {
     fields: [files.id],
     references: [lessons.thumbnailId],
+  }),
+  liveLesson: one(liveLessons, {
+    fields: [files.id],
+    references: [liveLessons.thumbnailId],
   }),
 }));
 
@@ -137,8 +138,12 @@ export const userFavoriteLessonsRelations = relations(
   })
 );
 
-export const liveLessonsRelations = relations(liveLessons, ({ many }) => ({
+export const liveLessonsRelations = relations(liveLessons, ({ many, one }) => ({
   registrations: many(liveLessonsRegistrations),
+  thumbnail: one(files, {
+    fields: [liveLessons.thumbnailId],
+    references: [files.id],
+  }),
 }));
 
 export const liveLessonsRegistrationsRelations = relations(

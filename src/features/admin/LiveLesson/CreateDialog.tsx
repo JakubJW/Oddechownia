@@ -9,78 +9,60 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Plus, Loader2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
-  FormMessage,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createformSchema, defaultValues } from './Form/schema';
-import { z } from 'zod';
+import { Loader2, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { queryClient } from '@/components/QueryClientProvider';
-import { CreateLiveLessonResponse } from '@/server/models/liveLesson.models';
-import { toast } from 'sonner';
-
-const createLiveLesson = async (values: z.infer<typeof createformSchema>) => {
-  const res = await fetch(`/api/live-lessons/create`, {
-    method: 'POST',
-    body: JSON.stringify(values),
-  });
-
-  if (!res.ok) {
-    const errorBody = await res
-      .json()
-      .catch(() => ({ message: res.statusText }));
-
-    throw new Error(
-      `Failed to fetch comments (Status ${res.status}): ${
-        errorBody.message || 'Unknown error'
-      }`
-    );
-  }
-
-  const json = await res.json();
-  return json.data as CreateLiveLessonResponse;
-};
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import FileUpload from '@/components/file-upload';
+import { createformSchema, defaultValues } from './Form/schema';
+import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
+import { useFileUpload } from '@/hooks/use-file-upload';
 
 const CreateUpdateDialog = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined
+  );
+  const { createMutation } = useLiveLessonMutations();
+  const { isUploading, uploadFiles } = useFileUpload({
+    bucket: 'public-assets',
+    folder: 'thumbnails/live-lessons',
+    onSuccess: (ids, previewUrl) => {
+      setImagePreview(previewUrl);
+      form.setValue('thumbnailId', ids[0]);
+    },
+  });
   const form = useForm({
     resolver: zodResolver(createformSchema),
     defaultValues,
     mode: 'all',
   });
 
-  const mutation = useMutation({
-    mutationFn: (values: z.infer<typeof createformSchema>) =>
-      createLiveLesson(values),
-    onSuccess: () => {
-      setDialogOpen(false);
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ['live-lessons'] });
-    },
-    onError: (error) => toast.error(error.message),
-  });
-
   const [date, time] = form.watch(['date', 'time']);
 
   useEffect(() => {
     if (!date || !time) return;
-    
+
     form.setValue('scheduledAt', new Date(`${date}T${time}`).toISOString());
   }, [date, time, form]);
 
   const onSubmit = async (values: z.infer<typeof createformSchema>) => {
-    mutation.mutate({ ...values });
+    createMutation.mutate(values);
+  };
+
+  const handleFilesDrop = async (files: File[]) => {
+    await uploadFiles(files);
   };
 
   return (
@@ -106,12 +88,12 @@ const CreateUpdateDialog = () => {
                 Dodaj informacje o nadchodzących zajęciach na żywo.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="flex flex-col gap-4 py-4">
               <FormField
                 control={form.control}
                 name="scheduledAt"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="hidden">
                     <FormControl>
                       <Input
                         type="string"
@@ -134,6 +116,32 @@ const CreateUpdateDialog = () => {
                         type="text"
                         placeholder="np. Poranny Vinyasa Flow"
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="thumbnailId"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Miniaturka</FormLabel>
+                    <FormControl>
+                      <div className="grid grid-cols-2 gap-4">
+                        <FileUpload
+                          isUploading={isUploading}
+                          maxFiles={1}
+                          accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+                          onChange={async (files) =>
+                            await handleFilesDrop(files)
+                          }
+                        />
+                        <img
+                          className="aspect-video object-cover rounded-xl"
+                          src={imagePreview}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -238,7 +246,7 @@ const CreateUpdateDialog = () => {
                 type="submit"
                 form="live-lesson-form"
               >
-                {mutation.isPending ? (
+                {createMutation.isPending ? (
                   <Loader2 className="animate-spin" />
                 ) : (
                   'Utwórz zajęcia'

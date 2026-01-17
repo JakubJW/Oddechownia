@@ -1,5 +1,4 @@
 import Container from '@/components/Container/Container';
-import Attachments from '@/features/PlayLessonView/Attachments/Attachments';
 import { CommentsSection } from '@/features/PlayLessonView/Comments/CommentsSection';
 import LessonPlayer from '@/features/PlayLessonView/LessonPlayer';
 import { Params } from '@/types/types';
@@ -34,7 +33,7 @@ export async function generateMetadata({
   });
 
   return {
-    title: `${lessonMetadata?.name} | ${playlistMetadata?.name} | Studio Jogi Online | Oddechownia`,
+    title: `${lessonMetadata?.name} | ${playlistMetadata?.name} | Studio Jogi Online`,
     description: lessonMetadata?.description,
   };
 }

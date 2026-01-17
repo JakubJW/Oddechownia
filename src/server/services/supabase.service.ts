@@ -10,6 +10,7 @@ export enum BUCKETS {
   ATTACHMENTS = 'attachments',
   THUMBNAILS = 'thumbnails',
   WEBSITE_ASSETS = 'website_assets',
+  PUBLIC_ASSETS = 'public-assets',
 }
 
 const updateUserInAuthSchema = async (params: UserAttributes) => {
@@ -64,9 +65,34 @@ const getFileUrl = (name: string, bucket: string, folder: string) => {
     }
   );
 
+  let fullPath = folder;
+
+  if (!folder.endsWith(name)) {
+    const separator = folder.endsWith('/') ? '' : '/';
+    fullPath = `${folder}${separator}${name}`;
+  }
+
   const {
     data: { publicUrl },
-  } = supabase.storage.from(bucket).getPublicUrl(`${folder}/${name}`);
+  } = supabase.storage.from(bucket).getPublicUrl(fullPath);
+
+  return { data: publicUrl, success: true, error: null };
+};
+
+const getThumbnailUrl = (bucket: string, path: string) => {
+  const supabase = createAdminClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      auth: {
+        persistSession: false,
+      },
+    }
+  );
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(bucket).getPublicUrl(path);
 
   return { data: publicUrl, success: true, error: null };
 };
@@ -160,6 +186,7 @@ const deleteFile = async (bucket: string, paths: string[]) => {
 export const supabaseService = {
   downloadFile,
   getFileUrl,
+  getThumbnailUrl,
   deleteFile,
   uploadFile,
   updateUserInAuthSchema,

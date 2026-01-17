@@ -5,7 +5,7 @@ import {
 import { and, asc, desc, eq, lt, or } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
-import { liveLessons, liveLessonsRegistrations } from '../db/schema';
+import { files, liveLessons, liveLessonsRegistrations } from '../db/schema';
 import { logger } from '../lib/logger.service';
 import {
   AdminLiveLessonRecordDTO,
@@ -85,6 +85,12 @@ const transformToAdminLiveLessonRecordListDTO = (
     meetingLink: lesson.meetingLink ?? undefined,
     recordingUrl: lesson.recordingUrl ?? undefined,
     currentParticipants: lesson.registrations.length,
+    thumbnail: lesson.thumbnail
+      ? supabaseService.getThumbnailUrl(
+          lesson.thumbnail.bucket,
+          lesson.thumbnail.path
+        ).data
+      : undefined,
   }));
 };
 
@@ -100,6 +106,7 @@ const selectAdminLiveLessons = async (
     where: cursorCondition,
     orderBy: desc(liveLessons.scheduledAt),
     with: {
+      thumbnail: true,
       registrations: {
         columns: { id: true },
         where: or(
@@ -128,6 +135,7 @@ const getMany = async (cursor: string | null, perPage: number = 6) => {
 };
 
 import { format } from 'date-fns'; // Make sure you have this
+import { supabaseService } from './supabase.service';
 
 async function getLiveLessonsWithUserStatus(
   user: User
@@ -136,6 +144,7 @@ async function getLiveLessonsWithUserStatus(
 
   const lessons = await db.query.liveLessons.findMany({
     with: {
+      thumbnail: true,
       registrations: user
         ? {
             where: eq(liveLessonsRegistrations.userId, user.id),
@@ -159,6 +168,12 @@ async function getLiveLessonsWithUserStatus(
       isPaymentPending: false,
       isEligibleForFree: false,
       freeEligibilitiesUsed: 0,
+      thumbnail: lesson.thumbnail
+        ? supabaseService.getThumbnailUrl(
+            lesson.thumbnail.bucket,
+            lesson.thumbnail.path
+          ).data
+        : undefined,
     }));
   }
 
@@ -229,7 +244,12 @@ async function getLiveLessonsWithUserStatus(
       isListed: lesson.isListed,
       isRegistered,
       isPaymentPending,
-
+      thumbnail: lesson.thumbnail
+        ? supabaseService.getThumbnailUrl(
+            lesson.thumbnail.bucket,
+            lesson.thumbnail.path
+          ).data
+        : undefined,
       // Context-Aware Data
       isEligibleForFree,
       freeEligibilitiesUsed: usedInThisMonth,
@@ -247,6 +267,7 @@ const getUserLessons = async (
   const rawData = await db
     .select({
       lesson: liveLessons,
+      thumbnail: files,
     })
     .from(liveLessons)
     .innerJoin(
@@ -265,12 +286,16 @@ const getUserLessons = async (
         )
       )
     )
+    .leftJoin(files, eq(liveLessons.thumbnailId, files.id))
     .orderBy(asc(liveLessons.scheduledAt));
 
-  return rawData.map(({ lesson }) => ({
+  return rawData.map(({ lesson, thumbnail }) => ({
     id: lesson.id,
     title: lesson.title,
     scheduledAt: lesson.scheduledAt,
+    thumbnail: thumbnail
+      ? supabaseService.getThumbnailUrl(thumbnail.bucket, thumbnail.path).data
+      : undefined,
     duration: lesson.duration,
     isListed: lesson.isListed,
     description: lesson.description ?? undefined,

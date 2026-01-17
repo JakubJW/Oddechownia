@@ -13,7 +13,11 @@ import Chat from '@/features/scripts/chat';
 import MailerLiteForms from '@/features/scripts/mailer-lite-forms';
 
 export const metadata: Metadata = {
-  title: 'Twoje miejsce, by złapać oddech | Oddechownia',
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: {
+    default: 'Twoje miejsce, by złapać oddech',
+    template: '%s | Oddechownia',
+  },
 };
 
 const sourceSans = Source_Sans_3({

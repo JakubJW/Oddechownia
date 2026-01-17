@@ -1,55 +1,17 @@
-import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import LessonCard from '@/components/LessonCard/LessonCard';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import LessonGrid from '@/features/admin/Lesson/LessonGrid';
-import { LessonFilters, SortOrder } from '@/server/services/filters.service';
-import type { SearchParams } from '@/types/types';
+import { AdminLessonsGrid } from '@/features/admin/Lesson/admin-lessons-grid';
 import Filters from '@/components/Filters/Filters';
-import { LessonsService } from '@/server/services/lessons.service';
+import CreateLessonDialog from '@/features/admin/Lesson/craete-dialog';
 
-export default async function AdminLessons({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const query = await searchParams;
-  const filters: LessonFilters = {};
-
-  if (query['search']) {
-    filters.search = query['search'] as string;
-  }
-
-  if (query['sortBy']) {
-    filters.sortBy = query['sortBy'] as string;
-  } else {
-    filters.sortBy = 'name';
-  }
-
-  if (query['sortOrder']) {
-    filters.sortOrder = query['sortOrder'] as SortOrder;
-  }
-
-  const lessons = await LessonsService.getLessonsList(filters);
-
-  if (!lessons) {
-    return (
-      <ErrorMessage message={'Podczas pobierania lekcji wystąpił błąd.'} />
-    );
-  }
-
+export default async function AdminLessons() {
   return (
     <div>
       <div className="flex justify-between">
         <p>Lekcje</p>
         <div className="flex gap-2">
-          <Link
-            href="/admin/lekcje/dodaj"
-            className={cn(buttonVariants({ variant: 'default' }))}
-          >
-            Dodaj lekcję
-          </Link>
+          <CreateLessonDialog />
           <Link
             href="/admin/lekcje/etykiety"
             className={cn(buttonVariants({ variant: 'default' }))}
@@ -58,7 +20,7 @@ export default async function AdminLessons({
           </Link>
         </div>
       </div>
-      <Filters
+      {/* <Filters
         config={{
           search: true,
           sortOptions: [
@@ -81,24 +43,8 @@ export default async function AdminLessons({
             },
           ],
         }}
-      />
-      <LessonGrid>
-        {lessons.map(({ id, name, description, video, thumbnail, labels }) => (
-          <Link
-            href={`/admin/lekcje/${id}`}
-            key={id}
-            className="hover:opacity-80"
-          >
-            <LessonCard
-              thumbnail={thumbnail}
-              name={name}
-              video={video}
-              description={description}
-              labels={labels}
-            />
-          </Link>
-        ))}
-      </LessonGrid>
+      /> */}
+      <AdminLessonsGrid />
     </div>
   );
 }

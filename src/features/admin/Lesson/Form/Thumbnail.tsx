@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/shadcn-io/dropzone';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
+import imageCompression from 'browser-image-compression';
 
 interface FormThumbnailProps {
   onDrop: (files: File[]) => void;
@@ -33,9 +34,21 @@ const FormThumbnail = ({
   const [preview, setPreview] = useState<string | undefined>(undefined);
   const [wantsToChangeThumbnail, setWantsToChangeThumbnail] = useState(false);
 
-  const handleDrop = (files: File[]) => {
+  const handleDrop = async (files: File[]) => {
     if (files.length > 0) {
-      onDrop(files);
+      const options = {
+        maxSizeMB: 0.3, // Compress until it's under 300KB
+        maxWidthOrHeight: 1280, // Resize wide images down
+        useWebWorker: true, // Don't freeze the UI
+        fileType: 'image/webp', // Convert to WebP (much smaller than PNG/JPG)
+      };
+      console.log(`Original size: ${files[0].size / 1024 / 1024} MB`);
+
+      const compressedFile = await imageCompression(files[0], options);
+
+      console.log(`Compressed size: ${compressedFile.size / 1024 / 1024} MB`);
+
+      onDrop([compressedFile]);
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -43,7 +56,7 @@ const FormThumbnail = ({
           setPreview(e.target?.result);
         }
       };
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(compressedFile);
     }
   };
 

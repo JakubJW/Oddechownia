@@ -37,12 +37,12 @@ export default async function MyAccount() {
       </div>
       <RecentLessons
         lessons={recentLessons}
-        className="col-span-12 lg:col-span-8"
+        className="col-span-12"
       />
-      <RecentPosts
+      {/* <RecentPosts
         posts={recentPosts.filter((post) => post.id !== 10 && post.id !== 11)}
         className="col-span-12 lg:col-span-4"
-      />
+      /> */}
       <CaledarGrid
         user={user}
         className="col-span-12 lg:col-span-8"
