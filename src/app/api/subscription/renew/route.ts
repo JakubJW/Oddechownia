@@ -33,25 +33,25 @@ export async function POST(req: NextRequest) {
         metadata: { userId: clientReferenceId },
       },
     });
-  }
-
-  session = await stripeService.createCheckoutSession({
-    mode: 'subscription',
-    line_items: [
-      {
-        price: env.NEXT_STRIPE_SUBSCRIPTION_PRICE_ID,
-        quantity: 1,
+  } else {
+    session = await stripeService.createCheckoutSession({
+      mode: 'subscription',
+      line_items: [
+        {
+          price: env.NEXT_STRIPE_SUBSCRIPTION_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+      allow_promotion_codes: true,
+      customer: customerId,
+      success_url: `${env.NEXT_PUBLIC_APP_URL}/rejestracja/{CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.NEXT_PUBLIC_APP_URL}/moje-konto`,
+      client_reference_id: clientReferenceId,
+      subscription_data: {
+        metadata: { userId: clientReferenceId },
       },
-    ],
-    allow_promotion_codes: true,
-    customer: customerId,
-    success_url: `${env.NEXT_PUBLIC_APP_URL}/rejestracja/{CHECKOUT_SESSION_ID}`,
-    cancel_url: `${env.NEXT_PUBLIC_APP_URL}/moje-konto`,
-    client_reference_id: clientReferenceId,
-    subscription_data: {
-      metadata: { userId: clientReferenceId },
-    },
-  });
+    });
+  }
 
   if (!session.url) {
     return NextResponse.json(
