@@ -1,9 +1,10 @@
 import { cn, formatTimeForInput } from '@/lib/utils';
-import { Calendar, Clock, Link, Video } from 'lucide-react';
+import { Calendar, Clock, Video } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { LiveLessonCardUserDashboardDTO } from '@/server/models/liveLesson.models';
+import Link from 'next/link';
 
 export const UserLiveLessonCard = ({
   title,
