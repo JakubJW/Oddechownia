@@ -17,9 +17,6 @@ export default function Hero() {
                 <span className="">Twoje miejsce,</span> <br />
                 by złapać oddech
               </HeaderOne>
-              <span className="block text-right text-base mt-2">
-                gdziekolwiek jesteś
-              </span>
             </div>
             <p className="leading-relaxed text-justify text-xl">
               Pragniesz, aby joga rozgościła się w Twojej codzienności? W
@@ -31,11 +28,11 @@ export default function Hero() {
           <Link
             className={cn(
               buttonVariants({ size: 'lg' }),
-              'flex rounded-full font-semibold text-white bg-secondary-foreground text-xl h-16 w-min'
+              'flex rounded-full font-semibold text-white bg-secondary-foreground text-xl h-16 mb-4'
             )}
             href={'/rejestracja'}
           >
-            Dołącz do studia
+            Zacznij za darmo
           </Link>
         </div>
       </Container>

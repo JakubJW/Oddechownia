@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { HeadingParagraph } from '@/components/Headers/headers';
 
 export default function AboutMe() {
   return (
@@ -16,19 +17,19 @@ export default function AboutMe() {
         </div>
         <div className="py-12 sm:py-24 px-4 mx-auto md:max-w-[600px]">
           <div>
-            <p className="text-lg z-10 order-2 md:order-1">
+            <HeadingParagraph className="text-base leading-relaxed mb-6">
               Hari Om.
-              <br />
-              <br />
+            </HeadingParagraph>
+            <HeadingParagraph className="text-base leading-relaxed mb-6">
               Mam na imię Weronika i witam Cię w mojej czułej, jogowej
               przestrzeni.
-              <br />
-              <br />
+            </HeadingParagraph>
+            <HeadingParagraph className="text-base leading-relaxed mb-6">
               Joga towarzyszy mi od ponad 6 lat - początkowo jako wsparcie w
               rehabilitacji, by szybko wkraść się do mojego codziennego życia i…
               absolutnie je odmienić.
-              <br />
-              <br />
+            </HeadingParagraph>
+            <HeadingParagraph className="text-base leading-relaxed mb-6">
               Uczę jogi na macie i poza nią, bo wierzę, że jej mądrość sięga
               daleko poza fizyczną praktykę i daje realne wsparcie w wyzwaniach,
               jakie stawia przed nami współczesny świat - jest wiedzą prostą,
@@ -37,20 +38,21 @@ export default function AboutMe() {
               wspierających praktyk dla ciała, znajdziesz również odżywcze
               treści z pogranicza filozofii jogi, mitologii indyjskiej, ajurwedy
               czy cykliczności.
-              <br />
-              <br />
+            </HeadingParagraph>
+            <HeadingParagraph className="text-base leading-relaxed mb-6">
               Nie jestem i nie planuję być związana z żadną konkretną ścieżką. W
               swoim nauczaniu podchodzę do tematu holistycznie, z uważnością na
               tradycję i z czułością dla współczesnego życia. Jestem
               certyfikowaną przez Yoga Alliance nauczycielką jogi (RYT200, Joga
               Nidra YACEP, Art of Chanting YACEP) i z radością pogłębiam
               nieustannie swoją praktykę oraz nauczanie.
-              <br />
-              <br />
+            </HeadingParagraph>
+            <HeadingParagraph className="text-base leading-relaxed">
               Namaste
-              <br />
+            </HeadingParagraph>
+            <HeadingParagraph className="text-base leading-relaxed">
               Weronika
-            </p>
+            </HeadingParagraph>
           </div>
         </div>
       </div>

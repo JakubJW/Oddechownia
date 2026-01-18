@@ -26,25 +26,19 @@ export default async function CourseVideosPreview() {
       <Container className="pt-32 flex flex-col lg:grid lg:grid-cols-2  justify-center">
         <div className="flex flex-col justify-center mx-auto mb-20 px-4 sm:pr-24">
           <HeaderTwo className="mb-4">Wyrusz w duchową podróż</HeaderTwo>
-          <p className="mb-8 text-lg leasing-relaxed font-light">
+          <p className="mb-8 text-lg leading-relaxed font-light">
             Oddechownia to czuła przestrzeń, w której łączymy ruch z bezruchem,
             wiedzę z doświadczaniem, a duchowość z codziennością. To pierwsze w
             Polsce studio jogi online, w którym tak głęboko zanurzamy się
             również w jogę poza matą: anatomię subtelną, filozofię jogi,
-            mitologię indyjską, ajurwedę czy cykliczność. W ramach subskrypcji
-            otrzymujesz dostęp do wszystkich treści: praktyk asan, medytacji,
-            jogi nidry, spotkań z oddechem oraz inspirujących wykładów i
-            opowieści. Sprawdź próbkę i wybierz swoją pierwszą praktykę.
+            mitologię indyjską, ajurwedę czy cykliczność.
           </p>
-          <Link
-            href="/studio-jogi-online"
-            className={cn(
-              buttonVariants({ size: 'lg' }),
-              'text-xl h-16 rounded-full self-start'
-            )}
-          >
-            Przeglądaj filmy
-          </Link>
+          <p className="mb-8 text-lg leading-relaxed font-light">
+            W ramach subskrypcji otrzymujesz dostęp do wszystkich treści:
+            praktyk asan, medytacji, jogi nidry, spotkań z oddechem oraz
+            inspirujących wykładów i opowieści. Zarejestruj się i praktykuj w
+            Oddechowni przez trzy dni za darmo!
+          </p>
         </div>
         <Carousel
           hideArrows
