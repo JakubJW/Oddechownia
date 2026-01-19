@@ -5,6 +5,7 @@ import Faq from '@/features/Homepage/Faq';
 import AboutMe from '@/features/Homepage/AboutMe';
 // import QuoteSection from '@/features/Homepage/quote-section';
 import Features from '@/features/Homepage/features';
+import CustomerReviews from '@/features/Homepage/CustomerReviews';
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <Features />
       {/* <QuoteSection /> */}
       <LessonVideosPreview />
+      <CustomerReviews />
       <AvailableSubscriptions />
       <AboutMe />
       <Faq />

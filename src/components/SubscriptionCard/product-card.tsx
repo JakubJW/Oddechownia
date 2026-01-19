@@ -82,7 +82,7 @@ const ActionButton = ({
       href={`${env.NEXT_PUBLIC_APP_URL}/zajecia-na-zywo`}
       className={cn(buttonVariants({ size: 'lg' }))}
     >
-      Dostępne lekcje
+      Przeglądaj dostępne lekcje
     </a>
   );
 };

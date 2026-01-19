@@ -9,7 +9,7 @@ export const Feature = ({ icon, children }: Props) => {
       <div className="p-2 rounded-full border-2 border-matcha-foreground">
         {icon}
       </div>
-      <span className="font-light">{children}</span>
+      <span className="font-light text-lg">{children}</span>
     </div>
   );
 };

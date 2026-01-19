@@ -9,29 +9,28 @@ import { Feature } from '../shared/feature';
 const Features = () => {
   return (
     <section>
-      <Container>
+      <Container className="pt-32">
         <div className="flex gap-6">
           <div className="flex-1"></div>
           <div className="flex-1">
             <HeaderTwo className="mb-8">
-              Co czeka na Ciebie w Oddechowni?
+              Odkryj przestrzeń dla swojego spokoju
             </HeaderTwo>
-            <p className="mb-6 text-lg leading-relaxed font-light">
+            <p className="mb-6 text-lg font-light">
               Oddechownia to przestrzeń do regularnej, uważnej praktyki – wtedy,
               kiedy masz na nią miejsce i gotowość. Bez pośpiechu. Bez presji.
               Bez „muszę”.
             </p>
-            <p className="mb-6 text-lg leading-relaxed font-light">
-              W ramach subskrypcji zyskujesz dostęp do bogatej biblioteki
-              praktyk jogi, medytacji i pracy z oddechem – ułożonych w
-              playlisty, które prowadzą Cię krok po kroku. Od porannych
-              rozruchów, przez łagodne sesje yin i jogę nidrę, po praktyki na
-              konkretne momenty cyklu, emocji czy pory dnia. To coś więcej niż
-              ćwiczenia.
+            <p className="mb-6 text-lg font-light">
+              Zyskujesz dostęp do bogatej biblioteki jogi, medytacji i pracy z
+              oddechem. Czekają tu na Ciebie gotowe playlisty, które poprowadzą
+              Cię krok po kroku: od porannych rozruchów, przez łagodne sesje yin
+              i jogę nidrę, aż po praktyki dopasowane do Twojego cyklu, emocji
+              czy pory dnia. To coś więcej niż tylko ćwiczenia.
             </p>
-            <p className="mb-12 text-lg leading-relaxed font-light">
-              To proces, który możesz wplatać w swoją codzienność – w swoim
-              tempie, w swoim rytmie, w swoim domu.
+            <p className="mb-12 text-lg font-light">
+              To proces, który wplatasz w swoją codzienność – w swoim tempie i
+              własnym rytmie. W domu.
             </p>
 
             <HeadingParagraph className="text-2xl font-normal mb-8">
@@ -40,20 +39,19 @@ const Features = () => {
 
             <div className="space-y-4 mb-8">
               <Feature icon={<Play className="size-6 text-matcha" />}>
-                dostęp do dziesiątek praktyk jogi, medytacji i jogi nidry
+                Dostęp do dziesiątek praktyk jogi, medytacji i nidry
               </Feature>
               <Feature icon={<Puzzle className="size-6 text-matcha" />}>
-                playlisty tematyczne prowadzone krok po kroku
+                Tematyczne playlisty prowadzące Cię za rękę
               </Feature>
               <Feature icon={<Moon className="size-6 text-matcha" />}>
-                praktyki na różne potrzeby: sen, regenerację, energię i czas
-                menstruacji
+                Sesje na sen, regenerację, energię i czas menstruacji
               </Feature>
               <Feature icon={<Video className="size-6 text-matcha" />}>
-                dwie darmowe sesje live w miesiącu (dla subskrybentów)
+                Dwa darmowe spotkania na żywo w miesiącu (dla subskrybentów)
               </Feature>
               <Feature icon={<Home className="size-6 text-matcha" />}>
-                pełną swobodę – praktykujesz gdzie i kiedy chcesz
+                Pełną swobodę – matę rozwijasz, gdzie i kiedy chcesz
               </Feature>
             </div>
 
