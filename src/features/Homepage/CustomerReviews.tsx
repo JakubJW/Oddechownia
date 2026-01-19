@@ -23,6 +23,12 @@ const mockReiews = [
     rating: 5,
     date: '2021-01-01',
   },
+  {
+    customerName: 'Andrzej Nowak',
+    review: 'Bardzo fajny kurs, polecam!',
+    rating: 5,
+    date: '2021-01-01',
+  },
 ];
 
 export default function CustomerReviews() {

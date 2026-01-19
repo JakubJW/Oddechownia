@@ -1,6 +1,6 @@
 import { ProductCard } from '@/components/SubscriptionCard/product-card';
 import Container from '@/components/Container/Container';
-import { HeaderTwo } from '@/components/Headers/headers';
+import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import { getUser } from '@/server/actions/user';
 import { stripeService } from '@/server/services/stripe.service';
 import Stripe from 'stripe';
@@ -43,11 +43,14 @@ export default async function AvailableSubscriptions() {
   return (
     <section>
       <Container className="overflow-hidden px-8">
-        <hgroup className="text-center max-w-[800px] mx-auto space-y-6 mb-24">
-          <HeaderTwo>
-            Jak możesz <br /> praktykować
-            <span className="text-primaryFg">&nbsp;w Oddechowni?</span>
+        <hgroup className="text-center max-w-[800px] mx-auto mb-24">
+          <HeaderTwo className="mb-8">
+            Wybierz najlepszą ścieżkę dla siebie
           </HeaderTwo>
+          <HeadingParagraph>
+            Zostań ze mną na dłużej w ramach subskrypcji lub wpadnij jednorazowo
+            na zajęcia live.
+          </HeadingParagraph>
         </hgroup>
         <div className="grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto gap-16">
           <ProductCard
