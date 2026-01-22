@@ -8,6 +8,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   robots: 'noindex,nofollow',
+  title: 'Rejestracja',
 };
 
 export default async function SignIn() {
@@ -31,6 +32,9 @@ export default async function SignIn() {
     <section>
       <div className="grid md:grid-cols-2">
         <div className="w-full lg:max-w-[512px] py-12 xl:max-w-[640px] 2xl:max-w-[768px] ml-auto px-4 lg:pr-16 xl:pr-24 2xl:pr-32 self-center space-y-8">
+          <h1 className="text-xl font-light text-muted-foreground">
+            Dołącz do Oddechowni
+          </h1>
           <Order
             features={subscriptionProductDto.marketingFeatures}
             amount={subscriptionProductDto.price.unitAmount}

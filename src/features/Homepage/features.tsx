@@ -3,71 +3,111 @@ import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { Moon, Puzzle, Play, Home, Video } from 'lucide-react';
+import { Play, Home, Video, Leaf, MessageCircle } from 'lucide-react';
 import { Feature } from '../shared/feature';
+import Om from '@/assets/Om.svg';
+import Sloneczko from '@/assets/Sloneczko.svg';
+import Kwiatek from '@/assets/Kwiatek.svg';
+import {
+  FeatureCircle,
+  FeatureCircleTitle,
+  FeatureCircleDescription,
+  FeatureCircleImage,
+} from '../shared/feature-circle';
+import Image from 'next/image';
 
 const Features = () => {
   return (
     <section>
-      <Container className="pt-32">
-        <div className="flex gap-6">
-          <div className="flex-1"></div>
-          <div className="flex-1">
-            <HeaderTwo className="mb-8">
-              Odkryj przestrzeń dla swojego spokoju
-            </HeaderTwo>
-            <p className="mb-6 text-lg font-light">
-              Oddechownia to przestrzeń do regularnej, uważnej praktyki – wtedy,
-              kiedy masz na nią miejsce i gotowość. Bez pośpiechu. Bez presji.
-              Bez „muszę”.
-            </p>
-            <p className="mb-6 text-lg font-light">
-              Zyskujesz dostęp do bogatej biblioteki jogi, medytacji i pracy z
-              oddechem. Czekają tu na Ciebie gotowe playlisty, które poprowadzą
-              Cię krok po kroku: od porannych rozruchów, przez łagodne sesje yin
-              i jogę nidrę, aż po praktyki dopasowane do Twojego cyklu, emocji
-              czy pory dnia. To coś więcej niż tylko ćwiczenia.
-            </p>
-            <p className="mb-12 text-lg font-light">
-              To proces, który wplatasz w swoją codzienność – w swoim tempie i
-              własnym rytmie. W domu.
-            </p>
+      <Container>
+        <HeaderTwo className="text-center font-light mb-12">
+          Więcej, niż yoga na YouTube
+        </HeaderTwo>
+        <div className="space-y-32">
+          <div className="flex flex-col md:flex-row gap-16">
+            <FeatureCircle>
+              <FeatureCircleImage>
+                <Om className="size-40" />
+              </FeatureCircleImage>
+              <FeatureCircleTitle>
+                Dla ciała i układu nerwowego
+              </FeatureCircleTitle>
+              <FeatureCircleDescription>
+                100+ praktyk asan, jogi nidry, medytacji prowadzonych i technik
+                oddechowych
+              </FeatureCircleDescription>
+            </FeatureCircle>
 
-            <HeadingParagraph className="text-2xl font-normal mb-8">
-              Dołączając do Oddechowni, otrzymujesz:
-            </HeadingParagraph>
+            <FeatureCircle>
+              <FeatureCircleImage>
+                <Sloneczko className="size-40" />
+              </FeatureCircleImage>
+              <FeatureCircleTitle>Praktyka poza matą</FeatureCircleTitle>
+              <FeatureCircleDescription>
+                Wykłady o filozofii jogi, kobiecej cykliczności, anatomii
+                subtelnej, mitologii i nie tylko
+              </FeatureCircleDescription>
+            </FeatureCircle>
 
-            <div className="space-y-4 mb-8">
-              <Feature icon={<Play className="size-6 text-matcha" />}>
-                Dostęp do dziesiątek praktyk jogi, medytacji i nidry
-              </Feature>
-              <Feature icon={<Puzzle className="size-6 text-matcha" />}>
-                Tematyczne playlisty prowadzące Cię za rękę
-              </Feature>
-              <Feature icon={<Moon className="size-6 text-matcha" />}>
-                Sesje na sen, regenerację, energię i czas menstruacji
-              </Feature>
-              <Feature icon={<Video className="size-6 text-matcha" />}>
-                Dwa darmowe spotkania na żywo w miesiącu (dla subskrybentów)
-              </Feature>
-              <Feature icon={<Home className="size-6 text-matcha" />}>
-                Pełną swobodę – matę rozwijasz, gdzie i kiedy chcesz
-              </Feature>
+            <FeatureCircle>
+              <FeatureCircleImage>
+                <Kwiatek className="size-40" />
+              </FeatureCircleImage>
+              <FeatureCircleTitle>Indywidualne wsparcie</FeatureCircleTitle>
+              <FeatureCircleDescription>
+                Stały kontakt z nauczycielem, gotowe plany praktyki i materiały
+                edukacyjne (e-booki)
+              </FeatureCircleDescription>
+            </FeatureCircle>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-16">
+            <div className="relative w-full aspect-[3/4] md:aspect-auto md:w-1/2 xl:w-2/3 ">
+              <Image
+                className="object-cover rounded-[32px]"
+                src="/hero2.jpg"
+                fill
+                alt="Obrazek"
+              />
             </div>
 
-            <p className="text-md font-light mb-6">
-              Zacznij od 3-dniowego dostępu próbnego i sprawdź, czy to
-              przestrzeń dla Ciebie.
-            </p>
-            <Link
-              className={cn(
-                buttonVariants(),
-                'flex rounded-full w-min text-white text-lg h-12 mb-4'
-              )}
-              href={'/rejestracja'}
-            >
-              Wypróbuj Oddechownię
-            </Link>
+            <div className="flex flex-col md:w-1/2 xl:w-1/3">
+              <HeadingParagraph className="text-2xl font-normal mb-8">
+                Dołączając do Oddechowni, otrzymujesz:
+              </HeadingParagraph>
+              <ul className="space-y-4 mb-8">
+                <Feature icon={<Play className="size-6 text-matcha" />}>
+                  Dostęp do Studia Jogi Online i biblioteki 100+ materiałów
+                  wideo
+                </Feature>
+                <Feature icon={<Video className="size-6 text-matcha" />}>
+                  Spotkania i praktyki na żywo (Zoom)
+                </Feature>
+                <Feature
+                  icon={<MessageCircle className="size-6 text-matcha" />}
+                >
+                  Indywidualne wsparcie w praktyce i stały kontakt z
+                  nauczycielką
+                </Feature>
+                <Feature icon={<Home className="size-6 text-matcha" />}>
+                  Możliwość praktykowania gdzie chcesz, kiedy chcesz - we
+                  własnym rytmie
+                </Feature>
+                <Feature icon={<Leaf className="size-6 text-matcha" />}>
+                  Darmowy 3-dniowy okres próbny
+                </Feature>
+              </ul>
+
+              <Link
+                className={cn(
+                  buttonVariants(),
+                  'flex rounded-full self-center md:self-start text-white text-lg h-12'
+                )}
+                href={'/rejestracja'}
+              >
+                Rozpocznij praktykę
+              </Link>
+            </div>
           </div>
         </div>
       </Container>

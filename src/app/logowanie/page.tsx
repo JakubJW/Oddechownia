@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 export const metadata: Metadata = {
   robots: 'noindex,nofollow',
+  title: 'Logowanie',
 };
 
 export default function Login() {
