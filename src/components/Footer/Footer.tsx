@@ -1,8 +1,7 @@
 import Container from '../Container/Container';
 import Link from 'next/link';
-import Logo from '../../../public/oddechownia.svg';
-import Image from 'next/image';
-import Instagram from '../../../public/instagram.svg';
+import Logo from '@/assets/oddechownia.svg';
+import Instagram from '@/assets/instagram.svg';
 import FooterLink from './FooterLink';
 import { filteredRoutes, footerLinks } from '@/utils/navigation';
 import { getUser } from '@/server/actions/user';
@@ -18,12 +17,7 @@ export default async function Footer() {
             className="block mr-8"
             href="/"
           >
-            <Image
-              src={Logo}
-              alt="Oddechownia logo"
-              priority
-              className="w-[200px]"
-            />
+            <Logo className="w-[200px]" />
           </Link>
           {[filteredRoutes(user), footerLinks].map((column, index) => (
             <ul
@@ -45,10 +39,7 @@ export default async function Footer() {
             href="https://www.instagram.com/weronikasyoga/"
             target="_blank"
           >
-            <Image
-              src={Instagram}
-              alt="Instagram logo"
-            />
+            <Instagram />
           </Link>
         </div>
       </Container>

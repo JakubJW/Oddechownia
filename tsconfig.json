@@ -29,12 +29,11 @@
     ]
   },
   "include": [
+    "svgr.d.ts",
+    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "next-env.d.ts",
-    "video.d.ts",
     ".next/types/**/*.ts",
-    "src/components/QueryClientProvider.tsx"
   ],
   "exclude": [
     "node_modules"

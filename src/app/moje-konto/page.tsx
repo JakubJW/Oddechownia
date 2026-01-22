@@ -4,8 +4,6 @@ import { SubscriptionInfoCard } from '@/features/user/SubscriptionInfoCard';
 import { LessonsService } from '@/server/services/lessons.service';
 import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { RecentLessons } from '@/features/user/RecentLessons';
-import { PostsService } from '@/server/services/posts.service';
-import RecentPosts from '@/features/user/RecentPosts';
 import { Wind } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
@@ -15,7 +13,6 @@ export default async function MyAccount() {
   const count = await LiveLessonsRegistrationsService.getUsedEntitlementsCount(
     user.id
   );
-  const recentPosts = await PostsService.getRecentPosts();
 
   if (!user.hasActiveSubscription) {
     return redirect('/wymagana-subskrypcja');

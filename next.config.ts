@@ -2,6 +2,14 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    rules: {
+      './src/assets/*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
   images: {
     minimumCacheTTL: 2678400,
     remotePatterns: [
@@ -30,6 +38,23 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ['pino', 'pino-pretty'],
   allowedDevOrigins: ['localhost', '127.0.0.1'],
+  webpack(config) {
+    const fileLoaderRule = config.module.rules.find((rule: any) =>
+      rule.test?.test?.('.svg')
+    );
+
+    config.module.rules.push({
+      test: /\.svg$/i,
+      include: /assets/,
+      use: ['@svgr/webpack'],
+    });
+
+    if (fileLoaderRule) {
+      fileLoaderRule.exclude = /assets/;
+    }
+
+    return config;
+  },
 };
 
 export default nextConfig;

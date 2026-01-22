@@ -97,6 +97,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@svgr/webpack": "^8.1.0",
     "@types/lodash.get": "^4.4.9",
     "@types/node": "^20",
     "@types/react": "^19",

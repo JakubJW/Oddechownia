@@ -1,6 +1,5 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import Logo from '../../../public/oddechownia.svg';
+import Logo from '@/assets/oddechownia.svg';
 import MobileNavigation from './MobileNavigation';
 import NavigationLink from './NavigationLink';
 import AccountDropdown from './account-dropdown';
@@ -46,12 +45,7 @@ export default function Navigation({ user }: NavigationProps) {
                   className="block mr-8 h-full"
                   href="/"
                 >
-                  <Image
-                    src={Logo}
-                    alt="Oddechownia logo"
-                    priority
-                    className="h-full w-min"
-                  />
+                  <Logo className="h-full w-min" />
                 </Link>
               </li>
               {filteredRoutes(user).map(({ content, href }, index) => (
