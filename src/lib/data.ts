@@ -6,7 +6,7 @@ export const getRequiredUser = cache(async () => {
   const user = await getUser();
 
   if (!user) {
-    redirect('/logowanie');
+    redirect('/rejestracja');
   }
 
   return user;

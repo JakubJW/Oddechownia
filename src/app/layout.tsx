@@ -51,9 +51,13 @@ export default async function RootLayout({
             )}
           </ToastProvider>
         </QueryClientProvider>
-        <Analytics />
-        <Chat />
-        <MailerLiteForms />
+        {env.NODE_ENV !== 'development' && (
+          <>
+            <Chat />
+            <Analytics />
+            <MailerLiteForms />
+          </>
+        )}
       </body>
     </html>
   );

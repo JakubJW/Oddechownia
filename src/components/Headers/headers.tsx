@@ -40,7 +40,7 @@ export const HeadingParagraph = ({ children, className }: Props) => {
   return (
     <p
       className={cn(
-        'leading-relaxed text-xl font-light',
+        'text-xl font-light',
         className ?? '',
         montserrat.className
       )}

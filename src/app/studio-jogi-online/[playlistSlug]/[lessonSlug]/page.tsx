@@ -54,9 +54,12 @@ export default async function PlaylistLessonPlayback({
     notFound();
   }
 
-  if (
-    (!user && !playlist.isAccessibleForFree) ||
-    (user && !user.hasActiveSubscription)
+  if (!user && !playlist.isAccessibleForFree) {
+    redirect('/rejestracja');
+  } else if (
+    user &&
+    !playlist.isAccessibleForFree &&
+    !user.hasActiveSubscription
   ) {
     redirect('/wymagana-subskrypcja');
   }
