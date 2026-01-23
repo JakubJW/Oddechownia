@@ -77,7 +77,7 @@ const IsItForYou = () => {
             3-dniowy okres próbny
           </Link>
           <Image
-            src="/hero2.jpg"
+            src="/subscription_square.png"
             className="-z-10 object-cover rounded-[32px]"
             fill
             alt="Obrazek"

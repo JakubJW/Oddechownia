@@ -21,7 +21,7 @@ const Features = () => {
     <section>
       <Container>
         <HeaderTwo className="text-center font-light mb-12">
-          Więcej, niż yoga na YouTube
+          Więcej, niż joga na YouTube
         </HeaderTwo>
         <div className="space-y-32">
           <div className="flex flex-col md:flex-row gap-16">

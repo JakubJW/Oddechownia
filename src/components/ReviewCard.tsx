@@ -1,7 +1,6 @@
 import Brandmark from '@/assets/Brandmark.svg';
 
 export interface ReviewCardProps {
-  customerName: string;
   review: string;
 }
 
@@ -12,7 +11,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         <div className="rounded-full bg-richBlack w-min p-4 mb-6">
           <Brandmark className="size-12 text-matcha" />
         </div>
-        <p className="font-light text-center">{review}</p>
+        <p className="font-light text-lg italic text-center">{review}</p>
       </div>
     </div>
   );
