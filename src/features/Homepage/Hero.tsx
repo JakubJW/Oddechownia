@@ -1,6 +1,9 @@
 import { HeaderOne } from '@/components/Headers/headers';
 import Image from 'next/image';
 import Container from '@/components/Container/Container';
+import Link from 'next/link';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function Hero() {
   return (
@@ -10,10 +13,19 @@ export default function Hero() {
           <div className="text-white text-left">
             <span className="block mb-2">Oddechownia Studio Jogi</span>
             <div className="w-min whitespace-nowrap">
-              <HeaderOne className="mb-8 md:mb-16">
+              <HeaderOne className="mb-8">
                 <span className="">Twoje miejsce,</span> <br />
                 by złapać oddech
               </HeaderOne>
+              <Link
+                className={cn(
+                  buttonVariants({ size: 'lg' }),
+                  'self-center md:self-start rounded-full text-xl text-richBlack h-14 mb-4'
+                )}
+                href={'/rejestracja'}
+              >
+                Rozpocznij za darmo
+              </Link>
             </div>
           </div>
         </div>

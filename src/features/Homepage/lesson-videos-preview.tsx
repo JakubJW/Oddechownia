@@ -23,7 +23,7 @@ export default async function CourseVideosPreview() {
   return (
     <section className="bg-primary-foreground">
       <Container className="flex flex-col md:flex-row gap-6 justify-center">
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col justify-center flex-1">
           <hgroup className="text-center md:text-left">
             <HeaderTwo className="mb-8 font-light">
               Wyrusz w duchową podróż
@@ -39,9 +39,9 @@ export default async function CourseVideosPreview() {
               buttonVariants({ size: 'lg' }),
               'self-center md:self-start rounded-full text-xl h-12 mb-4'
             )}
-            href={'/rejestracja'}
+            href={'/studio-jogi-online'}
           >
-            Wypróbuj za darmo
+            Przeglądaj filmy
           </Link>
         </div>
         <div className="flex-1">

@@ -5,7 +5,7 @@ import Faq from '@/features/Homepage/Faq';
 import AboutMe from '@/features/Homepage/AboutMe';
 // import QuoteSection from '@/features/Homepage/quote-section';
 import Features from '@/features/Homepage/features';
-// import CustomerReviews from '@/features/Homepage/CustomerReviews';
+import CustomerReviews from '@/features/Homepage/customer-reviews';
 import IsItForYou from '@/features/Homepage/is-it-for-you';
 
 export default function Home() {
@@ -14,7 +14,7 @@ export default function Home() {
       <Hero />
       <LessonVideosPreview />
       <Features />
-      {/* <CustomerReviews /> */}
+      <CustomerReviews />
       <IsItForYou />
       <AboutMe />
       <Faq />
