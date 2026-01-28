@@ -4,13 +4,13 @@ import { Source_Sans_3 } from 'next/font/google';
 import Navigation from '@/components/Navigation/Navigation';
 import Footer from '@/components/Footer/Footer';
 import { env } from '@/env';
-import Waitlist from '@/features/Waitlist/Waitlist';
 import ToastProvider from '@/components/ToastProvider';
 import QueryClientProvider from '@/components/QueryClientProvider';
 import { getUser } from '@/server/actions/user';
 import { Analytics } from '@vercel/analytics/next';
 import Chat from '@/features/scripts/chat';
 import MailerLiteForms from '@/features/scripts/mailer-lite-forms';
+import Hotjar from '@/features/scripts/hotjar';
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -40,15 +40,9 @@ export default async function RootLayout({
       <body className="antialiased">
         <QueryClientProvider>
           <ToastProvider>
-            {env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true' ? (
-              <Waitlist />
-            ) : (
-              <>
-                <Navigation user={user} />
-                <main className="mt-[64px] min-h-full">{children}</main>
-                <Footer />
-              </>
-            )}
+            <Navigation user={user} />
+            <main className="mt-[64px] min-h-full">{children}</main>
+            <Footer />
           </ToastProvider>
         </QueryClientProvider>
         {env.NODE_ENV !== 'development' && (
@@ -56,6 +50,7 @@ export default async function RootLayout({
             <Chat />
             <Analytics />
             <MailerLiteForms />
+            <Hotjar />
           </>
         )}
       </body>
