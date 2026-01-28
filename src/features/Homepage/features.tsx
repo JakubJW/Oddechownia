@@ -3,7 +3,7 @@ import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { Play, Home, Video, Leaf, MessageCircle } from 'lucide-react';
+import { Play, Home, Video, Leaf, MessageCircle, Book } from 'lucide-react';
 import { Feature } from '../shared/feature';
 import Om from '@/assets/Om.svg';
 import Sloneczko from '@/assets/Sloneczko.svg';
@@ -82,6 +82,9 @@ const Features = () => {
                 </Feature>
                 <Feature icon={<Video className="size-6 text-matcha" />}>
                   Spotkania i praktyki na żywo (Zoom)
+                </Feature>
+                <Feature icon={<Book className="size-6 text-matcha" />}>
+                  Darmowego e-booka po zakończeniu okresu próbnego
                 </Feature>
                 <Feature
                   icon={<MessageCircle className="size-6 text-matcha" />}

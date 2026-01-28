@@ -1,16 +1,17 @@
-import { User } from '@/server/actions/user';
-
-const navbarLinks = [
+export const navbarLinks = [
   {
     content: 'Studio Jogi Online',
     href: '/studio-jogi-online',
-    allowGuest: true,
     target: '_self',
   },
   {
     content: 'Zajęcia na żywo',
     href: '/zajecia-na-zywo',
-    allowGuest: true,
+    target: '_self',
+  },
+  {
+    content: 'Oferta',
+    href: '/oferta',
     target: '_self',
   },
 ];
@@ -20,20 +21,10 @@ export const footerLinks = [
     content: 'Regulamin',
     href: '/documents/regulamin.pdf',
     target: '_blank',
-    allowGuest: true,
   },
   {
     content: 'Polityka prywatności',
     href: '/documents/polityka-prywatnosci.pdf',
     target: '_blank',
-    allowGuest: true,
   },
 ];
-
-export const filteredRoutes = (user: User) => {
-  if (user) {
-    return navbarLinks;
-  }
-
-  return navbarLinks.filter((link) => link.allowGuest);
-};

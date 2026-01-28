@@ -11,7 +11,6 @@ import {
   Heart,
   LogOut,
   UserStar,
-  Users,
   Leaf,
 } from 'lucide-react';
 import {
@@ -73,10 +72,6 @@ export default function AccountDropdown({
           <Leaf className="size-4 mr-1" />
           Moja praktyka
         </DropdownMenuItem>
-        {/* <DropdownMenuItem onClick={() => router.push('/spolecznosc')}>
-          <Users className="size-4 mr-1" />
-          Społeczność
-        </DropdownMenuItem> */}
         <DropdownMenuItem
           onClick={() => router.push('/moje-konto/zajecia-na-zywo')}
         >

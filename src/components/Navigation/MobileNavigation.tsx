@@ -5,7 +5,7 @@ import { MenuIcon, X } from 'lucide-react';
 import { useState } from 'react';
 import NavigationLink from './NavigationLink';
 import { NavigationProps } from './Navigation';
-import { filteredRoutes } from '@/utils/navigation';
+import { navbarLinks } from '@/utils/navigation';
 import { signOut } from '@/server/actions/auth';
 
 export default function MobileNavigation({ user }: NavigationProps) {
@@ -29,7 +29,7 @@ export default function MobileNavigation({ user }: NavigationProps) {
           <X className="text-richBlack" />
         </button>
         <ul className="-mx-4 flex flex-col gap-4">
-          {filteredRoutes(user).map(({ content, href }, index) => (
+          {navbarLinks.map(({ content, href }, index) => (
             <li key={index}>
               <NavigationLink
                 isMobile={true}
@@ -59,14 +59,6 @@ export default function MobileNavigation({ user }: NavigationProps) {
                   onClick={() => setOpen(false)}
                 />
               </li>
-              {/* <li>
-                <NavigationLink
-                  isMobile={true}
-                  content="Społeczność"
-                  href="/spolecznosc"
-                  onClick={() => setOpen(false)}
-                />
-              </li> */}
               <li>
                 <NavigationLink
                   isMobile={true}
