@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 import Image from 'next/image';
 import { env } from '@/env';
 import { Metadata } from 'next';
+import Container from '@/components/Container/Container';
 
 export const metadata: Metadata = {
   robots: 'noindex,nofollow',
@@ -30,10 +31,10 @@ export default async function SignIn() {
 
   return (
     <section>
-      <div className="grid md:grid-cols-2">
-        <div className="w-full lg:max-w-[512px] py-12 xl:max-w-[640px] 2xl:max-w-[768px] ml-auto px-4 lg:pr-16 xl:pr-24 2xl:pr-32 self-center space-y-8">
-          <h1 className="text-xl font-light text-muted-foreground">
-            Dołącz do Oddechowni
+      <Container className="min-h-screen grid lg:grid-cols-2 lg:gap-16">
+        <div className="w-full self-center space-y-8">
+          <h1 className="text-lg xl:text-xl font-light">
+            Dołącz do Oddechowni i testuj za darmo przez 3 dni
           </h1>
           <Order
             features={subscriptionProductDto.marketingFeatures}
@@ -44,15 +45,16 @@ export default async function SignIn() {
           />
           <RegisterForm className="col-start-1 col-span-2" />
         </div>
-        <Image
-          className="auth-hero-image object-cover object-bottom w-full hidden md:block"
-          src="/auth-hero.png"
-          alt="Hero image"
-          height={3088}
-          width={2048}
-          priority={true}
-        />
-      </div>
+        <div className="relative hidden md:block">
+          <Image
+            className="object-cover object-bottom rounded-[32px]"
+            src="/auth-hero.png"
+            alt="Hero image"
+            fill
+            priority={true}
+          />
+        </div>
+      </Container>
     </section>
   );
 }

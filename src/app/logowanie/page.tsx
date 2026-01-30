@@ -1,3 +1,4 @@
+import Container from '@/components/Container/Container';
 import LoginForm from '@/features/Login/Form/LoginForm';
 import { Metadata } from 'next';
 import Image from 'next/image';
@@ -10,17 +11,18 @@ export const metadata: Metadata = {
 export default function Login() {
   return (
     <section>
-      <div className="grid lg:grid-cols-2">
+      <Container className="min-h-screen grid lg:grid-cols-2 lg:gap-16">
         <LoginForm />
-        <Image
-          className="auth-hero-image object-cover object-bottom w-full hidden lg:block"
-          src="/auth-hero.png"
-          alt="Hero image"
-          height={3088}
-          width={2048}
-          priority={true}
-        />
-      </div>
+        <div className="relative hidden lg:block">
+          <Image
+            className="object-cover object-bottom rounded-[32px]"
+            src="/auth-hero.png"
+            alt="Hero image"
+            fill
+            priority={true}
+          />
+        </div>
+      </Container>
     </section>
   );
 }
