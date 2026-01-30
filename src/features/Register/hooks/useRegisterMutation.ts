@@ -17,7 +17,6 @@ const registerAPI = async (values: RegisterFormValues) => {
 
   formData.append('email', values.email);
   formData.append('password', values.password);
-  formData.append('passwordConfirmation', values.passwordConfirmation);
   formData.append('firstName', values.firstName);
   formData.append('lastName', values.lastName);
   formData.append('regulationsAgreement', String(values.regulationsAgreement));

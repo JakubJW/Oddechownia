@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { useRegisterMutation } from '../hooks/useRegisterMutation';
 import { Loader2 } from 'lucide-react';
 import { ApiFieldError } from '../hooks/useRegisterMutation';
+import { PasswordInput } from '@/components/password-input';
 
 export const RegisterForm = ({ className }: { className?: string }) => {
   const mutation = useRegisterMutation();
@@ -53,10 +54,8 @@ export const RegisterForm = ({ className }: { className?: string }) => {
         >
           <div className="space-y-6">
             <div className="space-y-4">
-              <p className="text-muted-foreground font-light text-lg mb-4">
-                Twoje dane
-              </p>
-              <div className="grid grid-cols-2 gap-4">
+              <p className="font-light text-lg mb-4">Twoje dane</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="firstName"
@@ -89,24 +88,22 @@ export const RegisterForm = ({ className }: { className?: string }) => {
                     </FormItem>
                   )}
                 />
-              </div>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Adres e-mail</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Adres e-mail</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="password"
@@ -114,26 +111,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
                     <FormItem>
                       <FormLabel>Hasło</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="passwordConfirmation"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Powtórz hasło</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                        />
+                        <PasswordInput {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -141,6 +119,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
                 />
               </div>
             </div>
+
             <div className="space-y-2">
               <FormField
                 control={form.control}
@@ -158,7 +137,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
                         />
                         <label
                           htmlFor="regulations"
-                          className="text-xs text-muted-foreground font-light leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className="text-sm font-light leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           Akceptuję regulamin serwisu oraz chcę natychmiastowego
                           świadczenia usług i rozumiem, że nie będę mógł od niej
@@ -187,7 +166,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
                         />
                         <label
                           htmlFor="privacy"
-                          className="text-xs text-muted-foreground font-light leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className="text-sm font-light leading-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           Oświadczam, że zapoznałem się z Polityką Prywatności w
                           tym z informacją o dobrowolnym charakterze wyrażenia
@@ -209,7 +188,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
             {mutation.isPending && (
               <Loader2 className="size-4 animate-spin mr-1" />
             )}
-            Przejdź do płatności
+            Rozpocznij darmowy okres próbny
           </Button>
         </form>
       </Form>
