@@ -1,6 +1,5 @@
 'use client';
 
-import { login } from '@/server/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -11,13 +10,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { login } from '@/server/actions/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { formSchema, defaultValues } from './schema';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { defaultValues, formSchema } from './schema';
+import { PasswordInput } from '@/components/password-input';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -45,74 +46,69 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full lg:max-w-[512px] xl:max-w-[640px] 2xl:max-w-[768px] ml-auto py-32 px-4 lg:pr-16 xl:pr-24 2xl:pr-32 self-center">
-      <div>
-        <h1 className="font-bold text-xl mb-4">Logowanie</h1>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adres e-mail</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Hasło</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {error && (
-              <p className="text-sm font-medium text-destructive">{error}</p>
+    <div className="flex flex-col justify-center">
+      <h1 className="font-bold text-xl mb-4">Logowanie</h1>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Adres e-mail</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-            <p className="text-sm">
-              Jesteś nowym użytkownikem? &nbsp;
-              <Link
-                className="text-sm text-primaryFg underline self-end"
-                href="/rejestracja"
-              >
-                Dołącz już teraz!
-              </Link>
-            </p>
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Hasło</FormLabel>
+                <FormControl>
+                  <PasswordInput {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {error && (
+            <p className="text-sm font-medium text-destructive">{error}</p>
+          )}
+          <p className="text-sm">
+            Jesteś nowym użytkownikem? &nbsp;
             <Link
-              className="text-sm text-primaryFg underline"
-              href="/zapomnialem-hasla"
+              className="text-sm text-primaryFg underline self-end"
+              href="/rejestracja"
             >
-              Zapomniałem hasła
+              Dołącz już teraz!
             </Link>
-            <Button
-              size="lg"
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
-              Zaloguj
-            </Button>
-          </form>
-        </Form>
-      </div>
+          </p>
+          <Link
+            className="text-sm text-primaryFg underline"
+            href="/zapomnialem-hasla"
+          >
+            Zapomniałem hasła
+          </Link>
+          <Button
+            size="lg"
+            type="submit"
+            disabled={form.formState.isSubmitting}
+          >
+            Zaloguj
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 }
