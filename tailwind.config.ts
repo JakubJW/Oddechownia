@@ -25,6 +25,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-source-sans)', 'sans-serif'],
+        heading: ['var(--font-montserrat)', 'sans-serif'],
+      },
       colors: {
         foreground: 'var(--foreground)',
         primaryFg: 'hsl(var(--matcha))',
@@ -65,6 +69,7 @@ export default {
         matcha: {
           DEFAULT: 'hsl(var(--matcha))',
           foreground: 'var(--matcha-foreground)',
+          light: 'var(--matcha-light)',
         },
         almond: {
           DEFAULT: 'hsl(var(--almond))',

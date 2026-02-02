@@ -17,7 +17,7 @@ const LessonCard = ({
   'name' | 'description' | 'video' | 'thumbnail' | 'labels'
 > & { percent?: number }) => {
   return (
-    <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
+    <div className="lesson-card flex flex-col transition-all bg-white w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
           src={thumbnail}

@@ -24,7 +24,7 @@ export default async function OnlineYogaStudio() {
   }
 
   return (
-    <section>
+    <section className="bg-white-background">
       <Container className="py-12">
         <StudioJogiOnline playlists={playlists} />
       </Container>
