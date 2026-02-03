@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CommentsService } from '@/server/services/comments.service';
 import { encodeCursor, decodeCursor } from '@/lib/utils';
-import { craeteCommentFormSchema } from '@/features/PlayLessonView/Comments/Form/schema';
+import { craeteCommentFormSchema } from '@/features/lesson-playback/Comments/Form/schema';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);

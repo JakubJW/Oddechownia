@@ -16,7 +16,7 @@ import { InfiniteData } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { Edit2, EllipsisVerticalIcon, Trash2 } from 'lucide-react';
-import { useCommentMutations } from '../PlayLessonView/Comments/hooks/useCommentMutations';
+import { useCommentMutations } from '../lesson-playback/Comments/hooks/useCommentMutations';
 import { useState } from 'react';
 import { ReplyForm } from './CreateReplyForm';
 

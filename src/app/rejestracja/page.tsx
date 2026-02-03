@@ -33,7 +33,7 @@ export default async function SignIn() {
     <section>
       <Container className="min-h-screen grid lg:grid-cols-2 lg:gap-16">
         <div className="w-full self-center space-y-8">
-          <h1 className="text-lg xl:text-xl font-light">
+          <h1 className="font-sans text-lg xl:text-xl font-light">
             Dołącz do Oddechowni i testuj za darmo przez 3 dni
           </h1>
           <Order

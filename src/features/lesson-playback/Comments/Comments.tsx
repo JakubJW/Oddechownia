@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Comment } from '@/features/PlayLessonView/Comments/Comment';
+import { Comment } from '@/features/lesson-playback/Comments/Comment';
 import React from 'react';
 import { User } from '@/server/actions/user';
 import { useComments } from './hooks/useComments';

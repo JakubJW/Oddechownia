@@ -35,7 +35,6 @@ const defaultSettings: Settings = {
 export default function Carousel({
   children,
   settings,
-  hideArrows,
 }: {
   children: React.ReactNode;
   settings?: Settings;
@@ -46,14 +45,12 @@ export default function Carousel({
 
   return (
     <div className="slider-container relative">
-      {!hideArrows && (
-        <button
-          className="hidden lg:block lg:absolute slider-arrow-button slider-arrow-button__left"
-          onClick={() => slider.current?.slickPrev()}
-        >
-          <ChevronLeft className="slider-arrow-icon" />
-        </button>
-      )}
+      <button
+        className="slider-arrow-button slider-arrow-button__left"
+        onClick={() => slider.current?.slickPrev()}
+      >
+        <ChevronLeft className="slider-arrow-icon" />
+      </button>
       <Slider
         ref={slider}
         className="-mx-4"
@@ -61,14 +58,12 @@ export default function Carousel({
       >
         {children}
       </Slider>
-      {!hideArrows && (
-        <button
-          className="hidden lg:block lg:absolute slider-arrow-button slider-arrow-button__right"
-          onClick={() => slider.current?.slickNext()}
-        >
-          <ChevronRight className="slider-arrow-icon" />
-        </button>
-      )}
+      <button
+        className="slider-arrow-button slider-arrow-button__right"
+        onClick={() => slider.current?.slickNext()}
+      >
+        <ChevronRight className="slider-arrow-icon" />
+      </button>
     </div>
   );
 }

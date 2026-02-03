@@ -1,52 +1,57 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { CirclePlay, Clock } from 'lucide-react';
+import Brandmark from '@/assets/Brandmark.svg';
 import LessonCard from '@/components/LessonCard/LessonCard';
-import Link from 'next/link';
-import { PlaylistDetailDTO } from '@/server/models/playlist.models';
+import { Badge } from '@/components/ui/badge';
 import { LessonDTO } from '@/server/models/lesson.models';
-import { ArrowRight } from 'lucide-react';
+import { PlaylistDetailDTO } from '@/server/models/playlist.models';
+import { Gem, Play } from 'lucide-react';
+import Link from 'next/link';
 import Carousel from './Carousel/Carousel';
+import SnapScrollContainer from './Carousel/snap-scroll-container';
 
 interface PlaylistCardProps {
   playlist: PlaylistDetailDTO<LessonDTO[]>;
-  hideToolbar?: boolean;
 }
 
-const PlaylistCard: React.FC<PlaylistCardProps> = ({
-  playlist,
-  hideToolbar,
-}) => {
+const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
   return (
     <div>
-      {!hideToolbar && (
-        <div className="flex gap-8">
-          <div className="space-y-2 w-full gap-2 items-center">
-            <p className="text-xl font-bold">{playlist.name}</p>
-            <div className="flex justify-between">
-              <div className="space-x-2">
-                <Badge variant="secondary">
-                  <CirclePlay className="h-4 w-4 mr-2" />
-                  <span>{playlist.lessons.length} filmów</span>
-                </Badge>
-              </div>
-              <Link
-                className="flex items-center text-muted-foreground text-sm hover:underline"
-                href={`/studio-jogi-online/${playlist.slug}`}
-              >
-                Zobacz więcej <ArrowRight className="h-4 w-4 ml-1" />
-              </Link>
-            </div>
+      <div className="flex flex-wrap justify-between gap-4">
+        <h2 className="text-xl xl:text-3xl xl:leading-relaxed">
+          {playlist.name}
+        </h2>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            {playlist.isAccessibleForFree ? (
+              <Badge className="text-sm bg-emerald-100 text-emerald-500">
+                <Play className="size-3.5 mr-2" />
+                <span>Oglądaj za darmo</span>
+              </Badge>
+            ) : (
+              <Badge className="text-sm bg-richBlack text-matcha">
+                <Gem
+                  className="size-3.5 mr-2"
+                  strokeWidth={2}
+                />
+                <span>Subskrypcja</span>
+              </Badge>
+            )}
+            <Badge
+              variant="secondary"
+              className="text-sm"
+            >
+              <span>{playlist.lessons.length} filmów</span>
+            </Badge>
           </div>
         </div>
-      )}
-      <div className="mt-4">
-        <Carousel>
+      </div>
+      <div className="mt-6">
+        <SnapScrollContainer>
           {playlist.lessons.map((lesson) => (
             <Link
               key={lesson.id}
-              className="h-full"
+              className="flex-none h-full w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
               href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
             >
               <LessonCard
@@ -58,7 +63,18 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({
               />
             </Link>
           ))}
-        </Carousel>
+          <Link
+            href={`/studio-jogi-online/${playlist.slug}`}
+            className="flex-none w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
+          >
+            <div className="overflow-hidden relative min-h-[350px] bg-matcha-light rounded-xl flex justify-center items-center">
+              <Brandmark className="z-0 absolute bottom-0 right-0 w-3/4 h-3/4 text-matcha-foreground" />
+              <span className="z-10 bg-richBlack text-matcha font-semibold rounded-full px-4 py-2">
+                Zobacz wszystko
+              </span>
+            </div>
+          </Link>
+        </SnapScrollContainer>
       </div>
     </div>
   );

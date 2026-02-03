@@ -43,7 +43,7 @@ export const StudioJogiOnline = ({ playlists }: Props) => {
         query={query}
         onQueryChange={setQuery}
       />
-      <div className="space-y-4">
+      <div className="space-y-16">
         {filteredPlaylists.map((playlist) => (
           <PlaylistCard
             key={playlist.id}

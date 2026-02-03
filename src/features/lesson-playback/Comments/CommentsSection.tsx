@@ -1,4 +1,4 @@
-import { CommentForm } from '@/features/PlayLessonView/Comments/Form/CommentForm';
+import { CommentForm } from '@/features/lesson-playback/Comments/Form/CommentForm';
 import { Comments } from './Comments';
 import { cn } from '@/lib/utils';
 import { User } from '@/server/actions/user';

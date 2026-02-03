@@ -61,9 +61,9 @@ const CaledarGrid = ({
       <div className={cn('', className)}>
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-4">
-            <h3 className="font-semibold flex-grow">
+            <p className="font-semibold flex-grow">
               {format(selectedWeek, 'LLLL yyyy', { locale: pl })}
-            </h3>
+            </p>
             <Button
               size="sm"
               variant="default"

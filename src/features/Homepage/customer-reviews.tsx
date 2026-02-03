@@ -1,5 +1,4 @@
 import Container from '@/components/Container/Container';
-import { HeaderTwo } from '@/components/Headers/headers';
 import Carousel from '@/components/Carousel/Carousel';
 import ReviewCard from '@/components/ReviewCard';
 
@@ -25,9 +24,9 @@ export default function CustomerReviews() {
   return (
     <section className="bg-primary-foreground">
       <Container>
-        <HeaderTwo className="text-center font-light mb-8">
+        <h2 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed text-center font-light mb-8">
           Poznaj opinie innych
-        </HeaderTwo>
+        </h2>
         <Carousel
           hideArrows
           settings={{

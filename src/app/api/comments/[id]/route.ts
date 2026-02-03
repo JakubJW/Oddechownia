@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Params } from '@/types/types';
 import { CommentsService } from '@/server/services/comments.service';
-import { craeteCommentFormSchema } from '@/features/PlayLessonView/Comments/Form/schema';
+import { craeteCommentFormSchema } from '@/features/lesson-playback/Comments/Form/schema';
 
 export async function PATCH(
   req: NextRequest,
