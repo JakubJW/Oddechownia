@@ -7,7 +7,6 @@ import { LessonDTO } from '@/server/models/lesson.models';
 import { PlaylistDetailDTO } from '@/server/models/playlist.models';
 import { Gem, Play } from 'lucide-react';
 import Link from 'next/link';
-import Carousel from './Carousel/Carousel';
 import SnapScrollContainer from './Carousel/snap-scroll-container';
 
 interface PlaylistCardProps {
@@ -46,36 +45,34 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
           </div>
         </div>
       </div>
-      <div className="mt-6">
-        <SnapScrollContainer>
-          {playlist.lessons.map((lesson) => (
-            <Link
-              key={lesson.id}
-              className="flex-none h-full w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
-              href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
-            >
-              <LessonCard
-                thumbnail={lesson.thumbnail}
-                name={lesson.name}
-                description={lesson.description}
-                video={lesson.video}
-                labels={lesson.labels}
-              />
-            </Link>
-          ))}
+      <SnapScrollContainer>
+        {playlist.lessons.map((lesson) => (
           <Link
-            href={`/studio-jogi-online/${playlist.slug}`}
-            className="flex-none w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
+            key={lesson.id}
+            className="pl-4 lg:pl-0 flex-none h-full w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
+            href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
           >
-            <div className="overflow-hidden relative min-h-[350px] bg-matcha-light rounded-xl flex justify-center items-center">
-              <Brandmark className="z-0 absolute bottom-0 right-0 w-3/4 h-3/4 text-matcha-foreground" />
-              <span className="z-10 bg-richBlack text-matcha font-semibold rounded-full px-4 py-2">
-                Zobacz wszystko
-              </span>
-            </div>
+            <LessonCard
+              thumbnail={lesson.thumbnail}
+              name={lesson.name}
+              description={lesson.description}
+              video={lesson.video}
+              labels={lesson.labels}
+            />
           </Link>
-        </SnapScrollContainer>
-      </div>
+        ))}
+        <Link
+          href={`/studio-jogi-online/${playlist.slug}`}
+          className="pl-4 pr-4 lg:px-0 flex-none w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
+        >
+          <div className="overflow-hidden relative min-h-[350px] bg-matcha-light rounded-xl flex justify-center items-center">
+            <Brandmark className="z-0 absolute bottom-0 right-0 w-3/4 h-3/4 text-matcha-foreground" />
+            <span className="z-10 bg-richBlack text-matcha font-semibold rounded-full px-4 py-2">
+              Zobacz szczegóły
+            </span>
+          </div>
+        </Link>
+      </SnapScrollContainer>
     </div>
   );
 };
