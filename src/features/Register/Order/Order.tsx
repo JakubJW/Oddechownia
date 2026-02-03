@@ -1,7 +1,6 @@
 import { SubscriptionProductDTO } from '@/server/services/billing.service';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { HeaderTwo } from '@/components/Headers/headers';
 
 type OrderProps = Pick<
   SubscriptionProductDTO,
@@ -17,12 +16,12 @@ export default function Order({ features, className }: OrderProps) {
       )}
     >
       <div className="mt-4 rounded-lg font-light">
-        <HeaderTwo className="font-normal text-xl xl:text-xl uppercase">
+        <h2 className="font-normal text-xl xl:text-xl uppercase">
           3-dniowy okres próbny{' '}
           <span className="lowercase whitespace-nowrap text-sm text-muted-foreground">
             (potem 129,00 zł miesięcznie)
           </span>
-        </HeaderTwo>
+        </h2>
         <span className="block mt-4">Anuluj w każdej chwili</span>
         <p>
           Do zapłaty dzisiaj: <strong>0,00 zł</strong>

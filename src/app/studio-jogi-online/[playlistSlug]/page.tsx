@@ -1,5 +1,4 @@
 import Container from '@/components/Container/Container';
-import { HeaderTwo } from '@/components/Headers/headers';
 import LessonCard from '@/components/LessonCard/LessonCard';
 import { Badge } from '@/components/ui/badge';
 import VideoPlayer from '@/features/shared/VideoPlayer';
@@ -54,7 +53,9 @@ export default async function Playlist({
             />
           )}
           <hgroup className="space-y-6">
-            <HeaderTwo>{playlist.name}</HeaderTwo>
+            <h1 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed">
+              {playlist.name}
+            </h1>
             <p className="max-w-5xl">{playlist.description}</p>
             <div className="flex gap-4">
               <Badge variant="secondary">

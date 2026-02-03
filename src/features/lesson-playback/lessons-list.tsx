@@ -51,7 +51,7 @@ export const LessonsList = ({
                   <div className="relative overflow-hidden rounded-lg flex-shrink-0">
                     <div
                       className={cn(
-                        'lesson-playlist-card-play-overlay transition-opacity duration-300 flex items-center justify-center absolute h-full w-full top-0 left-0',
+                        'lesson-playlist-card-play-overlay z-10 transition-opacity duration-300 flex items-center justify-center absolute h-full w-full top-0 left-0',
                         slug === lessonSlug ? 'opacity-1' : 'opacity-0'
                       )}
                     >
@@ -66,7 +66,7 @@ export const LessonsList = ({
                       alt={name}
                       className="aspect-video object-cover transition-transform duration-300"
                     />
-                    <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs p-1 rounded-sm">
+                    <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs p-1 rounded-sm">
                       {formatDuration(video?.duration)}
                     </span>
                     <ProgressBar percent={progress?.percent || 0} />

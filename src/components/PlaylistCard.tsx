@@ -8,7 +8,7 @@ import { PlaylistDetailDTO } from '@/server/models/playlist.models';
 import { Gem, Play } from 'lucide-react';
 import Link from 'next/link';
 import Carousel from './Carousel/Carousel';
-import { HeaderTwo } from './Headers/headers';
+import SnapScrollContainer from './Carousel/snap-scroll-container';
 
 interface PlaylistCardProps {
   playlist: PlaylistDetailDTO<LessonDTO[]>;
@@ -17,18 +17,12 @@ interface PlaylistCardProps {
 const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
   return (
     <div>
-      <div className="flex flex-wrap justify-between">
-        <HeaderTwo className="text-2xl leading-normal xl:text-3xl xl:leading-relaxed">
+      <div className="flex flex-wrap justify-between gap-4">
+        <h2 className="text-xl xl:text-3xl xl:leading-relaxed">
           {playlist.name}
-        </HeaderTwo>
+        </h2>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
-            <Badge
-              variant="secondary"
-              className="text-sm"
-            >
-              <span>{playlist.lessons.length} filmów</span>
-            </Badge>
             {playlist.isAccessibleForFree ? (
               <Badge className="text-sm bg-emerald-100 text-emerald-500">
                 <Play className="size-3.5 mr-2" />
@@ -43,15 +37,21 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
                 <span>Subskrypcja</span>
               </Badge>
             )}
+            <Badge
+              variant="secondary"
+              className="text-sm"
+            >
+              <span>{playlist.lessons.length} filmów</span>
+            </Badge>
           </div>
         </div>
       </div>
-      <div className="mt-4">
-        <Carousel>
+      <div className="mt-6">
+        <SnapScrollContainer>
           {playlist.lessons.map((lesson) => (
             <Link
               key={lesson.id}
-              className="h-full"
+              className="flex-none h-full w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
               href={`/studio-jogi-online/${playlist.slug}/${lesson.slug}`}
             >
               <LessonCard
@@ -63,7 +63,10 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
               />
             </Link>
           ))}
-          <Link href={`/studio-jogi-online/${playlist.slug}`}>
+          <Link
+            href={`/studio-jogi-online/${playlist.slug}`}
+            className="flex-none w-[85%] sm:w-[calc(45%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-12px)] snap-start"
+          >
             <div className="overflow-hidden relative min-h-[350px] bg-matcha-light rounded-xl flex justify-center items-center">
               <Brandmark className="z-0 absolute bottom-0 right-0 w-3/4 h-3/4 text-matcha-foreground" />
               <span className="z-10 bg-richBlack text-matcha font-semibold rounded-full px-4 py-2">
@@ -71,7 +74,7 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
               </span>
             </div>
           </Link>
-        </Carousel>
+        </SnapScrollContainer>
       </div>
     </div>
   );

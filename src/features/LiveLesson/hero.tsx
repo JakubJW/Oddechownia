@@ -1,13 +1,5 @@
-import {
-  HeaderOne,
-  HeaderTwo,
-  HeadingParagraph,
-} from '@/components/Headers/headers';
-import { buttonVariants } from '@/components/ui/button';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import Container from '@/components/Container/Container';
+import Image from 'next/image';
 
 export default function Hero() {
   return (
@@ -15,13 +7,15 @@ export default function Hero() {
       <Container className="h-full">
         <div className="relative z-20 h-full w-full flex flex-col items-center sm:items-start justify-center sm:text-start px-4 sm:pr-24 gap-6 md:gap-y-16 sm:w-2/3 lg:w-1/2">
           <hgroup className="text-center max-w-3xl mx-auto space-y-6 mb-24">
-            <HeaderTwo>Zajęcia na żywo online</HeaderTwo>
-            <HeadingParagraph className="text-lg">
+            <h1 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed">
+              Zajęcia na żywo online
+            </h1>
+            <p className="font-montserrat text-lg">
               Dołącz do mnie na spotkaniach na żywo (Zoom), podczas których
               praktykujemy razem w czasie rzeczywistym. To przestrzeń wspólnej
               obecności, uważności i łagodnej pracy z ciałem, oddechem i umysłem
               - bez wychodzenia z domu.
-            </HeadingParagraph>
+            </p>
           </hgroup>
         </div>
       </Container>

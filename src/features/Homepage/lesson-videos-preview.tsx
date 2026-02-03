@@ -1,4 +1,3 @@
-import { HeaderTwo } from '@/components/Headers/headers';
 import Container from '@/components/Container/Container';
 import { ContentBlocksService } from '@/server/services/content-blocks.service';
 import { db } from '@/server/db';
@@ -25,9 +24,9 @@ export default async function CourseVideosPreview() {
       <Container className="flex flex-col md:flex-row gap-6 justify-center">
         <div className="flex flex-col justify-center flex-1">
           <hgroup className="text-center md:text-left">
-            <HeaderTwo className="mb-8 font-light">
+            <h2 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed mb-8 font-light">
               Wyrusz w duchową podróż
-            </HeaderTwo>
+            </h2>
             <p className="mb-6 text-xl leading-relaxed font-light">
               Oddechownia to czuła przestrzeń, w której łączymy ruch z
               bezruchem, wiedzę z doświadczaniem, a duchowość z codziennością.

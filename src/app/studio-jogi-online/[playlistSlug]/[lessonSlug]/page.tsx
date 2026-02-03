@@ -53,20 +53,20 @@ export default async function PlaylistLessonPlayback({
   const currentLesson = playlist.lessons.find(
     (lesson) => lesson?.slug === lessonSlug
   );
-
   if (!currentLesson) {
     notFound();
   }
-
   const playbackToken = await signMuxPlaybackId(
     currentLesson.video!.privatePlaybackId!
   );
+  const showPlayer =
+    (user && user.hasActiveSubscription) || playlist.isAccessibleForFree;
 
   return (
     <Container className="pt-0 lg:py-16">
       <div className="flex flex-col lg:flex-row gap-6 mb-8 -mx-4 md:-mx-0">
         <div className="w-full lg:w-2/3">
-          {user && user.hasActiveSubscription ? (
+          {showPlayer ? (
             <LessonPlayer
               signedPlaybackToken={playbackToken}
               thumbnail={currentLesson.thumbnail}
