@@ -12,17 +12,12 @@ import { cn } from '@/lib/utils';
 import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { Params } from '@/types/types';
 import { CircleCheck, CircleX } from 'lucide-react';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-export const metadata = {
-  title: 'Podsumowanie zakupu | Zajęcia na żywo | Oddechownia',
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-    noarchive: true,
-  },
+export const metadata: Metadata = {
+  title: 'Podsumowanie zakupu | Zajęcia na żywo',
 };
 
 const LiveLessonCheckoutSuccess = async ({

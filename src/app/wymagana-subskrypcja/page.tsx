@@ -2,11 +2,6 @@ import { SubscriptionRequiredCard } from '@/features/subscription-required-card'
 import Image from 'next/image';
 import { env } from '@/env';
 import { getRequiredUser } from '@/lib/data';
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  robots: 'noindex,nofollow',
-};
 
 const SubscriptionRequired = async () => {
   const user = await getRequiredUser();
