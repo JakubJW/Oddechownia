@@ -8,7 +8,6 @@ import { Metadata } from 'next';
 import Container from '@/components/Container/Container';
 
 export const metadata: Metadata = {
-  robots: 'noindex,nofollow',
   title: 'Rejestracja',
 };
 
