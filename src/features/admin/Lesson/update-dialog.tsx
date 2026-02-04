@@ -74,10 +74,10 @@ export const UpdateLessonDialog = ({
     await uploadFiles(files);
   };
 
-  useEffect(
-    () => form.reset({ ...lesson, labelIds: lesson.labels.map((l) => l.id) }),
-    [lesson, form]
-  );
+  useEffect(() => {
+    form.reset({ ...lesson, labelIds: lesson.labels.map((l) => l.id) });
+    setImagePreview(lesson.thumbnail);
+  }, [lesson, form]);
 
   return (
     <Dialog

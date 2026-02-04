@@ -5,7 +5,7 @@ import { LiveLessonsService } from '@/server/services/liveLessons.service';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: `Zajęcia na żywo`,
+  title: 'Zajęcia na żywo',
   description:
     'Dołącz do mnie na spotkaniach na żywo (Zoom), podczas których praktykujemy razem w czasie rzeczywistym. To przestrzeń wspólnej obecności, uważności i łagodnej pracy z ciałem, oddechem i umysłem - bez wychodzenia z domu.',
 };

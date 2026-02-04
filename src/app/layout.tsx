@@ -1,94 +1,27 @@
-import '@/styles/globals.css';
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import Navigation from '@/components/Navigation/Navigation';
 import Footer from '@/components/Footer/Footer';
-import { env } from '@/env';
-import ToastProvider from '@/components/ToastProvider';
+import Navigation from '@/components/Navigation/Navigation';
 import QueryClientProvider from '@/components/QueryClientProvider';
-import { getUser } from '@/server/actions/user';
-import { Analytics } from '@vercel/analytics/next';
+import ToastProvider from '@/components/ToastProvider';
+import { env } from '@/env';
 import Chat from '@/features/scripts/chat';
-import MailerLiteForms from '@/features/scripts/mailer-lite-forms';
 import Hotjar from '@/features/scripts/hotjar';
+import MailerLiteForms from '@/features/scripts/mailer-lite-forms';
+import { montserrat, sourceSans } from '@/fonts';
 import { cn } from '@/lib/utils';
+import { getUser } from '@/server/actions/user';
+import '@/styles/globals.css';
+import { Analytics } from '@vercel/analytics/next';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: {
-    default: 'Twoje miejsce, by złapać oddech',
+    default: 'Twoje miejsce, by złapać oddech | Oddechownia Studio Jogi',
     template: '%s | Oddechownia',
   },
+  description:
+    'Oddechownia to czuła przestrzeń, w której łączymy ruch z bezruchem, wiedzę z doświadczaniem, a duchowość z codziennością. Sprawdź i rozpocznij swoją pierwszą praktykę.',
 };
-
-const sourceSans = localFont({
-  src: [
-    {
-      path: '../../public/fonts/source-sans-3-v19-latin-ext-300.woff2',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/source-sans-3-v19-latin-ext-300italic.woff2',
-      weight: '300',
-      style: 'italic',
-    },
-    {
-      path: '../../public/fonts/source-sans-3-v19-latin-ext-regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/source-sans-3-v19-latin-ext-500.woff2',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/source-sans-3-v19-latin-ext-600.woff2',
-      weight: '600',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/source-sans-3-v19-latin-ext-700.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
-  display: 'swap',
-  variable: '--font-source-sans',
-});
-
-const montserrat = localFont({
-  src: [
-    {
-      path: '../../public/fonts/montserrat-v31-latin-ext-300.woff2',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/montserrat-v31-latin-ext-regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/montserrat-v31-latin-ext-500.woff2',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/montserrat-v31-latin-ext-600.woff2',
-      weight: '600',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/montserrat-v31-latin-ext-700.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
-  display: 'swap',
-  variable: '--font-montserrat',
-});
 
 export default async function RootLayout({
   children,
