@@ -35,18 +35,22 @@ export const AdminLessonCard = ({
 
       <div className="flex flex-col flex-grow px-4 py-6 xl:px-6 gap-4">
         <p className="text-black font-semibold line-clamp-2">{name}</p>
-        <p className="text-sm  text-gray-400 line-clamp-2">{description}</p>
-        <div className="flex gap-1 mt-auto">
-          {labels.map(({ id, text, color }) => (
-            <LessonLabel
-              key={id}
-              label={{ text, color }}
-            />
-          ))}
-        </div>
+        <p className="text-sm  text-gray-400 line-clamp-2 mt-auto">
+          {description}
+        </p>
+        {labels.length > 0 && (
+          <div className="flex gap-1 mt-auto">
+            {labels.map(({ id, text, color }) => (
+              <LessonLabel
+                key={id}
+                label={{ text, color }}
+              />
+            ))}
+          </div>
+        )}
         <Button
           variant="secondary"
-          className="flex-1"
+          className="flex-1 grow-0"
           onClick={() => {
             setCurrentLesson();
             setDialogOpen(true);

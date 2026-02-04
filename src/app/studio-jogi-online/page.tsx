@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import { StudioJogiOnline } from '@/features/StudioJogiOnline/StudioJogiOnline';
 
 export const metadata: Metadata = {
-  title: 'Studio Jogi Online | Oddechownia',
+  title: 'Studio Jogi Online',
 };
 
 export default async function OnlineYogaStudio() {
