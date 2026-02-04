@@ -1,19 +1,15 @@
 import { db } from '@/server/db';
 import { userLessonProgress } from '@/server/db/schema';
-import { getUser } from '../actions/user';
-import { revalidatePath } from 'next/cache';
-import { sql } from 'drizzle-orm';
+import { InferSelectModel, sql } from 'drizzle-orm';
+import { LessonDetailDTO } from '../models/lesson.models';
 
-export const saveProgress = async (
+const saveProgress = async (
   lessonId: number,
   seconds: number,
   totalDuration: number,
+  userId: string,
   playlistId?: number
 ) => {
-  const user = await getUser();
-  if (!user) return { error: 'Unauthorized' };
-
-  // Logic: Mark as complete if watched > 90%
   const progressRatio = totalDuration > 0 ? seconds / totalDuration : 0;
   const isCompletedNow = progressRatio >= 0.9;
 
@@ -21,26 +17,24 @@ export const saveProgress = async (
     await db
       .insert(userLessonProgress)
       .values({
-        userId: user.id,
+        userId,
         lessonId,
         playlistId,
         lastPositionSeconds: Math.floor(seconds),
         isCompleted: isCompletedNow,
-        updatedAt: new Date().toISOString(),
       })
       .onConflictDoUpdate({
-        target: [userLessonProgress.userId, userLessonProgress.lessonId],
+        target: [
+          userLessonProgress.userId,
+          userLessonProgress.lessonId,
+          userLessonProgress.playlistId,
+        ],
         set: {
           lastPositionSeconds: Math.floor(seconds),
-          updatedAt: new Date().toISOString(),
-          // Smart Logic: If it was ALREADY true, keep it true. Otherwise use new status.
           isCompleted: sql`CASE WHEN user_lesson_progress.is_completed = true THEN true ELSE ${isCompletedNow} END`,
-          // Update playlist context if provided
-          playlistId: playlistId || sql`user_lesson_progress.playlist_id`,
         },
       });
 
-    revalidatePath('/dashboard');
     return { success: true, isCompleted: isCompletedNow };
   } catch (error) {
     console.error('Save Progress Error', error);
@@ -48,6 +42,29 @@ export const saveProgress = async (
   }
 };
 
+const prepareProgress = (
+  progressMap: Map<number, InferSelectModel<typeof userLessonProgress>>,
+  lesson: LessonDetailDTO
+) => {
+  const progress = progressMap.get(lesson.id);
+  const duration = lesson.video?.duration || 0;
+  const lastPositionSeconds = progress?.lastPositionSeconds || 0;
+
+  let percent = 0;
+  if (progress?.isCompleted) {
+    percent = 100;
+  } else if (duration > 0) {
+    percent = (lastPositionSeconds / duration) * 100;
+  }
+
+  return {
+    isCompleted: progress?.isCompleted,
+    lastPositionSeconds,
+    percent: Math.min(percent, 100),
+  };
+};
+
 export const ProgressService = {
   saveProgress,
+  prepareProgress,
 };

@@ -1,5 +1,4 @@
 import Container from '@/components/Container/Container';
-import { HeaderTwo } from '@/components/Headers/headers';
 import Brandmark from '@/assets/Brandmark.svg';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,9 +22,9 @@ const IsItForYou = () => {
     <section>
       <Container className="flex flex-col md:flex-row md:items-center gap-16">
         <div className="relative overflow-hidden md:overflow-visible md:w-1/2 xl:w-2/3">
-          <HeaderTwo className="mb-8 font-light">
+          <h2 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed mb-8 font-light">
             Oddechownia jest dla ciebie, jeśli...
-          </HeaderTwo>
+          </h2>
           <div className="space-y-6">
             <Statement>
               <Bold>Chcesz praktykować w swoim rytmie</Bold>

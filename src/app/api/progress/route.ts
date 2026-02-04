@@ -5,6 +5,7 @@ import { ProgressService } from '@/server/services/progress.service';
 export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
       lessonId,
       seconds,
       totalDuration,
+      user.id,
       playlistId
     );
 

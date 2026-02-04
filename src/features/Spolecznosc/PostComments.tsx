@@ -1,5 +1,5 @@
 import { CommentDetailDTO } from '@/server/models/comment.models';
-import { useComments } from '../PlayLessonView/Comments/hooks/useComments';
+import { useComments } from '../lesson-playback/Comments/hooks/useComments';
 import { User } from '@/server/actions/user';
 import { PostComment } from './PostComment';
 

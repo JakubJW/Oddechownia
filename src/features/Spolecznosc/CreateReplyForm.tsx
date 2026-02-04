@@ -13,9 +13,9 @@ import {
   CreateCommentValues,
   craeteCommentFormSchema,
   createCommentFormDefaultValues,
-} from '../PlayLessonView/Comments/Form/schema';
+} from '../lesson-playback/Comments/Form/schema';
 import { User } from '@/server/actions/user';
-import { useCommentMutations } from '../PlayLessonView/Comments/hooks/useCommentMutations';
+import { useCommentMutations } from '../lesson-playback/Comments/hooks/useCommentMutations';
 import { queryClient } from '@/components/QueryClientProvider';
 import { InfiniteData } from '@tanstack/react-query';
 import { Send } from 'lucide-react';

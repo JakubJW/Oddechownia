@@ -21,7 +21,7 @@ export default function SortablePlaylistElement({
   href,
   description,
   isPublished,
-  lessonCount
+  lessonCount,
 }: SortablePlaylistElementProps) {
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id });
@@ -48,7 +48,7 @@ export default function SortablePlaylistElement({
         <p className="line-clamp-2">{name}</p>
       </td>
       <td>
-        <p className="line-clamp-2 whitespace-pre">{description}</p>
+        <p className="line-clamp-2">{description}</p>
       </td>
       <td>
         <p className="line-clamp-2">{lessonCount}</p>

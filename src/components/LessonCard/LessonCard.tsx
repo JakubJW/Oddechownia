@@ -17,7 +17,7 @@ const LessonCard = ({
   'name' | 'description' | 'video' | 'thumbnail' | 'labels'
 > & { percent?: number }) => {
   return (
-    <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
+    <div className="lesson-card flex flex-col transition-all bg-white w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
           src={thumbnail}
@@ -30,8 +30,11 @@ const LessonCard = ({
         </span>
         <ProgressBar percent={percent} />
         <div className="lesson-card-play-overlay transition-all duration-200 ease-in-out absolute top-0 left-0 h-full w-full opacity-0 bg-muted/60 flex items-center justify-center">
-          <div className="rounded-full bg-matcha p-4">
-            <Play className="h-12 w-12 text-white" />
+          <div className="rounded-full bg-matcha p-6">
+            <Play
+              className="h-8 w-8 text-white"
+              strokeWidth={1.5}
+            />
           </div>
         </div>
       </div>
