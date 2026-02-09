@@ -1,12 +1,13 @@
 import { FaqAnswer, FaqQuestion, FaqItem } from '@/components/FaqItem/FaqItem';
 import Container from '@/components/Container/Container';
-import { HeaderTwo } from '@/components/Headers/headers';
 
 export default function Faq() {
   return (
     <section className="bg-matcha">
       <Container>
-        <HeaderTwo className="text-center text-white mb-16">FAQ</HeaderTwo>
+        <h2 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed text-center text-white mb-16">
+          FAQ
+        </h2>
         <div className="space-y-6 max-w-[1000px] mx-auto">
           <FaqItem>
             <FaqQuestion>

@@ -9,15 +9,10 @@ import {
 } from '@/components/ui/card';
 import { CircleX } from 'lucide-react';
 import { AuthService } from '@/server/services/auth.service';
+import { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Kończenie rejestracji | Oddechownia',
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-    noarchive: true,
-  },
+export const metadata: Metadata = {
+  title: 'Kończenie rejestracji',
 };
 
 const SubscriptionCheckoutSuccess = async ({

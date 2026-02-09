@@ -3,7 +3,7 @@ import { eq, desc, isNull, and, InferSelectModel, lt } from 'drizzle-orm';
 import { db } from '../db';
 import { comments, users } from '../db/schema';
 import { getUser } from '../actions/user';
-import { CreateCommentValues } from '@/features/PlayLessonView/Comments/Form/schema';
+import { CreateCommentValues } from '@/features/lesson-playback/Comments/Form/schema';
 
 type CommentWithRepliesAndUser = InferSelectModel<typeof comments> & {
   user: Pick<

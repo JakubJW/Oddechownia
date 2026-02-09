@@ -1,5 +1,4 @@
 import Container from '@/components/Container/Container';
-import { HeaderTwo, HeadingParagraph } from '@/components/Headers/headers';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -20,9 +19,9 @@ const Features = () => {
   return (
     <section>
       <Container>
-        <HeaderTwo className="text-center font-light mb-12">
+        <h2 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed text-center font-light mb-12">
           Więcej, niż joga na YouTube
-        </HeaderTwo>
+        </h2>
         <div className="space-y-32">
           <div className="flex flex-col md:flex-row gap-16">
             <FeatureCircle>
@@ -72,9 +71,9 @@ const Features = () => {
             </div>
 
             <div className="flex flex-col md:w-1/2 xl:w-1/3">
-              <HeadingParagraph className="text-2xl font-normal mb-8">
+              <h3 className="text-2xl font-normal mb-8">
                 Dołączając do Oddechowni, otrzymujesz:
-              </HeadingParagraph>
+              </h3>
               <ul className="space-y-4 mb-8">
                 <Feature icon={<Play className="size-6 text-matcha" />}>
                   Dostęp do Studia Jogi Online i biblioteki 100+ materiałów

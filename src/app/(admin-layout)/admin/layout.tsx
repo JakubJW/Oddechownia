@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import Container from '@/components/Container/Container';
 import Link from 'next/link';
 import { getUser } from '@/server/actions/user';
@@ -6,9 +5,6 @@ import { UserRoles } from '@/server/db/consts';
 import { redirect } from 'next/navigation';
 
 export const dynamic = 'auto';
-export const metadata: Metadata = {
-  robots: 'noindex,nofollow',
-};
 
 export default async function AdminLayout({
   children,

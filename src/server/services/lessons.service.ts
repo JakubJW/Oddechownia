@@ -46,8 +46,8 @@ const transformLessonToDTO = (
 
 const transformLessonsToDetailDTO = (
   lessons: LessonDetailSchema[],
-  userId: string,
-  position: number
+  position: number,
+  userId?: string
 ): LessonDetailDTO[] => {
   return lessons.map((lesson) => ({
     id: lesson.id,

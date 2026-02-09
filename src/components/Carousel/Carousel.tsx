@@ -48,7 +48,7 @@ export default function Carousel({
     <div className="slider-container relative">
       {!hideArrows && (
         <button
-          className="hidden lg:block lg:absolute slider-arrow-button slider-arrow-button__left"
+          className="slider-arrow-button slider-arrow-button__left"
           onClick={() => slider.current?.slickPrev()}
         >
           <ChevronLeft className="slider-arrow-icon" />
@@ -63,7 +63,7 @@ export default function Carousel({
       </Slider>
       {!hideArrows && (
         <button
-          className="hidden lg:block lg:absolute slider-arrow-button slider-arrow-button__right"
+          className="slider-arrow-button slider-arrow-button__right"
           onClick={() => slider.current?.slickNext()}
         >
           <ChevronRight className="slider-arrow-icon" />

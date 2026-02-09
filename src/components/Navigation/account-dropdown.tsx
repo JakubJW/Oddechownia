@@ -18,7 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '../ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
@@ -38,12 +37,13 @@ export default function AccountDropdown({
     return (
       <Link
         className={cn(
-          buttonVariants({ variant: 'secondary', size: 'lg' }),
+          buttonVariants({ size: 'lg' }),
+          'bg-white hover:bg-matcha-light rounded-full text-richBlack font-semibold',
           className
         )}
         href="/logowanie"
       >
-        Zaloguj się
+        Logowanie
       </Link>
     );
   }
@@ -52,15 +52,16 @@ export default function AccountDropdown({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className={cn(className)}
-          variant="secondary"
+          className={cn(
+            buttonVariants({ size: 'lg' }),
+            'bg-white hover:bg-matcha-light rounded-full text-richBlack font-semibold',
+            className
+          )}
         >
-          <User className="size-5 mr-1" /> Moje konto
+          <User className="size-4 mr-2" /> Moje konto
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         {user?.isAdmin && (
           <DropdownMenuItem onClick={() => router.push('/admin')}>
             <UserStar className="size-4 mr-1" />
