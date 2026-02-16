@@ -229,9 +229,7 @@ export const liveLessons = pgTable('live_lessons', {
 
 export const liveLessonsRegistrations = pgTable('live_lessons_registrations', {
   id: uuid('id').defaultRandom().primaryKey(),
-  lessonId: uuid()
-    .notNull()
-    .references(() => liveLessons.id, { onDelete: 'cascade' }),
+  lessonId: uuid().references(() => liveLessons.id, { onDelete: 'cascade' }),
   name: varchar('name').notNull(),
   email: varchar('email').notNull(),
   userId: uuid('userId').references(() => users.id, { onDelete: 'cascade' }),
@@ -378,3 +376,53 @@ export const contentBlocks = pgTable('content_blocks', {
     .notNull()
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
+
+export const products = pgTable('products', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: varchar('name').notNull(),
+  slug: varchar('slug').notNull(),
+  type: varchar('type').$type<'ebook' | 'live-lesson'>().notNull(),
+  description: text('description'),
+  stripePriceId: text('stripe_price_id').notNull(),
+  image: text('image').notNull(),
+  price: integer('price').notNull(),
+  isVisible: boolean('is_visible').default(true),
+  isFreeForSubscribers: boolean('is_free_for_subscribers')
+    .default(false)
+    .notNull(),
+  usesMonthlyQuota: boolean('uses_monthly_quota').default(false),
+  createdAt: text('created_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .notNull()
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+});
+
+export const ebooks = pgTable('ebooks', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  productId: uuid('product_id')
+    .references(() => products.id)
+    .notNull()
+    .unique(),
+  path: text('path').notNull(),
+});
+
+export const purchases = pgTable(
+  'purchases',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    productId: uuid('product_id')
+      .references(() => products.id, { onDelete: 'cascade' })
+      .notNull(),
+    stripeSessionId: text('stripe_session_id'),
+    createdAt: text('created_at')
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .notNull(),
+  },
+  (t) => [unique('unique_user_product').on(t.userId, t.productId)]
+);

@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/server/actions/user'; // Or your session helper
 import { ProgressService } from '@/server/services/progress.service';
+import { createClient } from '@/supabase/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getUser();
+    const supabase = await createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-    if (!user) {
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -24,7 +27,7 @@ export async function POST(req: NextRequest) {
       lessonId,
       seconds,
       totalDuration,
-      user.id,
+      session.user.id,
       playlistId
     );
 

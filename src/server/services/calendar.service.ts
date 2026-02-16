@@ -10,8 +10,8 @@ import { addDays, isWeekend } from 'date-fns';
 import {
   ScheduleIntervals,
   SchedulePlaylistInput,
-} from '../models/practiceSchedule.models'; // Import from where you saved step 1
-import { playlistLesson } from '../db/schema'; // Import your schema
+} from '../models/practiceSchedule.models';
+import { playlistLesson } from '../db/schema';
 import { LiveLessonsRegistrationsService } from './liveLessonsRegistrations.service';
 import { getUser } from '../actions/user';
 
@@ -19,7 +19,6 @@ export type CalendarEventType = 'live-lesson' | 'practice-session';
 export type LiveLessonStatus = 'upcoming' | 'live' | 'completed';
 export type LiveLessonRecordingStatus = 'available' | 'preparing';
 
-// Base properties
 interface BaseEvent {
   id: string;
   date: string;
@@ -28,7 +27,6 @@ interface BaseEvent {
   duration: number;
 }
 
-// 1. Live Lesson (Read Only, State-Aware)
 export interface LiveLessonEvent extends BaseEvent {
   type: 'live-lesson';
   status: LiveLessonStatus;
@@ -42,7 +40,6 @@ export interface LiveLessonEvent extends BaseEvent {
   description?: string;
 }
 
-// 2. Practice Session (Editable)
 export interface PracticeSessionEvent extends BaseEvent {
   type: 'practice-session';
   lessonUrl: string;
@@ -130,7 +127,7 @@ export const getUserSchedule = async (
       endDate ? lte(liveLessons.scheduledAt, endDate) : undefined
     ),
     with: {
-      registrations: {
+      liveLessonsRegistrations: {
         where: or(
           and(
             eq(liveLessonsRegistrations.userId, userId),
@@ -164,7 +161,7 @@ export const getUserSchedule = async (
   const user = await getUser();
 
   for (const item of allLessons) {
-    const registrations = item.registrations;
+    const registrations = item.liveLessonsRegistrations;
 
     const { isEligible, lessonsUsed } =
       await LiveLessonsRegistrationsService.checkEntitlementEligibility(
@@ -242,7 +239,7 @@ export const schedulePlaylist = async (
     userId: string;
     lessonId: number;
     playlistId: number;
-    scheduledAt: string; // ISO string for DB
+    scheduledAt: string;
   }[] = [];
 
   if (data.mode === 'automatic') {

@@ -1,0 +1,1 @@
+ALTER TABLE "ebooks" RENAME COLUMN "file_url" TO "path";

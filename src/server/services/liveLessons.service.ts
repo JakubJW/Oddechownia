@@ -84,7 +84,7 @@ const transformToAdminLiveLessonRecordListDTO = (
     description: lesson.description ?? undefined,
     meetingLink: lesson.meetingLink ?? undefined,
     recordingUrl: lesson.recordingUrl ?? undefined,
-    currentParticipants: lesson.registrations.length,
+    currentParticipants: lesson.liveLessonsRegistrations.length,
     thumbnail: lesson.thumbnail
       ? supabaseService.getThumbnailUrl(
           lesson.thumbnail.bucket,
@@ -107,7 +107,7 @@ const selectAdminLiveLessons = async (
     orderBy: desc(liveLessons.scheduledAt),
     with: {
       thumbnail: true,
-      registrations: {
+      liveLessonsRegistrations: {
         columns: { id: true },
         where: or(
           and(
@@ -145,7 +145,7 @@ async function getLiveLessonsWithUserStatus(
   const lessons = await db.query.liveLessons.findMany({
     with: {
       thumbnail: true,
-      registrations: user
+      liveLessonsRegistrations: user
         ? {
             where: eq(liveLessonsRegistrations.userId, user.id),
           }
@@ -220,7 +220,7 @@ async function getLiveLessonsWithUserStatus(
       user.hasActiveSubscription && usedInThisMonth < LIMIT_PER_MONTH;
 
     // Registration / Payment Logic (Existing)
-    const myRegistrations = lesson.registrations || [];
+    const myRegistrations = lesson.liveLessonsRegistrations || [];
     const isRegistered = myRegistrations.length > 0;
 
     // Check if we have a valid entry (Paid OR Entitlement)

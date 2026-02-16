@@ -65,7 +65,6 @@ const CaledarGrid = ({
               {format(selectedWeek, 'LLLL yyyy', { locale: pl })}
             </p>
             <Button
-              size="sm"
               variant="default"
               onClick={() => goToToday()}
             >
@@ -73,14 +72,14 @@ const CaledarGrid = ({
             </Button>
             <Button
               variant="default"
-              size="sm"
+              size="icon"
               onClick={() => prevMonth()}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="default"
-              size="sm"
+              size="icon"
               onClick={() => nextMonth()}
             >
               <ChevronRight className="h-4 w-4" />

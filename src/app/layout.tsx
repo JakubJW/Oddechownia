@@ -15,6 +15,9 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  alternates: {
+    canonical: './',
+  },
   title: {
     default: 'Twoje miejsce, by złapać oddech | Oddechownia Studio Jogi',
     template: '%s | Oddechownia',

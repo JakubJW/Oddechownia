@@ -41,7 +41,6 @@ export default async function EBook() {
           </Link>
         </div>
       </Container>
-      <Brandmark className="absolute -top-10 -right-16 text-background z-0 size-[600px]" />
     </section>
   );
 }
