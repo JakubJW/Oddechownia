@@ -1,13 +1,13 @@
 'use server';
 
 import { getUser } from './user';
-import { RequestEbookDownload } from '../use-cases/request-ebook.download';
-import { ProductsRepository } from '../products.repository';
-import { PurchasesRepository } from '../purchases.repository';
-import { EbooksRepository } from '../ebooks.repository';
-import { SupabaseStorageService } from '../storage.service';
+import { RequestEbookDownload } from '@/application/use-cases/ebook/request-ebook.download';
+import { ProductsRepository } from '@/infrastructure/repositories/products.repository';
+import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
+import { EbooksRepository } from '@/infrastructure/repositories/ebooks.repository';
+import { SupabaseStorageService } from '@/infrastructure/services/storage.service';
 
-export async function downloadEbook(slug: string) {
+export async function downloadEbook(productId: string) {
   const user = await getUser();
 
   if (!user) {
@@ -21,15 +21,7 @@ export async function downloadEbook(slug: string) {
     new SupabaseStorageService()
   );
 
-  const url = await useCase.execute(user.id, slug);
+  const url = await useCase.execute(user.id, productId);
 
   return url;
 }
-
-export const purchaseEbook = async (slug: string) => {
-  const useCase = new RequestEbookDownload(new ProductsRepository());
-
-  const url = await useCase.execute(slug);
-
-  return url;
-};

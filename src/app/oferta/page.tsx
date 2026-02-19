@@ -3,10 +3,10 @@ import { EbookCard } from '@/features/products/ebook-card';
 import Kwiatek from '@/assets/Kwiatek.svg';
 import Om from '@/assets/Om.svg';
 import Sloneczko from '@/assets/Sloneczko.svg';
-import { PurchasesRepository } from '@/server/purchases.repository';
-import { GetVisibleProductsForUser } from '@/server/use-cases/get-visible-products-for-user';
-import { SubscriptionRepository } from '@/server/subscription.repository';
-import { ProductsRepository } from '@/server/products.repository';
+import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
+import { GetVisibleProductsForUser } from '@/application/use-cases/product/get-visible-products-for-user';
+import { SubscriptionRepository } from '@/infrastructure/repositories/subscription.repository';
+import { ProductsRepository } from '@/infrastructure/repositories/products.repository';
 import { getUser } from '@/server/actions/user';
 
 export default async function Products() {

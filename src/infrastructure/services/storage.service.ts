@@ -1,4 +1,4 @@
-import { IStorageService } from './interfaces/storage.service.interface';
+import { IStorageService } from '@/application/services/storage.service.interface';
 import { createClient } from '@supabase/supabase-js';
 import { env } from '@/env';
 
@@ -17,10 +17,7 @@ export class SupabaseStorageService implements IStorageService {
       .from(bucket)
       .createSignedUrl(path, ttl);
 
-    console.log(data);
-
     if (error) {
-      console.log(error);
       throw new Error('Cannot generate signed URL');
     }
 

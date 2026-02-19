@@ -1,6 +1,7 @@
-import { IProductsRepository } from '../products.repository.interface';
-import { IPurchasesRepository } from '../interfaces/purchases.repository.interface';
-import { ISubscriptionRepository } from '../interfaces/subscription.repository.interface';
+import { IProductsRepository } from '@/application/repositories/products.repository.interface';
+import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
+import { ISubscriptionRepository } from '@/application/repositories/subscription.repository.interface';
+import { SubscriberAccess } from '@/entities/models/product';
 
 export type ProductListItem = {
   id: string;
@@ -8,7 +9,7 @@ export type ProductListItem = {
   slug: string;
   image: string;
   price: number;
-  isFreeForSubscribers: boolean;
+  subscriberAccess: SubscriberAccess;
   state: 'can_download' | 'can_claim' | 'can_purchase';
 };
 
@@ -30,7 +31,7 @@ export class GetVisibleProductsForUser {
         slug: product.slug,
         image: product.image,
         price: product.price,
-        isFreeForSubscribers: product.isFreeForSubscribers,
+        subscriberAccess: product.subscriberAccess,
         state: 'can_purchase',
       }));
     }
@@ -43,15 +44,18 @@ export class GetVisibleProductsForUser {
     for (const product of products) {
       const hasPurchased =
         await this.purchasesRepository.hasUserPurchasedProduct(
-          userId,
-          product.id
+          product.id,
+          userId
         );
 
       let state: ProductListItem['state'];
 
       if (hasPurchased) {
         state = 'can_download';
-      } else if (product.isFreeForSubscribers && hasSubscription) {
+      } else if (
+        product.subscriberAccess === 'free_unlimited' &&
+        hasSubscription
+      ) {
         state = 'can_claim';
       } else {
         state = 'can_purchase';
@@ -63,7 +67,7 @@ export class GetVisibleProductsForUser {
         slug: product.slug,
         image: product.image,
         price: product.price,
-        isFreeForSubscribers: product.isFreeForSubscribers,
+        subscriberAccess: product.subscriberAccess,
         state,
       });
     }

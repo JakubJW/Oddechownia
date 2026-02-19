@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { db } from './db';
-import { ebooks } from './db/schema';
-import { IEbooksRepository } from './interfaces/ebooks.repository.interface';
+import { db } from '@/server/db';
+import { ebooks } from '@/server/db/schema';
+import { IEbooksRepository } from '@/application/repositories/ebooks.repository.interface';
 
 export class EbooksRepository implements IEbooksRepository {
   async getEbookByProductId(productId: string) {

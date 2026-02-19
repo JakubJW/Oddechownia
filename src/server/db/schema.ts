@@ -383,14 +383,14 @@ export const products = pgTable('products', {
   slug: varchar('slug').notNull(),
   type: varchar('type').$type<'ebook' | 'live-lesson'>().notNull(),
   description: text('description'),
-  stripePriceId: text('stripe_price_id').notNull(),
+  priceId: text('price_id').notNull(),
   image: text('image').notNull(),
   price: integer('price').notNull(),
   isVisible: boolean('is_visible').default(true),
-  isFreeForSubscribers: boolean('is_free_for_subscribers')
-    .default(false)
-    .notNull(),
-  usesMonthlyQuota: boolean('uses_monthly_quota').default(false),
+  subscriberAccess: varchar('subscriber_access')
+    .$type<'paid' | 'free_unlimited' | 'quota_based'>()
+    .notNull()
+    .default('paid'),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
@@ -413,13 +413,20 @@ export const purchases = pgTable(
   'purchases',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    userId: uuid('user_id')
-      .references(() => users.id, { onDelete: 'cascade' })
-      .notNull(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    email: varchar('email').notNull(),
     productId: uuid('product_id')
       .references(() => products.id, { onDelete: 'cascade' })
       .notNull(),
-    stripeSessionId: text('stripe_session_id'),
+    checkoutSessionId: text('checkout_session_id'),
+    acquisitionMethod: text('acquisition_method')
+      .$type<
+        | 'payment'
+        | 'subscription_quota'
+        | 'subscription_benefit'
+        | 'free_public'
+      >()
+      .notNull(),
     createdAt: text('created_at')
       .default(sql`(CURRENT_TIMESTAMP)`)
       .notNull(),

@@ -1,8 +1,8 @@
 import { and, eq } from 'drizzle-orm';
-import { db } from './db';
-import { products } from './db/schema';
-import { Product } from './product';
-import { IProductsRepository } from './interfaces/products.repository.interface';
+import { products } from '@/server/db/schema';
+import { Product } from '@/entities/models/product';
+import { IProductsRepository } from '@/application/repositories/products.repository.interface';
+import { db } from '@/server/db';
 
 export class ProductsRepository implements IProductsRepository {
   async createProduct(product: Product): Promise<Product> {
@@ -17,11 +17,10 @@ export class ProductsRepository implements IProductsRepository {
           description: created.description ?? undefined,
           image: created.image,
           price: created.price,
-          stripePriceId: created.stripePriceId,
-          usesMonthlyQuota: created.usesMonthlyQuota ?? false,
+          priceId: created.priceId,
           type: created.type,
           isVisible: created.isVisible ?? false,
-          isFreeForSubscribers: created.isFreeForSubscribers,
+          subscriberAccess: created.subscriberAccess,
         };
       } else {
         throw new Error('Cannot create a product');
@@ -31,7 +30,7 @@ export class ProductsRepository implements IProductsRepository {
     }
   }
 
-  async getProduct(slug: string): Promise<Product | undefined> {
+  async getBySlug(slug: string): Promise<Product | undefined> {
     const result = await db.query.products.findFirst({
       where: eq(products.slug, slug),
     });
@@ -45,11 +44,31 @@ export class ProductsRepository implements IProductsRepository {
       description: result.description ?? undefined,
       image: result.image,
       price: result.price,
-      stripePriceId: result.stripePriceId,
-      usesMonthlyQuota: result.usesMonthlyQuota ?? false,
+      priceId: result.priceId,
+      subscriberAccess: result.subscriberAccess,
       type: result.type,
       isVisible: result.isVisible ?? false,
-      isFreeForSubscribers: result.isFreeForSubscribers,
+    };
+  }
+
+  async getById(id: string): Promise<Product | undefined> {
+    const result = await db.query.products.findFirst({
+      where: eq(products.id, id),
+    });
+
+    if (!result) return undefined;
+
+    return {
+      id: result.id,
+      name: result.name,
+      slug: result.slug,
+      description: result.description ?? undefined,
+      image: result.image,
+      price: result.price,
+      priceId: result.priceId,
+      subscriberAccess: result.subscriberAccess,
+      type: result.type,
+      isVisible: result.isVisible ?? false,
     };
   }
 
@@ -68,11 +87,10 @@ export class ProductsRepository implements IProductsRepository {
         description: product.description ?? undefined,
         image: product.image,
         price: product.price,
-        stripePriceId: product.stripePriceId,
-        usesMonthlyQuota: product.usesMonthlyQuota ?? false,
+        priceId: product.priceId,
         type: product.type,
         isVisible: product.isVisible ?? false,
-        isFreeForSubscribers: product.isFreeForSubscribers,
+        subscriberAccess: product.subscriberAccess,
       }));
     } catch (error) {
       throw error;

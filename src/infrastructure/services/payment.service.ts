@@ -1,15 +1,24 @@
 import Stripe from 'stripe';
-import { IPaymentService } from './interfaces/payment.service.interface';
+import { stripeClient } from '@/stripe/stripe';
+import { IPaymentService } from '@/application/services/payment.service.interface';
+import { ProductType } from '@/entities/models/product';
 
 export class StripePaymentService implements IPaymentService {
-  constructor(private stripe: Stripe) {}
+  private stripe: Stripe;
+
+  constructor(stripe: Stripe = stripeClient) {
+    this.stripe = stripe;
+  }
 
   async createCheckoutSession(params: {
     priceId: string;
-    productId: string;
     successUrl: string;
     cancelUrl: string;
-    userId?: string;
+    metadata: {
+      userId?: string;
+      productId: string;
+      productType: ProductType;
+    };
   }) {
     const session = await this.stripe.checkout.sessions.create({
       mode: 'payment',
@@ -19,10 +28,7 @@ export class StripePaymentService implements IPaymentService {
           quantity: 1,
         },
       ],
-      metadata: {
-        userId: params.userId ? params.userId : null,
-        productId: params.productId,
-      },
+      metadata: params.metadata,
       success_url: params.successUrl,
       cancel_url: params.cancelUrl,
     });

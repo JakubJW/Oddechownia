@@ -1,7 +1,7 @@
-import { IEbooksRepository } from '../interfaces/ebooks.repository.interface';
-import { IProductsRepository } from '../interfaces/products.repository.interface';
-import { IPurchasesRepository } from '../interfaces/purchases.repository.interface';
-import { IStorageService } from '../interfaces/storage.service.interface';
+import { IEbooksRepository } from '@/application/repositories/ebooks.repository.interface';
+import { IProductsRepository } from '@/application/repositories/products.repository.interface';
+import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
+import { IStorageService } from '@/application/services/storage.service.interface';
 
 export class RequestEbookDownload {
   constructor(
@@ -11,16 +11,16 @@ export class RequestEbookDownload {
     private storageService: IStorageService
   ) {}
 
-  async execute(userId: string, productSlug: string): Promise<string> {
-    const product = await this.productsRepository.getProduct(productSlug);
+  async execute(userId: string, productId: string): Promise<string> {
+    const product = await this.productsRepository.getById(productId);
 
     if (!product) {
       throw new Error('Product not found');
     }
 
     const hasAccess = await this.purchasesRepository.hasUserPurchasedProduct(
-      userId,
-      product.id
+      product.id,
+      userId
     );
 
     if (!hasAccess) {

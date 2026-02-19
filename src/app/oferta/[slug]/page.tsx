@@ -8,10 +8,10 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getUser } from '@/server/actions/user';
 import { notFound } from 'next/navigation';
-import { GetProductForUser } from '@/server/use-cases/get-product-for-user';
-import { ProductsRepository } from '@/server/products.repository';
-import { PurchasesRepository } from '@/server/purchases.repository';
-import { SubscriptionRepository } from '@/server/subscription.repository';
+import { GetProductForUser } from '@/application/use-cases/product/get-product-for-user';
+import { ProductsRepository } from '@/infrastructure/repositories/products.repository';
+import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
+import { SubscriptionRepository } from '@/infrastructure/repositories/subscription.repository';
 
 const EbookDetails = async ({
   params,
@@ -59,7 +59,7 @@ const EbookDetails = async ({
             e-booka jako za darmo przy pierwszej miesięcznej subskrypcji.
           </p>
           <div className="flex flex-col gap-4">
-            {product.isFreeForSubscribers &&
+            {product.subscriberAccess === 'free_unlimited' &&
               product.state === 'can_purchase' && (
                 <Link
                   href="/rejestracja"
@@ -72,10 +72,7 @@ const EbookDetails = async ({
                 </Link>
               )}
             <GetEbookButton
-              slug={product.slug}
-              userId={user?.id}
               productId={product.id}
-              stripePriceId={product.stripePriceId}
               state={product.state}
             />
           </div>

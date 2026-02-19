@@ -1,7 +1,7 @@
 import { desc, eq } from 'drizzle-orm';
-import { db } from './db';
-import { subscriptions } from './db/schema';
-import { ISubscriptionRepository } from './interfaces/subscription.repository.interface';
+import { db } from '@/server/db';
+import { subscriptions } from '@/server/db/schema';
+import { ISubscriptionRepository } from '@/application/repositories/subscription.repository.interface';
 
 export class SubscriptionRepository implements ISubscriptionRepository {
   async hasActiveSubscriptionAfterTrial(userId: string): Promise<boolean> {
@@ -23,9 +23,6 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
     if (!subscription.currentPeriodEnd) return false;
 
-    const now = new Date();
-    const periodEnd = new Date(subscription.currentPeriodEnd);
-
-    return periodEnd > now;
+    return true;
   }
 }
