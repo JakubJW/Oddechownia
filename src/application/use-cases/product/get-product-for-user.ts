@@ -30,6 +30,8 @@ export class GetProductForUser {
     if (!product) return undefined;
 
     if (!userId) {
+      const state = product.price > 0 ? 'can_purchase' : 'can_download';
+
       return {
         id: product.id,
         name: product.name,
@@ -38,13 +40,12 @@ export class GetProductForUser {
         price: product.price,
         priceId: product.priceId,
         subscriberAccess: product.subscriberAccess,
-        state: 'can_purchase',
+        state,
       };
     }
 
     const hasSubscription =
       await this.subscriptionRepository.hasActiveSubscriptionAfterTrial(userId);
-
     const hasPurchased = await this.purchasesRepository.hasUserPurchasedProduct(
       product.id,
       userId

@@ -13,6 +13,8 @@ type Props = {
 export const GetEbookButton = ({ productId, state }: Props) => {
   const { claimMutation, purchaseMutation } = useProductMutations();
 
+  console.log(state);
+
   if (state === 'can_purchase') {
     return (
       <Button

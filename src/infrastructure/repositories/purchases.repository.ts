@@ -36,8 +36,7 @@ export class PurchasesRepository implements IPurchasesRepository {
       ),
     });
 
-    if (purchase) return true;
-    return false;
+    return purchase ? true : false;
   }
 
   async getUserPurchasedProductIds(userId: string): Promise<string[]> {

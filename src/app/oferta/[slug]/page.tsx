@@ -59,7 +59,8 @@ const EbookDetails = async ({
             e-booka jako za darmo przy pierwszej miesięcznej subskrypcji.
           </p>
           <div className="flex flex-col gap-4">
-            {product.subscriberAccess === 'free_unlimited' &&
+            {(product.subscriberAccess === 'free_unlimited' ||
+              product.subscriberAccess === 'quota_based') &&
               product.state === 'can_purchase' && (
                 <Link
                   href="/rejestracja"

@@ -10,10 +10,6 @@ import { SupabaseStorageService } from '@/infrastructure/services/storage.servic
 export async function downloadEbook(productId: string) {
   const user = await getUser();
 
-  if (!user) {
-    throw new Error('Unauthorized');
-  }
-
   const useCase = new RequestEbookDownload(
     new ProductsRepository(),
     new PurchasesRepository(),
@@ -21,7 +17,7 @@ export async function downloadEbook(productId: string) {
     new SupabaseStorageService()
   );
 
-  const url = await useCase.execute(user.id, productId);
+  const url = await useCase.execute(productId, user?.id);
 
   return url;
 }

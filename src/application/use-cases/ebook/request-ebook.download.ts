@@ -11,17 +11,20 @@ export class RequestEbookDownload {
     private storageService: IStorageService
   ) {}
 
-  async execute(userId: string, productId: string): Promise<string> {
+  async execute(productId: string, userId?: string): Promise<string> {
     const product = await this.productsRepository.getById(productId);
 
     if (!product) {
       throw new Error('Product not found');
     }
 
-    const hasAccess = await this.purchasesRepository.hasUserPurchasedProduct(
+    const hasPurchased = await this.purchasesRepository.hasUserPurchasedProduct(
       product.id,
       userId
     );
+
+    const isFree = product.price === 0;
+    const hasAccess = hasPurchased || isFree;
 
     if (!hasAccess) {
       throw new Error('Forbidden');
