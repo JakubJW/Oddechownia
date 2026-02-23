@@ -1,0 +1,1 @@
+ALTER TABLE "ebooks" ADD CONSTRAINT "ebooks_product_id_unique" UNIQUE("product_id");

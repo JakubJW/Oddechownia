@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { startOfMonth, endOfMonth, subDays, addDays } from 'date-fns';
-import { CalendarEvent } from '@/server/services/calendar.service';
+import { startOfMonth, endOfMonth } from 'date-fns';
+import { CalendarEvent } from '@/entities/models/user-practice-schedule';
 
 export const useCalendarEvents = (currentDate: Date) => {
-  const start = subDays(startOfMonth(currentDate), 7);
-  const end = addDays(endOfMonth(currentDate), 7);
+  const start = startOfMonth(currentDate);
+  const end = endOfMonth(currentDate);
 
   return useQuery({
     queryKey: ['calendar-events', start.toISOString(), end.toISOString()],

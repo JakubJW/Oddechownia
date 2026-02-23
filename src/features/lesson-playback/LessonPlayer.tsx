@@ -27,7 +27,7 @@ const DynamicLessonPlayer = ({
   startTime = 0,
 }: LessonPlayerProps) => {
   const lastSaveTime = useRef(0);
-  const THROTTLE_MS = 10000;
+  const THROTTLE_MS = 60000;
 
   const { mutate } = useProgressMutation();
 

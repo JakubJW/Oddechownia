@@ -11,9 +11,6 @@ export default function NotFound() {
           <div className="text-[12rem] md:text-[16rem] font-bold text-matcha leading-none select-none">
             404
           </div>
-          {/* <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-32 h-32 rounded-full bg-steelBlue animate-[ping_3s_ease-in-out_infinite]" />
-          </div> */}
         </div>
 
         <div className="space-y-4 -mt-12">
@@ -44,30 +41,6 @@ export default function NotFound() {
             Studio jogi online
           </Link>
         </div>
-
-        {/* <div className="pt-12 text-sm text-muted-foreground space-y-2">
-          <p className="font-medium">You might be looking for:</p>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <Link
-              href="/"
-              className="px-3 py-1 rounded-full bg-muted hover:bg-muted/80 transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              className="px-3 py-1 rounded-full bg-muted hover:bg-muted/80 transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="px-3 py-1 rounded-full bg-muted hover:bg-muted/80 transition-colors"
-            >
-              Contact
-            </Link>
-          </div>
-        </div> */}
       </div>
     </div>
   );

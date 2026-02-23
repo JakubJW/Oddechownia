@@ -26,7 +26,7 @@ function NavigationLink({
       onClick={onClick}
       className={cn(
         'flex border-b-2 h-full items-center px-4 hover:border-richBlack hover:text-richBlack trasition-colors duration-300',
-        isMobile ? 'text-richBlack' : 'text-white',
+        isMobile ? 'text-richBlack' : 'text-richBlack',
         href.split('/').includes(currentPath.split('/')[1]) &&
           currentPath !== '/' &&
           !isMobile

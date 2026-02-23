@@ -127,6 +127,83 @@
       "when": 1768350367441,
       "tag": "0017_outgoing_snowbird",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1771023782490,
+      "tag": "0018_polite_sphinx",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1771024679899,
+      "tag": "0019_foamy_yellow_claw",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1771024755189,
+      "tag": "0020_slippery_vance_astro",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1771031682065,
+      "tag": "0021_purple_joseph",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1771177698149,
+      "tag": "0022_exotic_mac_gargan",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1771189633996,
+      "tag": "0023_slow_leo",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1771271294560,
+      "tag": "0024_lonely_peter_quill",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1771273013518,
+      "tag": "0025_bumpy_falcon",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1771273440220,
+      "tag": "0026_warm_human_cannonball",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1771714031171,
+      "tag": "0027_outgoing_spiral",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1771865357940,
+      "tag": "0028_sleepy_wendigo",
+      "breakpoints": true
     }
   ]
 }

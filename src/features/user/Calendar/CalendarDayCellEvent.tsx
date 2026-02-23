@@ -1,7 +1,7 @@
 import {
   CalendarEvent,
   LiveLessonEvent,
-} from '@/server/services/calendar.service';
+} from '@/entities/models/user-practice-schedule';
 import { cn } from '@/lib/utils';
 import { CircleAlert, Video } from 'lucide-react';
 
@@ -20,12 +20,6 @@ const CalendarDayCellEvent = ({ event }: { event: CalendarEvent }) => {
         key={event.id}
         className="text-[10px] px-1.5 py-0.5 rounded border truncate font-medium bg-violet-100 text-violet-700 border-violet-200"
       >
-        <span className="opacity-75 mr-1">
-          {new Intl.DateTimeFormat('pl-PL', {
-            hour: '2-digit',
-            minute: '2-digit',
-          }).format(new Date(event.date))}
-        </span>
         {event.title}
       </div>
     );

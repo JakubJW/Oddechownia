@@ -2,8 +2,8 @@ import {
   CalendarEvent,
   LiveLessonEvent,
   PracticeSessionEvent,
-} from '@/server/services/calendar.service';
-import { CalendarEventType } from '@/server/services/calendar.service';
+  CalendarEventType,
+} from '@/entities/models/user-practice-schedule';
 import { formatDuration, formatTime } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { LiveLessonEvent } from '@/server/services/calendar.service';
+import { LiveLessonEvent } from '@/entities/models/user-practice-schedule';
 
 interface CalendarContextType {
   onSignUp: (lesson: LiveLessonEvent) => void;

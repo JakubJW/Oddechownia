@@ -250,23 +250,23 @@ const fullfillLiveLessonPurchase = async (
       await EmailService.sendLiveLessonRegistrationConfirmaion(
         existing.email,
         existing.name.split(' ')[0],
-        existing.lesson.title,
-        existing.lesson.scheduledAt
+        existing.lesson!.title,
+        existing.lesson!.scheduledAt
       );
 
       await EmailService.scheduleLiveLessonRemind(
         existing.email,
         existing.name.split(' ')[0],
-        existing.lesson.title,
-        existing.lesson.scheduledAt
+        existing.lesson!.title,
+        existing.lesson!.scheduledAt
       );
     }
   }
 
   return {
     registrationId: existing.id,
-    lessonTitle: existing.lesson.title,
-    scheduledAt: existing.lesson.scheduledAt,
+    lessonTitle: existing.lesson!.title,
+    scheduledAt: existing.lesson!.scheduledAt,
   };
 };
 

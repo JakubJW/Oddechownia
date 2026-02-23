@@ -17,6 +17,8 @@ import {
   labels,
   lessonLabels,
   posts,
+  products,
+  ebooks,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -139,7 +141,7 @@ export const userFavoriteLessonsRelations = relations(
 );
 
 export const liveLessonsRelations = relations(liveLessons, ({ many, one }) => ({
-  registrations: many(liveLessonsRegistrations),
+  liveLessonsRegistrations: many(liveLessonsRegistrations),
   thumbnail: one(files, {
     fields: [liveLessons.thumbnailId],
     references: [files.id],
@@ -223,4 +225,18 @@ export const lessonLabelsRelations = relations(lessonLabels, ({ one }) => ({
 export const postsRelations = relations(posts, ({ one, many }) => ({
   author: one(users, { fields: [posts.authorId], references: [users.id] }),
   comments: many(comments),
+}));
+
+export const productsRelatios = relations(products, ({ one }) => ({
+  ebook: one(ebooks, {
+    fields: [products.id],
+    references: [ebooks.productId],
+  }),
+}));
+
+export const ebooksRelations = relations(ebooks, ({ one }) => ({
+  product: one(products, {
+    fields: [ebooks.productId],
+    references: [products.id],
+  }),
 }));

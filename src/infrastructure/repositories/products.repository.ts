@@ -1,0 +1,99 @@
+import { and, eq } from 'drizzle-orm';
+import { products } from '@/server/db/schema';
+import { Product } from '@/entities/models/product';
+import { IProductsRepository } from '@/application/repositories/products.repository.interface';
+import { db } from '@/server/db';
+
+export class ProductsRepository implements IProductsRepository {
+  async createProduct(product: Product): Promise<Product> {
+    try {
+      const [created] = await db.insert(products).values(product).returning();
+
+      if (created) {
+        return {
+          id: created.id,
+          name: created.name,
+          slug: created.slug,
+          description: created.description ?? undefined,
+          image: created.image,
+          price: created.price,
+          priceId: created.priceId,
+          type: created.type,
+          isVisible: created.isVisible ?? false,
+          subscriberAccess: created.subscriberAccess,
+        };
+      } else {
+        throw new Error('Cannot create a product');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getBySlug(slug: string): Promise<Product | undefined> {
+    const result = await db.query.products.findFirst({
+      where: eq(products.slug, slug),
+    });
+
+    if (!result) return undefined;
+
+    return {
+      id: result.id,
+      name: result.name,
+      slug: result.slug,
+      description: result.description ?? undefined,
+      image: result.image,
+      price: result.price,
+      priceId: result.priceId,
+      subscriberAccess: result.subscriberAccess,
+      type: result.type,
+      isVisible: result.isVisible ?? false,
+    };
+  }
+
+  async getById(id: string): Promise<Product | undefined> {
+    const result = await db.query.products.findFirst({
+      where: eq(products.id, id),
+    });
+
+    if (!result) return undefined;
+
+    return {
+      id: result.id,
+      name: result.name,
+      slug: result.slug,
+      description: result.description ?? undefined,
+      image: result.image,
+      price: result.price,
+      priceId: result.priceId,
+      subscriberAccess: result.subscriberAccess,
+      type: result.type,
+      isVisible: result.isVisible ?? false,
+    };
+  }
+
+  async getVisibleProductsByType(
+    type: 'ebook' | 'live-lesson'
+  ): Promise<Product[]> {
+    try {
+      const result = await db.query.products.findMany({
+        where: and(eq(products.isVisible, true), eq(products.type, type)),
+      });
+
+      return result.map((product) => ({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description ?? undefined,
+        image: product.image,
+        price: product.price,
+        priceId: product.priceId,
+        type: product.type,
+        isVisible: product.isVisible ?? false,
+        subscriberAccess: product.subscriberAccess,
+      }));
+    } catch (error) {
+      throw error;
+    }
+  }
+}
