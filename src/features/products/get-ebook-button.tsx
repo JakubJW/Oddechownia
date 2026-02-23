@@ -8,12 +8,11 @@ import { downloadEbook } from '@/server/actions/ebook';
 type Props = {
   productId: string;
   state: 'can_purchase' | 'can_claim' | 'can_download';
+  price: number;
 };
 
-export const GetEbookButton = ({ productId, state }: Props) => {
+export const GetEbookButton = ({ productId, state, price }: Props) => {
   const { claimMutation, purchaseMutation } = useProductMutations();
-
-  console.log(state);
 
   if (state === 'can_purchase') {
     return (
@@ -23,7 +22,11 @@ export const GetEbookButton = ({ productId, state }: Props) => {
         size="lg"
         className="bg-white text-richBlack border border-richBlack hover:bg-muted"
       >
-        Zakup za 99 zł
+        Zakup za&nbsp;
+        {new Intl.NumberFormat('pl-PL', {
+          style: 'currency',
+          currency: 'PLN',
+        }).format(price / 100)}
         {purchaseMutation.isPending && (
           <Loader2 className="size-4 mr-2 animate-spin" />
         )}
@@ -37,7 +40,7 @@ export const GetEbookButton = ({ productId, state }: Props) => {
         onClick={() => claimMutation.mutate(productId)}
         disabled={claimMutation.isPending}
         size="lg"
-        className="text-richBlack"
+        className="flex-1 text-richBlack"
       >
         Odbierz za darmo
         {claimMutation.isPending && <Loader2 className="size-4 animate-spin" />}
@@ -54,7 +57,7 @@ export const GetEbookButton = ({ productId, state }: Props) => {
         }}
         disabled={claimMutation.isPending}
         size="lg"
-        className="text-richBlack"
+        className="flex-1 text-richBlack"
       >
         Pobierz
       </Button>

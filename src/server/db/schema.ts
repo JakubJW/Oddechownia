@@ -252,18 +252,17 @@ export const liveLessonsRegistrations = pgTable('live_lessons_registrations', {
 
 export const userPracticeSchedules = pgTable('user_practice_schedules', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id),
+  userId: uuid('user_id').references(() => users.id),
   lessonId: integer('lesson_id')
     .notNull()
     .references(() => lessons.id),
-  playlistId: integer('playlist_id').references(() => playlists.id),
+  playlistId: integer('playlist_id')
+    .notNull()
+    .references(() => playlists.id),
   scheduledAt: timestamp('scheduled_at', {
     withTimezone: true,
     mode: 'string',
   }).notNull(),
-  sendReminder: boolean('send_reminder').default(false),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),

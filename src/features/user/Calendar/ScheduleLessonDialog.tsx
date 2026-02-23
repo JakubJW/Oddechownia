@@ -1,11 +1,7 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, PlusCircle } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useMutation } from '@tanstack/react-query';
-import { addDays, endOfMonth, format, startOfMonth, subDays } from 'date-fns';
-import { pl } from 'date-fns/locale';
-import { CalendarIcon, Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,6 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -25,118 +22,67 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
-import { queryClient } from '@/components/QueryClientProvider';
-import { InferInsertModel } from 'drizzle-orm';
-import { userPracticeSchedules } from '@/server/db/schema';
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import { usePlaylists } from '@/features/admin/user-practice-schedule/hooks/use-playlists';
+import { useUserPracticeScheduleMutations } from '@/features/admin/user-practice-schedule/hooks/use-user-practice-schedule-mutations';
+import { UserPracticeScheduleInsert } from '@/entities/models/user-practice-schedule';
 
-const FormSchema = z.object({
-  date: z.date({
-    required_error: 'Data jest wymagana.',
-  }),
-  time: z
-    .string()
-    .regex(
-      /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-      'Podaj godzinę w formacie HH:MM'
-    ),
-});
+const createUserScheduleFormSchema = z
+  .object({
+    scheduledAt: z.string(),
+    lessonId: z.number(),
+    playlistId: z.number(),
+  })
+  .superRefine(({ lessonId, playlistId }, ctx) => {
+    if (!playlistId) {
+      ctx.addIssue({ path: ['playlistId'], code: 'custom', message: 'chuj' });
+    }
 
-interface ScheduleLessonDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  lessonId: number;
-  playlistId?: number;
-  defaultTitle: string;
-}
+    if (!lessonId) {
+      ctx.addIssue({ path: ['lessonId'], code: 'custom', message: 'chuj' });
+    }
+  });
 
-export function ScheduleLessonDialog({
-  open,
-  onOpenChange,
-  lessonId,
-  playlistId,
-  defaultTitle,
-}: ScheduleLessonDialogProps) {
-  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
-
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+export function ScheduleLessonDialog({ scheduledAt }: { scheduledAt: string }) {
+  const { data: playlistsData, isLoading, isError } = usePlaylists();
+  const { createMutation } = useUserPracticeScheduleMutations();
+  const form = useForm({
+    resolver: zodResolver(createUserScheduleFormSchema),
     defaultValues: {
-      time: '18:00', // Default time suggestion
+      scheduledAt,
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (values: z.infer<typeof FormSchema>) => {
-      const [hours, minutes] = values.time.split(':').map(Number);
-      const finalDate = new Date(values.date);
-      finalDate.setHours(hours);
-      finalDate.setMinutes(minutes);
+  const [playlistId] = form.watch(['playlistId']);
 
-      const response = await fetch('/api/calendar/schedule', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          lessonId,
-          playlistId,
-          scheduledAt: finalDate.toISOString(),
-        }),
-      });
+  const playlists = playlistsData ?? [];
+  const selectedPlaylist = playlists.find((p) => p.id === Number(playlistId));
+  const lessons = selectedPlaylist?.lessons ?? [];
 
-      if (!response.ok) {
-        throw new Error('Failed to schedule lesson');
-      }
-
-      const json = await response.json();
-
-      return json as {
-        data: InferInsertModel<typeof userPracticeSchedules>;
-        message: string;
-      };
-    },
-    onSuccess: ({ data }) => {
-      const start = subDays(startOfMonth(new Date(data.scheduledAt)), 7);
-      const end = addDays(endOfMonth(new Date(data.scheduledAt)), 7);
-
-      queryClient.invalidateQueries({
-        queryKey: ['calendar-events', start.toISOString(), end.toISOString()],
-      });
-
-      toast.success('Zajęcia zaplanowane', {
-        description: `Dodano "${defaultTitle}" do Twojego kalendarza.`,
-      });
-      onOpenChange(false);
-      form.reset();
-    },
-    onError: () => {
-      toast.error('Wystąpił błąd');
-    },
-  });
-
-  const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    mutation.mutate(values);
+  const onSubmit = (values: z.infer<typeof createUserScheduleFormSchema>) => {
+    createMutation.mutate(values);
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog>
+      <DialogTrigger>
+        <Button
+          asChild
+          size="icon"
+        >
+          <PlusCircle />
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Zaplanuj praktykę</DialogTitle>
           <DialogDescription>
-            Wybierz termin, w którym chcesz wykonać lekcję{' '}
-            <strong>&quot;{defaultTitle}&quot;</strong>.
+            Wybierz lekcję, która ma zostać wykonana w tym terminie
           </DialogDescription>
         </DialogHeader>
 
@@ -145,85 +91,79 @@ export function ScheduleLessonDialog({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4 py-4"
           >
-            {/* 1. Date Picker */}
             <FormField
               control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Data</FormLabel>
-                  <Popover
-                    open={datePopoverOpen}
-                    onOpenChange={setDatePopoverOpen}
-                    modal
-                  >
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className={cn(
-                            'w-full pl-3 text-left font-normal',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, 'PPP', { locale: pl })
-                          ) : (
-                            <span>Wybierz datę</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0"
-                      align="start"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0))
-                        } // Disable past dates
-                        locale={pl}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* 2. Time Input */}
-            <FormField
-              control={form.control}
-              name="time"
+              name="playlistId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Godzina</FormLabel>
+                  <FormLabel>Playlista</FormLabel>
                   <FormControl>
-                    <Input
-                      type="time"
-                      {...field}
-                      className="w-full"
-                    />
+                    <Select
+                      value={field.value?.toString() ?? ''}
+                      onValueChange={(val) => {
+                        field.onChange(Number(val));
+                        form.resetField('lessonId');
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Wybierz playlistę" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {playlists.map(({ name, id }) => (
+                          <SelectItem
+                            key={id}
+                            value={String(id)}
+                          >
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="lessonId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lekcja</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value?.toString() ?? ''}
+                      disabled={!playlistId || lessons.length === 0}
+                      onValueChange={(val) => field.onChange(Number(val))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Wybierz lekcję" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {lessons.map(({ name, id }) => (
+                          <SelectItem
+                            key={id}
+                            value={String(id)}
+                          >
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
               <Button
                 type="submit"
-                disabled={mutation.isPending}
+                disabled={createMutation.isPending}
               >
-                {mutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {createMutation.isPending && (
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                 )}
-                Zapisz w kalendarzu
+                Zapisz
               </Button>
             </DialogFooter>
           </form>

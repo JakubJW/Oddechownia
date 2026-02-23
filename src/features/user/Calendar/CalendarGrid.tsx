@@ -1,52 +1,40 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { format, isSameDay } from 'date-fns';
+import { format, isSameDay, isSameMonth } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCalendarGrid } from './hooks/useCalendarGrid';
 import { CalendarDayCell } from './CalendarDayCell';
 import { useCalendarEvents } from './hooks/useCalendarEvents';
-import SignUpDialog from '@/features/LiveLesson/SignUpDialog';
 import { CalendarProvider } from './context/CalendarContext';
 import { useCallback, useMemo, useState } from 'react';
-import { LiveLessonEvent } from '@/server/services/calendar.service';
+import { LiveLessonEvent } from '@/entities/models/user-practice-schedule';
 import { getRequiredUser } from '@/lib/data';
 import Image from 'next/image';
-import CalendarDayEvent from './CalendarDayEvent';
 import { cn } from '@/lib/utils';
 
 const WEEKDAYS = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'];
 
-const CaledarGrid = ({
-  user,
-  className,
-}: {
-  user: Awaited<ReturnType<typeof getRequiredUser>>;
-  className?: string;
-}) => {
-  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
-  const [selectedLesson, setSelectedLesson] = useState<LiveLessonEvent | null>(
-    null
-  );
+const CaledarGrid = ({ className }: { className?: string }) => {
   const {
-    week,
+    weeks,
     selectedDate,
-    selectedWeek,
+    selectedMonth,
     setSelectedDate,
     nextMonth,
     prevMonth,
     goToToday,
   } = useCalendarGrid();
-  const { data: allEvents = [], isFetching } = useCalendarEvents(selectedWeek);
+  const { data: allEvents = [], isFetching } = useCalendarEvents(selectedMonth);
 
   const getEventsForDay = (day: Date) => {
     return allEvents.filter((event) => isSameDay(event.date, day));
   };
 
   const handleSignUp = useCallback((lesson: LiveLessonEvent) => {
-    setSelectedLesson(lesson);
-    setIsSignUpOpen(true);
+    // setSelectedLesson(lesson);
+    // setIsSignUpOpen(true);
   }, []);
 
   const contextValue = useMemo(
@@ -62,7 +50,7 @@ const CaledarGrid = ({
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-4">
             <p className="font-semibold flex-grow">
-              {format(selectedWeek, 'LLLL yyyy', { locale: pl })}
+              {format(selectedMonth, 'LLLL yyyy', { locale: pl })}
             </p>
             <Button
               variant="default"
@@ -97,7 +85,7 @@ const CaledarGrid = ({
               ))}
             </div>
             <div className="relative flex flex-col">
-              {week.map((week, weekIdx) => (
+              {weeks.map((week, weekIdx) => (
                 <div
                   key={weekIdx}
                   className="grid grid-cols-7 border-b last:border-b-0"
@@ -107,6 +95,7 @@ const CaledarGrid = ({
                       key={day.toISOString()}
                       day={day}
                       isSelected={isSameDay(day, selectedDate)}
+                      isSameMonth={isSameMonth(day, selectedMonth)}
                       onSelect={setSelectedDate}
                       events={getEventsForDay(day)}
                     />
@@ -131,36 +120,6 @@ const CaledarGrid = ({
                 </div>
               )}
             </div>
-          </div>
-          {selectedLesson && (
-            <SignUpDialog
-              liveLesson={{
-                id: selectedLesson.id,
-                title: selectedLesson.title,
-                description: selectedLesson.description,
-                scheduledAt: selectedLesson.date,
-                isEligibleForFree: selectedLesson.isEligibleForFree,
-                freeEligibilitiesUsed: selectedLesson.freeEligibilitiesUsed,
-              }}
-              open={isSignUpOpen}
-              setOpen={setIsSignUpOpen}
-              user={user}
-            />
-          )}
-        </div>
-        <div className="hidden md:flex flex-col flex-grow mt-4">
-          <div className="flex flex-col flex-grow  rounded-xl">
-            {!getEventsForDay(selectedDate).length && (
-              <div className="flex items-center justify-center flex-grow font-light text-sm ">
-                Brak nadchodzących wydarzeń.
-              </div>
-            )}
-            {getEventsForDay(selectedDate).map((event) => (
-              <CalendarDayEvent
-                key={event.id}
-                event={event}
-              />
-            ))}
           </div>
         </div>
       </div>

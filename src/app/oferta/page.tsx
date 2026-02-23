@@ -39,10 +39,11 @@ export default async function Products() {
           {products.map((product) => (
             <EbookCard
               key={product.id}
-              title={product.name}
+              id={product.id}
+              name={product.name}
               slug={product.slug}
-              includedInSubscription={product.isFreeForSubscribers}
-              thumbnail={product.image}
+              subscriberAccess={product.subscriberAccess}
+              image={product.image}
               price={product.price}
               state={product.state}
             />

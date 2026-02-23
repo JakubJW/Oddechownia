@@ -30,8 +30,9 @@ export default async function AdminLayout({
             <Link href="/admin/playlisty">Playlisty</Link>
             <Link href="/admin/lekcje">Lekcje</Link>
             <Link href="/admin/zajecia-na-zywo">Zajęcia na żywo</Link>
-            <Link href="/admin/landing-page">Landing page</Link>
-            <Link href="/admin/filmy">Filmy</Link>
+            {/* <Link href="/admin/landing-page">Landing page</Link> */}
+            {/* <Link href="/admin/filmy">Filmy</Link> */}
+            <Link href="/admin/plan-praktyk">Plan praktyk</Link>
           </div>
           <div className="col-span-10">{children}</div>
         </div>
