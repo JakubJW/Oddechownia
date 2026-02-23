@@ -6,7 +6,8 @@ export class SupabaseStorageService implements IStorageService {
   async generateSignedUrl(
     bucket: string,
     path: string,
-    ttl: number
+    ttl: number,
+    download: boolean = false
   ): Promise<string> {
     const supabase = createClient(
       env.NEXT_PUBLIC_SUPABASE_URL,
@@ -15,7 +16,7 @@ export class SupabaseStorageService implements IStorageService {
 
     const { data, error } = await supabase.storage
       .from(bucket)
-      .createSignedUrl(path, ttl);
+      .createSignedUrl(path, ttl, { download });
 
     if (error) {
       throw new Error('Cannot generate signed URL');
