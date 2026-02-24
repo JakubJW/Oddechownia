@@ -25,4 +25,19 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
     return true;
   }
+
+  async getSubscriptionStatus(userId: string): Promise<string> {
+    const [result] = await db
+      .select({
+        status: subscriptions.status,
+      })
+      .from(subscriptions)
+      .where(eq(subscriptions.userId, userId))
+      .orderBy(desc(subscriptions.createdAt))
+      .limit(1);
+
+    if (!result) return 'inactive';
+
+    return result.status;
+  }
 }

@@ -2,7 +2,7 @@ import { UserPracticeScheduleEvent } from '@/entities/models/user-practice-sched
 import { useQuery } from '@tanstack/react-query';
 import { addWeeks, endOfDay, startOfDay } from 'date-fns';
 
-export const usePracticeSchedule = (currentDate: Date) => {
+export const useTodays = (currentDate: Date) => {
   const start = startOfDay(currentDate);
   const end = endOfDay(currentDate);
 

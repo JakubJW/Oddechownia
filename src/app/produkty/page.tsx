@@ -23,19 +23,19 @@ export default async function Products() {
   return (
     <section>
       <Container>
-        <div className="relative bg-gradient-to-r border border-matcha-foreground from-transparent to-matcha-light rounded-[32px] p-12 mb-12 overflow-hidden">
-          <div>
-            <h1 className="text-4xl font-light">Materiały</h1>
-            <p className="mt-4 w-1/2 text-lg">
+        {/* <div className="relative bg-gradient-to-r border border-matcha-foreground from-transparent to-matcha-light rounded-[32px] p-12 mb-12 overflow-hidden">
+          <Sloneczko className="absolute z-0 top-0 -translate-y-1/4 right-[15%] aspect-square h-[50%] sm:h-[95%] text-matcha/60" />
+          <Kwiatek className="absolute z-0 aspect-square top-1/2 -translate-y-1/2 right-[25%] -translate-x-1/2 h-[60%] sm:h-full text-matcha/30" />
+          <Om className="absolute bottom-0 translate-y-1/4 right-0 aspect-square h-[50%] sm:h-[90%] text-matcha" />
+          <div className="relative z-10">
+            <h1 className="text-4xl font-light">Produkty</h1>
+            <p className="mt-4 sm:w-1/2 text-lg">
               Od 15-minutowych porannych rozruchów po głębokie sesje Yin Jogi.
               Dołącz do Oddechowni i odblokuj wszystkie nagrania.
             </p>
           </div>
-          <Sloneczko className="absolute top-0 -translate-y-1/4 right-[15%] aspect-square h-[95%] text-matcha/60" />
-          <Kwiatek className="absolute aspect-square top-1/2 -translate-y-1/2 right-[25%] -translate-x-1/2 h-full text-matcha/30" />
-          <Om className="absolute bottom-0 translate-y-1/4 right-0 aspect-square h-[90%] text-matcha" />
-        </div>
-        <div className="grid grid-cols-4 gap-6 place-items-baseline">
+        </div> */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 place-items-baseline">
           {products.map((product) => (
             <EbookCard
               key={product.id}
@@ -46,6 +46,7 @@ export default async function Products() {
               image={product.image}
               price={product.price}
               state={product.state}
+              disabled={product.disabled}
             />
           ))}
         </div>

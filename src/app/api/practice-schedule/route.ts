@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserService } from '@/infrastructure/services/user.service';
-import { GetAdminSchedulesUseCase } from '@/application/use-cases/user-practice-schedule/get-admin-schedules.use-case';
+import { GetUserSchedulesUseCase } from '@/application/use-cases/user-practice-schedule/get-user-schedule.use-case';
 import { UserPracticeScheduleRepository } from '@/infrastructure/repositories/user-practice-schedule';
 import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
 
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     const startDate = startParam;
     const endDate = endParam;
 
-    const useCase = new GetAdminSchedulesUseCase(
+    const useCase = new GetUserSchedulesUseCase(
       new UserPracticeScheduleRepository(),
       new LiveLessonsRepository()
     );

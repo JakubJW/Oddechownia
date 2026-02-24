@@ -4,17 +4,19 @@ import { Button } from '@/components/ui/button';
 import { useProductMutations } from './hooks/use-product-mutations';
 import { Loader2 } from 'lucide-react';
 import { downloadEbook } from '@/server/actions/ebook';
+import { useState } from 'react';
 
 type Props = {
   productId: string;
-  state: 'can_purchase' | 'can_claim' | 'can_download';
+  state: 'can_purchase' | 'can_claim' | 'can_download' | 'disabled';
   price: number;
 };
 
 export const GetEbookButton = ({ productId, state, price }: Props) => {
+  const [buttonState, setButtonState] = useState(state);
   const { claimMutation, purchaseMutation } = useProductMutations();
 
-  if (state === 'can_purchase') {
+  if (buttonState === 'can_purchase') {
     return (
       <Button
         onClick={() => purchaseMutation.mutate(productId)}
@@ -22,7 +24,7 @@ export const GetEbookButton = ({ productId, state, price }: Props) => {
         size="lg"
         className="bg-white text-richBlack border border-richBlack hover:bg-muted"
       >
-        Zakup za&nbsp;
+        Kup za&nbsp;
         {new Intl.NumberFormat('pl-PL', {
           style: 'currency',
           currency: 'PLN',
@@ -34,10 +36,14 @@ export const GetEbookButton = ({ productId, state, price }: Props) => {
     );
   }
 
-  if (state === 'can_claim') {
+  if (buttonState === 'can_claim') {
     return (
       <Button
-        onClick={() => claimMutation.mutate(productId)}
+        onClick={() =>
+          claimMutation.mutate(productId, {
+            onSuccess: () => setButtonState('can_download'),
+          })
+        }
         disabled={claimMutation.isPending}
         size="lg"
         className="flex-1 text-richBlack"
@@ -48,7 +54,7 @@ export const GetEbookButton = ({ productId, state, price }: Props) => {
     );
   }
 
-  if (state === 'can_download') {
+  if (buttonState === 'can_download') {
     return (
       <Button
         onClick={async () => {

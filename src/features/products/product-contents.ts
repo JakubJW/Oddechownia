@@ -1,10 +1,17 @@
 export const PRODUCT_CONTENTS = {
   'energetyka-kobiecego-ciala': {
+    images: [
+      '/images/ebooks/energetyka-kobiecego-ciala/gallery/energetyka-kobiecego-ciala-1.png',
+      '/images/ebooks/energetyka-kobiecego-ciala/gallery/energetyka-kobiecego-ciala-2.png',
+      '/images/ebooks/energetyka-kobiecego-ciala/gallery/energetyka-kobiecego-ciala-3.png',
+      '/images/ebooks/energetyka-kobiecego-ciala/gallery/energetyka-kobiecego-ciala-4.png',
+    ],
     hero: {
       title: 'Energetyka kobiecego ciała - e-book',
       subtitle:
         'Przestań walczyć ze swoim ciałem. Zacznij czerpać z jego pierwotnej mocy.',
-      coverImage: '/images/ebooks/energetyka_kobiecego_ciala.jpg',
+      coverImage:
+        '/images/ebooks/energetyka-kobiecego-ciala/energetyka_kobiecego_ciala.jpg',
     },
     sections: [
       {
@@ -40,22 +47,6 @@ export const PRODUCT_CONTENTS = {
           'chcesz nauczyć się słuchać głosu intuicji i ufać sygnałom płynącym z ciała,',
           'pragniesz nauczyć się mówić własnym głosem, wyznaczać granice i z odwagą stawać w swojej prawdzie bez lęku przed oceną',
           'chcesz pogłębić praktykę jogi o wiedzę teoretyczną, która wykracza poza ćwiczenia fizyczne na macie.',
-        ],
-      },
-      {
-        type: 'text',
-        heading: 'Relacja z samą sobą, o jakiej zawsze marzyłaś',
-        paragraphs: [
-          'System energetyczny i czakry to rzeczywistość, której nie da się zważyć ani zmierzyć tradycyjnymi narzędziami, ale którą można głęboko odczuwać i przeżywać. To mądrość obecna w jodze od tysięcy lat, którą współczesna nauka, psychologia i neurobiologia dopiero zaczynają odkrywać i badać.',
-          'Rozpoczynając pracę z tym e-bookiem, przekonasz się o tym na własnej skórze: zobaczysz, jak teoria zamienia się w Twoje żywe doświadczenia, dając Ci realny wpływ na to, jak się czujesz, jak oddychasz i w jaki sposób kroczysz przez świat.',
-        ],
-      },
-      {
-        type: 'text',
-        heading: 'Twój rytm, Twoja praktyka',
-        paragraphs: [
-          'Kluczowym elementem e-booka jest kompletny, 14-tygodniowy plan pracy z systemem energetycznym, który przeprowadzi Cię krok po kroku przez każde z siedmiu centrów mocy. To nie są czasochłonne ćwiczenia, ale proste (choć istotne) rytuały wplecione w Twój plan dnia, dostosowane do współczesnego trybu życia.',
-          'Otrzymasz gotowy harmonogram codziennych i pogłębionych praktyk, który możesz realizować we własnym tempie, ucząc się, jak małe, regularne kroki budują trwałą harmonię w Twoim życiu.',
         ],
       },
     ],
