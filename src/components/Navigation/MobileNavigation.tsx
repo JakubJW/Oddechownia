@@ -14,7 +14,7 @@ export default function MobileNavigation({ user }: NavigationProps) {
   return (
     <div className="flex items-center md:hidden">
       <button onClick={() => setOpen(true)}>
-        <MenuIcon className="text-white" />
+        <MenuIcon className="text-richBlack" />
       </button>
       <div
         className={cn(

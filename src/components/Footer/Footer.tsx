@@ -36,7 +36,7 @@ export default async function Footer() {
             href="https://www.instagram.com/weronikasyoga/"
             target="_blank"
           >
-            <Instagram className="size-6" />
+            <Instagram className="size-6 text-richBlack" />
           </a>
         </div>
       </Container>
