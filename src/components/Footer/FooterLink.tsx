@@ -11,7 +11,7 @@ export default function FooterLink({ href, content, target }: FooterLinkProps) {
     return (
       <li>
         <a
-          className="block text-white text-lg"
+          className="block text-richBlack text-lg"
           href={href}
           target={target}
         >
@@ -24,7 +24,7 @@ export default function FooterLink({ href, content, target }: FooterLinkProps) {
   return (
     <li>
       <Link
-        className="block text-white text-lg"
+        className="block text-richBlack text-lg"
         href={href}
         target={target}
       >
