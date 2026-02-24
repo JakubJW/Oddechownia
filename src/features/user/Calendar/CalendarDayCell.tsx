@@ -1,6 +1,6 @@
 import { format, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { CalendarEvent } from '@/server/services/calendar.service';
+import { CalendarEvent } from '@/entities/models/user-practice-schedule';
 import CalendarDayCellEvent from './CalendarDayCellEvent';
 import CalendarDayEvent from './CalendarDayEvent';
 import { DayDetailsModal } from './DayDetailsModal';
@@ -8,6 +8,7 @@ import { DayDetailsModal } from './DayDetailsModal';
 interface CalendarDayCellProps {
   day: Date;
   isSelected: boolean;
+  isSameMonth: boolean;
   onSelect: (date: Date) => void;
   events: CalendarEvent[];
 }
@@ -15,6 +16,7 @@ interface CalendarDayCellProps {
 export const CalendarDayCell = ({
   day,
   isSelected,
+  isSameMonth,
   onSelect,
   events,
 }: CalendarDayCellProps) => {
@@ -45,7 +47,8 @@ export const CalendarDayCell = ({
         onClick={() => onSelect(day)}
         className={cn(
           'min-h-[120px] p-2  cursor-pointer transition-colors flex flex-col gap-1',
-          isSelected ? 'bg-primary-foreground' : 'hover:bg-muted/50'
+          isSelected ? 'bg-primary-foreground' : 'hover:bg-muted/50',
+          !isSameMonth && 'bg-gray-100 text-gray-400'
         )}
       >
         <div className="flex justify-between items-start">

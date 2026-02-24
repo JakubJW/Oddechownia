@@ -5,7 +5,7 @@ import LessonPlayer from '@/features/lesson-playback/LessonPlayer';
 import { LessonsList } from '@/features/lesson-playback/lessons-list';
 import { SubscriptionRequiredOverlay } from '@/features/lesson-playback/subscription-required-overlay';
 import { ExpandableText } from '@/features/shared/expandable-text';
-import { AddToCalendarButton } from '@/features/user/Calendar/AddToCalendarButton';
+// import { AddToCalendarButton } from '@/features/user/Calendar/AddToCalendarButton';
 import { getUser } from '@/server/actions/user';
 import { signMuxPlaybackId } from '@/server/lib/mux';
 import { LessonsService } from '@/server/services/lessons.service';
@@ -92,11 +92,11 @@ export default async function PlaylistLessonPlayback({
                 <ExpandableText text={currentLesson.description} />
                 {user && (
                   <div className="flex w-full md:w-min gap-2">
-                    <AddToCalendarButton
+                    {/* <AddToCalendarButton
                       lessonId={currentLesson.id}
                       playlistId={playlist.id}
                       lessonTitle={currentLesson.name}
-                    />
+                    />*/}
                     <FavoritesButton
                       lessonId={currentLesson.id}
                       initialIsFavorite={currentLesson.isFavorite}

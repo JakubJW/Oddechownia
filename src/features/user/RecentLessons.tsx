@@ -13,7 +13,7 @@ export const RecentLessons = ({ lessons, className }: Props) => {
   if (!lessons.length) {
     return (
       <div className={cn('pt-[20px] min-h-[350px] flex flex-col', className)}>
-        <p className="mb-4">Kontynuuj praktykę</p>
+        <p className="font-light mb-4">Ostatnio oglądane</p>
         <div className="flex flex-col flex-grow gap-4 rounded-lg items-center justify-center w-full bg-muted text-muted-foreground">
           <p>Tutaj pojawią się ostatnio oglądane praktyki.</p>
           <Link
@@ -29,7 +29,7 @@ export const RecentLessons = ({ lessons, className }: Props) => {
 
   return (
     <div className={cn('pt-[20px]', className)}>
-      <p className="mb-4">Kontynuuj praktykę</p>
+      <p className="mb-4 font-light">Ostatnio oglądane</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {lessons.map((lesson) => (
           <Link

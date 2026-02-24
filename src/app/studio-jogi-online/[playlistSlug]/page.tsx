@@ -2,7 +2,7 @@ import Container from '@/components/Container/Container';
 import LessonCard from '@/components/LessonCard/LessonCard';
 import { Badge } from '@/components/ui/badge';
 import VideoPlayer from '@/features/shared/VideoPlayer';
-import { SchedulePlaylistButton } from '@/features/user/Calendar/SchedulePlaylistButton';
+// import { SchedulePlaylistButton } from '@/features/user/Calendar/SchedulePlaylistButton';
 import { PlaylistsService } from '@/server/services/playlists.service';
 import { Params } from '@/types/types';
 import { CirclePlay } from 'lucide-react';
@@ -62,7 +62,7 @@ export default async function Playlist({
                 <CirclePlay className="h-4 w-4 mr-2" />
                 <span>{playlist.lessons.length} lekcji</span>
               </Badge>
-              <SchedulePlaylistButton playlist={playlist} />
+              {/* <SchedulePlaylistButton playlist={playlist} /> */}
             </div>
           </hgroup>
         </div>

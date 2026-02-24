@@ -1,4 +1,3 @@
-import CaledarGrid from '@/features/user/Calendar/CalendarGrid';
 import { getRequiredUser } from '@/lib/data';
 import { SubscriptionInfoCard } from '@/features/user/SubscriptionInfoCard';
 import { LessonsService } from '@/server/services/lessons.service';
@@ -6,6 +5,8 @@ import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRe
 import { RecentLessons } from '@/features/user/RecentLessons';
 import { Wind } from 'lucide-react';
 import { redirect } from 'next/navigation';
+import { PracticeSchedule } from '@/features/user/practice-schedule/practice-schedule';
+import CaledarGrid from '@/features/user/Calendar/CalendarGrid';
 
 export default async function MyAccount() {
   const user = await getRequiredUser();
@@ -40,10 +41,11 @@ export default async function MyAccount() {
         posts={recentPosts.filter((post) => post.id !== 10 && post.id !== 11)}
         className="col-span-12 lg:col-span-4"
       /> */}
-      <CaledarGrid
+      {/* <CaledarGrid
         user={user}
         className="col-span-12 lg:col-span-8"
-      />
+      /> */}
+      <PracticeSchedule />
       <SubscriptionInfoCard
         subscription={user.subscription}
         stripeCustomerId={user.stripeCustomerId}

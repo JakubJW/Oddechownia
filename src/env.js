@@ -20,7 +20,7 @@ export const env = createEnv({
 		NEXT_STRIPE_LIVE_LESSON_PRICE_ID: z.string(),
 		NEXT_MUX_SIGNING_KEY_ID: z.string(),
 		NEXT_MUX_SIGNING_KEY_SECRET: z.string(),
-		CRON_SECRET: z.string()
+		CRON_SECRET: z.string(),
 	},
 	client: {
 		NEXT_PUBLIC_SUPABASE_URL: z.string(),
@@ -50,7 +50,7 @@ export const env = createEnv({
 		NEXT_STRIPE_LIVE_LESSON_PRICE_ID: process.env.NEXT_STRIPE_LIVE_LESSON_PRICE_ID,
 		NEXT_MUX_SIGNING_KEY_ID: process.env.NEXT_MUX_SIGNING_KEY_ID,
 		NEXT_MUX_SIGNING_KEY_SECRET: process.env.NEXT_MUX_SIGNING_KEY_SECRET,
-		CRON_SECRET: process.env.CRON_SECRET
+		CRON_SECRET: process.env.CRON_SECRET,
 	},
 });
 
