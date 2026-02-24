@@ -10,8 +10,8 @@ export const navbarLinks = [
     target: '_self',
   },
   {
-    content: 'Oferta',
-    href: '/oferta',
+    content: 'Produkty',
+    href: '/produkty',
     target: '_self',
   },
 ];

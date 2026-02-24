@@ -35,7 +35,7 @@ export default async function EBook() {
               buttonVariants({ size: 'lg' }),
               'self-center md:self-start rounded-full text-xl h-12 mb-4'
             )}
-            href={'/oferta'}
+            href={'/produkty'}
           >
             Zobacz szczegóły
           </Link>

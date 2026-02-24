@@ -31,7 +31,7 @@ export class RequestEbookPurchase {
     const session = await this.stripePaymentService.createCheckoutSession({
       priceId: product.priceId,
       successUrl: `${env.NEXT_PUBLIC_APP_URL}/sukces`,
-      cancelUrl: `${env.NEXT_PUBLIC_APP_URL}/oferta/${product.slug}`,
+      cancelUrl: `${env.NEXT_PUBLIC_APP_URL}/produkty/${product.slug}`,
       metadata: {
         userId: user?.id,
         productId: product.id,

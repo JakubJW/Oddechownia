@@ -3,6 +3,7 @@ import { IPurchasesRepository } from '@/application/repositories/purchases.repos
 import { ISubscriptionRepository } from '@/application/repositories/subscription.repository.interface';
 import { AcquisitionMethod } from '@/entities/models/purchase';
 import { User } from '@/entities/models/user';
+import { revalidatePath } from 'next/cache';
 
 export class ClaimProductUseCase {
   constructor(

@@ -12,6 +12,7 @@ export type ProductListItem = {
   priceId: string;
   subscriberAccess: SubscriberAccess;
   state: 'can_download' | 'can_claim' | 'can_purchase';
+  disabled: boolean;
 };
 
 export class GetProductForUser {
@@ -41,25 +42,33 @@ export class GetProductForUser {
         priceId: product.priceId,
         subscriberAccess: product.subscriberAccess,
         state,
+        disabled: false,
       };
     }
 
-    const hasSubscription =
-      await this.subscriptionRepository.hasActiveSubscriptionAfterTrial(userId);
+    const subscriptionStatus =
+      await this.subscriptionRepository.getSubscriptionStatus(userId);
     const hasPurchased = await this.purchasesRepository.hasUserPurchasedProduct(
       product.id,
       userId
     );
 
     let state: ProductListItem['state'];
+    let disabled: boolean = false;
 
     if (hasPurchased) {
       state = 'can_download';
     } else if (
       product.subscriberAccess === 'free_unlimited' &&
-      hasSubscription
+      subscriptionStatus === 'active'
     ) {
       state = 'can_claim';
+    } else if (
+      subscriptionStatus === 'trialing' &&
+      product.subscriberAccess === 'free_unlimited'
+    ) {
+      state = 'can_purchase';
+      disabled = true;
     } else {
       state = 'can_purchase';
     }
@@ -73,6 +82,7 @@ export class GetProductForUser {
       priceId: product.priceId,
       subscriberAccess: product.subscriberAccess,
       state,
+      disabled,
     };
   }
 }

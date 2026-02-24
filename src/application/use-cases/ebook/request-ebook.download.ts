@@ -39,7 +39,8 @@ export class RequestEbookDownload {
     return this.storageService.generateSignedUrl(
       'private-assets',
       ebook.path,
-      60
+      60,
+      true
     );
   }
 }

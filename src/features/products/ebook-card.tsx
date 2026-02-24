@@ -14,6 +14,7 @@ export const EbookCard = ({
   price,
   slug,
   state,
+  disabled,
 }: Omit<ProductListItem, 'priceId'>) => {
   return (
     <div className="relative">
@@ -26,13 +27,15 @@ export const EbookCard = ({
       />
       <h2 className="mt-6 font-medium mb-4">{name}</h2>
       <div className="flex gap-2">
-        <GetEbookButton
-          productId={id}
-          state={state}
-          price={price}
-        />
+        {!disabled && (
+          <GetEbookButton
+            productId={id}
+            state={state}
+            price={price}
+          />
+        )}
         <Link
-          href={`/oferta/${slug}`}
+          href={`/produkty/${slug}`}
           className={cn(
             buttonVariants({ size: 'lg' }),
             'rounded-full bg-richBlack text-white flex-1'
