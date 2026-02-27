@@ -1,15 +1,15 @@
 'use client';
 
-import { isSameDay, format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { isSameDay } from 'date-fns';
+import { Play } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { usePracticeSchedule } from './hooks/use-practice-schedule';
 import { usePracticeScheduleList } from './hooks/use-practice-schedule-list';
-import { pl } from 'date-fns/locale';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
-import { Play } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export const PracticeSchedule = () => {
+  const router = useRouter();
   const { selectedDate, days } = usePracticeScheduleList();
   const { data: allEvents = [] } = usePracticeSchedule(selectedDate);
 
@@ -68,7 +68,10 @@ export const PracticeSchedule = () => {
                 <div className="p-4 pr-0">
                   <p>{event.lesson.title}</p>
                 </div>
-                <Button className="ml-4 mb-4 sm:mb-0 sm:ml-auto self-center">
+                <Button
+                  className="ml-4 mb-4 sm:mb-0 sm:ml-auto self-center"
+                  onClick={() => router.push(event.lesson.url)}
+                >
                   Oglądaj <Play className="size-4" />
                 </Button>
               </div>
