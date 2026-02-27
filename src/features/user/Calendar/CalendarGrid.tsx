@@ -1,18 +1,17 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { LiveLessonEvent } from '@/entities/models/user-practice-schedule';
+import { cn } from '@/lib/utils';
 import { format, isSameDay, isSameMonth } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useCalendarGrid } from './hooks/useCalendarGrid';
-import { CalendarDayCell } from './CalendarDayCell';
-import { useCalendarEvents } from './hooks/useCalendarEvents';
-import { CalendarProvider } from './context/CalendarContext';
-import { useCallback, useMemo, useState } from 'react';
-import { LiveLessonEvent } from '@/entities/models/user-practice-schedule';
-import { getRequiredUser } from '@/lib/data';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { useCallback, useMemo } from 'react';
+import { CalendarDayCell } from './CalendarDayCell';
+import { CalendarProvider } from './context/CalendarContext';
+import { useCalendarEvents } from './hooks/useCalendarEvents';
+import { useCalendarGrid } from './hooks/useCalendarGrid';
 
 const WEEKDAYS = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'];
 
