@@ -56,9 +56,7 @@ export default async function Playlist({
             <h1 className="text-2xl leading-normal xl:text-4xl xl:leading-relaxed">
               {playlist.name}
             </h1>
-            <p className="max-w-5xl whitespace-pre-wrap">
-              {playlist.description}
-            </p>
+            <p className="whitespace-pre-wrap">{playlist.description}</p>
             <div className="flex gap-4">
               <Badge variant="secondary">
                 <CirclePlay className="h-4 w-4 mr-2" />
