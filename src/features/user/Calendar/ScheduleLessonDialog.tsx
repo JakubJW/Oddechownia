@@ -30,7 +30,8 @@ import {
 } from '@/components/ui/select';
 import { usePlaylists } from '@/features/admin/user-practice-schedule/hooks/use-playlists';
 import { useUserPracticeScheduleMutations } from '@/features/admin/user-practice-schedule/hooks/use-user-practice-schedule-mutations';
-import { UserPracticeScheduleInsert } from '@/entities/models/user-practice-schedule';
+import { queryClient } from '@/components/QueryClientProvider';
+import { useState } from 'react';
 
 const createUserScheduleFormSchema = z
   .object({
@@ -49,7 +50,8 @@ const createUserScheduleFormSchema = z
   });
 
 export function ScheduleLessonDialog({ scheduledAt }: { scheduledAt: string }) {
-  const { data: playlistsData, isLoading, isError } = usePlaylists();
+  const [open, setOpen] = useState(false);
+  const { data: playlistsData } = usePlaylists();
   const { createMutation } = useUserPracticeScheduleMutations();
   const form = useForm({
     resolver: zodResolver(createUserScheduleFormSchema),
@@ -65,11 +67,19 @@ export function ScheduleLessonDialog({ scheduledAt }: { scheduledAt: string }) {
   const lessons = selectedPlaylist?.lessons ?? [];
 
   const onSubmit = (values: z.infer<typeof createUserScheduleFormSchema>) => {
-    createMutation.mutate(values);
+    createMutation.mutate(values, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['calendar-events'] });
+        setOpen(false);
+      },
+    });
   };
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+    >
       <DialogTrigger>
         <Button
           asChild

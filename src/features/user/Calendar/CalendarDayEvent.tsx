@@ -1,29 +1,4 @@
 import {
-  CalendarEvent,
-  LiveLessonEvent,
-  PracticeSessionEvent,
-  CalendarEventType,
-} from '@/entities/models/user-practice-schedule';
-import { formatDuration, formatTime } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import {
-  Clock,
-  ClockFading,
-  Loader2,
-  Pencil,
-  Play,
-  Trash2,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useCalendarContext } from './context/CalendarContext';
-import { useState } from 'react';
-import { format } from 'date-fns';
-import {
-  useDeletePractice,
-  useUpdatePractice,
-} from './hooks/useScheduleMutations';
-import { Input } from '@/components/ui/input';
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -34,7 +9,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  CalendarEvent,
+  CalendarEventType,
+  LiveLessonEvent,
+  PracticeSessionEvent,
+} from '@/entities/models/user-practice-schedule';
+import { useUserPracticeScheduleMutations } from '@/features/admin/user-practice-schedule/hooks/use-user-practice-schedule-mutations';
+import { formatTime } from '@/lib/utils';
+import { Clock, ClockFading, Loader2, Play, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCalendarContext } from './context/CalendarContext';
+import { useCalendarGrid } from './hooks/useCalendarGrid';
 
 const getItemContent = (type: CalendarEventType) => {
   if (type === 'live-lesson') {
@@ -137,7 +125,8 @@ const ScheduledPracticeActions = ({
   event: PracticeSessionEvent;
 }) => {
   const router = useRouter();
-  const deleteMutation = useDeletePractice();
+  const { deleteMutation } = useUserPracticeScheduleMutations();
+  const { refreshCalendar } = useCalendarGrid();
 
   return (
     <div className="flex gap-2">
@@ -161,20 +150,25 @@ const ScheduledPracticeActions = ({
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Usunąć praktykę?</AlertDialogTitle>
+            <AlertDialogTitle>Jesteś pewien?</AlertDialogTitle>
             <AlertDialogDescription>
-              To usunie &quot;{event.title}&quot; z Twojego kalendarza. Tej
-              operacji nie można cofnąć.
+              Zamierzasz usunąć <b>&quot;{event.title}&quot;</b> z planu
+              praktyk. Tej operacji nie można cofnąć.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteMutation.mutate(event.id)}
+              disabled={deleteMutation.isPending}
+              onClick={() =>
+                deleteMutation.mutate(event.id, {
+                  onSuccess: () => refreshCalendar(),
+                })
+              }
               className="bg-destructive hover:bg-destructive/90"
             >
               {deleteMutation.isPending && (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
               )}
               Usuń
             </AlertDialogAction>
@@ -190,35 +184,13 @@ const ScheduledPracticeDayEvent = ({
 }: {
   event: PracticeSessionEvent;
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [dateVal, setDateVal] = useState(
-    format(new Date(event.date), 'yyyy-MM-dd')
-  );
-  const [timeVal, setTimeVal] = useState(formatTime(event.date));
-  const updateMutation = useUpdatePractice({
-    onSuccess: () => setIsEditing(false),
-  });
-
-  const handleSave = () => {
-    updateMutation.mutate({
-      id: event.id,
-      date: new Date(`${dateVal}T${timeVal}`).toISOString(),
-    });
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setDateVal(format(new Date(event.date), 'yyyy-MM-dd'));
-    setTimeVal(format(new Date(event.date), 'HH:mm'));
-  };
-
   return (
     <div className="flex flex-col gap-2 rounded-md hover:bg-muted/10">
       <div className="flex justify-between">
         <div>
           <div className="flex items-center gap-2">
             <div className="size-2 rounded-full bg-violet-400 shrink-0" />
-            <p className="text-sm font-medium  truncate">{event.title}</p>
+            <p className="text-sm font-medium text-wrap">{event.title}</p>
           </div>
           <span className="text-xs text-muted-foreground">
             {getItemContent(event.type)}
@@ -226,63 +198,6 @@ const ScheduledPracticeDayEvent = ({
         </div>
         <ScheduledPracticeActions event={event} />
       </div>
-
-      {isEditing ? (
-        <div className="space-y-2">
-          <div className="flex gap-2">
-            <Input
-              type="date"
-              value={dateVal}
-              onChange={(e) => setDateVal(e.target.value)}
-              className="flex-1 h-8 text-xs px-2"
-            />
-            <Input
-              type="time"
-              value={timeVal}
-              onChange={(e) => setTimeVal(e.target.value)}
-              className="flex-1 h-8 text-xs px-2"
-            />
-          </div>
-          <div className="flex gap-2 text-xs">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex-1 h-7 px-2"
-              onClick={handleCancel}
-            >
-              Anuluj
-            </Button>
-            <Button
-              size="sm"
-              className="flex-1 h-7 px-2"
-              onClick={handleSave}
-              disabled={updateMutation.isPending}
-            >
-              {updateMutation.isPending && (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              )}
-              Zapisz
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div className="text-xs text-muted-foreground flex gap-2 items-center">
-          <div className="flex items-center gap-1">
-            <Clock className="size-3" />
-            <span>{formatTime(event.date)}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <ClockFading className="size-3" />
-            <span>{formatDuration(event.duration)}</span>
-          </div>
-          <button
-            className="flex underline gap-1 items-center text-muted-foreground rounded-full"
-            onClick={() => setIsEditing(true)}
-          >
-            Edytuj <Pencil className="size-3"></Pencil>
-          </button>
-        </div>
-      )}
     </div>
   );
 };
