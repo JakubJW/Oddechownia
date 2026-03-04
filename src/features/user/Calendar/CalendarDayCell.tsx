@@ -4,6 +4,7 @@ import { CalendarEvent } from '@/entities/models/user-practice-schedule';
 import CalendarDayCellEvent from './CalendarDayCellEvent';
 import CalendarDayEvent from './CalendarDayEvent';
 import { DayDetailsModal } from './DayDetailsModal';
+import { memo } from 'react';
 
 interface CalendarDayCellProps {
   day: Date;
@@ -13,13 +14,13 @@ interface CalendarDayCellProps {
   events: CalendarEvent[];
 }
 
-export const CalendarDayCell = ({
+const CalendarDayCell = memo(function CalendarDayCell({
   day,
   isSelected,
   isSameMonth,
   onSelect,
   events,
-}: CalendarDayCellProps) => {
+}: CalendarDayCellProps) {
   const isToday = isSameDay(day, new Date());
   const MAX_INLINE = 2;
   const hiddenCount = Math.max(0, events.length - MAX_INLINE);
@@ -46,7 +47,7 @@ export const CalendarDayCell = ({
       <div
         onClick={() => onSelect(day)}
         className={cn(
-          'min-h-[120px] p-2  cursor-pointer transition-colors flex flex-col gap-1',
+          'min-h-[120px] p-2  cursor-pointer transition-colors flex flex-col gap-1 border-r last:border-r-0',
           isSelected ? 'bg-primary-foreground' : 'hover:bg-muted/50',
           !isSameMonth && 'bg-gray-100 text-gray-400'
         )}
@@ -79,4 +80,6 @@ export const CalendarDayCell = ({
       </div>
     </DayDetailsModal>
   );
-};
+});
+
+export { CalendarDayCell };

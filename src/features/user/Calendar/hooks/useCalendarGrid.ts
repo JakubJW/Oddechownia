@@ -9,6 +9,7 @@ import {
   subMonths,
 } from 'date-fns';
 import { pl } from 'date-fns/locale';
+import { queryClient } from '@/components/QueryClientProvider';
 
 export const useCalendarGrid = (initialDate = new Date()) => {
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
@@ -33,6 +34,16 @@ export const useCalendarGrid = (initialDate = new Date()) => {
     return result;
   }, [selectedMonth]);
 
+  const refreshCalendar = () => {
+    queryClient.invalidateQueries({
+      queryKey: [
+        'calendar-events',
+        startOfMonth(selectedMonth).toISOString(),
+        endOfMonth(selectedMonth).toISOString(),
+      ],
+    });
+  };
+
   return {
     setSelectedDate,
     selectedDate,
@@ -41,5 +52,6 @@ export const useCalendarGrid = (initialDate = new Date()) => {
     nextMonth,
     prevMonth,
     goToToday,
+    refreshCalendar,
   };
 };

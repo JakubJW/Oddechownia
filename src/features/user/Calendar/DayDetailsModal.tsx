@@ -21,8 +21,8 @@ import { ScheduleLessonDialog } from './ScheduleLessonDialog';
 
 interface DayDetailsModalProps {
   day: Date;
-  children: React.ReactNode; // This is the Calendar Cell Trigger
-  content: React.ReactNode; // This is the <CalendarDayEvent /> list
+  children: React.ReactNode;
+  content: React.ReactNode;
   eventCount: number;
 }
 
@@ -39,8 +39,6 @@ export function DayDetailsModal({
   const description = `${eventCount} wydarzeń tego dnia`;
 
   if (isDesktop) {
-    // return <div className="border-r last:border-r-0">{children}</div>;
-
     return (
       <Popover
         open={open}
@@ -51,10 +49,8 @@ export function DayDetailsModal({
           className="w-80"
           align="start"
         >
-          <div className="bg-muted/50 border-b flex pb-4 justify-between items-center">
-            <span className="font-semibold text-sm ">{title}</span>
-            <span className="text-xs text-muted-foreground">{eventCount}</span>
-
+          <div className="border-b flex pb-4 justify-between items-center">
+            <span className="font-semibold text-sm ">Wydarzenia</span>
             <ScheduleLessonDialog scheduledAt={day.toISOString()} />
           </div>
           {content}

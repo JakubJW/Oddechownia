@@ -31,5 +31,66 @@ export const useUserPracticeScheduleMutations = () => {
     },
   });
 
-  return { createMutation };
+  const updateMutation = useMutation({
+    mutationFn: async ({
+      id,
+      values,
+    }: {
+      id: string;
+      values: UserPracticeScheduleInsert;
+    }) => {
+      const response = await fetch(`/api/admin/user-practice-schedules/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error('Podczas edycji planowanej praktyki wystapił błąd.');
+      }
+
+      const json = await response.json();
+
+      return json;
+    },
+    onSuccess: () => {
+      toast.success('Sukces', {
+        description: `Zaktualizowano plan praktyki`,
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/admin/user-practice-schedules/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Podczas usuwania planowanej praktyki wystapił błąd.');
+      }
+
+      const json = await response.json();
+
+      return json;
+    },
+    onSuccess: () => {
+      toast.success('Sukces', {
+        description: `Usunięto plan praktyki`,
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  return { createMutation, updateMutation, deleteMutation };
 };
