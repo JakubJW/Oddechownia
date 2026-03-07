@@ -26,7 +26,7 @@ export class GetUserLiveLessons {
     return {
       id: item.id,
       title: item.title,
-      image: supabaseService.getThumbnailUrl('public-assets', item.image).data,
+      image: item.image,
       description: item.description,
       scheduledAt: item.scheduledAt,
       duration: item.duration,
