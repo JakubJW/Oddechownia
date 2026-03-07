@@ -1,4 +1,4 @@
-import { RequestEbookPurchase } from '@/application/use-cases/ebook/request-ebook-purchase';
+import { CreateProductCheckoutSessionUseCase } from '@/application/use-cases/product/create-product-checkout-session.use-case.ts';
 import { ProductsRepository } from '@/infrastructure/repositories/products.repository';
 import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
 import { StripePaymentService } from '@/infrastructure/services/payment.service';
@@ -13,15 +13,13 @@ export async function GET(
   const { id } = await params;
 
   const userService = new UserService();
+  const user = await userService.getUser();
 
-  const useCase = new RequestEbookPurchase(
+  const useCase = new CreateProductCheckoutSessionUseCase(
     new ProductsRepository(),
     new PurchasesRepository(),
     new StripePaymentService()
   );
-
-  const user = await userService.getUser();
-
   const sessionUrl = await useCase.execute(id, user);
 
   return NextResponse.json({ url: sessionUrl }, { status: 200 });

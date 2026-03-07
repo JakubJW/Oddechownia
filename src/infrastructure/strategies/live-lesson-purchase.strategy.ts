@@ -2,9 +2,10 @@ import {
   IPurchaseStrategy,
   PurchaseContext,
 } from '@/application/strategies/purchase.strategy.interface';
+import { PRODUCT_TYPE } from '@/entities/models/product';
 
 export class LiveLessonPurchaseStrategy implements IPurchaseStrategy {
-  readonly type = 'live-lesson';
+  readonly type = PRODUCT_TYPE.LIVE_LESSON;
 
   constructor() {
     // private emailService: IEmailService,

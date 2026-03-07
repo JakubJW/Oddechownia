@@ -146,6 +146,10 @@ export const liveLessonsRelations = relations(liveLessons, ({ many, one }) => ({
     fields: [liveLessons.thumbnailId],
     references: [files.id],
   }),
+  product: one(products, {
+    fields: [liveLessons.productId],
+    references: [products.id],
+  }),
 }));
 
 export const liveLessonsRegistrationsRelations = relations(
@@ -227,10 +231,14 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   comments: many(comments),
 }));
 
-export const productsRelatios = relations(products, ({ one }) => ({
+export const productsRelations = relations(products, ({ one }) => ({
   ebook: one(ebooks, {
     fields: [products.id],
     references: [ebooks.productId],
+  }),
+  liveLesson: one(liveLessons, {
+    fields: [products.id],
+    references: [liveLessons.productId],
   }),
 }));
 

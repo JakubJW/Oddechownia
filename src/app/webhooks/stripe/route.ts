@@ -6,9 +6,8 @@ import { EbookPurchaseStrategy } from '@/infrastructure/strategies/ebook-purchas
 import { LiveLessonPurchaseStrategy } from '@/infrastructure/strategies/live-lesson-purchase.strategy';
 import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
 import { AuthService } from '@/server/services/auth.service';
-import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { stripeService } from '@/server/services/stripe.service';
-import { FulfillPurchaseUseCase } from '@/application/use-cases/product/fulfill-product-purchase';
+import { FulfillPurchaseUseCase } from '@/application/use-cases/product/fulfill-product-purchase.use-case';
 import { buffer } from '@/utils/requestBodyBufer';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';

@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { stripeClient } from '@/stripe/stripe';
 import { IPaymentService } from '@/application/services/payment.service.interface';
-import { ProductType } from '@/entities/models/product';
+import { PRODUCT_TYPE } from '@/entities/models/product';
 
 export class StripePaymentService implements IPaymentService {
   private stripe: Stripe;
@@ -17,7 +17,7 @@ export class StripePaymentService implements IPaymentService {
     metadata: {
       userId?: string;
       productId: string;
-      productType: ProductType;
+      productType: PRODUCT_TYPE;
     };
   }) {
     const session = await this.stripe.checkout.sessions.create({

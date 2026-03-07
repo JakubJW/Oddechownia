@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { LiveLessonsService } from '@/server/services/liveLessons.service';
 import { decodeCursor } from '@/lib/utils';
-import { getUser } from '@/server/actions/user';
 import { AppError, AuthenticationError } from '@/server/lib/errors';
 import { logger } from '@/server/lib/logger.service';
+import { GetUserLiveLessons } from '@/application/use-cases/live-lesson/get-user-live-lessons.use-case';
+import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
+import { SubscriptionRepository } from '@/infrastructure/repositories/subscription.repository';
+import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
+import { UserService } from '@/infrastructure/services/user.service';
 
 const getQueryParams = (url: string) => {
   return Object.fromEntries(new URL(url).searchParams);
@@ -11,9 +14,10 @@ const getQueryParams = (url: string) => {
 
 export async function GET(req: NextRequest) {
   const log = logger.child({ module: 'user-live-lessons' });
+  const userService = new UserService();
 
   try {
-    const user = await getUser();
+    const user = await userService.getUser();
 
     if (!user) {
       throw new AuthenticationError(
@@ -27,7 +31,13 @@ export async function GET(req: NextRequest) {
     const cursor = decodeCursor(searchParams.cursor);
     const perPage = 3;
 
-    const result = await LiveLessonsService.getUserLessons(user);
+    const useCase = new GetUserLiveLessons(
+      new PurchasesRepository(),
+      new SubscriptionRepository(),
+      new LiveLessonsRepository()
+    );
+
+    const result = await useCase.execute(user.id);
 
     return NextResponse.json({
       data: {

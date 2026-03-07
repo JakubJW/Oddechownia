@@ -3,8 +3,9 @@ import { IPaymentService } from '@/application/services/payment.service.interfac
 import { IProductsRepository } from '@/application/repositories/products.repository.interface';
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
 import { User } from '../../../entities/models/user';
+import { PRODUCT_TYPE } from '@/entities/models/product';
 
-export class RequestEbookPurchase {
+export class CreateProductCheckoutSessionUseCase {
   constructor(
     private productsRepository: IProductsRepository,
     private purchasesRepository: IPurchasesRepository,
@@ -28,10 +29,15 @@ export class RequestEbookPurchase {
       throw new Error('Forbidden');
     }
 
+    const cancelRoute =
+      product.type === PRODUCT_TYPE.LIVE_LESSON
+        ? 'zajecia-na-zywo'
+        : 'produkty';
+
     const session = await this.stripePaymentService.createCheckoutSession({
       priceId: product.priceId,
-      successUrl: `${env.NEXT_PUBLIC_APP_URL}/produkty/sukces/{CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${env.NEXT_PUBLIC_APP_URL}/produkty/${product.slug}`,
+      successUrl: `${env.NEXT_PUBLIC_APP_URL}/produkty/podsumowanie/{CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${env.NEXT_PUBLIC_APP_URL}/${cancelRoute}`,
       metadata: {
         userId: user?.id,
         productId: product.id,

@@ -1,41 +1,15 @@
 'use client';
 
-import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
-import { FetchUserLiveLessonsResponse } from '@/server/models/liveLesson.models';
-import { UserLiveLessonCard } from './user-live-lesson-card';
-import React from 'react';
-import { ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-const fetchLiveLessons = async ({
-  pageParam,
-}: {
-  pageParam: string | null;
-}) => {
-  const res = await fetch(`/api/user-live-lessons?cursor=${pageParam}`, {
-    method: 'GET',
-  });
-
-  if (!res.ok) {
-    const errorBody = (await res.json()) as { message: string };
-
-    throw new Error(errorBody.message || 'Unknown error');
-  }
-
-  const json = await res.json();
-  return json.data as FetchUserLiveLessonsResponse;
-};
+import React from 'react';
+import { UserLiveLessonCard } from './user-live-lesson-card';
+import { useUserLiveLessons } from './hooks/use-user-live-lessons';
 
 export const Grid = () => {
   const router = useRouter();
-  const { data, isError, isPending, error } = useInfiniteQuery({
-    queryKey: ['live-lessons'],
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    placeholderData: keepPreviousData,
-    queryFn: fetchLiveLessons,
-  });
+  const { isPending, isError, error, data } = useUserLiveLessons();
 
   if (isPending) {
     return (
@@ -70,16 +44,15 @@ export const Grid = () => {
         <React.Fragment key={index}>
           {page.data.map((lesson) => (
             <UserLiveLessonCard
-              id={lesson.id}
-              description={lesson.description}
-              status={lesson.status}
-              thumbnail={lesson.thumbnail}
               key={lesson.id}
               title={lesson.title}
-              meetingUrl={lesson.meetingUrl}
-              recordingUrl={lesson.recordingUrl}
+              description={lesson.description}
+              image={lesson.image}
               scheduledAt={lesson.scheduledAt}
               duration={lesson.duration}
+              status={lesson.status}
+              meetingLink={lesson.meetingLink}
+              recordingUrl={lesson.recordingUrl}
             />
           ))}
         </React.Fragment>

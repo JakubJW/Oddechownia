@@ -1,18 +1,25 @@
-export type SubscriberAccess = 'paid' | 'free_unlimited' | 'quota_based';
+export enum SUBSCRIBER_ACCESS {
+  PAID = 'paid',
+  FREE_UNLIMITED = 'free_unlimited',
+  QUOTA_BASED = 'quota_based',
+}
 
-export type ProductType = 'live-lesson' | 'ebook';
+export enum PRODUCT_TYPE {
+  EBOOK = 'ebook',
+  LIVE_LESSON = 'live-lesson',
+}
 
 export type Product = {
   id: string;
   name: string;
   slug: string;
-  type: ProductType;
+  type: PRODUCT_TYPE;
   description?: string;
   priceId: string;
   image: string;
   price: number;
   isVisible: boolean;
-  subscriberAccess: SubscriberAccess;
+  subscriberAccess: SUBSCRIBER_ACCESS;
 };
 
 export type EbookProduct = Product & {

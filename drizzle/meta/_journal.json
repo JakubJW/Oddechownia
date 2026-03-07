@@ -204,6 +204,13 @@
       "when": 1771865357940,
       "tag": "0028_sleepy_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1772664183610,
+      "tag": "0029_old_timeslip",
+      "breakpoints": true
     }
   ]
 }
