@@ -249,14 +249,12 @@ const fullfillLiveLessonPurchase = async (
     if (!existing.userId) {
       await EmailService.sendLiveLessonRegistrationConfirmaion(
         existing.email,
-        existing.name.split(' ')[0],
         existing.lesson!.title,
         existing.lesson!.scheduledAt
       );
 
       await EmailService.scheduleLiveLessonRemind(
         existing.email,
-        existing.name.split(' ')[0],
         existing.lesson!.title,
         existing.lesson!.scheduledAt
       );

@@ -43,6 +43,21 @@ export class PurchasesRepository implements IPurchasesRepository {
     return purchase ? true : false;
   }
 
+  async hasUserEmailPurchasedProduct(
+    productId: string,
+    email: string
+  ): Promise<boolean> {
+    const purchase = await db.query.purchases.findFirst({
+      columns: { id: true },
+      where: and(
+        eq(purchases.email, email),
+        eq(purchases.productId, productId)
+      ),
+    });
+
+    return purchase ? true : false;
+  }
+
   async getUserPurchasedProductIds(userId: string): Promise<string[]> {
     const result = await db.query.purchases.findMany({
       columns: { productId: true },

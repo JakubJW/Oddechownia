@@ -5,7 +5,7 @@ import { SUBSCRIBER_ACCESS } from '@/entities/models/product';
 import { ACQUISITION_METHOD } from '@/entities/models/purchase';
 import { User } from '@/entities/models/user';
 
-export class ClaimProductUseCase {
+export class ClaimProductRegisteredUseCase {
   constructor(
     private productsRepository: IProductsRepository,
     private purchasesRepository: IPurchasesRepository,

@@ -12,13 +12,20 @@ import { buffer } from '@/utils/requestBodyBufer';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
 
 const ebookStrategy = new EbookPurchaseStrategy();
-const liveLessonStrategy = new LiveLessonPurchaseStrategy();
-const fulfillPurchaseUseCase = new FulfillPurchaseUseCase(
-  new PurchasesRepository(),
-  [ebookStrategy, liveLessonStrategy]
+const purchasesRepository = new PurchasesRepository();
+
+const liveLessonStrategy = new LiveLessonPurchaseStrategy(
+  new LiveLessonsRepository(),
+  purchasesRepository
 );
+
+const fulfillPurchaseUseCase = new FulfillPurchaseUseCase(purchasesRepository, [
+  ebookStrategy,
+  liveLessonStrategy,
+]);
 
 export async function POST(req: Request) {
   const text = await req.text();

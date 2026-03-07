@@ -1,10 +1,13 @@
 import { Params } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
-import { ClaimProductUseCase } from '@/application/use-cases/product/claim-product';
+import { ClaimProductRegisteredUseCase } from '@/application/use-cases/product/claim-product-registered.use-case';
 import { UserService } from '@/infrastructure/services/user.service';
 import { ProductsRepository } from '@/infrastructure/repositories/products.repository';
 import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
 import { SubscriptionRepository } from '@/infrastructure/repositories/subscription.repository';
+import { ClaimLiveLessonGuestUseCase } from '@/application/use-cases/product/claim-live-lesson-guest.use-case';
+import { liveLessonSignUpFormSchema } from '@/features/LiveLesson/Form/schema';
+import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
 
 export async function POST(
   req: NextRequest,
@@ -13,19 +16,36 @@ export async function POST(
   const { id } = await params;
 
   const userService = new UserService();
-
-  const claimProductUseCase = new ClaimProductUseCase(
-    new ProductsRepository(),
-    new PurchasesRepository(),
-    new SubscriptionRepository()
-  );
-
   const user = await userService.getUser();
 
-  if (!user)
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  if (!user) {
+    const body = await req.json();
+    const parsed = liveLessonSignUpFormSchema.safeParse(body);
 
-  await claimProductUseCase.execute(user, id);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { message: 'Błąd walidacji danych' },
+        { status: 400 }
+      );
+    }
 
-  return NextResponse.json({ message: 'Success' }, { status: 200 });
+    const useCase = new ClaimLiveLessonGuestUseCase(
+      new PurchasesRepository(),
+      new LiveLessonsRepository()
+    );
+
+    await useCase.execute(parsed.data.email, id);
+
+    return NextResponse.json({ message: 'Success' }, { status: 200 });
+  } else {
+    const useCase = new ClaimProductRegisteredUseCase(
+      new ProductsRepository(),
+      new PurchasesRepository(),
+      new SubscriptionRepository()
+    );
+
+    await useCase.execute(user, id);
+
+    return NextResponse.json({ message: 'Success' }, { status: 200 });
+  }
 }

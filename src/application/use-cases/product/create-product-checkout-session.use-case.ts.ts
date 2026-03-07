@@ -2,7 +2,6 @@ import { env } from '@/env';
 import { IPaymentService } from '@/application/services/payment.service.interface';
 import { IProductsRepository } from '@/application/repositories/products.repository.interface';
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
-import { User } from '../../../entities/models/user';
 import { PRODUCT_TYPE } from '@/entities/models/product';
 
 export class CreateProductCheckoutSessionUseCase {
@@ -12,7 +11,7 @@ export class CreateProductCheckoutSessionUseCase {
     private stripePaymentService: IPaymentService
   ) {}
 
-  async execute(productId: string, user?: User): Promise<string> {
+  async execute(productId: string, userId?: string): Promise<string> {
     const product = await this.productsRepository.getById(productId);
 
     if (!product) {
@@ -22,7 +21,7 @@ export class CreateProductCheckoutSessionUseCase {
     const alreadyPurchased =
       await this.purchasesRepository.hasUserPurchasedProduct(
         product.id,
-        user?.id
+        userId
       );
 
     if (alreadyPurchased) {
@@ -39,7 +38,7 @@ export class CreateProductCheckoutSessionUseCase {
       successUrl: `${env.NEXT_PUBLIC_APP_URL}/produkty/podsumowanie/{CHECKOUT_SESSION_ID}`,
       cancelUrl: `${env.NEXT_PUBLIC_APP_URL}/${cancelRoute}`,
       metadata: {
-        userId: user?.id,
+        userId: userId,
         productId: product.id,
         productType: product.type,
       },

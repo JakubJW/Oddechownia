@@ -19,6 +19,7 @@ import { PurchasesRepository } from '@/infrastructure/repositories/purchases.rep
 import { EbookPurchaseStrategy } from '@/infrastructure/strategies/ebook-purchase.strategy';
 import { LiveLessonPurchaseStrategy } from '@/infrastructure/strategies/live-lesson-purchase.strategy';
 import { stripeService } from '@/server/services/stripe.service';
+import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
 
 export const metadata: Metadata = {
   title: 'Podsumowanie zakupu',
@@ -37,9 +38,13 @@ export default async function ProductPurchaseSummary({
 
   try {
     const session = await stripeService.retrieveSession(sessionId);
-    const useCase = new FulfillPurchaseUseCase(new PurchasesRepository(), [
+    const purchasesRepository = new PurchasesRepository();
+    const useCase = new FulfillPurchaseUseCase(purchasesRepository, [
       new EbookPurchaseStrategy(),
-      new LiveLessonPurchaseStrategy(),
+      new LiveLessonPurchaseStrategy(
+        new LiveLessonsRepository(),
+        purchasesRepository
+      ),
     ]);
 
     await useCase.execute({

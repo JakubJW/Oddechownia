@@ -22,14 +22,14 @@ import { formatTimeForInput } from '@/lib/utils';
 import { User } from '@/server/actions/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useProductMutations } from '../products/hooks/use-product-mutations';
 import {
   liveLessonSignUpFormDefaultValues,
   liveLessonSignUpFormSchema,
+  LiveLessonSignUpValues,
 } from './Form/schema';
-import { toast } from 'sonner';
 
 type SignUpDialogProps = {
   productId: string;
@@ -62,22 +62,15 @@ const SignUpDialog = ({
       : liveLessonSignUpFormDefaultValues,
   });
 
-  const mutation = useCallback(() => {
+  const onSubmit = async (values: LiveLessonSignUpValues) => {
     if (state === PURCHASE_STATE.CAN_CLAIM) {
-      return claimMutation.mutate(productId, {
-        onSuccess: () => {
-          toast('Pomyślnie zapisano na zajęcia na żywo');
-          setOpen(false);
-        },
-      });
+      return claimMutation.mutate({ productId, values });
     }
 
     if (state === PURCHASE_STATE.CAN_PURCHASE) {
-      return purchaseMutation.mutate(productId, {
-        onSuccess: ({ url }) => (window.location.href = url),
-      });
+      return purchaseMutation.mutate({ productId, values });
     }
-  }, [state, setOpen, purchaseMutation, claimMutation, productId]);
+  };
 
   return (
     <Dialog
@@ -87,7 +80,7 @@ const SignUpDialog = ({
       <Form {...form}>
         <form
           id="live-lesson-sign-up-form"
-          onSubmit={form.handleSubmit(mutation)}
+          onSubmit={form.handleSubmit(onSubmit)}
         >
           <DialogContent>
             <DialogHeader>

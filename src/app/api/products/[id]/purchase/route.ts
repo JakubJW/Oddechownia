@@ -20,7 +20,8 @@ export async function GET(
     new PurchasesRepository(),
     new StripePaymentService()
   );
-  const sessionUrl = await useCase.execute(id, user);
+
+  const sessionUrl = await useCase.execute(id, user?.id);
 
   return NextResponse.json({ url: sessionUrl }, { status: 200 });
 }
