@@ -1,4 +1,4 @@
-import { ProductType } from '@/entities/models/product';
+import { PRODUCT_TYPE } from '@/entities/models/product';
 
 export interface PurchaseContext {
   userId?: string;
@@ -8,6 +8,6 @@ export interface PurchaseContext {
 }
 
 export interface IPurchaseStrategy {
-  type: ProductType;
+  type: PRODUCT_TYPE;
   handle(context: PurchaseContext): Promise<void>;
 }

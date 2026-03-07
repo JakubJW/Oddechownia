@@ -2,9 +2,10 @@ import {
   IPurchaseStrategy,
   PurchaseContext,
 } from '@/application/strategies/purchase.strategy.interface';
+import { PRODUCT_TYPE } from '@/entities/models/product';
 
 export class EbookPurchaseStrategy implements IPurchaseStrategy {
-  readonly type = 'ebook';
+  readonly type = PRODUCT_TYPE.EBOOK;
 
   constructor() {
     // private emailService: IEmailService

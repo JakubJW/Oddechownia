@@ -1,40 +1,58 @@
 'use client';
 
 import { User } from '@/server/actions/user';
-import { LiveLessonCardDTO } from '@/server/models/liveLesson.models';
-import { useState } from 'react';
-import SignUpDialog from './SignUpDialog';
+import { useMemo, useState } from 'react';
+import SignUpDialog from './sign-up-dialog';
 import { LiveLessonCard } from './live-lesson-card';
+import { LiveLessonProduct } from '@/entities/models/live-lesson';
 
 type LiveLessonsGridProps = {
-  lessons: LiveLessonCardDTO[];
+  lessons: LiveLessonProduct[];
   user: User;
 };
 
 export const LiveLessonsGrid = ({ lessons, user }: LiveLessonsGridProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentLesson, setCurrentLesson] = useState<
-    LiveLessonCardDTO | undefined
-  >(undefined);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | undefined>(
+    undefined
+  );
+
+  const currentLesson = useMemo(() => {
+    return lessons.find((lesson) => lesson.id === selectedLessonId);
+  }, [selectedLessonId, lessons]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-8">
-      {lessons.map((lesson) => (
-        <LiveLessonCard
-          setCurrentLesson={setCurrentLesson}
-          setDialogOpen={setDialogOpen}
-          key={lesson.id}
-          lesson={lesson}
-        />
-      ))}
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-8">
+        {lessons.map((lesson) => (
+          <LiveLessonCard
+            setCurrentLessonId={setSelectedLessonId}
+            setDialogOpen={setDialogOpen}
+            key={lesson.id}
+            id={lesson.id}
+            title={lesson.title}
+            description={lesson.description}
+            thumbnail={lesson.image}
+            duration={lesson.duration}
+            scheduledAt={lesson.scheduledAt}
+            state={lesson.state}
+          />
+        ))}
+      </div>
+
       {currentLesson && (
         <SignUpDialog
           user={user}
-          liveLesson={currentLesson}
           open={dialogOpen}
           setOpen={setDialogOpen}
+          productId={currentLesson.productId}
+          title={currentLesson.title}
+          description={currentLesson.description}
+          scheduledAt={currentLesson.scheduledAt}
+          state={currentLesson.state}
+          price={currentLesson.price}
         />
       )}
-    </div>
+    </>
   );
 };

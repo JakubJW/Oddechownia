@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { IPurchaseStrategy } from '@/application/strategies/purchase.strategy.interface';
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
+import { ACQUISITION_METHOD } from '@/entities/models/purchase';
 
 export class FulfillPurchaseUseCase {
   private strategies: Map<string, IPurchaseStrategy>;
@@ -41,21 +42,21 @@ export class FulfillPurchaseUseCase {
         productId,
         userId,
         checkoutSessionId,
-        acquisitionMethod: 'payment',
+        acquisitionMethod: ACQUISITION_METHOD.PAYMENT,
       });
-    }
 
-    const strategy = this.strategies.get(productType);
+      const strategy = this.strategies.get(productType);
 
-    if (strategy) {
-      await strategy.handle({
-        userId,
-        productId,
-        checkoutSessionId,
-        metadata,
-      });
-    } else {
-      console.warn(`No strategy found for product type: ${productType}`);
+      if (strategy) {
+        await strategy.handle({
+          userId,
+          productId,
+          checkoutSessionId,
+          metadata,
+        });
+      } else {
+        console.warn(`No strategy found for product type: ${productType}`);
+      }
     }
 
     return { success: true };

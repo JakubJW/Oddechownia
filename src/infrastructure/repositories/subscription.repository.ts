@@ -40,4 +40,22 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
     return result.status;
   }
+
+  async getCurrentSubscriptionPeriod(
+    userId: string
+  ): Promise<{ start: string; end: string }> {
+    const [result] = await db
+      .select({
+        start: subscriptions.currentPeriodStart,
+        end: subscriptions.currentPeriodEnd,
+      })
+      .from(subscriptions)
+      .where(eq(subscriptions.userId, userId))
+      .orderBy(desc(subscriptions.createdAt))
+      .limit(1);
+
+    if (!result) throw new Error('User nie ma suba');
+
+    return result;
+  }
 }

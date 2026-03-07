@@ -2,42 +2,52 @@ import { formatTimeForInput } from '@/lib/utils';
 import { Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LiveLessonCardDTO } from '@/server/models/liveLesson.models';
 import Image from 'next/image';
+import { PURCHASE_STATE } from '@/entities/models/purchase';
 
 type Props = {
-  lesson: LiveLessonCardDTO;
+  id: string;
+  title: string;
+  description?: string;
+  thumbnail: string;
+  scheduledAt: string;
+  duration: number;
+  state: PURCHASE_STATE;
   setDialogOpen: (state: boolean) => void;
-  setCurrentLesson: (lesson: LiveLessonCardDTO) => void;
+  setCurrentLessonId: (id: string) => void;
 };
 
-const getButtonContent = (
-  isListed: boolean,
-  isRegistered: boolean,
-  isPaymentPending: boolean
-) => {
-  if (!isListed && !isRegistered) return 'Zarezerwuj miejsce';
-  if (isRegistered && isPaymentPending) return 'Dokończ płatność';
-  if (isRegistered && !isPaymentPending) return 'Już zapisany';
-  return 'Zapisy zamknięte';
+const getButtonContent = (state: PURCHASE_STATE) => {
+  switch (state) {
+    case PURCHASE_STATE.CAN_CLAIM:
+      return 'Zapisz się za darmo';
+    case PURCHASE_STATE.CAN_PURCHASE:
+      return 'Zarezerwuj miejsce';
+
+    case PURCHASE_STATE.CLAIMED:
+    case PURCHASE_STATE.PURCHASED:
+      return 'Zapisano';
+    default:
+      return 'Zapisy zakończone';
+  }
 };
 
 export const LiveLessonCard = ({
-  lesson,
-  setCurrentLesson,
+  id,
+  title,
+  description,
+  thumbnail,
+  scheduledAt,
+  duration,
+  state,
+  setCurrentLessonId,
   setDialogOpen,
 }: Props) => {
   return (
     <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
-        {/* <div className="flex gap-1">
-          {lesson.isRegistered && <Badge>Zapisano</Badge>}
-          {lesson.isPaymentPending && (
-            <Badge variant="outline">Płatność oczekująca</Badge>
-            )}
-            </div> */}
         <Image
-          src={lesson.thumbnail ? lesson.thumbnail : '/hero.jpg'}
+          src={thumbnail || '/hero.jpg'}
           alt="Obraz"
           fill
           className="lesson-card-thumbnail transition-all duration-200 ease-in-out object-cover"
@@ -46,7 +56,7 @@ export const LiveLessonCard = ({
           <Badge className="flex items-center gap-2">
             <Calendar className="size-4" />
             <span className="text-xsm">
-              {new Date(lesson.scheduledAt).toLocaleDateString('pl-PL', {
+              {new Date(scheduledAt).toLocaleDateString('pl-PL', {
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
@@ -56,35 +66,26 @@ export const LiveLessonCard = ({
           <Badge className="flex items-center gap-2">
             <Clock className="size-4" />
             <span className="text-xs">
-              {`${formatTimeForInput(lesson.scheduledAt)} (${
-                lesson.duration
-              } min)`}
+              {`${formatTimeForInput(scheduledAt)} (${duration} min)`}
             </span>
           </Badge>
         </div>
       </div>
       <div className="flex flex-col flex-grow px-4 py-6 xl:px-6 gap-4">
-        <p className="text-richBlack font-semibold line-clamp-2">
-          {lesson.title}
-        </p>
-        <p className="text-sm  text-gray-400 line-clamp-4">
-          {lesson.description}
-        </p>
+        <p className="text-richBlack font-semibold line-clamp-2">{title}</p>
+        <p className="text-sm  text-gray-400 line-clamp-4">{description}</p>
         <Button
           className="w-full"
           disabled={
-            lesson.isListed || (lesson.isRegistered && !lesson.isPaymentPending)
+            state === PURCHASE_STATE.CLAIMED ||
+            state === PURCHASE_STATE.PURCHASED
           }
           onClick={() => {
-            setCurrentLesson(lesson);
+            setCurrentLessonId(id);
             setDialogOpen(true);
           }}
         >
-          {getButtonContent(
-            lesson.isListed,
-            lesson.isRegistered,
-            lesson.isPaymentPending
-          )}
+          {getButtonContent(state)}
         </Button>
       </div>
     </div>

@@ -1,8 +1,12 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, lte, gte } from 'drizzle-orm';
 import { db } from '@/server/db';
 import { purchases } from '@/server/db/schema';
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
-import { Purchase, PurchaseInsert } from '@/entities/models/purchase';
+import {
+  ACQUISITION_METHOD,
+  Purchase,
+  PurchaseInsert,
+} from '@/entities/models/purchase';
 
 export class PurchasesRepository implements IPurchasesRepository {
   async create(payload: PurchaseInsert): Promise<Purchase> {
@@ -18,7 +22,7 @@ export class PurchasesRepository implements IPurchasesRepository {
       checkoutSessionId: created.checkoutSessionId || undefined,
       email: created.email,
       userId: created.userId || undefined,
-      acquisitionMethod: created.acquisitionMethod,
+      acquisitionMethod: created.acquisitionMethod as ACQUISITION_METHOD,
     };
   }
 
@@ -32,6 +36,21 @@ export class PurchasesRepository implements IPurchasesRepository {
       columns: { id: true },
       where: and(
         eq(purchases.userId, userId),
+        eq(purchases.productId, productId)
+      ),
+    });
+
+    return purchase ? true : false;
+  }
+
+  async hasUserEmailPurchasedProduct(
+    productId: string,
+    email: string
+  ): Promise<boolean> {
+    const purchase = await db.query.purchases.findFirst({
+      columns: { id: true },
+      where: and(
+        eq(purchases.email, email),
         eq(purchases.productId, productId)
       ),
     });
@@ -61,7 +80,25 @@ export class PurchasesRepository implements IPurchasesRepository {
       checkoutSessionId: purchase.checkoutSessionId || undefined,
       email: purchase.email,
       userId: purchase.userId || undefined,
-      acquisitionMethod: purchase.acquisitionMethod,
+      acquisitionMethod: purchase.acquisitionMethod as ACQUISITION_METHOD,
     };
+  }
+
+  async getUserFreeQuotaUsage(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<number> {
+    const result = await db.query.purchases.findMany({
+      columns: { id: true },
+      where: and(
+        eq(purchases.userId, userId),
+        eq(purchases.acquisitionMethod, ACQUISITION_METHOD.SUBSCRIPTION_QUOTA),
+        gte(purchases.createdAt, startDate),
+        lte(purchases.createdAt, endDate)
+      ),
+    });
+
+    return result.length;
   }
 }

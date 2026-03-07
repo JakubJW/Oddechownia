@@ -1,8 +1,11 @@
 import Container from '@/components/Container/Container';
 import { LiveLessonsGrid } from '@/features/LiveLesson/live-lessons-grid';
 import { getUser } from '@/server/actions/user';
-import { LiveLessonsService } from '@/server/services/liveLessons.service';
 import type { Metadata } from 'next';
+import { GetUpcomingLiveLessonsForUser } from '@/application/use-cases/live-lesson/get-upcoming-live-lessons.use-case';
+import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
+import { SubscriptionRepository } from '@/infrastructure/repositories/subscription.repository';
+import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
 
 export const metadata: Metadata = {
   title: 'Zajęcia na żywo',
@@ -12,7 +15,14 @@ export const metadata: Metadata = {
 
 export default async function LiveLessons() {
   const user = await getUser();
-  const lessons = await LiveLessonsService.getLiveLessonsWithUserStatus(user);
+
+  const useCase = new GetUpcomingLiveLessonsForUser(
+    new PurchasesRepository(),
+    new SubscriptionRepository(),
+    new LiveLessonsRepository()
+  );
+
+  const lessons = await useCase.execute(user?.id);
 
   return (
     <>

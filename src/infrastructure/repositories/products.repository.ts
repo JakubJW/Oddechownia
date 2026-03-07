@@ -1,6 +1,10 @@
 import { and, eq } from 'drizzle-orm';
 import { products } from '@/server/db/schema';
-import { Product } from '@/entities/models/product';
+import {
+  Product,
+  PRODUCT_TYPE,
+  SUBSCRIBER_ACCESS,
+} from '@/entities/models/product';
 import { IProductsRepository } from '@/application/repositories/products.repository.interface';
 import { db } from '@/server/db';
 
@@ -18,9 +22,9 @@ export class ProductsRepository implements IProductsRepository {
           image: created.image,
           price: created.price,
           priceId: created.priceId,
-          type: created.type,
+          type: created.type as PRODUCT_TYPE,
           isVisible: created.isVisible ?? false,
-          subscriberAccess: created.subscriberAccess,
+          subscriberAccess: created.subscriberAccess as SUBSCRIBER_ACCESS,
         };
       } else {
         throw new Error('Cannot create a product');
@@ -45,8 +49,8 @@ export class ProductsRepository implements IProductsRepository {
       image: result.image,
       price: result.price,
       priceId: result.priceId,
-      subscriberAccess: result.subscriberAccess,
-      type: result.type,
+      subscriberAccess: result.subscriberAccess as SUBSCRIBER_ACCESS,
+      type: result.type as PRODUCT_TYPE,
       isVisible: result.isVisible ?? false,
     };
   }
@@ -66,15 +70,13 @@ export class ProductsRepository implements IProductsRepository {
       image: result.image,
       price: result.price,
       priceId: result.priceId,
-      subscriberAccess: result.subscriberAccess,
-      type: result.type,
+      subscriberAccess: result.subscriberAccess as SUBSCRIBER_ACCESS,
+      type: result.type as PRODUCT_TYPE,
       isVisible: result.isVisible ?? false,
     };
   }
 
-  async getVisibleProductsByType(
-    type: 'ebook' | 'live-lesson'
-  ): Promise<Product[]> {
+  async getVisibleProductsByType(type: PRODUCT_TYPE): Promise<Product[]> {
     try {
       const result = await db.query.products.findMany({
         where: and(eq(products.isVisible, true), eq(products.type, type)),
@@ -88,9 +90,9 @@ export class ProductsRepository implements IProductsRepository {
         image: product.image,
         price: product.price,
         priceId: product.priceId,
-        type: product.type,
+        type: product.type as PRODUCT_TYPE,
         isVisible: product.isVisible ?? false,
-        subscriberAccess: product.subscriberAccess,
+        subscriberAccess: product.subscriberAccess as SUBSCRIBER_ACCESS,
       }));
     } catch (error) {
       throw error;

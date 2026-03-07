@@ -1,10 +1,21 @@
-import { cn, formatTimeForInput } from '@/lib/utils';
-import { Calendar, Clock, Video } from 'lucide-react';
-import { Button, buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { LiveLessonStatus } from '@/entities/models/live-lesson';
+import { cn, formatTimeForInput } from '@/lib/utils';
+import { Calendar, Clock } from 'lucide-react';
 import Image from 'next/image';
-import { LiveLessonCardUserDashboardDTO } from '@/server/models/liveLesson.models';
 import Link from 'next/link';
+
+type UserLiveLessonCardProps = {
+  title: string;
+  description?: string;
+  image: string;
+  scheduledAt: string;
+  duration: number;
+  meetingLink?: string;
+  recordingUrl?: string;
+  status: LiveLessonStatus;
+};
 
 export const UserLiveLessonCard = ({
   title,
@@ -12,29 +23,21 @@ export const UserLiveLessonCard = ({
   scheduledAt,
   status,
   description,
-  meetingUrl,
+  meetingLink,
   recordingUrl,
-  thumbnail,
-}: LiveLessonCardUserDashboardDTO) => {
+  image,
+}: UserLiveLessonCardProps) => {
   const statusStyles = {
     upcoming: { backgroundColor: '#B9C499', color: '#00171F' },
-    live: { backgroundColor: '#9EAFBF', color: '#ffffff' },
+    live: 'bg-white text-red-500',
     completed: { backgroundColor: '#EBDFD3', color: '#00171F' },
   };
-
-  const statusText = {
-    upcoming: 'Nadchodzące',
-    live: 'Na żywo',
-    completed: 'Zakończone',
-  };
-
-  console.log(status);
 
   return (
     <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
-          src={thumbnail ? thumbnail : '/hero.jpg'}
+          src={image ? image : '/hero.jpg'}
           alt={`Miniatura lekcji ${title}`}
           fill
           className="lesson-card-thumbnail transition-all duration-200 ease-in-out object-cover"
@@ -58,16 +61,15 @@ export const UserLiveLessonCard = ({
           </Badge>
         </div>
         <div className="absolute right-2 top-2">
-          {status === 'live' && (
+          {status === LiveLessonStatus.LIVE && (
             <Badge
-              className="shrink-0 items-center"
-              style={statusStyles[status]}
+              className={cn('shrink-0 items-center', statusStyles[status])}
             >
               <span className="relative flex h-2 w-2 mr-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
               </span>
-              <span>{statusText[status]}</span>
+              <span>W trakcie</span>
             </Badge>
           )}
         </div>
@@ -75,49 +77,41 @@ export const UserLiveLessonCard = ({
       <div className="flex flex-col flex-grow px-4 py-6 xl:px-6 gap-4">
         <p className="text-richBlack font-semibold line-clamp-2">{title}</p>
         <p className="text-sm  text-gray-400 line-clamp-4">{description}</p>
-        {status === 'upcoming' && (
+        {status === LiveLessonStatus.UPCOMING && (
           <Button
             disabled
             size="lg"
             variant="default"
-            className="w-full"
+            className="w-full mt-auto"
           >
-            <Video className="mr-2 h-4 w-4" />
             Nadchodzące
           </Button>
         )}
-        {status === 'live' && meetingUrl && (
+        {status === LiveLessonStatus.LIVE && meetingLink && (
           <Link
-            href={meetingUrl}
+            href={meetingLink}
             target="_blank"
-            className={cn(buttonVariants({ size: 'lg' }), 'w-full')}
-            style={{ backgroundColor: '#9EAFBF', color: '#ffffff' }}
+            className={cn(buttonVariants({ size: 'lg' }), 'mt-auto')}
           >
-            <Video className="mr-2 h-4 w-4" />
-            Dołącz teraz
+            Dołącz do spotkania
           </Link>
         )}
-        {status === 'completed' && !recordingUrl && (
+        {status === LiveLessonStatus.PROCESSING && !recordingUrl && (
           <Button
             disabled
-            className={cn(
-              buttonVariants({ size: 'lg', variant: 'secondary' }),
-              'w-full'
-            )}
+            className={cn('mt-auto')}
+            size="lg"
           >
-            Nagranie w przygotowaniu
+            Przygotowywanie nagrania
           </Button>
         )}
-        {status === 'completed' && recordingUrl && (
+        {status === LiveLessonStatus.COMPLETED && recordingUrl && (
           <Link
-            className={cn(
-              buttonVariants({ size: 'lg', variant: 'outline' }),
-              'w-full'
-            )}
+            className={cn(buttonVariants({ size: 'lg' }), 'mt-auto')}
             target="_blank"
             href={recordingUrl}
           >
-            Zobacz nagranie
+            Obejrzyj nagranie
           </Link>
         )}
       </div>

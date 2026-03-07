@@ -1,7 +1,7 @@
 import { IProductsRepository } from '@/application/repositories/products.repository.interface';
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
 import { ISubscriptionRepository } from '@/application/repositories/subscription.repository.interface';
-import { SubscriberAccess } from '@/entities/models/product';
+import { SUBSCRIBER_ACCESS } from '@/entities/models/product';
 
 export type ProductListItem = {
   id: string;
@@ -9,7 +9,7 @@ export type ProductListItem = {
   slug: string;
   image: string;
   price: number;
-  subscriberAccess: SubscriberAccess;
+  subscriberAccess: SUBSCRIBER_ACCESS;
   state: 'can_download' | 'can_claim' | 'can_purchase';
   disabled: boolean;
 };

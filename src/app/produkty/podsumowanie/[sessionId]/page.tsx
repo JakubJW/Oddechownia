@@ -9,22 +9,27 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { LiveLessonsRegistrationsService } from '@/server/services/liveLessonsRegistrations.service';
 import { Params } from '@/types/types';
 import { CircleCheck, CircleX } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { FulfillPurchaseUseCase } from '@/application/use-cases/product/fulfill-product-purchase.use-case';
+import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
+import { EbookPurchaseStrategy } from '@/infrastructure/strategies/ebook-purchase.strategy';
+import { LiveLessonPurchaseStrategy } from '@/infrastructure/strategies/live-lesson-purchase.strategy';
+import { stripeService } from '@/server/services/stripe.service';
+import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
 
 export const metadata: Metadata = {
-  title: 'Podsumowanie zakupu | Zajęcia na żywo',
+  title: 'Podsumowanie zakupu',
 };
 
-const LiveLessonCheckoutSuccess = async ({
+export default async function ProductPurchaseSummary({
   params,
 }: {
   params: Params<{ sessionId: string }>;
-}) => {
+}) {
   const { sessionId } = await params;
 
   if (!sessionId) {
@@ -32,10 +37,22 @@ const LiveLessonCheckoutSuccess = async ({
   }
 
   try {
-    const { lessonTitle, scheduledAt } =
-      await LiveLessonsRegistrationsService.fullfillLiveLessonPurchase(
-        sessionId
-      );
+    const session = await stripeService.retrieveSession(sessionId);
+    const purchasesRepository = new PurchasesRepository();
+    const useCase = new FulfillPurchaseUseCase(purchasesRepository, [
+      new EbookPurchaseStrategy(),
+      new LiveLessonPurchaseStrategy(
+        new LiveLessonsRepository(),
+        purchasesRepository
+      ),
+    ]);
+
+    await useCase.execute({
+      checkoutSessionId: session.id,
+      stripePaymentStatus: session.payment_status,
+      userEmail: session.customer_details!.email!,
+      metadata: session.metadata!,
+    });
 
     return (
       <section>
@@ -49,12 +66,12 @@ const LiveLessonCheckoutSuccess = async ({
                 Płatność zakończona
               </CardTitle>
               <CardDescription>
-                Twoje uczestnictwo w zajęciach zostało potwierdzone.{' '}
+                Twoje uczestnictwo w zajęciach zostało potwierdzone.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="rounded-md p-4">
-                <p>{lessonTitle}</p>
+                {/* <p>{lessonTitle}</p>
                 <span>
                   {new Intl.DateTimeFormat('pl-PL', {
                     timeZone: 'Europe/Warsaw',
@@ -64,7 +81,7 @@ const LiveLessonCheckoutSuccess = async ({
                     hour: '2-digit',
                     minute: '2-digit',
                   }).format(new Date(scheduledAt))}
-                </span>
+                </span> */}
               </div>
               <div className="border-t pt-6 mt-6 space-y-3 text-muted-foreground text-sm">
                 <p className="font-medium">Co dalej?</p>
@@ -115,28 +132,25 @@ const LiveLessonCheckoutSuccess = async ({
                 Błąd weryfikacji płatności
               </CardTitle>
               <CardDescription>
-                Nie udało nam się automatycznie potwierdzić Twojej rejestracji.
-                Jeśli środki zostały pobrane, skontaktuj się z nami podając ID
-                sesji:
+                Podczas przetwarzania płatności wystąpił błąd. Jeśli środki
+                zostały pobrane, skontaktuj się z nami podając ID sesji:
                 <br />
                 <code className="bg-gray-100 p-1 rounded text-xs mt-2 block w-fit">
                   {sessionId}
                 </code>
               </CardDescription>
             </CardHeader>
-            <CardFooter>
+            {/* <CardFooter>
               <Link
                 className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
                 href="/kontakt"
               >
                 Kontakt z pomocą
               </Link>
-            </CardFooter>
+            </CardFooter> */}
           </Card>
         </Container>
       </section>
     );
   }
-};
-
-export default LiveLessonCheckoutSuccess;
+}
