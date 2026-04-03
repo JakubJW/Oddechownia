@@ -7,6 +7,7 @@ import {
   Purchase,
   PurchaseInsert,
 } from '@/entities/models/purchase';
+import { PurchaseMapper } from '../mappers/purchase.mapper';
 
 export class PurchasesRepository implements IPurchasesRepository {
   async create(payload: PurchaseInsert): Promise<Purchase> {
@@ -16,14 +17,7 @@ export class PurchasesRepository implements IPurchasesRepository {
       .onConflictDoNothing()
       .returning();
 
-    return {
-      id: created.id,
-      productId: created.productId,
-      checkoutSessionId: created.checkoutSessionId || undefined,
-      email: created.email,
-      userId: created.userId || undefined,
-      acquisitionMethod: created.acquisitionMethod as ACQUISITION_METHOD,
-    };
+    return PurchaseMapper.toDomain(created);
   }
 
   async hasUserPurchasedProduct(
@@ -68,20 +62,13 @@ export class PurchasesRepository implements IPurchasesRepository {
   }
 
   async findBySessionId(sessionId: string): Promise<Purchase | undefined> {
-    const purchase = await db.query.purchases.findFirst({
+    const result = await db.query.purchases.findFirst({
       where: eq(purchases.checkoutSessionId, sessionId),
     });
 
-    if (!purchase) return undefined;
+    if (!result) throw new Error('Not found');
 
-    return {
-      id: purchase.id,
-      productId: purchase.productId,
-      checkoutSessionId: purchase.checkoutSessionId || undefined,
-      email: purchase.email,
-      userId: purchase.userId || undefined,
-      acquisitionMethod: purchase.acquisitionMethod as ACQUISITION_METHOD,
-    };
+    return PurchaseMapper.toDomain(result);
   }
 
   async getUserFreeQuotaUsage(
@@ -100,5 +87,13 @@ export class PurchasesRepository implements IPurchasesRepository {
     });
 
     return result.length;
+  }
+
+  async findByProductId(id: string): Promise<Purchase[]> {
+    const result = await db.query.purchases.findMany({
+      where: eq(purchases.productId, id),
+    });
+
+    return result.map(PurchaseMapper.toDomain);
   }
 }

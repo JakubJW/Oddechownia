@@ -93,10 +93,15 @@ class StripeService {
   public async listProducts() {
     const products = await this.stripe.products.list({
       active: true,
-      limit: 3,
+      expand: ['data.default_price'],
     });
 
-    return products;
+    return products.data.map((product) => ({
+      id: product.id,
+      name: product.name,
+      price: (product.default_price as Stripe.Price).unit_amount,
+      defaultPriceId: (product.default_price as Stripe.Price).id,
+    }));
   }
 
   public async listPrices(params: Stripe.PriceListParams) {

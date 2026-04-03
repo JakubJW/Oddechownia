@@ -2,7 +2,6 @@ import { ILiveLessonsRepository } from '@/application/repositories/live-lessons.
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
 import { ISubscriptionRepository } from '@/application/repositories/subscription.repository.interface';
 import { LiveLesson, UserLiveLessonCard } from '@/entities/models/live-lesson';
-import { supabaseService } from '@/server/services/supabase.service';
 import { isBefore } from 'date-fns';
 import { LiveLessonStatus } from '@/entities/models/live-lesson';
 
@@ -19,7 +18,12 @@ export class GetUserLiveLessons {
 
     const lessons = await this.liveLessonsRepository.getByProductId(purchased);
 
-    return lessons.map((item) => this.mapToDTO(item));
+    return lessons
+      .map((item) => this.mapToDTO(item))
+      .sort(
+        (a, b) =>
+          new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
+      );
   }
 
   private mapToDTO(item: LiveLesson): UserLiveLessonCard {

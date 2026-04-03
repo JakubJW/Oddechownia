@@ -5,68 +5,29 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from '@/components/ui/dialog';
-import { FetchAdminLiveLessonsParticipantsListResponse } from '@/server/models/liveLesson.models';
+import { ACQUISITION_METHOD } from '@/entities/models/purchase';
+import { LiveLessonRegistrationCardDTO } from '@/server/models/liveLessonRegistration.models';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import React from 'react';
 
-const getStatusBadge = (status?: string) => {
-  switch (status) {
-    case 'paid':
+const getStatusBadge = (acquiredBy?: ACQUISITION_METHOD) => {
+  switch (acquiredBy) {
+    case ACQUISITION_METHOD.PAYMENT:
       return <Badge className="bg-green-600">Opłacone</Badge>;
-    case 'unpaid':
-      return <Badge variant="secondary">Oczekuje</Badge>;
+    case ACQUISITION_METHOD.FREE_PUBLIC:
+      return <Badge variant="secondary">Za darmo</Badge>;
+    case ACQUISITION_METHOD.SUBSCRIPTION_QUOTA:
+      return <Badge variant="secondary">Za kredyty</Badge>;
     default:
       return <Badge className="bg-green-500">Za darmo</Badge>;
   }
 };
 
-// const exportToCSV = () => {
-//   const headers = [
-//     'Imię i nazwisko',
-//     'Email',
-//     'Status płatności',
-//     'Kwota (PLN)',
-//     'Data rejestracji',
-//   ];
-//   const rows = registrations.map((reg) => [
-//     reg.name,
-//     reg.email,
-//     reg.payment_status === 'paid' ? 'Opłacone' : 'Oczekuje',
-//     reg.payment_status === 'completed' && reg.amount_paid > 0
-//       ? (reg.amount_paid / 100).toFixed(2)
-//       : '0.00',
-//     new Date(reg.created_at).toLocaleString('pl-PL'),
-//   ]);
-
-//   const csvContent = [
-//     headers.join(','),
-//     ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
-//   ].join('\n');
-
-//   const blob = new Blob(['\ufeff' + csvContent], {
-//     type: 'text/csv;charset=utf-8;',
-//   });
-//   const link = document.createElement('a');
-//   const url = URL.createObjectURL(blob);
-//   link.setAttribute('href', url);
-//   link.setAttribute(
-//     'download',
-//     `zapisy_zajecia_${lessonId}_${new Date().toISOString().split('T')[0]}.csv`
-//   );
-//   document.body.appendChild(link);
-//   link.click();
-//   document.body.removeChild(link);
-
-//   toast('Sukces', {
-//     description: 'Lista zapisów została wyeksportowana.',
-//   });
-// };
-
 const fetchRegistrations = async (id: string) => {
-  const res = await fetch(`/api/live-lessons/${id}/registrations`, {
+  const res = await fetch(`/api/admin/live-lessons/${id}/registrations`, {
     method: 'GET',
   });
 
@@ -79,7 +40,7 @@ const fetchRegistrations = async (id: string) => {
   }
 
   const json = await res.json();
-  return json as FetchAdminLiveLessonsParticipantsListResponse;
+  return json as LiveLessonRegistrationCardDTO[];
 };
 
 const BaseDialog = ({
@@ -99,14 +60,6 @@ const BaseDialog = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Zapisy na zajęcia</DialogTitle>
-          {/* <Button
-            onClick={exportToCSV}
-            size="sm"
-            variant="outline"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Eksportuj CSV
-          </Button> */}
         </DialogHeader>
         {children}
       </DialogContent>
@@ -152,7 +105,7 @@ const ParticipantsDialog = ({
     );
   }
 
-  if (data.data.length === 0) {
+  if (data.length === 0) {
     return (
       <BaseDialog
         open={open}
@@ -171,7 +124,7 @@ const ParticipantsDialog = ({
       setOpen={setOpen}
     >
       <div className="grid gap-3">
-        {data.data.map((reg) => (
+        {data.map((reg) => (
           <div
             key={reg.id}
             className="p-4 border rounded-lg space-y-2"
@@ -181,11 +134,11 @@ const ParticipantsDialog = ({
                 <p className="font-medium">{reg.name}</p>
                 <p className="text-sm text-muted-foreground">{reg.email}</p>
               </div>
-              {getStatusBadge(reg.paymentStatus)}
+              {getStatusBadge(reg.acquisitionMethod)}
             </div>
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>
-                Zarejestrowano: &nbsp;
+                Zapisano: &nbsp;
                 {new Date(reg.createdAt).toLocaleDateString('pl-PL', {
                   day: 'numeric',
                   month: 'long',
@@ -205,7 +158,7 @@ const ParticipantsDialog = ({
       <div className="pt-4 border-t">
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Łączna liczba zapisów:</span>
-          <span className="font-semibold">{data.data.length}</span>
+          <span className="font-semibold">{data.length}</span>
         </div>
         {/* <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Opłacone:</span>

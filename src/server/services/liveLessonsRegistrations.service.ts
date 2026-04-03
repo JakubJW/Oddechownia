@@ -1,20 +1,18 @@
-import { and, count, desc, eq, gte, lte, or } from 'drizzle-orm';
-import { liveLessonsRegistrations, liveLessons } from '@/server/db/schema';
-import { db } from '@/server/db';
-import { LiveLessonSignUpValues } from '@/features/LiveLesson/Form/schema';
-import { logger } from '../lib/logger.service';
-import { stripeService } from './stripe.service';
 import { env } from '@/env';
+import { LiveLessonSignUpValues } from '@/features/LiveLesson/Form/schema';
+import { db } from '@/server/db';
+import { liveLessons, liveLessonsRegistrations } from '@/server/db/schema';
+import { endOfMonth, startOfMonth } from 'date-fns';
+import { and, count, eq, gte, lte, or } from 'drizzle-orm';
 import { User } from '../actions/user';
 import {
-  AppError,
   AuthenticationError,
   AuthorizationError,
   ConflictError,
 } from '../lib/errors';
-import { LiveLessonRegistrationCardDTO } from '../models/liveLessonRegistration.models';
+import { logger } from '../lib/logger.service';
 import { EmailService } from './emails.service';
-import { startOfMonth, endOfMonth } from 'date-fns';
+import { stripeService } from './stripe.service';
 
 export type PurchaseConfirmationDTO = {
   registrationId: string;
@@ -268,35 +266,7 @@ const fullfillLiveLessonPurchase = async (
   };
 };
 
-const getLessonRegistrations = async (
-  lessonId: string
-): Promise<LiveLessonRegistrationCardDTO[]> => {
-  try {
-    const result = await db.query.liveLessonsRegistrations.findMany({
-      where: eq(liveLessonsRegistrations.lessonId, lessonId),
-      orderBy: desc(liveLessonsRegistrations.createdAt),
-    });
-
-    return result.map((registration) => ({
-      id: registration.id,
-      name: registration.name,
-      email: registration.email,
-      createdAt: registration.createdAt,
-      paymentStatus: registration.paymentStatus ?? undefined,
-    }));
-  } catch (error) {
-    log.error(error);
-
-    throw new AppError(
-      'An unknown error occured user registrations fetch.',
-      500,
-      'Podczas pobierania listy zapisanych użytkowników wystąpił niespodziewany błąd.'
-    );
-  }
-};
-
 export const LiveLessonsRegistrationsService = {
-  getLessonRegistrations,
   create,
   checkEntitlementEligibility,
   fullfillLiveLessonPurchase,

@@ -22,6 +22,8 @@ export type Product = {
   subscriberAccess: SUBSCRIBER_ACCESS;
 };
 
+export type ProductInsert = Omit<Product, 'id'>;
+
 export type EbookProduct = Product & {
   fileUrl: string;
 };

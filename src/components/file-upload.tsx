@@ -30,7 +30,7 @@ const FileUpload = ({
 
   return (
     <Dropzone
-      className="aspect-video"
+      className="aspect-video rounded-xl"
       accept={accept}
       onDrop={handleDrop}
       src={files}

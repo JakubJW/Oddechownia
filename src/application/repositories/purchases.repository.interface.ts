@@ -14,4 +14,5 @@ export interface IPurchasesRepository {
     startDate: string,
     endDate: string
   ): Promise<number>;
+  findByProductId(id: string): Promise<Purchase[]>;
 }

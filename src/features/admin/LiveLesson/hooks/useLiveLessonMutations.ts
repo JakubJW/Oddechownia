@@ -2,12 +2,15 @@ import { queryClient } from '@/components/QueryClientProvider';
 import { CreateLiveLessonResponse } from '@/server/models/liveLesson.models';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { CreateLiveLessonValues, UpdateLiveLessonValues } from '../Form/schema';
+import {
+  TCreateLiveLessonSchema,
+  TUpdateLiveLessonSchema,
+} from '../Form/schema';
 import { UpdateLiveLessonResponse } from '@/server/models/liveLesson.models';
 
 export const useLiveLessonMutations = () => {
-  const createLiveLessonAPI = async (values: CreateLiveLessonValues) => {
-    const res = await fetch(`/api/live-lessons/create`, {
+  const createLiveLessonAPI = async (values: TCreateLiveLessonSchema) => {
+    const res = await fetch(`/api/admin/live-lessons`, {
       method: 'POST',
       body: JSON.stringify(values),
     });
@@ -33,9 +36,9 @@ export const useLiveLessonMutations = () => {
     values,
   }: {
     id: string;
-    values: UpdateLiveLessonValues;
+    values: TUpdateLiveLessonSchema;
   }) => {
-    const res = await fetch(`/api/live-lessons/${id}`, {
+    const res = await fetch(`/api/admin/live-lessons/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(values),
     });

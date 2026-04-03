@@ -2,7 +2,7 @@ import { FetchAdminLiveLessonsListResponse } from '@/server/models/liveLesson.mo
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 
 const liveLessonsAPI = async ({ pageParam }: { pageParam: string | null }) => {
-  const res = await fetch(`/api/live-lessons/?cursor=${pageParam}`, {
+  const res = await fetch(`/api/admin/live-lessons/?cursor=${pageParam}`, {
     method: 'GET',
   });
 
@@ -15,7 +15,7 @@ const liveLessonsAPI = async ({ pageParam }: { pageParam: string | null }) => {
   }
 
   const json = await res.json();
-  return json.data as FetchAdminLiveLessonsListResponse;
+  return json as FetchAdminLiveLessonsListResponse;
 };
 
 export const useLiveLessons = () => {
