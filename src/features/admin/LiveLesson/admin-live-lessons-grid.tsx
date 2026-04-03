@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { AdminLiveLessonRecordDTO } from '@/server/models/liveLesson.models';
+import { AdminLiveLessonCardDTO } from '@/entities/models/live-lesson';
 import React, { useState } from 'react';
 import ParticipantsDialog from './ParticipantsDialog';
 import UpdateDialog from './UpdateDialog';
@@ -14,7 +14,7 @@ export const AdminLiveLessonsGrid = () => {
   const [currentParticipantsLessonId, setCurrentParticipantsLessonId] =
     useState<string | undefined>(undefined);
   const [currentLesson, setCurrentLesson] = useState<
-    AdminLiveLessonRecordDTO | undefined
+    AdminLiveLessonCardDTO | undefined
   >(undefined);
 
   const { isPending, isError, data, isFetching, hasNextPage, fetchNextPage } =
@@ -41,7 +41,7 @@ export const AdminLiveLessonsGrid = () => {
   }
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
       {data.pages.map((page, index) => (
         <React.Fragment key={index}>
           {page.data.map((liveLesson) => (

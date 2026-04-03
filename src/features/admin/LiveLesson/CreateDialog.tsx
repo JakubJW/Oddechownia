@@ -12,6 +12,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,26 +22,43 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import FileUpload from '@/components/file-upload';
 import { createformSchema, defaultValues } from './Form/schema';
 import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
 import { useFileUpload } from '@/hooks/use-file-upload';
+import { useStripeProducts } from '@/hooks/use-stripe-products';
+import { Combobox } from '@/components/combobox';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { SUBSCRIBER_ACCESS } from '@/entities/models/product';
 
 const CreateUpdateDialog = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | undefined>(
     undefined
   );
+  const { data } = useStripeProducts();
+
+  const comboboxOptions = useMemo(() => {
+    if (!data) return [];
+
+    return data.map((item) => ({
+      value: item.defaultPriceId,
+      label: item.name,
+    }));
+  }, [data]);
+
   const { createMutation } = useLiveLessonMutations();
   const { isUploading, uploadFiles } = useFileUpload({
     bucket: 'public-assets',
     folder: 'thumbnails/live-lessons',
     onSuccess: (ids, previewUrl) => {
       setImagePreview(previewUrl);
-      form.setValue('thumbnailId', ids[0]);
+      form.setValue('imageId', ids[0]);
     },
   });
   const form = useForm({
@@ -48,8 +66,28 @@ const CreateUpdateDialog = () => {
     defaultValues,
     mode: 'all',
   });
+  const [date, time, isFree, priceId] = form.watch([
+    'date',
+    'time',
+    'isFree',
+    'priceId',
+  ]);
 
-  const [date, time] = form.watch(['date', 'time']);
+  useEffect(() => {
+    if (isFree === true) {
+      form.setValue('subscriberAccess', SUBSCRIBER_ACCESS.FREE_UNLIMITED);
+    } else {
+      form.setValue('subscriberAccess', SUBSCRIBER_ACCESS.QUOTA_BASED);
+    }
+  }, [isFree, form]);
+
+  useEffect(() => {
+    const unitAmount = isFree
+      ? 0
+      : (data?.find((option) => option.defaultPriceId === priceId)?.price ?? 0);
+
+    form.setValue('price', unitAmount);
+  }, [data, priceId, isFree, form]);
 
   useEffect(() => {
     if (!date || !time) return;
@@ -106,6 +144,99 @@ const CreateUpdateDialog = () => {
               />
               <FormField
                 control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem className="hidden">
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="priceId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Powiązany produkt Stripe</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          placeholder="Wybierz produkt..."
+                          options={comboboxOptions}
+                          onChange={field.onChange}
+                          isLoading={false}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="isFree"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="is-free"
+                            defaultChecked={false}
+                            onCheckedChange={(checked) =>
+                              field.onChange(checked)
+                            }
+                          />
+                          <Label htmlFor="is-free">Za darmo</Label>
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        Nie powoduje zużycia darmowych zapisów dla subskrybentów
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="subscriberAccess"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dostęp dla subskrybentów</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        disabled={isFree === true}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={SUBSCRIBER_ACCESS.PAID} />
+                          </FormControl>
+                          <FormLabel className="font-normal">Płatny</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem
+                              value={SUBSCRIBER_ACCESS.QUOTA_BASED}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Za kredyty
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
@@ -123,7 +254,7 @@ const CreateUpdateDialog = () => {
               />
               <FormField
                 control={form.control}
-                name="thumbnailId"
+                name="imageId"
                 render={() => (
                   <FormItem>
                     <FormLabel>Miniaturka</FormLabel>
@@ -147,7 +278,7 @@ const CreateUpdateDialog = () => {
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <FormField
                   name="date"
                   control={form.control}
@@ -180,27 +311,28 @@ const CreateUpdateDialog = () => {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Czas trwania (minuty)</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="text"
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            field.onChange(Number(value));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-              <FormField
-                control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Czas trwania (minuty)</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="text"
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, '');
-                          field.onChange(Number(value));
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name="description"

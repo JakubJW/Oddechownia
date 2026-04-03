@@ -19,6 +19,7 @@ export type Purchase = {
   productId: string;
   checkoutSessionId?: string;
   acquisitionMethod: ACQUISITION_METHOD;
+  createdAt: string;
 };
 
 export type PurchaseInsert = {

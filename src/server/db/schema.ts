@@ -383,7 +383,7 @@ export const products = pgTable('products', {
   type: varchar('type').$type<'ebook' | 'live-lesson'>().notNull(),
   description: text('description'),
   priceId: text('price_id').notNull(),
-  image: text('image').notNull(),
+  imageId: integer('image_id').references(() => files.id),
   price: integer('price').notNull(),
   isVisible: boolean('is_visible').default(true),
   subscriberAccess: varchar('subscriber_access')

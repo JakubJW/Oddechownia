@@ -36,7 +36,7 @@ export class GetUpcomingLiveLessonsForUser {
   ): LiveLessonProduct {
     return {
       id: item.id,
-      productId: item.id,
+      productId: item.productId,
       title: item.title,
       price: item.price,
       image: item.image,
