@@ -7,7 +7,7 @@ import { LiveLessonPurchaseStrategy } from '@/infrastructure/strategies/live-les
 import { PurchasesRepository } from '@/infrastructure/repositories/purchases.repository';
 import { AuthService } from '@/server/services/auth.service';
 import { stripeService } from '@/server/services/stripe.service';
-import { FulfillPurchaseUseCase } from '@/application/use-cases/product/fulfill-product-purchase.use-case';
+import { FulfillPurchaseUseCase } from '@/application/use-cases/purchase/fulfill-purchase.use-case';
 import { buffer } from '@/utils/requestBodyBufer';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';

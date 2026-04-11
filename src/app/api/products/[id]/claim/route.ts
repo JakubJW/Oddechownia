@@ -8,6 +8,7 @@ import { SubscriptionRepository } from '@/infrastructure/repositories/subscripti
 import { ClaimLiveLessonGuestUseCase } from '@/application/use-cases/product/claim-live-lesson-guest.use-case';
 import { liveLessonSignUpFormSchema } from '@/features/LiveLesson/Form/schema';
 import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
+import { AppError } from '@/server/lib/errors';
 
 export async function POST(
   req: NextRequest,
@@ -29,23 +30,39 @@ export async function POST(
       );
     }
 
-    const useCase = new ClaimLiveLessonGuestUseCase(
-      new PurchasesRepository(),
-      new LiveLessonsRepository()
-    );
+    try {
+      const useCase = new ClaimLiveLessonGuestUseCase(
+        new PurchasesRepository(),
+        new LiveLessonsRepository()
+      );
 
-    await useCase.execute(parsed.data.email, id);
+      const result = await useCase.execute(parsed.data.email, id);
 
-    return NextResponse.json({ message: 'Success' }, { status: 200 });
+      return NextResponse.json(result, { status: 200 });
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof AppError) {
+        return NextResponse.json(error.userMessage, { status: error.status });
+      } else {
+        return NextResponse.json({ error: error }, { status: 500 });
+      }
+    }
   } else {
-    const useCase = new ClaimProductRegisteredUseCase(
-      new ProductsRepository(),
-      new PurchasesRepository(),
-      new SubscriptionRepository()
-    );
+    try {
+      const useCase = new ClaimProductRegisteredUseCase(
+        new ProductsRepository(),
+        new PurchasesRepository(),
+        new SubscriptionRepository()
+      );
 
-    await useCase.execute(user, id);
+      const result = await useCase.execute(user, id);
 
-    return NextResponse.json({ message: 'Success' }, { status: 200 });
+      return NextResponse.json(result, { status: 200 });
+    } catch (error) {
+      if (error instanceof AppError) {
+        return NextResponse.json(error.userMessage, { status: error.status });
+      }
+    }
   }
 }

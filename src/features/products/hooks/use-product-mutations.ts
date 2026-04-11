@@ -16,19 +16,13 @@ export const useProductMutations = () => {
     });
 
     if (!res.ok) {
-      const errorBody = await res
-        .json()
-        .catch(() => ({ message: res.statusText }));
+      const error = await res.json().catch(() => ({ message: res.statusText }));
 
-      throw new Error(
-        `Failed to fetch comments (Status ${res.status}): ${
-          errorBody.message || 'Unknown error'
-        }`
-      );
+      throw new Error(error || 'Unknown error');
     }
 
     const json = await res.json();
-    return json.data as { success: boolean };
+    return json;
   };
 
   const purchaseProductAPI = async ({

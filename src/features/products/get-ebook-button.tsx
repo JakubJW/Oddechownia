@@ -66,7 +66,6 @@ export const GetEbookButton = ({ productId, state, price }: Props) => {
           const url = await downloadEbook(productId);
           window.location.href = url;
         }}
-        disabled={claimMutation.isPending}
         size="lg"
         className="flex-1 text-richBlack"
       >

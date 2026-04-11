@@ -2,6 +2,7 @@ import { ILiveLessonsRepository } from '@/application/repositories/live-lessons.
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
 import { ACQUISITION_METHOD } from '@/entities/models/purchase';
 import { EmailService } from '@/server/services/emails.service';
+import { ConflictError } from '@/server/lib/errors';
 
 export class ClaimLiveLessonGuestUseCase {
   constructor(
@@ -25,27 +26,27 @@ export class ClaimLiveLessonGuestUseCase {
       );
 
     if (hasPurchasedProduct) {
-      throw new Error('Aleady claimed');
+      throw new ConflictError('Products', 'Ten produkt został już odebrany.');
     }
 
-    await this.purchasesRepository.create({
+    const purchase = await this.purchasesRepository.create({
       email: userEmail,
-      productId: lesson.id,
+      productId: lesson.productId,
       acquisitionMethod: ACQUISITION_METHOD.FREE_PUBLIC,
     });
 
-    await EmailService.sendLiveLessonRegistrationConfirmaion(
-      userEmail,
-      lesson.title,
-      lesson.scheduledAt
-    );
+    // await EmailService.sendLiveLessonRegistrationConfirmaion(
+    //   userEmail,
+    //   lesson.title,
+    //   lesson.scheduledAt
+    // );
 
-    await EmailService.scheduleLiveLessonRemind(
-      userEmail,
-      lesson.title,
-      lesson.scheduledAt
-    );
+    // await EmailService.scheduleLiveLessonRemind(
+    //   userEmail,
+    //   lesson.title,
+    //   lesson.scheduledAt
+    // );
 
-    return { success: true, message: 'Access granted' };
+    return purchase;
   }
 }

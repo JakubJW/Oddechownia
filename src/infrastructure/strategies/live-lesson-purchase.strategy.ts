@@ -22,24 +22,17 @@ export class LiveLessonPurchaseStrategy implements IPurchaseStrategy {
     const [lesson] = await this.liveLessonRepository.getByProductId([
       ctx.productId,
     ]);
-    const purchase = await this.purchaseRepository.findBySessionId(
-      ctx.checkoutSessionId
-    );
-
-    if (!purchase) throw new Error('Purchase not found.');
 
     await EmailService.sendLiveLessonRegistrationConfirmaion(
-      purchase.email,
+      ctx.email,
       lesson.title,
       lesson.scheduledAt
     );
 
     await EmailService.scheduleLiveLessonRemind(
-      purchase.email,
+      ctx.email,
       lesson.title,
       lesson.scheduledAt
     );
-
-    console.log('Live lesson purchase strategy fired');
   }
 }

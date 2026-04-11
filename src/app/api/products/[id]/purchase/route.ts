@@ -6,7 +6,7 @@ import { UserService } from '@/infrastructure/services/user.service';
 import { Params } from '@/types/types';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
+export async function POST(
   req: NextRequest,
   { params }: { params: Params<{ id: string }> }
 ) {

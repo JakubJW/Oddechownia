@@ -35,7 +35,7 @@ export class CreateProductCheckoutSessionUseCase {
 
     const session = await this.stripePaymentService.createCheckoutSession({
       priceId: product.priceId,
-      successUrl: `${env.NEXT_PUBLIC_APP_URL}/produkty/podsumowanie/{CHECKOUT_SESSION_ID}`,
+      successUrl: `${env.NEXT_PUBLIC_APP_URL}/produkty/podsumowanie-zakupu/{CHECKOUT_SESSION_ID}`,
       cancelUrl: `${env.NEXT_PUBLIC_APP_URL}/${cancelRoute}`,
       metadata: {
         userId: userId,

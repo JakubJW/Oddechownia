@@ -20,7 +20,7 @@ export class LiveLessonMapper {
       id: raw.id,
       productId: raw.productId!,
       title: raw.product?.name || raw.title,
-      description: raw.product?.description || undefined,
+      description: raw.product?.description || raw?.description || undefined,
       image: raw.product?.image
         ? supabaseService.getThumbnailUrl(
             raw.product?.image?.bucket,
