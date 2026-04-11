@@ -4,6 +4,7 @@ import { ISubscriptionRepository } from '@/application/repositories/subscription
 import { SUBSCRIBER_ACCESS } from '@/entities/models/product';
 import { ACQUISITION_METHOD } from '@/entities/models/purchase';
 import { User } from '@/entities/models/user';
+import { ConflictError } from '@/server/lib/errors';
 
 export class ClaimProductRegisteredUseCase {
   constructor(
@@ -35,10 +36,10 @@ export class ClaimProductRegisteredUseCase {
       );
 
     if (hasPurchasedProduct) {
-      throw new Error('Already claimed');
+      throw new ConflictError('Products', 'Ten produkt został już odebrany.');
     }
 
-    await this.purchasesRepository.create({
+    const purchase = await this.purchasesRepository.create({
       email: user.email,
       userId: user.id,
       productId: product.id,
@@ -48,6 +49,6 @@ export class ClaimProductRegisteredUseCase {
           : ACQUISITION_METHOD.SUBSCRIPTION_BENEFIT,
     });
 
-    return { success: true, message: 'Access granted' };
+    return purchase;
   }
 }

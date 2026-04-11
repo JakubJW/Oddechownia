@@ -15,4 +15,5 @@ export interface IPurchasesRepository {
     endDate: string
   ): Promise<number>;
   findByProductId(id: string): Promise<Purchase[]>;
+  findById(id: string): Promise<Purchase | undefined>;
 }

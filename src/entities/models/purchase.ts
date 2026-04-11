@@ -1,3 +1,5 @@
+import { PRODUCT_TYPE } from './product';
+
 export enum ACQUISITION_METHOD {
   PAYMENT = 'payment',
   SUBSCRIPTION_QUOTA = 'subscription_quota',
@@ -20,6 +22,7 @@ export type Purchase = {
   checkoutSessionId?: string;
   acquisitionMethod: ACQUISITION_METHOD;
   createdAt: string;
+  productType: PRODUCT_TYPE;
 };
 
 export type PurchaseInsert = {

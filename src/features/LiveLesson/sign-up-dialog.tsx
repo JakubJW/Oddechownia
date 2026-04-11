@@ -30,6 +30,7 @@ import {
   liveLessonSignUpFormSchema,
   LiveLessonSignUpValues,
 } from './Form/schema';
+import { useRouter } from 'next/navigation';
 
 type SignUpDialogProps = {
   productId: string;
@@ -55,6 +56,7 @@ const SignUpDialog = ({
   user,
 }: SignUpDialogProps) => {
   const { purchaseMutation, claimMutation } = useProductMutations();
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(liveLessonSignUpFormSchema),
     defaultValues: user
@@ -64,7 +66,14 @@ const SignUpDialog = ({
 
   const onSubmit = async (values: LiveLessonSignUpValues) => {
     if (state === PURCHASE_STATE.CAN_CLAIM) {
-      return claimMutation.mutate({ productId, values });
+      return claimMutation.mutate(
+        { productId, values },
+        {
+          onSuccess: (purchase) => {
+            router.push(`/produkty/podsumowanie-odbioru/${purchase.id}`);
+          },
+        }
+      );
     }
 
     if (state === PURCHASE_STATE.CAN_PURCHASE) {

@@ -45,7 +45,7 @@ export class GetUpcomingLiveLessonsForUser {
       duration: item.duration,
       state: strategy.determineState({
         price: item.price,
-        productId: item.id,
+        productId: item.productId,
         subscriberAccess: item.subscriberAccess,
         userContext: context,
       }),

@@ -11,13 +11,13 @@ import { PurchaseMapper } from '../mappers/purchase.mapper';
 
 export class PurchasesRepository implements IPurchasesRepository {
   async create(payload: PurchaseInsert): Promise<Purchase> {
-    const [created] = await db
+    const [result] = await db
       .insert(purchases)
       .values(payload)
       .onConflictDoNothing()
       .returning();
 
-    return PurchaseMapper.toDomain(created);
+    return PurchaseMapper.toDomain(result);
   }
 
   async hasUserPurchasedProduct(
@@ -64,9 +64,16 @@ export class PurchasesRepository implements IPurchasesRepository {
   async findBySessionId(sessionId: string): Promise<Purchase | undefined> {
     const result = await db.query.purchases.findFirst({
       where: eq(purchases.checkoutSessionId, sessionId),
+      with: {
+        product: {
+          columns: {
+            type: true,
+          },
+        },
+      },
     });
 
-    if (!result) throw new Error('Not found');
+    if (!result) return undefined;
 
     return PurchaseMapper.toDomain(result);
   }
@@ -92,8 +99,32 @@ export class PurchasesRepository implements IPurchasesRepository {
   async findByProductId(id: string): Promise<Purchase[]> {
     const result = await db.query.purchases.findMany({
       where: eq(purchases.productId, id),
+      with: {
+        product: {
+          columns: {
+            type: true,
+          },
+        },
+      },
     });
 
     return result.map(PurchaseMapper.toDomain);
+  }
+
+  async findById(id: string): Promise<Purchase | undefined> {
+    const result = await db.query.purchases.findFirst({
+      where: eq(purchases.id, id),
+      with: {
+        product: {
+          columns: {
+            type: true,
+          },
+        },
+      },
+    });
+
+    if (!result) return undefined;
+
+    return PurchaseMapper.toDomain(result);
   }
 }
