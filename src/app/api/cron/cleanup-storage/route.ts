@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/server/db';
-import { files, lessons, liveLessons, attachments } from '@/server/db/schema';
+import {
+  files,
+  lessons,
+  liveLessons,
+  attachments,
+  products,
+} from '@/server/db/schema';
 import { notInArray, isNotNull, inArray } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js';
 import { env } from '@/env';
@@ -29,10 +35,16 @@ export async function GET() {
       .from(attachments)
       .where(isNotNull(attachments.fileId));
 
+    const productThumbnails = await db
+      .select({ id: products.imageId })
+      .from(products)
+      .where(isNotNull(products.imageId));
+
     const usedIds = [
       ...lessonThumbnails.map((t) => t.id),
       ...liveLessonThumbnails.map((t) => t.id).filter((val) => val !== null),
       ...attachmentFiles.map((t) => t.id),
+      ...productThumbnails.map((t) => t.id).filter((val) => val !== null),
     ];
 
     if (usedIds.length === 0) {
