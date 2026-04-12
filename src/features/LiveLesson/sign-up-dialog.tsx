@@ -17,42 +17,46 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PURCHASE_STATE } from '@/entities/models/purchase';
 import { formatTimeForInput } from '@/lib/utils';
-import { LiveLessonCardDTO } from '@/server/models/liveLesson.models';
+import { User } from '@/server/actions/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { memo } from 'react';
 import { useForm } from 'react-hook-form';
+import { useProductMutations } from '../products/hooks/use-product-mutations';
 import {
-  type LiveLessonSignUpValues,
   liveLessonSignUpFormDefaultValues,
   liveLessonSignUpFormSchema,
+  LiveLessonSignUpValues,
 } from './Form/schema';
-import { User } from '@/server/actions/user';
-import { useLiveLessonMutations } from './hooks/useLiveLessonMutations';
+import { useRouter } from 'next/navigation';
 
 type SignUpDialogProps = {
-  user: User;
-  liveLesson: Pick<
-    LiveLessonCardDTO,
-    | 'id'
-    | 'title'
-    | 'description'
-    | 'scheduledAt'
-    | 'isEligibleForFree'
-    | 'freeEligibilitiesUsed'
-  >;
+  productId: string;
+  title: string;
+  description?: string;
+  scheduledAt: string;
+  state: PURCHASE_STATE;
   open: boolean;
+  price: number;
+  user: User;
   setOpen: (state: boolean) => void;
 };
 
 const SignUpDialog = ({
-  liveLesson,
+  productId,
+  title,
+  description,
+  scheduledAt,
+  state,
   open,
+  price,
   setOpen,
   user,
 }: SignUpDialogProps) => {
-  const { signUpMutation } = useLiveLessonMutations();
+  const { purchaseMutation, claimMutation } = useProductMutations();
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(liveLessonSignUpFormSchema),
     defaultValues: user
@@ -61,11 +65,20 @@ const SignUpDialog = ({
   });
 
   const onSubmit = async (values: LiveLessonSignUpValues) => {
-    if (!liveLesson) return;
-    signUpMutation.mutate(
-      { id: liveLesson.id, values },
-      { onSuccess: () => setOpen(false) }
-    );
+    if (state === PURCHASE_STATE.CAN_CLAIM) {
+      return claimMutation.mutate(
+        { productId, values },
+        {
+          onSuccess: (purchase) => {
+            router.push(`/produkty/podsumowanie-odbioru/${purchase.id}`);
+          },
+        }
+      );
+    }
+
+    if (state === PURCHASE_STATE.CAN_PURCHASE) {
+      return purchaseMutation.mutate({ productId, values });
+    }
   };
 
   return (
@@ -80,15 +93,14 @@ const SignUpDialog = ({
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className="leading-normal">
                 <span className="block text-sm font-normal text-muted-foreground mb-4">
-                  {new Date(liveLesson.scheduledAt).toLocaleDateString('pl-PL')}
-                  , {formatTimeForInput(liveLesson.scheduledAt)}
+                  {new Date(scheduledAt).toLocaleDateString('pl-PL')},{' '}
+                  {formatTimeForInput(scheduledAt)}
                 </span>
-                {liveLesson.title}
-                &nbsp;
+                {title}
               </DialogTitle>
-              <DialogDescription>{liveLesson.description}</DialogDescription>
+              <DialogDescription>{description || ''}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <FormField
@@ -133,29 +145,32 @@ const SignUpDialog = ({
                   </p>
                 )}
               </div>
-              {liveLesson.isEligibleForFree && (
+              {/* {state === PURCHASE_STATE.CAN_CLAIM && (
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-sm">
                   <p className="font-medium text-primary">
-                    {liveLesson.freeEligibilitiesUsed! < 2
-                      ? `✨ Darmowe zajęcia (${liveLesson.freeEligibilitiesUsed} z 2)`
+                    {freeEligibilitiesUsed! < 2
+                      ? `✨ Darmowe zajęcia (${freeEligibilitiesUsed} z 2)`
                       : `Wykorzystano darmowe zajęcia`}
                   </p>
                 </div>
-              )}
+              )} */}
               <Button
                 className="w-full"
                 form="live-lesson-sign-up-form"
                 type="submit"
-                disabled={signUpMutation.isPending}
+                disabled={claimMutation.isPending || purchaseMutation.isPending}
               >
-                {signUpMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {(claimMutation.isPending || purchaseMutation.isPending) && (
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                 )}
-                {liveLesson.isEligibleForFree
+                {state === PURCHASE_STATE.CAN_CLAIM
                   ? 'Zapisz się za darmo'
-                  : 'Przejdź do płatności (29 PLN)'}
+                  : `Przejdź do płatności (${new Intl.NumberFormat('pl-PL', {
+                      style: 'currency',
+                      currency: 'PLN',
+                    }).format(price / 100)})`}
               </Button>
-              {!liveLesson.isEligibleForFree && (
+              {state === PURCHASE_STATE.CAN_PURCHASE && (
                 <p className="text-xs text-muted-foreground text-center">
                   Zostaniesz przekierowany do bezpiecznej płatności Stripe
                 </p>

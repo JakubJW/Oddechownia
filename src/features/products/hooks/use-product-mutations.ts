@@ -1,31 +1,40 @@
+import { LiveLessonSignUpValues } from '@/features/LiveLesson/Form/schema';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 export const useProductMutations = () => {
-  const claimProductAPI = async (productId: string) => {
+  const claimProductAPI = async ({
+    productId,
+    values,
+  }: {
+    productId: string;
+    values?: LiveLessonSignUpValues;
+  }) => {
     const res = await fetch(`/api/products/${productId}/claim`, {
       method: 'POST',
+      body: JSON.stringify(values),
     });
 
     if (!res.ok) {
-      const errorBody = await res
-        .json()
-        .catch(() => ({ message: res.statusText }));
+      const error = await res.json().catch(() => ({ message: res.statusText }));
 
-      throw new Error(
-        `Failed to fetch comments (Status ${res.status}): ${
-          errorBody.message || 'Unknown error'
-        }`
-      );
+      throw new Error(error || 'Unknown error');
     }
 
     const json = await res.json();
-    return json.data as { success: boolean };
+    return json;
   };
 
-  const purchaseProductAPI = async (id: string) => {
-    const res = await fetch(`/api/products/${id}/purchase`, {
-      method: 'GET',
+  const purchaseProductAPI = async ({
+    productId,
+    values,
+  }: {
+    productId: string;
+    values?: LiveLessonSignUpValues;
+  }) => {
+    const res = await fetch(`/api/products/${productId}/purchase`, {
+      method: 'POST',
+      body: JSON.stringify(values),
     });
 
     if (!res.ok) {

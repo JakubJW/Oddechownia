@@ -1,11 +1,12 @@
 import { IProductsRepository } from '@/application/repositories/products.repository.interface';
 import { IPurchasesRepository } from '@/application/repositories/purchases.repository.interface';
 import { ISubscriptionRepository } from '@/application/repositories/subscription.repository.interface';
-import { AcquisitionMethod } from '@/entities/models/purchase';
+import { SUBSCRIBER_ACCESS } from '@/entities/models/product';
+import { ACQUISITION_METHOD } from '@/entities/models/purchase';
 import { User } from '@/entities/models/user';
-import { revalidatePath } from 'next/cache';
+import { ConflictError } from '@/server/lib/errors';
 
-export class ClaimProductUseCase {
+export class ClaimProductRegisteredUseCase {
   constructor(
     private productsRepository: IProductsRepository,
     private purchasesRepository: IPurchasesRepository,
@@ -35,35 +36,19 @@ export class ClaimProductUseCase {
       );
 
     if (hasPurchasedProduct) {
-      throw new Error('Already claimed');
+      throw new ConflictError('Products', 'Ten produkt został już odebrany.');
     }
 
-    const acquisitionMethod: AcquisitionMethod = 'subscription_benefit';
-
-    // if (product.price === 0) {
-    //   acquisitionMethod = 'free_public';
-    // } else if (hasActiveSubscription) {
-    //   if (product.subscriberAccess === 'free_unlimited') {
-    //     acquisitionMethod = 'subscription_benefit';
-    //   } else if (product.subscriberAccess === 'quota_based') {
-    //     const usage =
-    //       await this.purchasesRepository.countMonthlyQuotaUsage(userId);
-    //     if (usage >= 2) throw new Error('Monthly quota exceeded');
-    //     acquisitionMethod = 'subscription_quota';
-    //   } else {
-    //     throw new Error('This product is not included in subscription');
-    //   }
-    // } else {
-    //   throw new Error('Payment required');
-    // }
-
-    await this.purchasesRepository.create({
+    const purchase = await this.purchasesRepository.create({
       email: user.email,
       userId: user.id,
       productId: product.id,
-      acquisitionMethod,
+      acquisitionMethod:
+        product.subscriberAccess === SUBSCRIBER_ACCESS.QUOTA_BASED
+          ? ACQUISITION_METHOD.SUBSCRIPTION_QUOTA
+          : ACQUISITION_METHOD.SUBSCRIPTION_BENEFIT,
     });
 
-    return { success: true, message: 'Access granted' };
+    return purchase;
   }
 }

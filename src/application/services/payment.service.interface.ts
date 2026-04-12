@@ -1,4 +1,4 @@
-import { ProductType } from '@/entities/models/product';
+import { PRODUCT_TYPE } from '@/entities/models/product';
 
 export interface IPaymentService {
   createCheckoutSession(params: {
@@ -8,7 +8,7 @@ export interface IPaymentService {
     metadata: {
       userId?: string;
       productId: string;
-      productType: ProductType;
+      productType: PRODUCT_TYPE;
     };
   }): Promise<{ url: string }>;
 }

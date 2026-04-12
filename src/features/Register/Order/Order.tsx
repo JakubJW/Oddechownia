@@ -1,6 +1,16 @@
-import { SubscriptionProductDTO } from '@/server/services/billing.service';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+type SubscriptionProductDTO = {
+  id: string;
+  name: string;
+  description: string | null;
+  priceId: string;
+  amount: number;
+  interval?: 'day' | 'week' | 'month' | 'year';
+  intervalCount?: number;
+  features: (string | undefined)[];
+};
 
 type OrderProps = Pick<
   SubscriptionProductDTO,

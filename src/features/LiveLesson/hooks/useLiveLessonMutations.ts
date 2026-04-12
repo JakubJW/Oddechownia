@@ -1,18 +1,10 @@
 import { LiveLessonSignUpResponse } from '@/server/models/liveLesson.models';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { LiveLessonSignUpValues } from '../Form/schema';
 
-const signUpAPI = async ({
-  id,
-  values,
-}: {
-  id: string;
-  values: LiveLessonSignUpValues;
-}) => {
-  const res = await fetch(`/api/live-lessons/${id}/sign-up`, {
+const signUpAPI = async (id: string) => {
+  const res = await fetch(`/api/products/${id}/claim`, {
     method: 'POST',
-    body: JSON.stringify(values),
   });
 
   if (!res.ok) {
@@ -26,11 +18,7 @@ const signUpAPI = async ({
 };
 
 export const useLiveLessonMutations = () => {
-  const signUpMutation = useMutation<
-    LiveLessonSignUpResponse,
-    Error,
-    { id: string; values: LiveLessonSignUpValues }
-  >({
+  const signUpMutation = useMutation<LiveLessonSignUpResponse, Error, string>({
     mutationFn: signUpAPI,
     onSuccess: (data) => {
       if (data.url) {

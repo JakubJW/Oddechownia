@@ -19,6 +19,7 @@ import {
   posts,
   products,
   ebooks,
+  purchases,
 } from './schema';
 
 export const playlistRelations = relations(playlists, ({ many, one }) => ({
@@ -67,6 +68,7 @@ export const userRelations = relations(users, ({ many }) => ({
   practiceSchedules: many(userPracticeSchedules),
   lessonProgress: many(userLessonProgress),
   subscriptions: many(subscriptions),
+  purchaes: many(purchases),
 }));
 
 export const playlistLessonRelations = relations(playlistLesson, ({ one }) => ({
@@ -103,6 +105,10 @@ export const filesRelations = relations(files, ({ one }) => ({
   liveLesson: one(liveLessons, {
     fields: [files.id],
     references: [liveLessons.thumbnailId],
+  }),
+  product: one(products, {
+    fields: [files.id],
+    references: [products.imageId],
   }),
 }));
 
@@ -145,6 +151,10 @@ export const liveLessonsRelations = relations(liveLessons, ({ many, one }) => ({
   thumbnail: one(files, {
     fields: [liveLessons.thumbnailId],
     references: [files.id],
+  }),
+  product: one(products, {
+    fields: [liveLessons.productId],
+    references: [products.id],
   }),
 }));
 
@@ -227,10 +237,30 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   comments: many(comments),
 }));
 
-export const productsRelatios = relations(products, ({ one }) => ({
+export const productsRelations = relations(products, ({ one, many }) => ({
   ebook: one(ebooks, {
     fields: [products.id],
     references: [ebooks.productId],
+  }),
+  liveLesson: one(liveLessons, {
+    fields: [products.id],
+    references: [liveLessons.productId],
+  }),
+  purchases: many(purchases),
+  image: one(files, {
+    fields: [products.imageId],
+    references: [files.id],
+  }),
+}));
+
+export const purchasesRelations = relations(purchases, ({ one }) => ({
+  product: one(products, {
+    fields: [purchases.productId],
+    references: [products.id],
+  }),
+  user: one(users, {
+    fields: [purchases.userId],
+    references: [users.id],
   }),
 }));
 

@@ -19,7 +19,9 @@ export const GetEbookButton = ({ productId, state, price }: Props) => {
   if (buttonState === 'can_purchase') {
     return (
       <Button
-        onClick={() => purchaseMutation.mutate(productId)}
+        onClick={() =>
+          purchaseMutation.mutate({ productId, values: undefined })
+        }
         disabled={purchaseMutation.isPending}
         size="lg"
         className="bg-white text-richBlack border border-richBlack hover:bg-muted"
@@ -40,9 +42,12 @@ export const GetEbookButton = ({ productId, state, price }: Props) => {
     return (
       <Button
         onClick={() =>
-          claimMutation.mutate(productId, {
-            onSuccess: () => setButtonState('can_download'),
-          })
+          claimMutation.mutate(
+            { productId, values: undefined },
+            {
+              onSuccess: () => setButtonState('can_download'),
+            }
+          )
         }
         disabled={claimMutation.isPending}
         size="lg"
@@ -61,7 +66,6 @@ export const GetEbookButton = ({ productId, state, price }: Props) => {
           const url = await downloadEbook(productId);
           window.location.href = url;
         }}
-        disabled={claimMutation.isPending}
         size="lg"
         className="flex-1 text-richBlack"
       >

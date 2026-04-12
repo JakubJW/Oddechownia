@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { LiveLessonsService } from '@/server/services/liveLessons.service';
 import { logger } from '@/server/lib/logger.service';
 import { NotFoundError } from '@/server/lib/errors';
+import { UpdateLiveLessonUseCase } from '@/application/use-cases/live-lesson/update-live-lesson.use-case';
+import { LiveLessonsRepository } from '@/infrastructure/repositories/live-lessons.repository';
+import { updateFormSchema } from '@/features/admin/LiveLesson/Form/schema';
 
 export async function PATCH(
   req: NextRequest,
@@ -13,9 +15,19 @@ export async function PATCH(
     const values = await req.json();
     const { id } = await params;
 
-    await LiveLessonsService.update(id, values);
+    const parsed = updateFormSchema.safeParse(values);
 
-    return NextResponse.json({ message: 'Success!' }, { status: 200 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { message: 'Bad request', errors: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const useCase = new UpdateLiveLessonUseCase(new LiveLessonsRepository());
+    await useCase.execute(id, values);
+
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     if (error instanceof NotFoundError) {
       return NextResponse.json(
@@ -23,7 +35,7 @@ export async function PATCH(
         { status: error.status }
       );
     }
-    
+
     log.error(
       {
         operation: 'update',

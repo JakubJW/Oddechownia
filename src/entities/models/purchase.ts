@@ -1,8 +1,18 @@
-export type AcquisitionMethod =
-  | 'payment'
-  | 'subscription_quota'
-  | 'subscription_benefit'
-  | 'free_public';
+import { PRODUCT_TYPE } from './product';
+
+export enum ACQUISITION_METHOD {
+  PAYMENT = 'payment',
+  SUBSCRIPTION_QUOTA = 'subscription_quota',
+  SUBSCRIPTION_BENEFIT = 'subscription_benefit',
+  FREE_PUBLIC = 'free_public',
+}
+
+export enum PURCHASE_STATE {
+  CAN_CLAIM = 'can_claim',
+  CLAIMED = 'claimed',
+  CAN_PURCHASE = 'can_purchse',
+  PURCHASED = 'purchased',
+}
 
 export type Purchase = {
   id: string;
@@ -10,7 +20,9 @@ export type Purchase = {
   email: string;
   productId: string;
   checkoutSessionId?: string;
-  acquisitionMethod: AcquisitionMethod;
+  acquisitionMethod: ACQUISITION_METHOD;
+  createdAt: string;
+  productType: PRODUCT_TYPE;
 };
 
 export type PurchaseInsert = {
@@ -18,5 +30,5 @@ export type PurchaseInsert = {
   productId: string;
   userId?: string;
   checkoutSessionId?: string;
-  acquisitionMethod: AcquisitionMethod;
+  acquisitionMethod: ACQUISITION_METHOD;
 };

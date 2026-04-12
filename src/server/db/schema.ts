@@ -101,9 +101,6 @@ export const playlistLesson = pgTable(
       .notNull()
       .references(() => playlists.id, { onDelete: 'cascade' }),
     position: integer('position').notNull(),
-    // isFeaturedOnHomepage: boolean('is_featured_on_homepage')
-    //   .notNull()
-    //   .default(false),
   },
   (table) => [
     unique('unique_playlist_lesson_constraint').on(
@@ -218,6 +215,9 @@ export const liveLessons = pgTable('live_lessons', {
   thumbnailId: integer('thumbnail_id').references(() => files.id, {
     onDelete: 'set null',
   }),
+  productId: uuid('product_id')
+    .references(() => products.id)
+    .unique(),
   createdAt: text('created_at')
     .default(sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
@@ -383,7 +383,7 @@ export const products = pgTable('products', {
   type: varchar('type').$type<'ebook' | 'live-lesson'>().notNull(),
   description: text('description'),
   priceId: text('price_id').notNull(),
-  image: text('image').notNull(),
+  imageId: integer('image_id').references(() => files.id),
   price: integer('price').notNull(),
   isVisible: boolean('is_visible').default(true),
   subscriberAccess: varchar('subscriber_access')

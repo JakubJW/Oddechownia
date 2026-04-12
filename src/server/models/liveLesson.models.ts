@@ -1,28 +1,13 @@
 import { InferSelectModel } from 'drizzle-orm';
 import { liveLessons } from '../db/schema';
 import { LiveLessonRegistrationCardDTO } from './liveLessonRegistration.models';
+import { AdminLiveLessonCardDTO } from '@/entities/models/live-lesson';
 
 export type LiveLessonSchema = InferSelectModel<typeof liveLessons>;
 
-export type AdminLiveLessonRecordDTO = {
-  id: string;
-  title: string;
-  scheduledAt: string;
-  duration: number;
-  isListed: boolean;
-  isPublished: boolean;
-  isCompleted: boolean;
-  description?: string;
-  meetingLink?: string;
-  recordingUrl?: string;
-  currentParticipants: number;
-  thumbnail?: string;
-};
-
 export type FetchAdminLiveLessonsListResponse = {
-  data: AdminLiveLessonRecordDTO[];
+  data: AdminLiveLessonCardDTO[];
   nextCursor: string | null;
-  success: boolean;
   error: string | null;
 };
 

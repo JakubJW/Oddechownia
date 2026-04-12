@@ -42,7 +42,6 @@ const sendBatch = async (
 
 const sendLiveLessonRegistrationConfirmaion = async (
   recipientEmail: string,
-  recipientName: string,
   lessonName: string,
   lessonScheduledAt: string
 ) => {
@@ -51,7 +50,6 @@ const sendLiveLessonRegistrationConfirmaion = async (
     template: {
       id: templates.liveLesson.confirmRegistration,
       variables: {
-        RECIPIENT_NAME: recipientName,
         LIVE_LESSON_NAME: lessonName,
         LIVE_LESSON_SCHEDULED_AT: new Intl.DateTimeFormat('pl-PL', {
           timeZone: 'Europe/Warsaw',
@@ -68,7 +66,6 @@ const sendLiveLessonRegistrationConfirmaion = async (
 
 const scheduleLiveLessonRemind = async (
   recipientEmail: string,
-  recipientName: string,
   lessonName: string,
   lessonScheduledAt: string
 ) => {
@@ -84,7 +81,6 @@ const scheduleLiveLessonRemind = async (
     template: {
       id: templates.liveLesson.reminder,
       variables: {
-        RECIPIENT_NAME: recipientName,
         LIVE_LESSON_NAME: lessonName,
         LIVE_LESSON_SCHEDULED_AT: new Intl.DateTimeFormat('pl-PL', {
           timeZone: 'Europe/Warsaw',

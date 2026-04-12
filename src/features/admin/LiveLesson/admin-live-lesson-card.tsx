@@ -3,12 +3,12 @@ import { Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
-import { AdminLiveLessonRecordDTO } from '@/server/models/liveLesson.models';
+import { AdminLiveLessonCardDTO } from '@/entities/models/live-lesson';
 
 type Props = {
-  lesson: AdminLiveLessonRecordDTO;
+  lesson: AdminLiveLessonCardDTO;
   setDialogOpen: (state: boolean) => void;
-  setCurrentLesson: (lesson: AdminLiveLessonRecordDTO) => void;
+  setCurrentLesson: (lesson: AdminLiveLessonCardDTO) => void;
   setParticipantsDialogOpen: (state: boolean) => void;
   setCurrentParticipantsLessonId: (id: string) => void;
 };
@@ -24,7 +24,7 @@ export const AdminLiveLessonCard = ({
     <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
-          src={lesson.thumbnail ? lesson.thumbnail : '/hero.jpg'}
+          src={lesson.image ? lesson.image : '/hero.jpg'}
           alt={`Miniatura lekcji ${lesson.title}`}
           fill
           className="lesson-card-thumbnail transition-all duration-200 ease-in-out object-cover"
