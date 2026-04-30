@@ -1,12 +1,11 @@
 'use client';
 
-import { NavigationProps } from './Navigation';
 import Link from 'next/link';
 import { Button, buttonVariants } from '../ui/button';
 import { cn } from '@/lib/utils';
 import {
   Settings,
-  User,
+  User as UserIcon,
   Video,
   Heart,
   LogOut,
@@ -22,8 +21,10 @@ import {
 } from '../ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { signOut } from '@/server/actions/auth';
+import { User } from '@/server/actions/user';
 
-interface NavigaitonActionProps extends NavigationProps {
+interface NavigaitonActionProps {
+  user: User;
   className?: string;
 }
 
@@ -58,7 +59,7 @@ export default function AccountDropdown({
             className
           )}
         >
-          <User className="size-4 mr-2" /> Moje konto
+          <UserIcon className="size-4 mr-2" /> Moje konto
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
