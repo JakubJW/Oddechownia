@@ -14,6 +14,11 @@ export const navbarLinks = [
     href: '/produkty',
     target: '_self',
   },
+  {
+    content: 'Blog',
+    href: '/blog',
+    target: '_self',
+  },
 ];
 
 export const footerLinks = [
