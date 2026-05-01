@@ -63,8 +63,7 @@ const IsItForYou = () => {
         </div>
         <div className="relative flex flex-col items-center justify-center aspect-square w-full md:w-1/2 xl:w-1/3">
           <p className="text-2xl text-center font-light mb-6">
-            Sprawdź za darmo, <br />
-            zanim wykupisz subskrypcję
+            Dołącz do Oddechowni <br />i rozpocznij praktykę
           </p>
           <Link
             className={cn(
@@ -73,7 +72,7 @@ const IsItForYou = () => {
             )}
             href={'/rejestracja'}
           >
-            3-dniowy okres próbny
+            Przejdź do rejestracji
           </Link>
           <Image
             src="/subscription_square.png"

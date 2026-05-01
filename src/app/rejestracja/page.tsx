@@ -33,7 +33,7 @@ export default async function SignIn() {
       <Container className="min-h-screen grid lg:grid-cols-2 lg:gap-16">
         <div className="w-full self-center space-y-8">
           <h1 className="font-sans text-lg xl:text-xl font-light">
-            Dołącz do Oddechowni i testuj za darmo przez 3 dni
+            Dołącz do Oddechowni
           </h1>
           <Order
             features={subscriptionProductDto.marketingFeatures}

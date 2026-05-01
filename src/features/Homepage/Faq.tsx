@@ -112,20 +112,6 @@ export default function Faq() {
           </FaqItem>
           <FaqItem>
             <FaqQuestion>
-              <p>Jak mogę dołączyć do zajęć online?</p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                To bardzo proste. Po wykupieniu subskrypcji otrzymasz dostęp do
-                platformy, gdzie znajdziesz linki do zajęć na żywo oraz
-                możliwość zapisania się na dwa wybrane zajęcia w miesiącu. Link
-                do zajęć otrzymasz drogą mailową lub możesz dołączyć do nich
-                bezpośrednio ze studia.
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
               <p>
                 Czy mogę dołączyć, jeśli nie chcę wykonywać praktyki fizycznej?
               </p>
@@ -136,31 +122,6 @@ export default function Faq() {
                 sekcji. Oprócz tego zanurzamy się również wspólnie w świat
                 filozofii jogi, medytujemy, praktykujemy jogę nidrę & rozmawiamy
                 o wielu ciekawych i inspirujących jogicznych konceptach.
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
-              <p>Czy muszę brać udział w zajęciach na żywo?</p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                Nie! Zajęcia live są nagrywane, dlatego możesz korzystać z
-                praktyk tak, jak chcesz & wtedy, kiedy chcesz. 🙂
-              </p>
-            </FaqAnswer>
-          </FaqItem>
-          <FaqItem>
-            <FaqQuestion>
-              <p>
-                Czy mogę dołączyć do zajęć na żywo, jeśli nie jestem
-                subskrybentem?
-              </p>
-            </FaqQuestion>
-            <FaqAnswer>
-              <p>
-                Tak, w zakładce Zajęcia na żywo znajdziesz aktualny harmonogram
-                spotkań na żywo, na które możesz wykupić jednorazowe wejście.
               </p>
             </FaqAnswer>
           </FaqItem>
