@@ -16,7 +16,7 @@ export const PostCard = ({ id, slug, title, lead, image, category }: Props) => {
   return (
     <li
       key={id}
-      className="lesson-card flex flex-col transition-all bg-white w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden"
+      className="post-card flex flex-col bg-white w-full rounded-xl min-h-[350px] h-full overflow-hidden"
     >
       <Link href={`/blog/${slug}`}>
         <div className="relative aspect-video overflow-hidden rounded-xl">
@@ -24,7 +24,7 @@ export const PostCard = ({ id, slug, title, lead, image, category }: Props) => {
             <Image
               src={image}
               alt="Author photo"
-              className="object-cover"
+              className="post-card-thumbnail object-cover transition-all duration-300 ease-in-out"
               fill
             />
           )}
@@ -34,7 +34,7 @@ export const PostCard = ({ id, slug, title, lead, image, category }: Props) => {
             </Badge>
           )}
         </div>
-        <div className="flex flex-col flex-grow py-6  gap-4">
+        <div className="flex flex-col flex-grow py-6 gap-4">
           <h2 className="text-black font-semibold line-clamp-2">{title}</h2>
           <p className="text-sm  text-gray-400 line-clamp-3">{lead}</p>
         </div>
