@@ -188,7 +188,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
             {mutation.isPending && (
               <Loader2 className="size-4 animate-spin mr-1" />
             )}
-            Rozpocznij darmowy okres próbny
+            Przejdź do płatności
           </Button>
         </form>
       </Form>

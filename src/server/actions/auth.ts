@@ -169,7 +169,6 @@ export async function signUp(values: RegisterFormValues) {
       client_reference_id: user.id,
       subscription_data: {
         metadata: { userId: user.id },
-        trial_period_days: 3,
       },
     });
 
