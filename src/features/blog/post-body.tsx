@@ -1,5 +1,3 @@
-'use client';
-
 import { Image } from 'next-sanity/image';
 import { urlFor } from '@/sanity/imageUrlBuilder';
 import { PortableText, PortableTextComponents } from 'next-sanity';
