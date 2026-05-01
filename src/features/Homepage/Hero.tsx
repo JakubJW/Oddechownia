@@ -24,7 +24,7 @@ export default function Hero() {
                 )}
                 href={'/rejestracja'}
               >
-                Rozpocznij za darmo
+                Dołącz teraz
               </Link>
             </div>
           </div>

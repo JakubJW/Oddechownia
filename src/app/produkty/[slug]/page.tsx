@@ -4,7 +4,7 @@ import { PRODUCT_CONTENTS } from '@/features/products/product-contents';
 import { Params } from '@/types/types';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { getUser } from '@/server/actions/user';
 import { notFound } from 'next/navigation';
 import { GetProductForUser } from '@/application/use-cases/product/get-product-for-user';
@@ -106,22 +106,11 @@ const EbookDetails = async ({
 
             {(product.subscriberAccess === 'free_unlimited' ||
               product.subscriberAccess === 'quota_based') && (
-              <p className="font-light">
-                Dołącz do Oddechowni i odbierz e-booka po zakończeniu 3-dniowego
-                okresu próbnego lub kup teraz.
+              <p className="font-medium">
+                Dołącz do Oddechowni i odbierz e-booka za darmo lub kup teraz.
               </p>
             )}
             <div className="space-x-2">
-              {(product.subscriberAccess === 'free_unlimited' ||
-                product.subscriberAccess === 'quota_based') &&
-                product.disabled && (
-                  <Button
-                    disabled
-                    className="text-richBlack"
-                  >
-                    Pobierz za darmo po okresie próbnym
-                  </Button>
-                )}
               {!user && (
                 <Link
                   href="/rejestracja"
@@ -130,7 +119,7 @@ const EbookDetails = async ({
                     'bg-matcha text-richBlack'
                   )}
                 >
-                  Rozpocznij okres próbny
+                  Przejdź do rejestracji
                 </Link>
               )}
               <GetEbookButton

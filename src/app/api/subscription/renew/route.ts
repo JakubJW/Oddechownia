@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
       cancel_url: `${env.NEXT_PUBLIC_APP_URL}/moje-konto`,
       client_reference_id: clientReferenceId,
       subscription_data: {
-        trial_period_days: 3,
         metadata: { userId: clientReferenceId },
       },
     });

@@ -27,15 +27,12 @@ export default function Order({ features, className }: OrderProps) {
     >
       <div className="mt-4 rounded-lg font-light">
         <h2 className="font-normal text-xl xl:text-xl uppercase">
-          3-dniowy okres próbny{' '}
+          Subskrypcja{' '}
           <span className="lowercase whitespace-nowrap text-sm text-muted-foreground">
-            (potem 129,00 zł miesięcznie)
+            (89,00 zł miesięcznie)
           </span>
         </h2>
         <span className="block mt-4">Anuluj w każdej chwili</span>
-        <p>
-          Do zapłaty dzisiaj: <strong>0,00 zł</strong>
-        </p>
       </div>
       <ul className="space-y-3 my-4">
         {features.map((feature, index) => {

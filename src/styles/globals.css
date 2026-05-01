@@ -171,9 +171,15 @@ body {
     }
   }
 
+  .ebook-card:hover {
+    .ebook-card-thumbnail {
+      transform: scale(1.05);
+    }
+  }
+  
   .post-card:hover {
     .post-card-thumbnail {
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
   }
 
