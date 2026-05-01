@@ -17,9 +17,11 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist }) => {
   return (
     <div>
       <div className="flex flex-wrap justify-between gap-4">
-        <h2 className="text-xl xl:text-3xl xl:leading-relaxed">
-          {playlist.name}
-        </h2>
+        <Link href={`/studio-jogi-online/${playlist.slug}`}>
+          <h2 className="text-xl xl:text-3xl xl:leading-relaxed hover:underline">
+            {playlist.name}
+          </h2>
+        </Link>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             {playlist.isAccessibleForFree ? (

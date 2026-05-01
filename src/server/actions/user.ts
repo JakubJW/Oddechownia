@@ -24,6 +24,7 @@ const accessGrantedStatuses = ['active', 'past_due', 'trialing'];
 export const getUser = cache(async () => {
   try {
     const supabase = await createClient();
+
     const {
       data: { user },
     } = await supabase.auth.getUser();

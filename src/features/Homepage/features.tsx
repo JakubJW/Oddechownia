@@ -2,7 +2,7 @@ import Container from '@/components/Container/Container';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { Play, Home, Video, Leaf, MessageCircle, Book } from 'lucide-react';
+import { Play, Home, Video, MessageCircle, Book } from 'lucide-react';
 import { Feature } from '../shared/feature';
 import Om from '@/assets/Om.svg';
 import Sloneczko from '@/assets/Sloneczko.svg';
@@ -80,10 +80,10 @@ const Features = () => {
                   wideo
                 </Feature>
                 <Feature icon={<Video className="size-6 text-matcha" />}>
-                  Spotkania i praktyki na żywo (Zoom)
+                  Programy praktyk dostosowane do Twoich potrzeb
                 </Feature>
                 <Feature icon={<Book className="size-6 text-matcha" />}>
-                  Darmowego e-booka po zakończeniu okresu próbnego
+                  Darmowe materiały edukacyjne do pobrania
                 </Feature>
                 <Feature
                   icon={<MessageCircle className="size-6 text-matcha" />}
@@ -94,9 +94,6 @@ const Features = () => {
                 <Feature icon={<Home className="size-6 text-matcha" />}>
                   Możliwość praktykowania gdzie chcesz, kiedy chcesz - we
                   własnym rytmie
-                </Feature>
-                <Feature icon={<Leaf className="size-6 text-matcha" />}>
-                  Darmowy 3-dniowy okres próbny
                 </Feature>
               </ul>
 

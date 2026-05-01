@@ -8,7 +8,6 @@ import Hotjar from '@/features/scripts/hotjar';
 import MailerLiteForms from '@/features/scripts/mailer-lite-forms';
 import { montserrat, sourceSans } from '@/fonts';
 import { cn } from '@/lib/utils';
-import { getUser } from '@/server/actions/user';
 import '@/styles/globals.css';
 import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
@@ -26,13 +25,11 @@ export const metadata: Metadata = {
     'Oddechownia to czuła przestrzeń, w której łączymy ruch z bezruchem, wiedzę z doświadczaniem, a duchowość z codziennością. Sprawdź i rozpocznij swoją pierwszą praktykę.',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getUser();
-
   return (
     <html lang="pl">
       <body
@@ -40,7 +37,7 @@ export default async function RootLayout({
       >
         <QueryClientProvider>
           <ToastProvider>
-            <Navigation user={user} />
+            <Navigation />
             <main className="mt-[64px] min-h-full">{children}</main>
             <Footer />
           </ToastProvider>
