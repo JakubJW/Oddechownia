@@ -170,6 +170,12 @@ body {
     }
   }
 
+  .ebook-card:hover {
+    .ebook-card-thumbnail {
+      transform: scale(1.1);
+    }
+  }
+
   .lesson-playlist-card:hover {
 
     .lesson-playlist-card-thumbnail {

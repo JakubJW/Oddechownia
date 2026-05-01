@@ -35,7 +35,7 @@ export default async function Products() {
             </p>
           </div>
         </div> */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 place-items-baseline">
+        <div className="grid grid-cols-1 sm:grid-cols-4 place-items-baseline">
           {products.map((product) => (
             <EbookCard
               key={product.id}
@@ -46,7 +46,6 @@ export default async function Products() {
               image={product.image}
               price={product.price}
               state={product.state}
-              disabled={product.disabled}
             />
           ))}
         </div>
