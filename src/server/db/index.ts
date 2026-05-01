@@ -1,20 +1,17 @@
 import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
-import * as relations from './relations';
 import { env } from '@/env';
 
 const connectionString = env.NEXT_DATABASE_URL;
 
 export const client = postgres(connectionString, { prepare: false });
 export const drizzleClient = drizzle(client, {
-  schema: { ...schema, ...relations },
+  schema,
 });
 
 declare global {
-  var database:
-    | PostgresJsDatabase<typeof schema & typeof relations>
-    | undefined;
+  var database: PostgresJsDatabase<typeof schema> | undefined;
 }
 
 export const db = global.database || drizzleClient;

@@ -1,21 +1,14 @@
-import Link from 'next/link';
 import Logo from '@/assets/oddechownia.svg';
-import MobileNavigation from './MobileNavigation';
-import NavigationLink from './NavigationLink';
-import AccountDropdown from './account-dropdown';
-import { User } from '@/server/actions/user';
 import { navbarLinks } from '@/utils/navigation';
-import { SubscriptionRenewalFailed } from './subscription-renewal-failed';
+import Link from 'next/link';
 import Container from '../Container/Container';
+import AuthStatus from './auth-status';
+import NavigationLink from './NavigationLink';
 
-export interface NavigationProps {
-  user: User | null;
-}
-
-export default function Navigation({ user }: NavigationProps) {
+export default function Navigation() {
   return (
     <header className="fixed top-0 z-40 w-full bg-matcha">
-      <SubscriptionRenewalFailed user={user} />
+      {/* <SubscriptionRenewalFailed user={user} /> */}
       <Container className="py-0 px-4 flex justify-between items-center h-[64px]">
         <nav className="h-full">
           <ul className="h-full flex justify-center sm:justify-start items-center">
@@ -41,11 +34,7 @@ export default function Navigation({ user }: NavigationProps) {
             ))}
           </ul>
         </nav>
-        <AccountDropdown
-          className="hidden md:inline-flex"
-          user={user}
-        />
-        <MobileNavigation user={user} />
+        <AuthStatus />
       </Container>
     </header>
   );

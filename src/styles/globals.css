@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@plugin "@tailwindcss/typography";
 
 html {
   height: 100vh;
@@ -167,6 +168,12 @@ body {
 
     .lesson-card-play-overlay {
       opacity: 1;
+    }
+  }
+
+  .post-card:hover {
+    .post-card-thumbnail {
+      transform: scale(1.1);
     }
   }
 
