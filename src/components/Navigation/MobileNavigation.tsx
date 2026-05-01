@@ -4,11 +4,11 @@ import { cn } from '@/lib/utils';
 import { MenuIcon, X } from 'lucide-react';
 import { useState } from 'react';
 import NavigationLink from './NavigationLink';
-import { NavigationProps } from './Navigation';
 import { navbarLinks } from '@/utils/navigation';
 import { signOut } from '@/server/actions/auth';
+import { User } from '@/server/actions/user';
 
-export default function MobileNavigation({ user }: NavigationProps) {
+export default function MobileNavigation({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
 
   return (
