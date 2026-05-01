@@ -171,6 +171,12 @@ body {
     }
   }
 
+  .post-card:hover {
+    .post-card-thumbnail {
+      transform: scale(1.1);
+    }
+  }
+
   .lesson-playlist-card:hover {
 
     .lesson-playlist-card-thumbnail {

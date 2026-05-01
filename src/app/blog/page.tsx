@@ -4,7 +4,6 @@ import { getPostsAsCardDTOs } from '@/infrastructure/services/blog.service';
 
 export const metadata: Metadata = {
   title: 'Blog',
-  description: '',
 };
 
 export default async function BlogArticles() {

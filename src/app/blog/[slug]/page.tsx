@@ -1,13 +1,10 @@
-import { urlFor } from '@/sanity/imageUrlBuilder';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getPostBySlug } from '@/infrastructure/services/blog.service';
 import DocumentBody from '@/features/blog/post-body';
-import { Image } from 'next-sanity/image';
+import { getPostBySlug } from '@/infrastructure/services/blog.service';
 import { client } from '@/sanity/client';
-import Container from '@/components/Container/Container';
+import { urlFor } from '@/sanity/imageUrlBuilder';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
+import { Image } from 'next-sanity/image';
+import { notFound } from 'next/navigation';
 
 export const dynamicParams = true;
 
