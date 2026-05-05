@@ -4,11 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create:admin": "npx tsx src/scripts/createAdmin.ts",
     "db:migrate:local": "npx drizzle-kit migrate --config=drizzle-local.config.ts",
     "webhooks:listen": "ngrok http --url=growing-optimum-rattler.ngrok-free.app 3000"
   },
@@ -52,8 +51,8 @@
     "drizzle-orm": "^0.39.3",
     "lucide-react": "^0.554.0",
     "motion": "^12.38.0",
-    "next": "^15.5.15",
-    "next-sanity": "^10.1.4",
+    "next": "^16.2.4",
+    "next-sanity": "^12.4.2",
     "next-themes": "^0.4.6",
     "pino": "^10.3.1",
     "postgres": "^3.4.9",

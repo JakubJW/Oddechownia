@@ -38,23 +38,23 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ['pino', 'pino-pretty'],
   allowedDevOrigins: ['localhost', '127.0.0.1'],
-  webpack(config) {
-    const fileLoaderRule = config.module.rules.find((rule: any) =>
-      rule.test?.test?.('.svg')
-    );
+  // webpack(config) {
+  //   const fileLoaderRule = config.module.rules.find((rule: any) =>
+  //     rule.test?.test?.('.svg')
+  //   );
 
-    config.module.rules.push({
-      test: /\.svg$/i,
-      include: /assets/,
-      use: ['@svgr/webpack'],
-    });
+  //   config.module.rules.push({
+  //     test: /\.svg$/i,
+  //     include: /assets/,
+  //     use: ['@svgr/webpack'],
+  //   });
 
-    if (fileLoaderRule) {
-      fileLoaderRule.exclude = /assets/;
-    }
+  //   if (fileLoaderRule) {
+  //     fileLoaderRule.exclude = /assets/;
+  //   }
 
-    return config;
-  },
+  //   return config;
+  // },
 };
 
 export default nextConfig;
