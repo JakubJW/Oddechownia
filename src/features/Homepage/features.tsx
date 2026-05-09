@@ -61,7 +61,7 @@ const Features = () => {
           </div>
 
           <div className="flex flex-col md:flex-row gap-16">
-            <div className="relative w-full aspect-[3/4] md:aspect-auto md:w-1/2 xl:w-2/3 ">
+            <div className="relative w-full aspect-3/4 md:aspect-auto md:w-1/2 xl:w-2/3 ">
               <Image
                 className="object-cover rounded-[32px]"
                 src="/hero2.jpg"

@@ -322,7 +322,7 @@ export function SchedulePlaylistDialog({
                       control={form.control}
                       name={`lessons.${index}.scheduledAt`}
                       render={({ field }) => (
-                        <FormItem className="flex-shrink-0">
+                        <FormItem className="shrink-0">
                           <Popover>
                             <PopoverTrigger asChild>
                               <Button

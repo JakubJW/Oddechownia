@@ -98,7 +98,7 @@ export const Comment = ({
           author={author}
           isAdmin={isAdmin}
         />
-        <div className="flex-grow bg-muted rounded-lg p-2">
+        <div className="grow bg-muted rounded-lg p-2">
           <span className="text-sm">
             <div className="flex justify-between">
               <p className="text-sm font-normal">

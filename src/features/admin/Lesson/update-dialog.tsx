@@ -159,7 +159,7 @@ export const UpdateLessonDialog = ({
                     <FormLabel>Film</FormLabel>
                     <FormControl>
                       {lesson.video ? (
-                        <>
+                        <div>
                           <MuxPlayer
                             className="mb-6 w-full aspect-video rounded-lg overflow-hidden"
                             streamType="on-demand"
@@ -189,7 +189,7 @@ export const UpdateLessonDialog = ({
                                 </DialogDescription>
                               </DialogHeader>
                               <DialogFooter>
-                                <DialogClose>
+                                <DialogClose asChild>
                                   <Button
                                     variant="outline"
                                     type="button"
@@ -213,7 +213,7 @@ export const UpdateLessonDialog = ({
                               </DialogFooter>
                             </DialogContent>
                           </Dialog>
-                        </>
+                        </div>
                       ) : (
                         <MuxUploader
                           type="bar"

@@ -24,7 +24,7 @@
 //       <Button
 //         onClick={() => setOpen(true)}
 //         variant="default"
-//         className="flex-grow md:flex-none"
+//         className="grow md:flex-none"
 //       >
 //         <CalendarPlus className="mr-2 h-4 w-4" />
 //         Zaplanuj

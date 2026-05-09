@@ -23,7 +23,7 @@ export default async function Products() {
   return (
     <section>
       <Container>
-        {/* <div className="relative bg-gradient-to-r border border-matcha-foreground from-transparent to-matcha-light rounded-[32px] p-12 mb-12 overflow-hidden">
+        {/* <div className="relative bg-linear-to-r border border-matcha-foreground from-transparent to-matcha-light rounded-[32px] p-12 mb-12 overflow-hidden">
           <Sloneczko className="absolute z-0 top-0 -translate-y-1/4 right-[15%] aspect-square h-[50%] sm:h-[95%] text-matcha/60" />
           <Kwiatek className="absolute z-0 aspect-square top-1/2 -translate-y-1/2 right-[25%] -translate-x-1/2 h-[60%] sm:h-full text-matcha/30" />
           <Om className="absolute bottom-0 translate-y-1/4 right-0 aspect-square h-[50%] sm:h-[90%] text-matcha" />

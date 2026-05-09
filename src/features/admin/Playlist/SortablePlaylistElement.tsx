@@ -39,7 +39,7 @@ export default function SortablePlaylistElement({
     >
       <td className="py-4 pl-4">
         <GripVertical
-          className="text-primaryFg flex-shrink-0 cursor-grab active:cursor-grabbing active:outline-none focus:outline-none"
+          className="text-primaryFg shrink-0 cursor-grab active:cursor-grabbing active:outline-hidden focus:outline-hidden"
           {...attributes}
           {...listeners}
         />

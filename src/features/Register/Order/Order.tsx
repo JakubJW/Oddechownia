@@ -43,7 +43,7 @@ export default function Order({ features, className }: OrderProps) {
               key={index}
               className="flex gap-2"
             >
-              <Check className="size-4 mt-1 text-primaryFg flex-shrink-0" />
+              <Check className="size-4 mt-1 text-primaryFg shrink-0" />
               <p className="font-light text-richBlack">{feature}</p>
             </li>
           );

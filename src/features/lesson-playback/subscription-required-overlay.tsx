@@ -17,7 +17,7 @@ export const SubscriptionRequiredOverlay = ({ thumbnail }: Props) => {
         fill
         className="object-cover"
       />
-      <div className="absolute bg-black bg-opacity-60 top-0 left-0 h-full w-full flex flex-col items-center justify-center">
+      <div className="absolute bg-black/60 top-0 left-0 h-full w-full flex flex-col items-center justify-center">
         <Gem
           className="text-matcha h-1/4 w-1/4"
           strokeWidth={1.5}

@@ -6,7 +6,7 @@ export default function MaintenanceMode() {
     <section className="h-full">
       <div className="flex flex-col h-full justify-between md:flex-row md:items-center">
         <div className="flex h-1/2 items-center px-4 space-y-6 sm:space-y-8 md:mx-auto text-center md:max-w-[600px]">
-          <HeaderOne className="flex-grow">
+          <HeaderOne className="grow">
             Strona <span className="text-primaryFg">w budowie.</span>
           </HeaderOne>
         </div>
