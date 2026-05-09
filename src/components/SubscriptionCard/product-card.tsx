@@ -121,7 +121,7 @@ export function ProductCard({
               key={index}
               className="flex gap-2"
             >
-              <Check className="size-4 mt-1 text-matcha flex-shrink-0" />
+              <Check className="size-4 mt-1 text-matcha shrink-0" />
               <span>{feature}</span>
             </li>
           );

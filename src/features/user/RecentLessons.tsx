@@ -14,7 +14,7 @@ export const RecentLessons = ({ lessons, className }: Props) => {
     return (
       <div className={cn('pt-[20px] min-h-[350px] flex flex-col', className)}>
         <p className="font-light mb-4">Ostatnio oglądane</p>
-        <div className="flex flex-col flex-grow gap-4 rounded-lg items-center justify-center w-full bg-muted text-muted-foreground">
+        <div className="flex flex-col grow gap-4 rounded-lg items-center justify-center w-full bg-muted text-muted-foreground">
           <p>Tutaj pojawią się ostatnio oglądane praktyki.</p>
           <Link
             href={'/studio-jogi-online'}

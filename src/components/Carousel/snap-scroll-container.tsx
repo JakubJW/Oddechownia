@@ -22,7 +22,7 @@ const SnapScrollContainer = ({ children }: { children: React.ReactNode }) => {
     <div className="mt-6 relative">
       <div
         ref={scrollRef}
-        className="-mx-4 lg:-mx-0 lg:gap-4 flex justify-start overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-smooth pb-4"
+        className="-mx-4 lg:mx-0 lg:gap-4 flex justify-start overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-smooth pb-4"
       >
         {children}
       </div>

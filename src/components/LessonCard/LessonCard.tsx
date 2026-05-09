@@ -17,19 +17,19 @@ const LessonCard = ({
   'name' | 'description' | 'video' | 'thumbnail' | 'labels'
 > & { percent?: number }) => {
   return (
-    <div className="lesson-card flex flex-col transition-all bg-white w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
+    <div className="card-hover-effect flex flex-col bg-white w-full rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
           src={thumbnail}
           alt="Obraz"
           fill
-          className="lesson-card-thumbnail transition-all duration-200 ease-in-out object-cover"
+          className="card-thumbnail object-cover"
         />
-        <span className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/75 text-white text-xs font-medium">
+        <span className="absolute bottom-2 right-2 px-2 py-1 rounded-sm bg-black/75 text-white text-xs font-medium">
           {formatDuration(video?.duration)}
         </span>
         <ProgressBar percent={percent} />
-        <div className="lesson-card-play-overlay transition-all duration-200 ease-in-out absolute top-0 left-0 h-full w-full opacity-0 bg-muted/60 flex items-center justify-center">
+        <div className="card-overlay absolute top-0 left-0 h-full w-full opacity-0 bg-muted/60 flex items-center justify-center">
           <div className="rounded-full bg-matcha p-6">
             <Play
               className="h-8 w-8 text-white"
@@ -39,7 +39,7 @@ const LessonCard = ({
         </div>
       </div>
 
-      <div className="flex flex-col flex-grow px-4 py-6 xl:px-6 gap-4">
+      <div className="flex flex-col grow px-4 py-6 xl:px-6 gap-4">
         <p className="text-black font-semibold line-clamp-2">{name}</p>
         <p className="text-sm  text-gray-400 line-clamp-2">{description}</p>
         <div className="flex gap-1 mt-auto">

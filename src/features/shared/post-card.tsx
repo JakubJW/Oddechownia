@@ -34,7 +34,7 @@ export const PostCard = ({ id, slug, title, lead, image, category }: Props) => {
             </Badge>
           )}
         </div>
-        <div className="flex flex-col flex-grow py-6 gap-4">
+        <div className="flex flex-col grow py-6 gap-4">
           <h2 className="text-black font-semibold line-clamp-2">{title}</h2>
           <p className="text-sm  text-gray-400 line-clamp-3">{lead}</p>
         </div>

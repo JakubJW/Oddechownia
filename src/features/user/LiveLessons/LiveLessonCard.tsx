@@ -44,7 +44,7 @@ export function LiveLessonCard({
           background: 'linear-gradient(to right, #B9C499, #9EAFBF, #EBDFD3)',
         }}
       />
-      <CardHeader className="flex-grow">
+      <CardHeader className="grow">
         <div className="flex items-start justify-between gap-2">
           <CardTitle
             className="text-xl font-semibold text-balance leading-tight flex-1"

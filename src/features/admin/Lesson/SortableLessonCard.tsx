@@ -38,7 +38,7 @@ export default function SortableLessonCard({
       {...attributes}
       {...listeners}
     >
-      <GripVertical className="text-primaryFg flex-shrink-0" />
+      <GripVertical className="text-primaryFg shrink-0" />
       <Link
         className="flex gap-4"
         href={href}
