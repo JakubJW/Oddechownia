@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    dangerouslyAllowLocalIP: true, // Only for private networks
     minimumCacheTTL: 2678400,
     remotePatterns: [
       {
