@@ -58,7 +58,7 @@ const IsItForYou = () => {
                 porządkują wiedzę
               </Italic>
             </Statement>
-            <Brandmark className="size-64 -z-10 absolute -bottom-4 md:-bottom-0 -right-4 md:-right-0 md:-top-4 md:-left-4 text-primary-foreground" />
+            <Brandmark className="size-64 -z-10 absolute -bottom-4 md:bottom-0 -right-4 md:right-0 md:-top-4 md:-left-4 text-primary-foreground" />
           </div>
         </div>
         <div className="relative flex flex-col items-center justify-center aspect-square w-full md:w-1/2 xl:w-1/3">

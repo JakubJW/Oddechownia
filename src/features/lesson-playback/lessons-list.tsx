@@ -33,7 +33,7 @@ export const LessonsList = ({
     <div className={cn(className)}>
       <div className="flex flex-col flex-1 lg:h-0 lg:min-h-full md:border md:rounded-xl bg-white">
         <h2 className="font-medium text-md p-6 line-clamp-2">{playlistName}</h2>
-        <div className="flex-grow px-6 pb-6 overflow-y-scroll">
+        <div className="grow px-6 pb-6 overflow-y-scroll">
           {lessons.map(
             ({ id, video, name, slug, thumbnail, progress, labels }) => (
               <Link
@@ -48,7 +48,7 @@ export const LessonsList = ({
                       : 'hover:bg-matcha-light'
                   )}
                 >
-                  <div className="relative overflow-hidden rounded-lg flex-shrink-0">
+                  <div className="relative overflow-hidden rounded-lg shrink-0">
                     <div
                       className={cn(
                         'lesson-playlist-card-play-overlay z-10 transition-opacity duration-300 flex items-center justify-center absolute h-full w-full top-0 left-0',
@@ -66,7 +66,7 @@ export const LessonsList = ({
                       alt={name}
                       className="aspect-video object-cover transition-transform duration-300"
                     />
-                    <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs p-1 rounded-sm">
+                    <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs p-1 rounded-xs">
                       {formatDuration(video?.duration)}
                     </span>
                     <ProgressBar percent={progress?.percent || 0} />

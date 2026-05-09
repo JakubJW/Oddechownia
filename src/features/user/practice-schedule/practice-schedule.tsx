@@ -51,11 +51,11 @@ export const PracticeSchedule = () => {
                 </div>
               </div>
             </div> */}
-          <div className="h-full flex flex-grow border rounded-xl overflow-hidden">
+          <div className="h-full flex grow border rounded-xl overflow-hidden">
             {getEventsForDay(new Date()).map((event) => (
               <div
                 key={event.id}
-                className="sm:flex flex-grow sm:pr-4"
+                className="sm:flex grow sm:pr-4"
               >
                 <div className="relative aspect-video sm:h-[150px]">
                   <Image

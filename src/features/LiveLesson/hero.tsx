@@ -27,7 +27,7 @@ export default function Hero() {
           fill
           priority
         />
-        <div className="absolute top-0 w-full h-full bg-black sm:bg-transparent sm:bg-gradient-to-r from-black to-transparent opacity-50" />
+        <div className="absolute top-0 w-full h-full bg-black sm:bg-transparent sm:bg-linear-to-r from-black to-transparent opacity-50" />
       </div>
     </section>
   );

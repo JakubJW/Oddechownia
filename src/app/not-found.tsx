@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-accent/10 to-background">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-background via-accent/10 to-background">
       <div className="max-w-2xl w-full text-center space-y-8">
         <div className="relative">
           <div className="text-[12rem] md:text-[16rem] font-bold text-matcha leading-none select-none">

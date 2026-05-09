@@ -18,7 +18,7 @@ const CalendarDayCellEvent = ({ event }: { event: CalendarEvent }) => {
     return (
       <div
         key={event.id}
-        className="text-[10px] px-1.5 py-0.5 rounded border truncate font-medium bg-violet-100 text-violet-700 border-violet-200"
+        className="text-[10px] px-1.5 py-0.5 rounded-sm border truncate font-medium bg-violet-100 text-violet-700 border-violet-200"
       >
         {event.title}
       </div>
@@ -29,7 +29,7 @@ const CalendarDayCellEvent = ({ event }: { event: CalendarEvent }) => {
     <div
       key={event.id}
       className={cn(
-        'flex gap-2 items-center text-[10px] px-1.5 py-0.5 rounded border font-medium ',
+        'flex gap-2 items-center text-[10px] px-1.5 py-0.5 rounded-smborder font-medium ',
         getLiveLessonStyles(event)
       )}
     >

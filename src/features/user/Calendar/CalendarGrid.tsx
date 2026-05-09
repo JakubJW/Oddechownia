@@ -68,7 +68,7 @@ const CaledarGrid = () => {
   return (
     <CalendarProvider value={contextValue}>
       <div className="flex items-center gap-2">
-        <p className="font-semibold flex-grow">
+        <p className="font-semibold grow">
           {format(selectedMonth, 'LLLL yyyy', { locale: pl })}
         </p>
         <Button

@@ -31,14 +31,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pl">
-      <body
-        className={cn(sourceSans.variable, montserrat.variable, 'antialiased')}
-      >
+    <html
+      lang="pl"
+      className={cn(sourceSans.variable, montserrat.variable, 'antialiased')}
+    >
+      <body>
         <QueryClientProvider>
           <ToastProvider>
             <Navigation />
-            <main className="mt-[64px] min-h-full">{children}</main>
+            <main className="mt-16 min-h-full">{children}</main>
             <Footer />
           </ToastProvider>
         </QueryClientProvider>

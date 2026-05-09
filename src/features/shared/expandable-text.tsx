@@ -21,7 +21,7 @@ export const ExpandableText = ({ text }: { text: string }) => {
       {isLongText && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs font-medium mt-1 text-primary hover:underline focus:outline-none"
+          className="text-xs font-medium mt-1 text-primary hover:underline focus:outline-hidden"
         >
           {isExpanded ? 'Pokaż mniej' : 'Zobacz więcej'}
         </button>

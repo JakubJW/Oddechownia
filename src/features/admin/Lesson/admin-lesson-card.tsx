@@ -20,20 +20,20 @@ export const AdminLessonCard = ({
   setDialogOpen: (state: boolean) => void;
 }) => {
   return (
-    <div className="lesson-card flex flex-col transition-all w-full duration-200 ease-in-out rounded-xl min-h-[350px] h-full overflow-hidden">
+    <div className="card-hover-effect flex flex-col w-full rounded-xl min-h-[350px] h-full overflow-hidden">
       <div className="relative aspect-video overflow-hidden">
         <Image
           src={thumbnail}
           alt="Obraz"
           fill
-          className="lesson-card-thumbnail transition-all duration-200 ease-in-out object-cover"
+          className="card-thumbnail object-cover"
         />
-        <span className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/75 text-white text-xs font-medium">
+        <span className="absolute bottom-2 right-2 px-2 py-1 rounded-sm bg-black/75 text-white text-xs font-medium">
           {formatDuration(video?.duration)}
         </span>
       </div>
 
-      <div className="flex flex-col flex-grow px-4 py-6 xl:px-6 gap-4">
+      <div className="flex flex-col grow px-4 py-6 xl:px-6 gap-4">
         <p className="text-black font-semibold line-clamp-2">{name}</p>
         <p className="text-sm  text-gray-400 line-clamp-2 mt-auto">
           {description}

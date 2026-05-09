@@ -44,9 +44,9 @@ export default async function SignIn() {
           />
           <RegisterForm className="col-start-1 col-span-2" />
         </div>
-        <div className="relative hidden md:block">
+        <div className="relative hidden lg:block">
           <Image
-            className="object-cover object-bottom rounded-[32px]"
+            className="object-cover object-bottom rounded-4xl"
             src="/auth-hero.png"
             alt="Hero image"
             fill

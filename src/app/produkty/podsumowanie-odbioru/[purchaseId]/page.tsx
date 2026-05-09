@@ -71,7 +71,7 @@ export default async function ProductClaimSummary({
                 Podczas przetwarzania płatności wystąpił błąd. Jeśli środki
                 zostały pobrane, skontaktuj się z nami podając ID zakupu:
                 <br />
-                <code className="bg-gray-100 p-1 rounded text-xs mt-2 block w-fit">
+                <code className="bg-gray-100 p-1 rounded-sm text-xs mt-2 block w-fit">
                   {purchaseId}
                 </code>
               </CardDescription>

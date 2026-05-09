@@ -40,7 +40,7 @@ const EbookDetails = async ({
     <>
       <section>
         <Container className="pt-0 md:pt-16 grid grid-cols-4 gap-16 max-w-5xl">
-          <div className="-mx-4 md:-mx-0 col-span-4 md:col-span-2">
+          <div className="-mx-4 md:mx-0 col-span-4 md:col-span-2">
             <Carousel
               hideArrows
               settings={{
@@ -73,7 +73,7 @@ const EbookDetails = async ({
               {productContents.images.map((image) => (
                 <Image
                   key={image}
-                  className="md:rounded-[32px] object-cover flex-grow"
+                  className="md:rounded-[32px] object-cover grow"
                   src={image}
                   width={1080}
                   height={1350}

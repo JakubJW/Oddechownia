@@ -6,7 +6,7 @@ export default function AboutMe() {
     <section>
       <Container>
         <div className="flex flex-col-reverse md:flex-row gap-8 md:gap-16">
-          <div className="relative w-full aspect-[3/4] md:aspect-auto md:w-1/2">
+          <div className="relative w-full aspect-3/4 md:aspect-auto md:w-1/2">
             <Image
               className="object-cover object-center rounded-[32px]"
               src="/homepage_2.jpg"
