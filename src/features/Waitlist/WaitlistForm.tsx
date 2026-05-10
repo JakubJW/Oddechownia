@@ -21,7 +21,7 @@ import { z } from 'zod';
 import { defaultValues, formSchema } from './schema';
 
 export default function WaitlistForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
@@ -121,8 +121,8 @@ export default function WaitlistForm() {
           {isLoading
             ? 'Ładowanie...'
             : isSuccess
-            ? 'Dziękuję, jesteśmy w kontakcie!'
-            : 'Zapisz się!'}
+              ? 'Dziękuję, jesteśmy w kontakcie!'
+              : 'Zapisz się!'}
         </Button>
         {form.formState.errors.root?.serverError && (
           <p className="text-sm font-medium text-destructive">

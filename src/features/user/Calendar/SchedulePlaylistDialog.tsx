@@ -75,7 +75,7 @@ export function SchedulePlaylistDialog({
     'automatic'
   );
 
-  const form = useForm<SchedulePlaylistInput>({
+  const form = useForm({
     resolver: zodResolver(SchedulePlaylistSchema),
     defaultValues: {
       mode: 'automatic',

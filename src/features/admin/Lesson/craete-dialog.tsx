@@ -49,7 +49,7 @@ export function CreateLessonDialog() {
     },
   });
 
-  const form = useForm<CreateLessonValues>({
+  const form = useForm({
     resolver: zodResolver(createformSchema),
     defaultValues,
     mode: 'all',

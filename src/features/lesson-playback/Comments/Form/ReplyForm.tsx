@@ -28,7 +28,7 @@ export const ReplyForm = ({
   onSuccess,
 }: ReplyFormProps) => {
   const { createMutation } = useCommentMutations();
-  const form = useForm<CreateCommentValues>({
+  const form = useForm({
     resolver: zodResolver(craeteCommentFormSchema),
     defaultValues: { ...createCommentFormDefaultValues, parentId, lessonId },
   });

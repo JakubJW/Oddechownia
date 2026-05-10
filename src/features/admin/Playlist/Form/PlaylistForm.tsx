@@ -31,7 +31,7 @@ export default function PlaylistForm({
 }) {
   const router = useRouter();
   const [isUploaded, setIsUploaded] = useState(false);
-  const form = useForm<PlaylistFormValues>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: playlist ? { ...playlist } : defaultValues,
     mode: 'all',

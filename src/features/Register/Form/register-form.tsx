@@ -26,7 +26,7 @@ import { PasswordInput } from '@/components/password-input';
 
 export const RegisterForm = ({ className }: { className?: string }) => {
   const mutation = useRegisterMutation();
-  const form = useForm<RegisterFormValues>({
+  const form = useForm({
     resolver: zodResolver(registerFormSchema),
     defaultValues: registerDefaultValues,
     mode: 'all',

@@ -22,7 +22,7 @@ interface CommentFormProps {
 
 export const CommentForm = ({ lessonId }: CommentFormProps) => {
   const { createMutation } = useCommentMutations();
-  const form = useForm<CreateCommentValues>({
+  const form = useForm({
     resolver: zodResolver(craeteCommentFormSchema),
     defaultValues: {
       ...createCommentFormDefaultValues,

@@ -20,7 +20,7 @@ import { changePasswordAuthenticated } from '@/server/actions/auth';
 const SecurityForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
     mode: 'all',

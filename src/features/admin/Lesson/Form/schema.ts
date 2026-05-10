@@ -3,17 +3,17 @@ import { nonEmptyString } from '@/shared/formUtils';
 import { ERROR_MESSAGES } from '@/shared/messages';
 
 export const createformSchema = z.object({
-  name: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
+  name: z.string({ error: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   description: z.string(),
   videoId: z.coerce
     .number({
-      invalid_type_error: 'Nieprawidłowe ID filmu.',
+      error: 'Nieprawidłowe ID filmu.',
     })
     .int('ID filmu musi być liczbą całkowitą.')
     .optional(),
   thumbnailId: z.coerce
     .number({
-      invalid_type_error: 'Nieprawidłowe ID miniatury.',
+      error: 'Nieprawidłowe ID miniatury.',
     })
     .int('ID miniatury musi być liczbą całkowitą.')
     .refine((value) => value !== undefined, 'Brak ID miniatury.')
@@ -22,17 +22,17 @@ export const createformSchema = z.object({
 });
 
 export const updateFormSchema = z.object({
-  name: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
+  name: z.string({ error: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   description: z.string(),
   videoId: z.coerce
     .number({
-      invalid_type_error: 'Nieprawidłowe ID filmu.',
+      error: 'Nieprawidłowe ID filmu.',
     })
     .int('ID filmu musi być liczbą całkowitą.')
     .optional(),
   thumbnailId: z.coerce
     .number({
-      invalid_type_error: 'Nieprawidłowe ID miniatury.',
+      error: 'Nieprawidłowe ID miniatury.',
     })
     .int('ID miniatury musi być liczbą całkowitą.')
     .refine((value) => value !== undefined, 'Brak ID miniatury.')

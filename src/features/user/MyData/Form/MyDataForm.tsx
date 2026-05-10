@@ -23,12 +23,12 @@ const MyDataForm = ({ user }: { user: User }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: user?.firstName ?? '',
       lastName: user?.lastName ?? '',
-      email: user?.email,
+      email: user!.email,
       regulationsAgreement: user?.regulationsAgreement ?? false,
       privacyPolicyAgreement: user?.privacyPolicyAgreement ?? false,
     },

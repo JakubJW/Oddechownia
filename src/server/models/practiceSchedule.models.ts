@@ -9,7 +9,7 @@ export const ScheduleIntervals = {
 
 const BaseScheduleSchema = z.object({
   playlistId: z.number(),
-  startDate: z.date({ required_error: 'Data rozpoczęcia jest wymagana' }),
+  startDate: z.date({ error: 'Data rozpoczęcia jest wymagana' }),
   startTime: z
     .string()
     .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Format HH:MM'),

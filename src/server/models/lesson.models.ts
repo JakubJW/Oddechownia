@@ -100,16 +100,16 @@ export type FetchAdminLessonListResponse = {
 export const craeteLessonSchema = z.object({
   thumbnailId: z.coerce
     .number({
-      invalid_type_error: 'Nieprawidłowe ID miniatury.',
+      error: 'Nieprawidłowe ID miniatury.',
     })
     .int('ID miniatury musi być liczbą całkowitą.')
     .refine((value) => value !== undefined, 'Brak ID miniatury.')
     .optional(),
-  name: z.string({ message: 'Pole wymagane' }).pipe(nonEmptyString),
+  name: z.string({ error: 'Pole wymagane' }).pipe(nonEmptyString),
   description: z.string(),
   videoId: z.coerce
     .number({
-      invalid_type_error: 'Nieprawidłowe ID filmu.',
+      error: 'Nieprawidłowe ID filmu.',
     })
     .int('ID filmu musi być liczbą całkowitą.')
     .optional(),

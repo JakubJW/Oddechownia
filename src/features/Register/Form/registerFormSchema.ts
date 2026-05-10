@@ -16,19 +16,11 @@ export const registerFormSchema = z
     firstName: z.string().pipe(nonEmptyString),
     lastName: z.string().pipe(nonEmptyString),
     email: z
-      .string()
-      .email({ message: ERROR_MESSAGES.INVALID_EMAIL })
+      .email({ error: ERROR_MESSAGES.INVALID_EMAIL })
       .pipe(nonEmptyString),
     password: z.string().pipe(nonEmptyString),
-    regulationsAgreement: z.preprocess(
-      (value) => value === 'on' || value === 'true' || value === true,
-      z.boolean().refine((val) => val, ERROR_MESSAGES.REQUIRED)
-    ),
-    privacyPolicyAgreement: z.preprocess(
-      (value) => value === 'on' || value === 'true' || value === true,
-
-      z.boolean().refine((value) => value, ERROR_MESSAGES.REQUIRED)
-    ),
+    regulationsAgreement: z.boolean(),
+    privacyPolicyAgreement: z.boolean(),
   })
   .superRefine(({ regulationsAgreement, privacyPolicyAgreement }, ctx) => {
     if (!regulationsAgreement) {

@@ -57,7 +57,7 @@ export const UpdateLessonDialog = ({
     },
   });
 
-  const form = useForm<UpdateLessonValues>({
+  const form = useForm({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
       ...lesson,

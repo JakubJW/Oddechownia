@@ -4,19 +4,16 @@ import { ERROR_MESSAGES } from '@/shared/messages';
 import { SUBSCRIBER_ACCESS } from '@/entities/models/product';
 
 export const createformSchema = z.object({
-  title: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
-  date: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
-  time: z.string({ message: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
+  title: z.string({ error: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
+  date: z.string({ error: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
+  time: z.string({ error: ERROR_MESSAGES.REQUIRED }).pipe(nonEmptyString),
   scheduledAt: z.string(),
   priceId: z.string(),
-  price: z.coerce.number(),
+  price: z.int(),
   isFree: z.boolean(),
-  imageId: z.coerce.number(),
+  imageId: z.int(),
   subscriberAccess: z.nativeEnum(SUBSCRIBER_ACCESS),
-  duration: z.coerce
-    .number({
-      invalid_type_error: 'Czas trwania musi być liczbą.',
-    })
+  duration: z
     .int('Czas trwania musi być liczbą całkowitą.')
     .min(15, 'Minimalny czas trwania to 15 minut.')
     .max(360, 'Maksymalny czas trwania to 360 minut.'),
@@ -31,7 +28,7 @@ export const createformSchema = z.object({
 });
 
 export const updateFormSchema = createformSchema.extend({
-  imageId: z.coerce.number().optional(),
+  imageId: z.int().optional(),
   recordingUrl: z
     .string()
     .optional()

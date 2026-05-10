@@ -5,10 +5,9 @@ import { ERROR_MESSAGES } from '@/shared/messages';
 export const formSchema = z.object({
   firstName: z.string().pipe(nonEmptyString),
   email: z
-    .string({ required_error: ERROR_MESSAGES.REQUIRED })
+    .email({ message: ERROR_MESSAGES.INVALID_EMAIL })
     .trim()
-    .min(1, { message: ERROR_MESSAGES.REQUIRED })
-    .email({ message: ERROR_MESSAGES.INVALID_EMAIL }),
+    .min(1, { error: ERROR_MESSAGES.REQUIRED }),
   emailMarketingAgreement: z
     .boolean()
     .refine((value) => value, ERROR_MESSAGES.REQUIRED),

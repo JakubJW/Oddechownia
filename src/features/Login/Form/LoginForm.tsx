@@ -23,7 +23,7 @@ import { PasswordInput } from '@/components/password-input';
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
