@@ -1,115 +1,109 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { MenuIcon, X } from 'lucide-react';
-import { useState } from 'react';
+import { MenuIcon } from 'lucide-react';
 import NavigationLink from './NavigationLink';
 import { navbarLinks } from '@/utils/navigation';
 import { signOut } from '@/server/actions/auth';
 import { User } from '@/server/actions/user';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { useState } from 'react';
 
 export default function MobileNavigation({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
 
   return (
     <div className="flex items-center md:hidden">
-      <button onClick={() => setOpen(true)}>
-        <MenuIcon className="text-richBlack" />
-      </button>
-      <div
-        className={cn(
-          'absolute p-4 bg-white top-0 left-0 h-screen w-full flex flex-col opacity-0 pointer-events-none transition-opacity duration-300',
-          open && 'opacity-1 pointer-events-auto'
-        )}
+      <Sheet
+        onOpenChange={setOpen}
+        open={open}
       >
-        <button
-          className="inline-flex w-min self-end"
-          onClick={() => setOpen(false)}
-        >
-          <X className="text-richBlack" />
-        </button>
-        <ul className="-mx-4 flex flex-col gap-4">
-          {navbarLinks.map(({ content, href }, index) => (
-            <li key={index}>
-              <NavigationLink
-                isMobile={true}
-                content={content}
-                href={href}
-                onClick={() => setOpen(false)}
-              />
-            </li>
-          ))}
-          {user?.isAdmin && (
-            <li>
-              <NavigationLink
-                isMobile={true}
-                content="Admin"
-                href="/admin"
-                onClick={() => setOpen(false)}
-              />
-            </li>
-          )}
-          {user && (
-            <>
-              <li>
+        <SheetTrigger asChild>
+          <button>
+            <MenuIcon className="text-richBlack" />
+          </button>
+        </SheetTrigger>
+        <SheetContent side="right">
+          <ul className="flex flex-col gap-4 mt-8">
+            {navbarLinks.map(({ content, href }, index) => (
+              <li key={index}>
                 <NavigationLink
                   isMobile={true}
-                  content="Moja praktyka"
-                  href="/moje-konto"
+                  content={content}
+                  href={href}
                   onClick={() => setOpen(false)}
                 />
               </li>
+            ))}
+            {user?.isAdmin && (
               <li>
                 <NavigationLink
                   isMobile={true}
-                  content="Moje zajęcia na żywo"
-                  href="/moje-konto/zajecia-na-zywo"
+                  content="Admin"
+                  href="/admin"
                   onClick={() => setOpen(false)}
                 />
               </li>
+            )}
+            {user && (
+              <>
+                <li>
+                  <NavigationLink
+                    isMobile={true}
+                    content="Moja praktyka"
+                    href="/moje-konto"
+                    onClick={() => setOpen(false)}
+                  />
+                </li>
+                <li>
+                  <NavigationLink
+                    isMobile={true}
+                    content="Moje zajęcia na żywo"
+                    href="/moje-konto/zajecia-na-zywo"
+                    onClick={() => setOpen(false)}
+                  />
+                </li>
+                <li>
+                  <NavigationLink
+                    isMobile={true}
+                    content="Ulubione lekcje"
+                    href="/moje-konto/ulubione-lekcje"
+                    onClick={() => setOpen(false)}
+                  />
+                </li>
+                <li>
+                  <NavigationLink
+                    isMobile={true}
+                    content="Ustawienia"
+                    href="/moje-konto/ustawienia"
+                    onClick={() => setOpen(false)}
+                  />
+                </li>
+                <li>
+                  <NavigationLink
+                    isMobile={true}
+                    content="Wyloguj"
+                    href="#"
+                    onClick={async () => {
+                      await signOut();
+                      setOpen(false);
+                    }}
+                  />
+                </li>
+              </>
+            )}
+            {!user && (
               <li>
                 <NavigationLink
                   isMobile={true}
-                  content="Ulubione lekcje"
-                  href="/moje-konto/ulubione-lekcje"
+                  content="Logowanie"
+                  href="/logowanie"
                   onClick={() => setOpen(false)}
                 />
               </li>
-              <li>
-                <NavigationLink
-                  isMobile={true}
-                  content="Ustawienia"
-                  href="/moje-konto/ustawienia"
-                  onClick={() => setOpen(false)}
-                />
-              </li>
-              <li>
-                <NavigationLink
-                  isMobile={true}
-                  content="Wyloguj"
-                  href="#"
-                  onClick={async () => {
-                    setOpen(false);
-                    await signOut();
-                  }}
-                />
-              </li>
-            </>
-          )}
-          {!user && (
-            <li>
-              <NavigationLink
-                isMobile={true}
-                content="Logowanie"
-                href="/logowanie"
-                onClick={async () => {
-                  setOpen(false);
-                }}
-              />
-            </li>
-          )}
-        </ul>
-      </div>
+            )}
+          </ul>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
