@@ -28,19 +28,26 @@ export async function login(formData: FormData) {
   const parsed = loginFormSchema.safeParse(data);
 
   if (!parsed.success) {
-    return { data: null, error: null };
+    throw new Error('Błąd walidacji danych.');
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const {
+    error,
+    data: { user },
+  } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   });
 
   if (error && error.code === 'invalid_credentials') {
-    return { error: 'Nieprawidłowe dane logowania', data: null };
+    throw new Error('Nieprawidłowe dane logowania.');
   }
 
-  return { data: null, error: null };
+  if (!user) {
+    throw new Error('Podczas logowania wystąpił błąd.');
+  }
+
+  return user;
 }
 
 export async function requestPasswordReset(email: string) {
@@ -231,9 +238,8 @@ export async function signOut() {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    redirect('/error');
+    throw new Error('Podczas wylogowywania wystąpił błąd.');
   }
 
   revalidatePath('/', 'layout');
-  redirect('/');
 }

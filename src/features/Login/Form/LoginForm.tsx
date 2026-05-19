@@ -10,7 +10,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { login } from '@/server/actions/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -19,11 +18,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { defaultValues, formSchema } from './schema';
 import { PasswordInput } from '@/components/password-input';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
+  const { logIn } = useAuth();
   const router = useRouter();
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
@@ -35,14 +36,13 @@ export default function LoginForm() {
     formData.append('email', values.email);
     formData.append('password', values.password);
 
-    const { error } = await login(formData);
-
-    if (error) {
+    try {
+      await logIn(formData);
+      router.push('/moje-konto');
+    } catch (error) {
       console.log('Error in LoginForm', error);
-      return setError(error);
+      setError((error as unknown as Error).message);
     }
-
-    router.push('/moje-konto');
   };
 
   return (
