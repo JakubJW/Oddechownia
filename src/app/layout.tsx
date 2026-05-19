@@ -3,7 +3,7 @@ import Navigation from '@/components/Navigation/Navigation';
 import QueryClientProvider from '@/components/QueryClientProvider';
 import ToastProvider from '@/components/ToastProvider';
 import { env } from '@/env';
-import Chat from '@/features/scripts/chat';
+// import Chat from '@/features/scripts/chat';
 import Hotjar from '@/features/scripts/hotjar';
 import MailerLiteForms from '@/features/scripts/mailer-lite-forms';
 import { montserrat, sourceSans } from '@/fonts';
@@ -45,7 +45,7 @@ export default function RootLayout({
         </QueryClientProvider>
         {env.NODE_ENV !== 'development' && (
           <>
-            <Chat />
+            {/* <Chat /> */}
             <Analytics />
             <MailerLiteForms />
             <Hotjar />
