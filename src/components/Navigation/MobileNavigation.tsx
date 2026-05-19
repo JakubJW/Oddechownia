@@ -3,13 +3,14 @@
 import { MenuIcon } from 'lucide-react';
 import NavigationLink from './NavigationLink';
 import { navbarLinks } from '@/utils/navigation';
-import { signOut } from '@/server/actions/auth';
+import { useAuth } from '../AuthProvider';
 import { User } from '@/server/actions/user';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { useState } from 'react';
 
 export default function MobileNavigation({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
+  const { logOut } = useAuth();
 
   return (
     <div className="flex items-center md:hidden">
@@ -84,7 +85,7 @@ export default function MobileNavigation({ user }: { user: User }) {
                     content="Wyloguj"
                     href="#"
                     onClick={async () => {
-                      await signOut();
+                      await logOut();
                       setOpen(false);
                     }}
                   />

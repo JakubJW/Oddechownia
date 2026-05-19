@@ -1,38 +1,36 @@
 'use client';
 
-import Link from 'next/link';
-import { Button, buttonVariants } from '../ui/button';
 import { cn } from '@/lib/utils';
+import { User } from '@/server/actions/user';
 import {
+  Heart,
+  Leaf,
+  LogOut,
   Settings,
   User as UserIcon,
-  Video,
-  Heart,
-  LogOut,
   UserStar,
-  Leaf,
+  Video,
 } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../AuthProvider';
+import { Button, buttonVariants } from '../ui/button';
 import {
   DropdownMenu,
-  DropdownMenuItem,
   DropdownMenuContent,
-  DropdownMenuTrigger,
+  DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { useRouter } from 'next/navigation';
-import { signOut } from '@/server/actions/auth';
-import { User } from '@/server/actions/user';
 
 interface NavigaitonActionProps {
   user: User;
   className?: string;
 }
 
-export default function AccountDropdown({
-  user,
-  className,
-}: NavigaitonActionProps) {
+export default function AccountDropdown({ className }: NavigaitonActionProps) {
   const router = useRouter();
+  const { user, logOut } = useAuth();
 
   if (!user) {
     return (
@@ -91,7 +89,7 @@ export default function AccountDropdown({
           <Settings className="size-4 mr-1" />
           Ustawienia
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={async () => await signOut()}>
+        <DropdownMenuItem onClick={async () => await logOut()}>
           <LogOut className="size-4 mr-1" /> Wyloguj
         </DropdownMenuItem>
       </DropdownMenuContent>
