@@ -17,7 +17,7 @@ export default function Navigation() {
                 className="block mr-8 h-full"
                 href="/"
               >
-                <Logo className="text-richBlack h-full w-min" />
+                <Logo className="text-richBlack h-full" />
               </Link>
             </li>
             {navbarLinks.map(({ content, href }, index) => (

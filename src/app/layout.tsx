@@ -12,6 +12,7 @@ import '@/styles/globals.css';
 import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import { AuthProvider } from '@/components/AuthProvider';
+import MaintenanceMode from '@/features/Maintenance/MaintenanceMode';
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -37,15 +38,19 @@ export default function RootLayout({
       className={cn(sourceSans.variable, montserrat.variable, 'antialiased')}
     >
       <body>
-        <AuthProvider>
-          <QueryClientProvider>
-            <ToastProvider>
-              <Navigation />
-              <main className="mt-16 min-h-full">{children}</main>
-              <Footer />
-            </ToastProvider>
-          </QueryClientProvider>
-        </AuthProvider>
+        { env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
+          ? <MaintenanceMode /> 
+          : <AuthProvider>
+              <QueryClientProvider>
+                <ToastProvider>
+                  <Navigation />
+                  <main className="mt-16 min-h-full">{children}</main>
+                  <Footer />
+                </ToastProvider>
+              </QueryClientProvider>
+            </AuthProvider>
+        }
+        
         {env.NODE_ENV !== 'development' && (
           <>
             {/* <Chat /> */}
