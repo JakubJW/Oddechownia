@@ -13,6 +13,22 @@ import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import { AuthProvider } from '@/components/AuthProvider';
 import MaintenanceMode from '@/features/Maintenance/MaintenanceMode';
+import { getUser } from '@/server/actions/user';
+import { headers } from 'next/headers';
+
+const ADMIN_LOGIN_PATH = '/admin/logowanie';
+
+async function shouldShowMaintenancePlug() {
+  if (env.NEXT_PUBLIC_MAINTENANCE_MODE !== 'true') return false;
+
+  // Admin login page must stay reachable so admins can bypass the plug.
+  // `x-current-path` is set by the proxy for /admin/* routes.
+  const path = (await headers()).get('x-current-path');
+  if (path === ADMIN_LOGIN_PATH) return false;
+
+  const user = await getUser();
+  return !user?.isAdmin;
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
@@ -27,30 +43,33 @@ export const metadata: Metadata = {
     'Oddechownia to czuła przestrzeń, w której łączymy ruch z bezruchem, wiedzę z doświadczaniem, a duchowość z codziennością. Sprawdź i rozpocznij swoją pierwszą praktykę.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const showMaintenancePlug = await shouldShowMaintenancePlug();
+
   return (
     <html
       lang="pl"
       className={cn(sourceSans.variable, montserrat.variable, 'antialiased')}
     >
       <body>
-        { env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
-          ? <MaintenanceMode /> 
-          : <AuthProvider>
-              <QueryClientProvider>
-                <ToastProvider>
-                  <Navigation />
-                  <main className="mt-16 min-h-full">{children}</main>
-                  <Footer />
-                </ToastProvider>
-              </QueryClientProvider>
-            </AuthProvider>
-        }
-        
+        {showMaintenancePlug ? (
+          <MaintenanceMode />
+        ) : (
+          <AuthProvider>
+            <QueryClientProvider>
+              <ToastProvider>
+                <Navigation />
+                <main className="mt-16 min-h-full">{children}</main>
+                <Footer />
+              </ToastProvider>
+            </QueryClientProvider>
+          </AuthProvider>
+        )}
+
         {env.NODE_ENV !== 'development' && (
           <>
             {/* <Chat /> */}
