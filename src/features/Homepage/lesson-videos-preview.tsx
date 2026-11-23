@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 export default async function CourseVideosPreview() {
   const featuredLessonIds = await ContentBlocksService.getFeaeturedLessonIds();
-  const featuredLessons = await db.query.lessons.findMany({
+  const [featuredLesson] = await db.query.lessons.findMany({
     where: inArray(lessons.id, featuredLessonIds),
     with: {
       video: true,
@@ -44,16 +44,16 @@ export default async function CourseVideosPreview() {
           </Link>
         </div>
         <div className="flex-1">
-          <VideoPlayer
+          {featuredLesson && <VideoPlayer
             thumbnail={
               supabaseService.getFileUrl(
-                featuredLessons[0].thumbnail.name,
-                featuredLessons[0].thumbnail.bucket,
-                featuredLessons[0].thumbnail.path
+                featuredLesson.thumbnail.name,
+                featuredLesson.thumbnail.bucket,
+                featuredLesson.thumbnail.path
               ).data
             }
             playbackId={'ky2un2dak00KBtDM8r4PXoU012RDN2aGMsqmcPu31Q35g'}
-          />
+          />}
         </div>
       </Container>
     </section>
