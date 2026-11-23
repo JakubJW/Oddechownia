@@ -41,6 +41,8 @@ export default function LoginForm() {
     }
 
     router.push('/admin');
+    // Re-evaluate root layout (maintenance mode gate) with the new session.
+    router.refresh();
   };
 
   return (
